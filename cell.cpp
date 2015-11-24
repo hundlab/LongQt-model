@@ -1,0 +1,127 @@
+//####################################################
+// This file contains general function definitions 
+// for simulation of excitable cell activity.
+//
+// Copyright (C) 2011 Thomas J. Hund.
+// Updated 11/21/2012
+//####################################################
+
+#include "cell.h"
+
+//######################################################
+// Constructor for parent cell class - the basis for 
+// any excitable cell model.  
+//######################################################
+Cell::Cell()
+{
+    //##### Assign default parameters ##################
+    dtmin = 0.005;  // ms
+    dtmed = 0.01;
+    dtmax = 0.1;
+    dvcut = 1.0;    // mV/ms
+    Cm = 1.0;  // uF/cm^s
+    Rcg = 1.0;
+    cellRadius = 0.001; // cm
+    cellLength = 0.01;  // cm
+    type = "Cell";  // class name
+    RGAS = 8314.0;
+    TEMP = 310.0;
+    FDAY = 96487.0;
+
+    //##### Initialize variables ##################
+    dVdt=dVdtmax=0.0;
+    t=0.0;
+    dt=dtmin;
+    vOld = vNew =  -88.0;
+    iTot = iTotold = 0.0;
+    iNat = iKt = iCat = 0.0;
+    
+    // make map of state vars
+    vars["vOld"]=&vOld;
+    vars["t"]=&t;
+    vars["dVdt"]=&dVdt;
+    vars["iTot"]=&iTot;
+    vars["iKt"]=&iKt;
+    vars["iNat"]=&iNat;
+    vars["iCat"]=&iCat;
+    
+    // make map of params
+    pars["dtmin"]=&dtmin;
+    pars["dtmed"]=&dtmed;
+    pars["dtmax"]=&dtmax;
+    pars["Cm"]=&Cm;
+    pars["Rcg"]=&Rcg;
+    pars["RGAS"]=&RGAS;
+    pars["TEMP"]=&TEMP;
+    pars["FDAY"]=&FDAY;
+    pars["cellRadius"]=&cellRadius;
+    pars["cellLength"]=&cellLength;
+    pars["Vcell"]=&Vcell;
+    pars["Vmyo"]=&Vmyo;
+    pars["AGeo"]=&AGeo;
+    pars["ACap"]=&ACap;
+    
+};
+//######################################################
+// Destructor for parent cell class.
+//#####################################################
+Cell::~Cell()
+{
+};
+
+// Transmembrane potential 
+double Cell::updateV()
+{
+  vNew=vOld-iTot*dt;
+  
+  dVdt=(vNew-vOld)/dt;
+  if(dVdt>dVdtmax)
+    dVdtmax=dVdt;
+  return vNew;
+};
+
+void Cell::setV(double v)
+{
+  vNew=v;	
+  vOld=v;
+};
+
+// Dynamic time step  
+double Cell::tstep(double stimt)
+{
+  t=t+dt;
+  
+  if((dVdt>=dvcut)||((t>stimt-2.0)&&(t<stimt+10.0))||(apTime<5.0))
+  {
+    dt=dtmin;
+  }
+  else if(apTime<40)
+  {
+    dt=dtmed;
+  }
+  else
+  {
+    dt=dtmax;
+  }
+  
+    return t;
+};
+
+// External stimulus.
+int Cell::externalStim(double stimval)
+{
+    iTot = iTot+stimval;   // If [ion] change, also should add stimval to specific ion total (e.g. iKt)
+    
+  return 1;
+};
+
+// Overwritten in child classes with calls to fxns that update currents
+void Cell::updateCurr()
+{
+};
+
+// Ditto but for intracellular ion concentration changes
+void Cell::updateConc()
+{
+};
+

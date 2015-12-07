@@ -15,7 +15,8 @@
 #include <vector>
 #include <fstream>
 #include <iostream>
-#include <QString>
+using namespace std;
+
 
 //######################################################
 //Define class for parent cell.
@@ -24,7 +25,7 @@ class Cell
 {
   public:
     Cell();
-    virtual ~Cell();
+    ~Cell(); 
   
   //##### Declare class functions ##############
     virtual double updateV();
@@ -65,8 +66,8 @@ class Cell
     const char* type;
     
     //##### Declare maps for vars/params ##############
-    std::map<QString, double*> vars;  // map of state vars
-    std::map<std::string, double*> pars;  // map of params
+    map<string, double*> vars;  // map of state vars
+    map<string, double*> pars;  // map of params
     
 };
 

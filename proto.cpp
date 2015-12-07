@@ -8,6 +8,7 @@
 
 #include "proto.h"
 #include <QDebug>
+using namespace std;
 
 //######################################################
 // Constructor for parent cell class - the basis for 
@@ -88,7 +89,7 @@ int Protocol::stim()
 {
   if(cell->t>=stimt&&cell->t<(stimt+stimdur)){
       if(stimflag==0){
-          std::cout << "Stimulus to " << cell->type << " at t = " << cell->t << std::endl;
+          cout << "Stimulus to " << cell->type << " at t = " << cell->t << endl;
           stimcounter++;
           stimflag=1;
           if(stimcounter>=int(numstims)){
@@ -114,17 +115,17 @@ int Protocol::stim()
 // Assign parameter values based on pnames and 2D vector pvals
 //############################################################
 
-int Protocol::assign_cell_pars(std::vector<std::string> pnames, std::vector< std::vector<std::string> > pvals, int trialnum)
+int Protocol::assign_cell_pars(vector<string> pnames, vector< vector<string> > pvals, int trialnum)
 {
-    int j;
+    unsigned int j;
     double logmean = 0.0;
     double logstdev = 0.2;
     double mean = 1.0;
     double stdev = 0.2;
     double increment;
     
-    std::lognormal_distribution<double> logdistribution(logmean,logstdev);
-    std::normal_distribution<double> distribution(mean,stdev);
+    lognormal_distribution<double> logdistribution(logmean,logstdev);
+    normal_distribution<double> distribution(mean,stdev);
     
     for (j=0; j<pnames.size(); j++) {
         if (pvals[j][0] == "random" ) {  // if first arg is "random" = choose rand val
@@ -133,7 +134,7 @@ int Protocol::assign_cell_pars(std::vector<std::string> pnames, std::vector< std
                     if (pvals[j].size()>3) {
                         logmean = atof(pvals[j][2].c_str());
                         logstdev = atof(pvals[j][3].c_str());
-                        std::lognormal_distribution<double> logdistribution(logmean,logstdev);
+                        lognormal_distribution<double> logdistribution(logmean,logstdev);
                         *cell->pars[pnames[j]] = logdistribution(generator) ;
                     }
                     else
@@ -181,15 +182,15 @@ int Protocol::assign_cell_pars(std::vector<std::string> pnames, std::vector< std
 //#############################################################
 // Resize varmap based on list in file.
 //#############################################################
-std::map<std::string, double*> Protocol::resizemap(std::map<std::string,double*> varmap, std::string file)
+map<string, double*> Protocol::resizemap(map<string,double*> varmap, string file)
 {
-    std::ifstream ifile;
-    std::map<std::string, double*> vars;
-    std::string name;
+    ifstream ifile;
+    map<string, double*> vars;
+    string name;
     
     ifile.open(file);
     if(!ifile.is_open()){
-        std::cout << "Error opening " << file << std::endl;
+        cout << "Error opening " << file << endl;
         exit(1);
     }
     
@@ -203,10 +204,10 @@ std::map<std::string, double*> Protocol::resizemap(std::map<std::string,double*>
 };
 
 // Resize varmap based on list.
-std::map<std::string, double*> Protocol::resizemap(std::map<std::string,double*> varmap, std::vector<std::string> names)
+map<string, double*> Protocol::resizemap(map<string,double*> varmap, vector<string> names)
 {
-    int i;
-    std::map<std::string, double*> vars;
+    unsigned int i;
+    map<string, double*> vars;
     
     for (i=0; i<names.size(); i++){
         if(varmap.count(names[i])>0)
@@ -221,19 +222,19 @@ std::map<std::string, double*> Protocol::resizemap(std::map<std::string,double*>
 // and gets stored in vector, rest of row checked in varmap2 and used to create row in 2D vector.
 // Returns vector with first column and rest of file in 2D vector.
 //#############################################################
-std::tuple< std::vector<std::string>, std::vector< std::vector<std::string> > > Protocol::parse2Dmap(std::map<std::string,double*> varmap,std::map<std::string,double*> varmap2, std::string file)
+tuple< vector<string>, vector< vector<string> > > Protocol::parse2Dmap(map<string,double*> varmap,map<string,double*> varmap2, string file)
 {
-    std::ifstream ifile;
-    std::string line, name;
+    ifstream ifile;
+    string line, name;
     
-    std::vector<std::string> vnames;
-    std::vector<std::string> mnames;
+    vector<string> vnames;
+    vector<string> mnames;
     
-    std::vector< std::vector<std::string> > twoDmnames;
+    vector< vector<string> > twoDmnames;
     
     ifile.open(file);
     if(!ifile.is_open()){
-        std::cout << "Error opening " << file << std::endl;
+        cout << "Error opening " << file << endl;
         exit(1);
     }
     
@@ -241,7 +242,7 @@ std::tuple< std::vector<std::string>, std::vector< std::vector<std::string> > > 
     
     while(!ifile.eof()){
         getline(ifile,line);
-        std::stringstream linestream(line);
+        stringstream linestream(line);
         linestream >> name;
         
         if(varmap.count(name)>0){
@@ -272,19 +273,19 @@ std::tuple< std::vector<std::string>, std::vector< std::vector<std::string> > > 
 // and gets stored in vector, rest of row used to create row in 2D vector.
 // Returns vector with first column and rest of file in 2D vector.
 //#############################################################
-std::tuple< std::vector<std::string>, std::vector< std::vector<std::string> > > Protocol::parsemixedmap(std::map<std::string,double*> varmap, std::string file)
+tuple< vector<string>, vector< vector<string> > > Protocol::parsemixedmap(map<string,double*> varmap, string file)
 {
-    std::ifstream ifile;
-    std::string line, name;
+    ifstream ifile;
+    string line, name;
     
-    std::vector<std::string> cnames;
-    std::vector<std::string> rnames;
+    vector<string> cnames;
+    vector<string> rnames;
     
-    std::vector< std::vector<std::string> > twoDrnames;
+    vector< vector<string> > twoDrnames;
     
     ifile.open(file);
     if(!ifile.is_open()){
-        std::cout << "Error opening " << file << std::endl;
+        cout << "Error opening " << file << endl;
         exit(1);
     }
     
@@ -292,7 +293,7 @@ std::tuple< std::vector<std::string>, std::vector< std::vector<std::string> > > 
     
     while(!ifile.eof()){
         getline(ifile,line);
-        std::stringstream linestream(line);
+        stringstream linestream(line);
         linestream >> name;
         
         if(varmap.count(name)>0){
@@ -319,10 +320,10 @@ std::tuple< std::vector<std::string>, std::vector< std::vector<std::string> > > 
 //#############################################################
 // Returns copy of variable values (not pointers) in varmap.
 //#############################################################
-std::map<std::string,double> Protocol::copymapvals(std::map<std::string, double*> varmap)
+map<string,double> Protocol::copymapvals(map<string, double*> varmap)
 {
-    std::map<std::string, double> vars;
-    std::map<std::string, double*>::iterator p;
+    map<string, double> vars;
+    map<string, double*>::iterator p;
     
     for(p=varmap.begin(); p!=varmap.end(); ++p)
         vars[p->first] = *p->second;
@@ -333,14 +334,14 @@ std::map<std::string,double> Protocol::copymapvals(std::map<std::string, double*
 //#############################################################
 // Write values of variables in varmap to screen.
 //#############################################################
-int Protocol::map2screen(std::map<std::string, double*> varmap)
+int Protocol::map2screen(map<string, double*> varmap)
 {
-    std::map<std::string, double*>::iterator p;
+    map<string, double*>::iterator p;
     
     for(p=varmap.begin(); p!=varmap.end(); ++p)
-        std::cout << p->first << " = " << *p->second << "; ";
+        cout << p->first << " = " << *p->second << "; ";
     
-    std::cout << std::endl;
+    cout << endl;
     
     return 1;
 };
@@ -348,16 +349,281 @@ int Protocol::map2screen(std::map<std::string, double*> varmap)
 //#############################################################
 // Write values of variables in varmap to screen.
 //#############################################################
-int Protocol::map2screen(std::map<std::string, double> varmap)
+int Protocol::map2screen(map<string, double> varmap)
 {
-    std::map<std::string, double>::iterator p;
+    map<string, double>::iterator p;
     
     for(p=varmap.begin(); p!=varmap.end(); ++p)
-        std::cout << p->first << " = " << p->second << "; ";
+        cout << p->first << " = " << p->second << "; ";
     
-    std::cout << std::endl;
+    cout << endl;
     
     return 1;
+};
+
+//#############################################################
+// Set params for measuring state var props (dur, min, max, etc).
+//#############################################################
+int Protocol::initializeMeasure(int measureSize) {
+    unsigned int i;
+
+     measures = new Measure[measureSize];   // Array of measure streams.
+    
+    //Parse and resize 2D map based on measfile...move into measure?
+    
+    if (int(measflag)==1){
+        parse2Dmap(cell->vars,measures[0].varmap, measfile, &mvnames, &mpnames);
+        for (i=0; i<mvnames.size(); i++) {
+            if (i<int(maxmeassize)) {
+                measures[i].datamap = resizemap(measures[i].varmap,mpnames[i]);
+                measures[i].varname = mvnames[i];
+            }
+        }
+        tempvals = new map<string, double> [mvnames.size()];
+    
+    }
+
+    return 0;
+
+};
+
+//############################################################
+// Get the number of Doutput arrays to create
+//############################################################
+int Protocol::getNeededDOutputSize(){
+    return int(mvnames.size()+1+numtrials*(mvnames.size()+1));
+};
+
+//############################################################
+// Run the cell simulation
+//############################################################
+int Protocol::runSim() {
+    unsigned int i,j;
+    char writefile[50];     // Buffer for storing filenames
+
+    //###############################################################
+    // Loop over number of trials
+    //###############################################################
+    for(i=0;i<int(numtrials);i++)
+    {
+        assign_cell_pars(pnames,pvals,i);   // Assign cell pars before each trial.
+        time = cell->t = 0.0;      // reset time
+        doneflag=1;     // reset doneflag
+  
+//        if (int(readflag)==1)
+//            readvals(cell->vars, readfile);  // Init SVs before each trial.
+        
+        //###############################################################
+        // Every time step, currents, concentrations, and Vm are calculated.
+        //###############################################################
+        int pCount = 0;
+        
+        while(int(doneflag)&&(time<tMax)){
+            
+            time = cell->tstep(stimt);    // Update time
+            cell->updateCurr();    // Update membrane currents
+
+            if(int(paceflag)==1)  // Apply stimulus
+                stim();
+
+            cell->updateConc();   // Update ion concentrations
+            vM=cell->updateV();     // Update transmembrane potential
+            
+            //##### Output select variables to file  ####################
+            if(int(measflag)==1&&cell->t>meastime){
+                for (j=0; j<mvnames.size(); j++) {
+                    if(measures[j].measure(cell->t,*cell->vars[measures[j].varname])){
+                        tempvals[j]=copymapvals(measures[j].datamap);
+                        if (int(writeflag)==1) {
+                            sprintf(writefile,"./data/dt%d_%s.dat",i,mvnames[j].c_str());
+                            douts[j+(i+1)*(mvnames.size()+1)].writevals(measures[j].datamap,writefile,'a');
+                        }
+                        measures[j].reset();
+                    }
+                }
+            }
+            if (int(writeflag)==1&&time>writetime&&pCount%int(writeint)==0) {
+                sprintf(writefile,"./data/dt%d_dvars.dat",i);
+                douts[mvnames.size()+(i+1)*(mvnames.size()+1)].writevals(datamap,writefile,'a');
+            }
+            cell->setV(vM); //Overwrite vOld with new value
+            pCount++;
+        }
+      
+      map2screen(parmap);  // send final property values to console
+      // Output final (ss) property values for each trial
+      for (j=0; j<mvnames.size(); j++){
+          map2screen(tempvals[j]);
+          sprintf(writefile,"./data/dss_%s.dat",mvnames[j].c_str());
+          douts[j].writevals(tempvals[j],writefile,'a');
+          measures[j].reset();
+      }
+      
+      // Output parameter values for each trial
+      douts[mvnames.size()].writevals(parmap, "./data/dss_pvars.dat", 'a');
+      
+  }
+
+};
+
+//#############################################################
+// Read values of variables in varmap from file.
+// Format of file should be "variable name" tab "value"
+//#############################################################
+
+int Protocol::readvals(map<string, double*> varmap, string file)
+{
+    ifstream ifile;
+    
+    string name;
+    double num;
+    map<string, double*>::iterator p;
+    
+    if(!ifile.is_open())
+        ifile.open(file);
+    if(!ifile.is_open()){
+        cout << "Error opening " << file << endl;
+        return 1;
+    }
+    
+    while(!ifile.eof()){
+        ifile >> name;
+        if(varmap.count(name)>0){
+            ifile >> num;
+            *varmap[name] = num;
+        }
+    }
+    
+    ifile.close();
+    return 1;
+  
+};
+
+//#############################################################
+// Create vectors based on mixed list in file.  First row element is checked in varmap
+// and gets stored in vector, rest of row used to create row in 2D vector.
+// Writes paramiter names into cnames and paramiter values into twoDrnames.
+//#############################################################
+int Protocol::parsemixedmap(map<string,double*> varmap, string file, vector<string>* cnames, vector<vector<string>>* twoDrnames)
+{
+    ifstream ifile;
+    string line, name;
+    
+    vector<string> rnames;
+    
+    ifile.open(file);
+    if(!ifile.is_open()){
+        cout << "Error opening " << file << endl;
+        return 1;
+    }
+    
+    int counter = 0;
+    
+    while(!ifile.eof()){
+        getline(ifile,line);
+        stringstream linestream(line);
+        linestream >> name;
+        if(varmap.count(name)>0){
+            (*cnames).push_back(name);
+            
+            while (!linestream.eof()) {
+                linestream >> name;
+                rnames.push_back(name);
+            }
+            if (rnames.size()>0)
+                (*twoDrnames).push_back(rnames);
+            else
+                (*cnames).pop_back();
+            
+            rnames.clear();
+        }
+        counter++;
+        
+    }
+    ifile.close();
+   
+    return 0;
+};
+
+//#############################################################
+// Create vectors based on 2D list in file.  First row element is checked in varmap
+// and gets stored in vector, rest of row checked in varmap2 and used to create row in 2D vector.
+// Returns vector with first column and rest of file in 2D vector.
+//#############################################################
+int Protocol::parse2Dmap(map<string,double*> varmap,map<string,double*> varmap2, string file, vector<string>* vnames, vector< vector<string> >* twoDmnames)
+{
+    ifstream ifile;
+    string line, name;
+    
+    vector<string> mnames;
+    
+    ifile.open(file);
+    if(!ifile.is_open()){
+        cout << "Error opening " << file << endl;
+        return 1;
+    }
+    
+    int counter = 0;
+    
+    while(!ifile.eof()){
+        getline(ifile,line);
+        stringstream linestream(line);
+        linestream >> name;
+        
+        if(varmap.count(name)>0){
+            (*vnames).push_back(name);
+            
+            while (!linestream.eof()) {
+                linestream >> name;
+                if(varmap2.count(name)>0){
+                    mnames.push_back(name);
+                }
+            }
+            if (mnames.size()>0)
+                (*twoDmnames).push_back(mnames);
+            else
+               (* vnames).pop_back();
+            
+            mnames.clear();
+        }
+        counter++;
+        
+    }
+    ifile.close();
+    return 0;
+};
+
+//#############################################################
+// Resize varmap based on list in file.
+//#############################################################
+int Protocol::resizemap(map<string,double*> varmap, string file, map<string, double*>* vars)
+{
+    ifstream ifile;
+    string name;
+    
+    ifile.open(file);
+    if(!ifile.is_open()){
+        cout << "Error opening " << file << endl;
+        return 1;
+    }
+    
+    while(!ifile.eof()){
+        ifile >> name;
+        if(varmap.count(name)>0)
+            (*vars)[name] = varmap[name];
+    }
+    ifile.close();
+    return 0;
+};
+
+//#############################################################
+// Set params for reading/saving model params.
+//#############################################################
+int Protocol::read_model_params(){
+
+    parsemixedmap(cell->pars, pvarfile ,&pnames, &pvals);
+    parmap = resizemap(cell->pars,pnames);
+    return 0;
 };
 
 
@@ -384,15 +650,15 @@ Output::~Output()
 // organized with variable name in 1st column and values
 // in 2nd column.
 //#############################################################
-int Output::writevals(std::map<std::string, double*> varmap, std::string file)
+int Output::writevals(map<string, double*> varmap, string file)
 {
-    std::map<std::string, double*>::iterator p;
+    map<string, double*>::iterator p;
     ofile.precision(10);
     if(!ofile.is_open())
         ofile.open(file);
     
     if(!ofile.is_open()){
-        std::cout << "Error opening " << file << std::endl;
+        cout << "Error opening " << file << endl;
         exit(1);
     }
     
@@ -408,27 +674,27 @@ int Output::writevals(std::map<std::string, double*> varmap, std::string file)
 // Output is organized in columns with variable names in first
 // row.
 //#############################################################
-int Output::writevals(std::map<std::string, double*> varmap, std::string file, char type)
+int Output::writevals(map<string, double*> varmap, string file, char type)
 {
-    std::map<std::string, double*>::iterator p;
+    map<string, double*>::iterator p;
     ofile.precision(10);
     
     if(counter==0){
         if(!ofile.is_open())
             ofile.open(file);
         if(!ofile.is_open()){
-            std::cout << "Error opening " << file << std::endl;
+            cout << "Error opening " << file << endl;
             exit(1);
         }
         for(p=varmap.begin(); p!=varmap.end(); ++p)
             ofile << p->first << "\t";
-        ofile << std::endl;
+        ofile << endl;
     }
     
     for(p=varmap.begin(); p!=varmap.end(); ++p)
         ofile << *p->second << "\t";
     
-    ofile << std::endl;
+    ofile << endl;
     
     counter++;
     return 1;
@@ -439,15 +705,15 @@ int Output::writevals(std::map<std::string, double*> varmap, std::string file, c
 // organized with variable name in 1st column and values
 // in 2nd column.
 //#############################################################
-int Output::writevals(std::map<std::string, double> varmap, std::string file)
+int Output::writevals(map<string, double> varmap, string file)
 {
-    std::map<std::string, double>::iterator p;
+    map<string, double>::iterator p;
     ofile.precision(10);
     if(!ofile.is_open())
         ofile.open(file);
     
     if(!ofile.is_open()){
-        std::cout << "Error opening " << file << std::endl;
+        cout << "Error opening " << file << endl;
         exit(1);
     }
     
@@ -463,27 +729,27 @@ int Output::writevals(std::map<std::string, double> varmap, std::string file)
 // Output is organized in columns with variable names in first
 // row.
 //#############################################################
-int Output::writevals(std::map<std::string, double> varmap, std::string file, char type)
+int Output::writevals(map<string, double> varmap, string file, char type)
 {
-    std::map<std::string, double>::iterator p;
+    map<string, double>::iterator p;
     ofile.precision(10);
     
     if(counter==0){
         if(!ofile.is_open())
             ofile.open(file);
         if(!ofile.is_open()){
-            std::cout << "Error opening " << file << std::endl;
+            cout << "Error opening " << file << endl;
             exit(1);
         }
         for(p=varmap.begin(); p!=varmap.end(); ++p)
             ofile << p->first << "\t";
-        ofile << std::endl;
+        ofile << endl;
     }
     
     for(p=varmap.begin(); p!=varmap.end(); ++p)
         ofile << p->second << "\t";
     
-    ofile << std::endl;
+    ofile << endl;
     
     counter++;
     return 1;
@@ -562,7 +828,7 @@ int Measure::measure(double time, double var)
         derivt=time;
     }
     
-    if(deriv2nd>.02&&var>(0.01*std::abs(min)+min)&&ddrflag==0){   // Track 2nd deriv for SAN ddr
+    if(deriv2nd>.02&&var>(0.01*abs(min)+min)&&ddrflag==0){   // Track 2nd deriv for SAN ddr
         vartakeoff=var;
         deriv2ndt=time;
         ddr=(vartakeoff-min)/(time-mint);
@@ -573,7 +839,7 @@ int Measure::measure(double time, double var)
         peak=var;
         maxt=time;
     }
-    else if((peak-min)>0.3*std::abs(min))    // Assumes true max is more than 30% greater than the min.
+    else if((peak-min)>0.3*abs(min))    // Assumes true max is more than 30% greater than the min.
         maxflag=1;
     
     if(var<min){                        // Track value and time of min

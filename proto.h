@@ -14,7 +14,7 @@
 #include "kurata08.h"
 #include <sstream>
 #include <random>
-
+using namespace std;
 
 //######################################################
 //Define class for protocol.
@@ -30,15 +30,23 @@ class Protocol
   
     //##### Declare class functions ##############
     virtual int stim();
-    virtual int assign_cell_pars(std::vector<std::string> pnames, std::vector< std::vector<std::string> > pvals, int trialnum);
-    virtual std::map<std::string, double*> resizemap(std::map<std::string,double*> varmap, std::string file);
-    virtual std::map<std::string, double*> resizemap(std::map<std::string,double*> varmap, std::vector<std::string> names);
-    virtual std::tuple< std::vector<std::string>, std::vector< std::vector<std::string> > > parse2Dmap(std::map<std::string,double*> varmap,std::map<std::string,double*> varmap2, std::string file);
-    virtual std::tuple< std::vector<std::string>, std::vector< std::vector<std::string> > > parsemixedmap(std::map<std::string,double*> varmap, std::string file);
-    virtual std::map<std::string,double> copymapvals(std::map<std::string, double*> varmap);
-    virtual int map2screen(std::map<std::string, double*> varmap);
-    virtual int map2screen(std::map<std::string, double> varmap);
-
+    virtual int assign_cell_pars(vector<string> pnames, vector< vector<string> > pvals, int trialnum);
+    virtual map<string, double*> resizemap(map<string,double*> varmap, string file);
+    virtual map<string, double*> resizemap(map<string,double*> varmap, vector<string> names);
+    virtual tuple< vector<string>, vector< vector<string> > > parse2Dmap(map<string,double*> varmap,map<string,double*> varmap2, string file);
+    virtual tuple< vector<string>, vector< vector<string> > > parsemixedmap(map<string,double*> varmap, string file);
+    virtual map<string,double> copymapvals(map<string, double*> varmap);
+    virtual int map2screen(map<string, double*> varmap);
+    virtual int map2screen(map<string, double> varmap);
+    virtual int initializeMeasure(int measureSize);
+    virtual int getNeededDOutputSize(); //get the size needed to construct the output array
+    virtual int runSim();
+    virtual int readvals(map<string, double*> varmap, string file);
+    virtual int parsemixedmap(map<string,double*> varmap, string file, vector<string>* cnames, vector<vector<string>>* twoDrnames);
+    virtual int parse2Dmap(map<string,double*> varmap,map<string,double*> varmap2, string file, vector<string>* vnames, vector< vector<string> >* twoDmnames);
+    virtual int resizemap(map<string,double*> varmap, string file, map<string, double*>* vars);
+    virtual int read_model_params();
+ 
 
     //##### Declare class variables ##############
     Cell* cell;        // pointer to cell class
@@ -61,13 +69,22 @@ class Protocol
     
     int myId;  // used to identify threaded protos
 
-    std::default_random_engine generator;
+    default_random_engine generator;
     
-    std::string readfile,savefile,dvarfile,pvarfile, measfile, simvarfile;
+    string readfile,savefile,dvarfile,pvarfile, measfile, simvarfile;
+
+    vector<string> pnames;              // stores cell param names
+    vector< vector<string> > pvals;     // stores cell param vals
+    vector<string> mvnames;     // vector of var names to be measured (e.g. Vm, Cai)
+    vector< vector<string> > mpnames;   // vector of property names to measure (e.g. dur, min)
+ 
     
     //##### Declare maps for vars/params ##############
-    std::map<std::string, double*> pars;  // map of params
-    
+    map<string, double*> pars;  // map of params
+    map<string, double*> parmap; // map for output params
+    map<string, double*> datamap; // map for output state vars
+    map<string, double> *tempvals;   // map to store measure vals
+   
 };
 
 //#############################################################
@@ -80,14 +97,14 @@ public:
     Output();
     ~Output();
     
-    std::ofstream ofile;
+    ofstream ofile;
     int counter;
     int interval;   //write to file when counter%interval==0
     
-    virtual int writevals(std::map<std::string, double*> varmap, std::string file, char type);
-    virtual int writevals(std::map<std::string, double*> varmap, std::string file);
-    virtual int writevals(std::map<std::string, double> varmap, std::string file, char type);
-    virtual int writevals(std::map<std::string, double> varmap, std::string file);
+    virtual int writevals(map<string, double*> varmap, string file, char type);
+    virtual int writevals(map<string, double*> varmap, string file);
+    virtual int writevals(map<string, double> varmap, string file, char type);
+    virtual int writevals(map<string, double> varmap, string file);
 };
 
 //#############################################################
@@ -132,12 +149,12 @@ public:
     int ddrflag;
     int returnflag;
     
-    std::string varname;
+    string varname;
     
     int measure(double time,double var);  //measures props related to var; returns 1 when ready for output.
     void reset();   //resets params to init vals
-    std::map<std::string, double*> varmap; // map for refing properties that can be measured.
-    std::map<std::string, double*> datamap; // map for refing properties that will be output.
+    map<string, double*> varmap; // map for refing properties that can be measured.
+    map<string, double*> datamap; // map for refing properties that will be output.
     
 };
 

@@ -28,7 +28,8 @@ Protocol::Protocol()
     savefile = "./data/s.txt"; // File to save final SV
 
     myId = 1;
-    
+   
+    writestd = 0; 
     writeflag = 0;      // 1 to write data to file during sim
     dvarfile = "dvars.txt";  // File with SV to write.
     writetime = 0;      // time to start writing.
@@ -37,7 +38,12 @@ Protocol::Protocol()
     
     pvarfile = "pvars.txt"; // File to specify cell params
     simvarfile = "simvars.txt";  // File to specify sim params
-    
+
+    propertyoutfile = "./data/dt%d_%s.dat";
+    dvarsoutfile = "./data/dt%d_dvars.dat";
+    finalpropertyoutfile = "./data/dss_%s.dat";
+    finaldvarsoutfile = "./data/dss_pvars.dat";
+
     measflag = 0;       // 1 to track SV props during sim
     measfile = "mvars.txt"; // File containing property names to track
     meastime = 0;       // time to start tracking props
@@ -435,7 +441,7 @@ int Protocol::runSim() {
                     if(measures[j].measure(cell->t,*cell->vars[measures[j].varname])){
                         tempvals[j]=copymapvals(measures[j].datamap);
                         if (int(writeflag)==1) {
-                            sprintf(writefile,"./data/dt%d_%s.dat",i,mvnames[j].c_str());
+                            sprintf(writefile,propertyoutfile.c_str(),i,mvnames[j].c_str());
                             douts[j+(i+1)*(mvnames.size()+1)].writevals(measures[j].datamap,writefile,'a');
                         }
                         measures[j].reset();
@@ -443,27 +449,29 @@ int Protocol::runSim() {
                 }
             }
             if (int(writeflag)==1&&time>writetime&&pCount%int(writeint)==0) {
-                sprintf(writefile,"./data/dt%d_dvars.dat",i);
+                sprintf(writefile,dvarsoutfile.c_str(),i);
                 douts[mvnames.size()+(i+1)*(mvnames.size()+1)].writevals(datamap,writefile,'a');
             }
             cell->setV(vM); //Overwrite vOld with new value
             pCount++;
         }
-      
-      map2screen(parmap);  // send final property values to console
+    
+      if(writestd)   
+        map2screen(parmap);  // send final property values to console
       // Output final (ss) property values for each trial
       for (j=0; j<mvnames.size(); j++){
-          map2screen(tempvals[j]);
-          sprintf(writefile,"./data/dss_%s.dat",mvnames[j].c_str());
+          if(writestd)
+            map2screen(tempvals[j]);
+          sprintf(writefile,finalpropertyoutfile.c_str(),mvnames[j].c_str());
           douts[j].writevals(tempvals[j],writefile,'a');
           measures[j].reset();
       }
       
       // Output parameter values for each trial
-      douts[mvnames.size()].writevals(parmap, "./data/dss_pvars.dat", 'a');
+      douts[mvnames.size()].writevals(parmap, finaldvarsoutfile.c_str(), 'a');
       
   }
-
+    return 0;
 };
 
 //#############################################################
@@ -471,7 +479,7 @@ int Protocol::runSim() {
 // Format of file should be "variable name" tab "value"
 //#############################################################
 
-int Protocol::readvals(map<string, double*> varmap, string file)
+int Protocol::readpars(map<string, double*> varmap, string file)
 {
     ifstream ifile;
     
@@ -495,7 +503,7 @@ int Protocol::readvals(map<string, double*> varmap, string file)
     }
     
     ifile.close();
-    return 1;
+    return 0;
   
 };
 
@@ -619,11 +627,12 @@ int Protocol::resizemap(map<string,double*> varmap, string file, map<string, dou
 //#############################################################
 // Set params for reading/saving model params.
 //#############################################################
-int Protocol::read_model_params(){
+int Protocol::readpvars(){
 
-    parsemixedmap(cell->pars, pvarfile ,&pnames, &pvals);
+    int ret = 0;
+    ret = parsemixedmap(cell->pars, pvarfile ,&pnames, &pvals);
     parmap = resizemap(cell->pars,pnames);
-    return 0;
+    return ret;
 };
 
 

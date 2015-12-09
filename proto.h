@@ -14,6 +14,8 @@
 #include "kurata08.h"
 #include <sstream>
 #include <random>
+#include <exception>
+#include <string>
 using namespace std;
 
 //######################################################
@@ -41,11 +43,11 @@ class Protocol
     virtual int initializeMeasure(int measureSize);
     virtual int getNeededDOutputSize(); //get the size needed to construct the output array
     virtual int runSim();
-    virtual int readvals(map<string, double*> varmap, string file);
+    virtual int readpars(map<string, double*> varmap, string file);
     virtual int parsemixedmap(map<string,double*> varmap, string file, vector<string>* cnames, vector<vector<string>>* twoDrnames);
     virtual int parse2Dmap(map<string,double*> varmap,map<string,double*> varmap2, string file, vector<string>* vnames, vector< vector<string> >* twoDmnames);
     virtual int resizemap(map<string,double*> varmap, string file, map<string, double*>* vars);
-    virtual int read_model_params();
+    virtual int readpvars();
  
 
     //##### Declare class variables ##############
@@ -63,7 +65,7 @@ class Protocol
     double readflag,saveflag,writeflag,measflag,paceflag;
     double numtrials;
     double stimflag, stimcounter;
-    
+    int writestd;    
     double tMax;
     double maxdoutsize,maxmeassize;
     
@@ -71,7 +73,8 @@ class Protocol
 
     default_random_engine generator;
     
-    string readfile,savefile,dvarfile,pvarfile, measfile, simvarfile;
+    string readfile,savefile,dvarfile,pvarfile, measfile, simvarfile, propertyoutfile, dvarsoutfile, finalpropertyoutfile, finaldvarsoutfile;
+
 
     vector<string> pnames;              // stores cell param names
     vector< vector<string> > pvals;     // stores cell param vals

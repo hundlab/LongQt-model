@@ -137,6 +137,30 @@ Protocol::Protocol(const Protocol& toCopy)
     time= toCopy.time;
     vM = toCopy.vM;
     
+    //###### Duplicate cells, measures outputs and maps######
+    if(toCopy.cell != NULL) {
+        cell = toCopy.cell->clone();
+    }
+    if(toCopy.douts != NULL) {
+        int size = int(toCopy.mvnames.size()+1+toCopy.numtrials*(toCopy.mvnames.size()+1));
+        douts = new Output[size];
+    }
+    if(toCopy.ics != NULL) {
+            ics = new Output(*toCopy.ics);
+    }
+    if(toCopy.measures != NULL) {
+        measures = new Measure[(int)maxmeassize];
+        for(int i = 0; i < (int)maxmeassize; i++) {
+            measures[i] = Measure(toCopy.measures[i]);
+        }
+    }    
+    pnames = vector<string>(toCopy.pnames);
+    pvals = vector<vector<string>>(toCopy.pvals);
+    mvnames = vector<string>(toCopy.mvnames);
+    mpnames = vector<vector<string>>(toCopy.mpnames);
+    parmap = map<string, double*>(toCopy.parmap);
+    datamap = map<string, double*>(toCopy.datamap);
+    tempvals = new map<string, double>(*toCopy.tempvals);
     // make map of params
     pars["tMax"]=&tMax;
     pars["bcl"]=&bcl;
@@ -153,12 +177,17 @@ Protocol::Protocol(const Protocol& toCopy)
     pars["meastime"]=&meastime;
     pars["paceflag"]=&paceflag;
     pars["maxdoutsize"]=&maxdoutsize;
+
 };
 //######################################################
 // Destructor for parent cell class.
 //#####################################################
 Protocol::~Protocol()
 {
+/*    delete cell;
+    delete douts;
+    delete ics;
+    delete measures;*/
 };
 
 // External stimulus.
@@ -739,7 +768,13 @@ Output::Output()
 {
     counter = 0;
     interval = 1;
+    
 };
+
+Output::Output(const Output& toCopy) {
+    counter = toCopy.counter;
+    interval = toCopy.interval;
+}
 
 Output::~Output()
 {
@@ -890,6 +925,52 @@ Measure::Measure()
     durflag = 0;
     percrepol = 50.0;
     returnflag = 0;
+    
+    varmap["cl"]=&cl;
+    varmap["peak"]=&peak;
+    varmap["min"]=&min;
+    varmap["amp"]=&amp;
+    varmap["ddr"]=&ddr;
+    varmap["maxderiv"]=&maxderiv;
+    varmap["dur"]=&dur;
+    varmap["durtime1"]=&durtime1;
+    varmap["vartakeoff"]=&vartakeoff;
+    varmap["mint"]=&mint;
+    varmap["derivt"]=&derivt;
+    varmap["deriv2ndt"]=&deriv2ndt;
+    
+    datamap["peak"]=&peak;
+    datamap["min"]=&min;
+    datamap["maxderiv"]=&maxderiv;
+    datamap["dur"]=&dur;
+};
+
+Measure::Measure(const Measure& toCopy)
+{
+    peak= toCopy.peak;
+    min= toCopy.min;
+    vartakeoff= toCopy.vartakeoff;
+    repol = toCopy.repol;
+    amp = toCopy.amp;
+    maxderiv= toCopy.maxderiv;
+    maxderiv2nd= toCopy.maxderiv2nd;
+    cl= toCopy.cl;
+    told = toCopy.told;
+    mint = toCopy.mint;
+    maxt = toCopy.maxt;
+    varold = toCopy.varold;
+    derivold = toCopy.derivold;
+    minflag = toCopy.minflag;
+    maxflag = toCopy.maxflag;
+    ampflag = toCopy.ampflag;
+    ddrflag = toCopy.ddrflag;
+    derivt2 = toCopy.derivt2;
+    derivt1 = toCopy.derivt1;
+    derivt = toCopy.derivt;
+    deriv2ndt = toCopy.deriv2ndt;
+    durflag = toCopy.durflag;
+    percrepol = toCopy.percrepol;
+    returnflag = toCopy.returnflag;
     
     varmap["cl"]=&cl;
     varmap["peak"]=&peak;

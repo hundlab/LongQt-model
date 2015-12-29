@@ -129,6 +129,11 @@ Cell::~Cell()
 {
 };
 
+//default copy function
+Cell* Cell::clone() {
+    return new Cell(*this);
+};
+
 // Transmembrane potential 
 double Cell::updateV()
 {

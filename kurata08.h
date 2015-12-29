@@ -41,6 +41,7 @@ class ControlSa : public Cell
     ControlSa(const ControlSa& toCopy);
     ~ControlSa();
 
+  virtual ControlSa* clone();
   //##################################################
   // Declare functions/variables unique to Central SAN
   // class. All functions/variables declared in parent

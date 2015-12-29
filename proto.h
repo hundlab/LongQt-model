@@ -100,6 +100,7 @@ class Output
 {
 public:
     Output();
+    Output(const Output& toCopy);
     ~Output();
     
     ofstream ofile;
@@ -121,6 +122,7 @@ class Measure
 {
 public:
     Measure();
+    Measure(const Measure& toCopy);
     ~Measure();
     
     double* var;

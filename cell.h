@@ -27,7 +27,8 @@ class Cell
     Cell();
     Cell(const Cell& toCopy);
     ~Cell(); 
-  
+    
+    virtual Cell* clone(); //public copy function
   //##### Declare class functions ##############
     virtual double updateV();
     virtual void setV(double v);

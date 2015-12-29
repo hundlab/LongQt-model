@@ -25,6 +25,7 @@ class Cell
 {
   public:
     Cell();
+    Cell(const Cell& toCopy);
     ~Cell(); 
   
   //##### Declare class functions ##############

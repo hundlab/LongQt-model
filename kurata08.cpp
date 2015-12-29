@@ -102,7 +102,188 @@ ControlSa::ControlSa()
 
 	iCait=iCart=0.0;
     
-    // add to vars map declared/defined in cell.h and cell.cc
+    // add to vars map declared/defined in cell.h and cell.cpp
+    vars["naI"]=&naI;
+    vars["kI"]=&kI;
+    vars["caI"]=&caI;
+    vars["caR"]=&caR;
+    vars["caJsr"]=&caJsr;
+    vars["caNsr"]=&caNsr;
+    vars["trpnCa"]=&trpnCa;
+    vars["trpnMg"]=&trpnMg;
+    vars["trpnMgmg"]=&trpnMgmg;
+    vars["cmdnI"]=&cmdnI;
+    vars["cmdnR"]=&cmdnR;
+    vars["csqn"]=&csqn;
+    vars["iRel"]=&iRel;
+    vars["iUp"]=&iUp;
+    vars["iTr"]=&iTr;
+    vars["iDiff"]=&iDiff;
+    vars["iSt"]=&iSt;
+    vars["Gate.qa"]=&Gate.qa;
+    vars["Gate.qi"]=&Gate.qi;
+    vars["iNab"]=&iNab;
+    vars["iCal"]=&iCal;
+    vars["Gate.d"]=&Gate.d;
+    vars["Gate.f"]=&Gate.f;
+    vars["Gate.fca"]=&Gate.fca;
+    vars["iCatt"]=&iCatt;
+    vars["Gate.dt"]=&Gate.dt;
+    vars["Gate.ft"]=&Gate.ft;
+    vars["iNak"]=&iNak;
+    vars["iNaca"]=&iNaca;
+    vars["iTo"]=&iTo;
+    vars["iTrek"]=&iTrek;
+    vars["iSus"]=&iSus;
+    vars["Gate.q"]=&Gate.q;
+    vars["Gate.r"]=&Gate.r;
+    vars["iKs"]=&iKs;
+    vars["Gate.n"]=&Gate.n;
+    vars["iKr"]=&iKr;
+    vars["Gate.paf"]=&Gate.paf;
+    vars["Gate.pas"]=&Gate.pas;
+    vars["Gate.pi"]=&Gate.pi;
+    vars["iKach"]=&iKach;
+    vars["iH"]=&iH;
+    vars["iHna"]=&iHna;
+    vars["iHk"]=&iHk;
+    vars["Gate.y"]=&Gate.y;
+    vars["iCait"]=&iCait;
+    vars["iCart"]=&iCart;
+    
+    pars["Vnsr"] = &Vnsr;
+    pars["Vjsr"] = &Vjsr;
+    pars["Vss"] = &Vss;
+    pars["naO"] = &naO;
+    pars["kO"] = &kO;
+    pars["caO"] = &caO;
+    pars["icalFactor"] = &icalFactor;
+    pars["icattFactor"] = &icattFactor;
+    pars["ikrFactor"] = &ikrFactor;
+    pars["iksFactor"] = &iksFactor;
+    pars["itoFactor"] = &itoFactor;
+    pars["itrekFactor"] = &itrekFactor;
+    pars["isusFactor"] = &isusFactor;
+    pars["ikachFactor"] = &ikachFactor;
+    pars["istFactor"] = &istFactor;
+    pars["inabFactor"] = &inabFactor;
+    pars["inakFactor"] = &inakFactor;
+    pars["inacaFactor"] = &inacaFactor;
+    pars["ihFactor"] = &ihFactor;
+    pars["iupFactor"] = &iupFactor;
+    pars["irelFactor"] = &irelFactor;
+
+    
+};
+//############################################
+//Constructor for deep copy
+//############################################
+ControlSa::ControlSa(const ControlSa& toCopy ) : Cell(toCopy)
+{
+    //##### Assign default parameters ##################
+    dt=dt;
+    dtmin = toCopy.dtmin;
+    dtmed = toCopy.dtmed;
+    dtmax = toCopy.dtmax;
+    dvcut = toCopy.dvcut;
+    type = "ControlSa";
+    apTime = toCopy.apTime;
+     
+    naO = toCopy.naO;
+    caO = toCopy.caO;
+    kO = toCopy.kO;
+    
+    cellRadius= toCopy.cellRadius;  //0.0004cm
+    cellLength= toCopy.cellLength;  //0.007cm
+    Rcg = toCopy.Rcg;
+    
+    Vcell= toCopy.Vcell;
+    ACap= toCopy.ACap;
+    Vmyo= toCopy.Vmyo; //uL
+    Vss= toCopy.Vss;
+    Vnsr= toCopy.Vnsr;//uL
+    Vjsr= toCopy.Vjsr;//uL
+    
+    icalFactor = toCopy.icalFactor;
+    icattFactor = toCopy.icattFactor;
+    ikrFactor = toCopy.ikrFactor;
+    iksFactor = toCopy.iksFactor;
+    itoFactor = toCopy.itoFactor;
+    itrekFactor = toCopy.itrekFactor;
+    isusFactor = toCopy.isusFactor;
+    ikachFactor = toCopy.ikachFactor;
+    istFactor = toCopy.istFactor;
+    inabFactor = toCopy.inabFactor;
+    inakFactor = toCopy.inakFactor;
+    inacaFactor = toCopy.inacaFactor;
+    ihFactor = toCopy.ihFactor;
+    iupFactor = toCopy.iupFactor;
+    irelFactor = toCopy.irelFactor;
+    
+    //##### Initialize variables ##################
+    dVdt= toCopy.dVdt;
+    dVdtmax= toCopy.dVdtmax;
+    t= toCopy.t;
+    dt = toCopy.dt;
+    dtmin = toCopy.dtmin;
+    vOld = toCopy.vOld;
+    vNew = toCopy.vNew;
+
+	caI = toCopy.caI;// kurata, min. diastolic Ca2+
+  	caR = toCopy.caR; //ditto
+  	caJsr = toCopy.caJsr; // from kurata
+  	caNsr = toCopy.caNsr; //ditto
+  	kI = toCopy.kI;
+  	naI = toCopy.naI;   //ditto
+
+  	Gate.d= toCopy.Gate.d; //L-type Ca-current gates
+  	Gate.f= toCopy.Gate.f;
+  	Gate.fca= toCopy.Gate.fca;
+
+ 	Gate.dt= toCopy.Gate.dt;   //T-type Ca-current gates
+  	Gate.ft= toCopy.Gate.ft;
+  	Gate.paf= toCopy.Gate.paf;  //IKr gates
+  	Gate.pas= toCopy.Gate.pas;
+  	Gate.pi= toCopy.Gate.pi;
+
+  	Gate.n= toCopy.Gate.n;//0.0;  //IKs gate
+
+  	Gate.q = toCopy.Gate.q; //Ito
+  	Gate.r = toCopy.Gate.r; //Ito and Isus
+
+  	Gate.qa = toCopy.Gate.qa;  //Ist
+  	Gate.qi = toCopy.Gate.qi;
+
+  	Gate.y = toCopy.Gate.y;  //Ih
+
+	csqn = toCopy.csqn;//only for kurata buffering equations
+  	cmdnI = toCopy.cmdnI;  //only for kurata buffering equations
+  	cmdnR = toCopy.cmdnR;
+  	trpnCa = toCopy.trpnCa;
+  	trpnMg = toCopy.trpnMg;
+  	trpnMgmg = toCopy.trpnMgmg;
+
+	iSt= toCopy.iSt;
+    iNab= toCopy.iNab;
+	iCal= toCopy.iCal;
+    iCatt= toCopy.iCatt;
+	iKs= toCopy.iKs;
+    iKr= toCopy.iKr;
+    iTo= toCopy.iTo;
+    iSus= toCopy.iSus;
+    iKach= toCopy.iKach;
+	iNak= toCopy.iNak;
+    iNaca= toCopy.iNaca;
+    iHna= toCopy.iHna;
+    iHk= toCopy.iHk;
+	iRel= toCopy.iRel;
+    iUp= toCopy.iUp;
+    iTr= toCopy.iTr;
+    iDiff= toCopy.iDiff;
+
+	iCait=iCart=0.0;
+    
+    // add to vars map declared/defined in cell.h and cell.cpp
     vars["naI"]=&naI;
     vars["kI"]=&kI;
     vars["caI"]=&caI;

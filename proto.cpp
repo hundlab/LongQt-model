@@ -11,8 +11,7 @@
 using namespace std;
 
 //######################################################
-// Constructor for parent cell class - the basis for 
-// any excitable cell model.  SV = state variable
+// Default Constructor 
 //######################################################
 Protocol::Protocol()
 {
@@ -83,6 +82,78 @@ Protocol::Protocol()
     pars["paceflag"]=&paceflag;
     pars["maxdoutsize"]=&maxdoutsize;
 };
+
+//######################################################
+// Deep Copy Constructor 
+//######################################################
+Protocol::Protocol(const Protocol& toCopy)
+{
+    //##### Assign default parameters ##################
+    
+    doneflag = toCopy.doneflag;       // set to 0 to end simulation
+    
+    tMax = toCopy.tMax;   // max simulation time, ms
+    
+    readflag = toCopy.readflag;       // 1 to read SV ICs from file
+    saveflag = toCopy.saveflag;       // 1 to save final SV vals to file
+    readfile = toCopy.readfile; // File to read SV ICs
+    savefile = toCopy.savefile; // File to save final SV
+
+    myId = toCopy.myId;
+   
+    writestd = toCopy.writestd; 
+    writeflag = toCopy.writeflag;      // 1 to write data to file during sim
+    dvarfile = toCopy.dvarfile;  // File with SV to write.
+    writetime = toCopy.writetime;      // time to start writing.
+    writeint = toCopy.writeint;     // interval for writing.
+    maxdoutsize = toCopy.maxdoutsize;   // Max number of dout files.
+    
+    pvarfile = toCopy.pvarfile; // File to specify cell params
+    simvarfile = toCopy.simvarfile;  // File to specify sim params
+
+    propertyoutfile = toCopy.propertyoutfile;
+    dvarsoutfile = toCopy.dvarsoutfile;
+    finalpropertyoutfile = toCopy.finalpropertyoutfile;
+    finaldvarsoutfile = toCopy.finaldvarsoutfile;
+
+    measflag = toCopy.measflag;       // 1 to track SV props during sim
+    measfile = toCopy.measfile; // File containing property names to track
+    meastime = toCopy.meastime;       // time to start tracking props
+    maxmeassize = toCopy.maxmeassize;   // Max number of SVs to track
+    
+    numtrials = toCopy.numtrials;
+    //######## Params for pacing protocol #########################
+    paceflag = toCopy.paceflag;   // 1 to pace cell.
+    numstims = toCopy.numstims;   // # of stimuli to apply
+    bcl = toCopy.bcl;     // basic cycle length, ms
+    stimval = toCopy.stimval;  // stim current amplitude, uA/uF
+    stimdur = toCopy.stimdur;  // stim duration, ms
+    stimt = toCopy.stimt;    // time of first stim, ms
+    
+    stimcounter = toCopy.stimcounter;
+    stimflag = toCopy.stimflag;
+    
+    //##### Initialize variables ##################
+    time= toCopy.time;
+    vM = toCopy.vM;
+    
+    // make map of params
+    pars["tMax"]=&tMax;
+    pars["bcl"]=&bcl;
+    pars["stimval"]=&stimval;
+    pars["stimdur"]=&stimdur;
+    pars["stimt"]=&stimt;
+    pars["numstims"]=&numstims;
+    pars["numtrials"]=&numtrials;
+    pars["readflag"]=&readflag;
+    pars["saveflag"]=&saveflag;
+    pars["writeflag"]=&writeflag;
+    pars["writetime"]=&writetime;
+    pars["measflag"]=&measflag;
+    pars["meastime"]=&meastime;
+    pars["paceflag"]=&paceflag;
+    pars["maxdoutsize"]=&maxdoutsize;
+};
 //######################################################
 // Destructor for parent cell class.
 //#####################################################
@@ -95,7 +166,6 @@ int Protocol::stim()
 {
   if(cell->t>=stimt&&cell->t<(stimt+stimdur)){
       if(stimflag==0){
-          cout << "Stimulus to " << cell->type << " at t = " << cell->t << endl;
           stimcounter++;
           stimflag=1;
           if(stimcounter>=int(numstims)){

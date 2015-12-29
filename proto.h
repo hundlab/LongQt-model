@@ -28,6 +28,7 @@ class Protocol
 {
   public:
     Protocol();
+    Protocol(const Protocol& toCopy);
     ~Protocol();
   
     //##### Declare class functions ##############

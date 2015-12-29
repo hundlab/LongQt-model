@@ -62,6 +62,66 @@ Cell::Cell()
     pars["ACap"]=&ACap;
     
 };
+
+//#####################################################
+//Constructor for deep copy from annother Cell
+//#####################################################
+Cell::Cell(const Cell& toCopy)
+{
+    //##### Assign default parameters ##################
+    dtmin = toCopy.dtmin;
+    dtmed = toCopy.dtmed;
+    dtmax = toCopy.dtmax;
+    dvcut = toCopy.dvcut;    // mV/ms
+    Cm = toCopy.Cm ;  // uF/cm^s
+    Rcg = toCopy.Rcg;
+    cellRadius = toCopy.cellRadius; // cm
+    cellLength = toCopy.cellLength;  // cm
+    type = "Cell";  // class name
+    RGAS = toCopy.RGAS;
+    TEMP = toCopy.TEMP;
+    FDAY = toCopy.FDAY;
+
+    //##### Initialize variables ##################
+    dVdt= toCopy.dVdt;
+    dVdtmax= toCopy.dVdtmax;
+    t= toCopy.t;
+    dt=toCopy.dt;
+    vOld = toCopy.vOld;
+    vNew = toCopy.vNew;
+    iTot = toCopy.iTot;
+    iTotold = toCopy.iTotold;
+    iNat = toCopy.iNat;
+    iKt = toCopy.iKt;
+    iCat = toCopy.iCat;
+    
+    // make map of state vars
+    vars["vOld"]=&vOld;
+    vars["t"]=&t;
+    vars["dVdt"]=&dVdt;
+    vars["iTot"]=&iTot;
+    vars["iKt"]=&iKt;
+    vars["iNat"]=&iNat;
+    vars["iCat"]=&iCat;
+    
+    // make map of params
+    pars["dtmin"]=&dtmin;
+    pars["dtmed"]=&dtmed;
+    pars["dtmax"]=&dtmax;
+    pars["Cm"]=&Cm;
+    pars["Rcg"]=&Rcg;
+    pars["RGAS"]=&RGAS;
+    pars["TEMP"]=&TEMP;
+    pars["FDAY"]=&FDAY;
+    pars["cellRadius"]=&cellRadius;
+    pars["cellLength"]=&cellLength;
+    pars["Vcell"]=&Vcell;
+    pars["Vmyo"]=&Vmyo;
+    pars["AGeo"]=&AGeo;
+    pars["ACap"]=&ACap;
+    
+};
+
 //######################################################
 // Destructor for parent cell class.
 //#####################################################

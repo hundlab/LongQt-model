@@ -38,6 +38,7 @@ class ControlSa : public Cell
 {
   public:
     ControlSa();
+    ControlSa(const ControlSa& toCopy);
     ~ControlSa();
 
   //##################################################

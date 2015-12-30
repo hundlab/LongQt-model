@@ -81,6 +81,7 @@ Protocol::Protocol()
     pars["meastime"]=&meastime;
     pars["paceflag"]=&paceflag;
     pars["maxdoutsize"]=&maxdoutsize;
+
 };
 
 //######################################################
@@ -768,6 +769,31 @@ bool Protocol::writepars(map<string, double*> varmap, string file)
     return 0;
   
 };
+//############################################################
+//Wirte the keys from varmap to a file
+//############################################################
+bool Protocol::writedvars(map<string, double*> varmap, string file)
+{
+    ofstream ofile;
+    string name;
+    double num;
+    map<string, double*>::iterator it;
+    
+    if(!ofile.is_open())
+        ofile.open(file);
+    if(!ofile.is_open()){
+        cout << "Error opening " << file << endl;
+        return 1;
+    }
+
+    for(it = varmap.begin(); it != varmap.end(); it++){
+        ofile << it->first << endl;
+    }
+    
+    ofile.close();
+    return 0;
+
+}
 
 //#############################################################
 // Output class constructor and destructor

@@ -49,8 +49,8 @@ class Protocol
     virtual int parse2Dmap(map<string,double*> varmap,map<string,double*> varmap2, string file, vector<string>* vnames, vector< vector<string> >* twoDmnames);
     virtual int resizemap(map<string,double*> varmap, string file, map<string, double*>* vars);
     virtual int readpvars();
-    virtual bool writepars(map<string, double*> varmap, string file); //write the contence of varmpa to a file
- 
+    virtual bool writepars(map<string, double*> varmap, string file); //write the contence of varmap to a file
+    virtual bool writedvars(map<string, double*> varmap, string file); //write varmap keys to a file
 
     //##### Declare class variables ##############
     Cell* cell;        // pointer to cell class

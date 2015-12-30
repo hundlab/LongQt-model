@@ -88,6 +88,7 @@ Protocol::Protocol()
 //######################################################
 Protocol::Protocol(const Protocol& toCopy)
 {
+    unsigned int i = 0;
     //##### Assign default parameters ##################
     
     doneflag = toCopy.doneflag;       // set to 0 to end simulation
@@ -137,6 +138,21 @@ Protocol::Protocol(const Protocol& toCopy)
     time= toCopy.time;
     vM = toCopy.vM;
     
+    pnames = vector<string>(toCopy.pnames);
+    for(i = 0; i < toCopy.pvals.size(); i++) {
+        pvals.push_back(vector<string>(toCopy.pvals.at(i)));
+    }
+    mvnames = vector<string>(toCopy.mvnames);
+    for(i = 0; i < toCopy.mpnames.size(); i++) {
+        mpnames.push_back(vector<string>(toCopy.mpnames.at(i)));
+    }
+    parmap = map<string, double*>(toCopy.parmap);
+    datamap = map<string, double*>(toCopy.datamap);
+    tempvals = new map<string, double>[mvnames.size()];
+    for(i = 0; i < mvnames.size(); i++) {
+        tempvals[i] = map<string, double>(toCopy.tempvals[i]);
+    }
+
     //###### Duplicate cells, measures outputs and maps######
     if(toCopy.cell != NULL) {
         cell = toCopy.cell->clone();
@@ -149,19 +165,12 @@ Protocol::Protocol(const Protocol& toCopy)
             ics = new Output(*toCopy.ics);
     }
     if(toCopy.measures != NULL) {
-        measures = new Measure[(int)maxmeassize];
-        for(int i = 0; i < (int)maxmeassize; i++) {
+        measures = new Measure[int(maxmeassize)];
+        for(i = 0; i < (int)maxmeassize; i++) {
             measures[i] = Measure(toCopy.measures[i]);
         }
     }    
-    pnames = vector<string>(toCopy.pnames);
-    pvals = vector<vector<string>>(toCopy.pvals);
-    mvnames = vector<string>(toCopy.mvnames);
-    mpnames = vector<vector<string>>(toCopy.mpnames);
-    parmap = map<string, double*>(toCopy.parmap);
-    datamap = map<string, double*>(toCopy.datamap);
-    tempvals = new map<string, double>(*toCopy.tempvals);
-    // make map of params
+   // make map of params
     pars["tMax"]=&tMax;
     pars["bcl"]=&bcl;
     pars["stimval"]=&stimval;
@@ -503,7 +512,7 @@ int Protocol::getNeededDOutputSize(){
 // Run the cell simulation
 //############################################################
 int Protocol::runSim() {
-    unsigned int i,j;
+    unsigned int i,j =0;
     char writefile[50];     // Buffer for storing filenames
 
     //###############################################################
@@ -564,7 +573,7 @@ int Protocol::runSim() {
           sprintf(writefile,finalpropertyoutfile.c_str(),mvnames[j].c_str());
           douts[j].writevals(tempvals[j],writefile,'a');
           measures[j].reset();
-      }
+      } 
       
       // Output parameter values for each trial
       douts[mvnames.size()].writevals(parmap, finaldvarsoutfile.c_str(), 'a');
@@ -971,7 +980,8 @@ Measure::Measure(const Measure& toCopy)
     durflag = toCopy.durflag;
     percrepol = toCopy.percrepol;
     returnflag = toCopy.returnflag;
-    
+    varname = toCopy.varname;    
+
     varmap["cl"]=&cl;
     varmap["peak"]=&peak;
     varmap["min"]=&min;

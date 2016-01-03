@@ -192,13 +192,7 @@ Protocol::Protocol(const Protocol& toCopy)
 //######################################################
 // Destructor for parent cell class.
 //#####################################################
-Protocol::~Protocol()
-{
-/*    delete cell;
-    delete douts;
-    delete ics;
-    delete measures;*/
-};
+Protocol::~Protocol(){};
 
 // External stimulus.
 int Protocol::stim()

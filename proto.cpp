@@ -481,8 +481,7 @@ int Protocol::initializeMeasure(int measureSize) {
     //Parse and resize 2D map based on measfile...move into measure?
     
     if (int(measflag)==1){
-        parse2Dmap(cell->vars,measures[0].varmap, measfile, &mvnames, &mpnames);
-        for (i=0; i<mvnames.size(); i++) {
+       for (i=0; i<mvnames.size(); i++) {
             if (i<int(maxmeassize)) {
                 measures[i].datamap = resizemap(measures[i].varmap,mpnames[i]);
                 measures[i].varname = mvnames[i];
@@ -494,6 +493,14 @@ int Protocol::initializeMeasure(int measureSize) {
 
     return 0;
 
+};
+
+//###############################################################
+// Read file into mvnames and mpnames
+// ##############################################################
+bool Protocol::readMvars(string file){
+     bool ret = !(bool)parse2Dmap(cell->vars,Measure().varmap, measfile, &mvnames, &mpnames);
+    return ret;
 };
 
 //############################################################
@@ -683,7 +690,6 @@ int Protocol::parse2Dmap(map<string,double*> varmap,map<string,double*> varmap2,
         
         if(varmap.count(name)>0){
             (*vnames).push_back(name);
-            
             while (!linestream.eof()) {
                 linestream >> name;
                 if(varmap2.count(name)>0){
@@ -703,6 +709,31 @@ int Protocol::parse2Dmap(map<string,double*> varmap,map<string,double*> varmap2,
     ifile.close();
     return 0;
 };
+
+//############################################################
+// write 2Dmap to file
+//############################################################
+bool Protocol::write2Dmap(vector<string> vnames, vector< vector<string> > twoDmnames, string file) {
+    int ret = 0;
+    unsigned int i,j;
+    ofstream out;
+
+    out.open(file);
+    if(!out.is_open()){
+        cout << "Error opening " << file << endl;
+        return 1;
+    }
+
+    for(i = 0; i < vnames.size(); i++) {
+        out << mvnames[i] << "\t";
+        for(j = 0; j < twoDmnames[i].size(); j++){
+            out << twoDmnames[i][j];
+        }
+        out << endl;
+    }
+
+    return ret;
+}
 
 //#############################################################
 // Resize varmap based on list in file.

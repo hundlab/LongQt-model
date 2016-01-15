@@ -727,7 +727,7 @@ bool Protocol::write2Dmap(vector<string> vnames, vector< vector<string> > twoDmn
     for(i = 0; i < vnames.size(); i++) {
         out << mvnames[i] << "\t";
         for(j = 0; j < twoDmnames[i].size(); j++){
-            out << twoDmnames[i][j];
+            out << twoDmnames[i][j] << "\t";
         }
         out << endl;
     }

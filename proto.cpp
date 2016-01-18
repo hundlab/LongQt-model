@@ -531,7 +531,7 @@ int Protocol::runSim() {
             
             time = cell->tstep(stimt);    // Update time
             cell->updateCurr();    // Update membrane currents
-
+cout << time << "\n";
             if(int(paceflag)==1)  // Apply stimulus
                 stim();
 

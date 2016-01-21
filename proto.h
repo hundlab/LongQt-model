@@ -123,8 +123,11 @@ class Measure
 public:
     Measure();
     Measure(const Measure& toCopy);
+    Measure( Measure&& toCopy);
     ~Measure();
     
+Measure& operator=(const Measure& toCopy);
+
     double* var;
     double varold;
     double vartakeoff; //var value at point of max deflection.

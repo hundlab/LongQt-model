@@ -543,7 +543,7 @@ int Protocol::runSim() {
 
             cell->updateConc();   // Update ion concentrations
             vM=cell->updateV();     // Update transmembrane potential
-            
+
             //##### Output select variables to file  ####################
             if(int(measflag)==1&&cell->t>meastime){
                 for (j=0; j<mvnames.size(); j++) {
@@ -1030,6 +1030,106 @@ Measure::Measure(const Measure& toCopy)
     for(it = datamap.begin(); it != datamap.end() ; it++) {
         datamap[it->first] = varmap[it->first];
     } 
+};
+
+Measure::Measure( Measure&& toCopy) {
+    std::map<string, double*>::iterator it;
+
+    peak= toCopy.peak;
+    min= toCopy.min;
+    vartakeoff= toCopy.vartakeoff;
+    repol = toCopy.repol;
+    amp = toCopy.amp;
+    maxderiv= toCopy.maxderiv;
+    maxderiv2nd= toCopy.maxderiv2nd;
+    cl= toCopy.cl;
+    told = toCopy.told;
+    mint = toCopy.mint;
+    maxt = toCopy.maxt;
+    varold = toCopy.varold;
+    derivold = toCopy.derivold;
+    minflag = toCopy.minflag;
+    maxflag = toCopy.maxflag;
+    ampflag = toCopy.ampflag;
+    ddrflag = toCopy.ddrflag;
+    derivt2 = toCopy.derivt2;
+    derivt1 = toCopy.derivt1;
+    derivt = toCopy.derivt;
+    deriv2ndt = toCopy.deriv2ndt;
+    durflag = toCopy.durflag;
+    percrepol = toCopy.percrepol;
+    returnflag = toCopy.returnflag;
+    dur = toCopy.dur;
+    varname = toCopy.varname;    
+
+    varmap["cl"]=&cl;
+    varmap["peak"]=&peak;
+    varmap["min"]=&min;
+    varmap["amp"]=&amp;
+    varmap["ddr"]=&ddr;
+    varmap["maxderiv"]=&maxderiv;
+    varmap["dur"]=&dur;
+    varmap["durtime1"]=&durtime1;
+    varmap["vartakeoff"]=&vartakeoff;
+    varmap["mint"]=&mint;
+    varmap["derivt"]=&derivt;
+    varmap["deriv2ndt"]=&deriv2ndt;
+
+    datamap = toCopy.datamap;   
+    for(it = datamap.begin(); it != datamap.end() ; it++) {
+        datamap[it->first] = varmap[it->first];
+    } 
+};
+
+Measure& Measure::operator=(const Measure& toCopy) {
+    std::map<string, double*>::iterator it;
+
+    peak= toCopy.peak;
+    min= toCopy.min;
+    vartakeoff= toCopy.vartakeoff;
+    repol = toCopy.repol;
+    amp = toCopy.amp;
+    maxderiv= toCopy.maxderiv;
+    maxderiv2nd= toCopy.maxderiv2nd;
+    cl= toCopy.cl;
+    told = toCopy.told;
+    mint = toCopy.mint;
+    maxt = toCopy.maxt;
+    varold = toCopy.varold;
+    derivold = toCopy.derivold;
+    minflag = toCopy.minflag;
+    maxflag = toCopy.maxflag;
+    ampflag = toCopy.ampflag;
+    ddrflag = toCopy.ddrflag;
+    derivt2 = toCopy.derivt2;
+    derivt1 = toCopy.derivt1;
+    derivt = toCopy.derivt;
+    deriv2ndt = toCopy.deriv2ndt;
+    durflag = toCopy.durflag;
+    percrepol = toCopy.percrepol;
+    returnflag = toCopy.returnflag;
+    dur = toCopy.dur;
+    varname = toCopy.varname;    
+
+    varmap["cl"]=&cl;
+    varmap["peak"]=&peak;
+    varmap["min"]=&min;
+    varmap["amp"]=&amp;
+    varmap["ddr"]=&ddr;
+    varmap["maxderiv"]=&maxderiv;
+    varmap["dur"]=&dur;
+    varmap["durtime1"]=&durtime1;
+    varmap["vartakeoff"]=&vartakeoff;
+    varmap["mint"]=&mint;
+    varmap["derivt"]=&derivt;
+    varmap["deriv2ndt"]=&deriv2ndt;
+
+    datamap = toCopy.datamap;   
+    for(it = datamap.begin(); it != datamap.end() ; it++) {
+        datamap[it->first] = varmap[it->first];
+    }
+
+    return *this;
 };
 
 Measure::~Measure()

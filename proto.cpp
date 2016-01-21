@@ -181,7 +181,7 @@ Protocol::Protocol(const Protocol& toCopy)
     if(toCopy.measures != NULL) {
         measures = new Measure[int(maxmeassize)];
         for(i = 0; i < (int)maxmeassize; i++) {
-            measures[i] = Measure(toCopy.measures[i]);
+            measures[i] = *(new Measure(toCopy.measures[i]));
         }
     }
 
@@ -197,7 +197,6 @@ Protocol::Protocol(const Protocol& toCopy)
     for(i = 0; i < mvnames.size(); i++) {
         tempvals[i] = map<string, double>(toCopy.tempvals[i]);
     }
- 
 };
 //######################################################
 // Destructor for parent cell class.
@@ -499,9 +498,7 @@ int Protocol::initializeMeasure(int measureSize) {
             }
         }
         tempvals = new map<string, double> [mvnames.size()];
-    
     }
-
     return 0;
 
 };
@@ -987,6 +984,8 @@ Measure::Measure()
 
 Measure::Measure(const Measure& toCopy)
 {
+    std::map<string, double*>::iterator it;
+
     peak= toCopy.peak;
     min= toCopy.min;
     vartakeoff= toCopy.vartakeoff;
@@ -1026,11 +1025,11 @@ Measure::Measure(const Measure& toCopy)
     varmap["mint"]=&mint;
     varmap["derivt"]=&derivt;
     varmap["deriv2ndt"]=&deriv2ndt;
-    
-    datamap["peak"]=&peak;
-    datamap["min"]=&min;
-    datamap["maxderiv"]=&maxderiv;
-    datamap["dur"]=&dur;
+
+    datamap = toCopy.datamap;   
+    for(it = datamap.begin(); it != datamap.end() ; it++) {
+        datamap[it->first] = varmap[it->first];
+    } 
 };
 
 Measure::~Measure()
@@ -1043,7 +1042,6 @@ Measure::~Measure()
 //################################################################
 int Measure::measure(double time, double var)
 {
-//cout << time << " " << var << "\n";
     double deriv,deriv2nd;
     
     returnflag = 0;  //default for return...set to 1 when props ready for output

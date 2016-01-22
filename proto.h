@@ -125,8 +125,11 @@ class Measure
 public:
     Measure();
     Measure(const Measure& toCopy);
+    Measure( Measure&& toCopy);
     ~Measure();
     
+Measure& operator=(const Measure& toCopy);
+
     double* var;
     double varold;
     double vartakeoff; //var value at point of max deflection.
@@ -164,7 +167,9 @@ public:
     void reset();   //resets params to init vals
     map<string, double*> varmap; // map for refing properties that can be measured.
     map<string, double*> datamap; // map for refing properties that will be output.
-    
+
+private:
+    void copy(const Measure& toCopy);    
 };
 
 

@@ -90,6 +90,8 @@ Protocol::Protocol()
 Protocol::Protocol(const Protocol& toCopy)
 {
     unsigned int i = 0;
+    std::map<string, double*>::iterator it;
+
     //##### Assign default parameters ##################
     
     doneflag = toCopy.doneflag;       // set to 0 to end simulation
@@ -138,40 +140,8 @@ Protocol::Protocol(const Protocol& toCopy)
     //##### Initialize variables ##################
     time= toCopy.time;
     vM = toCopy.vM;
-    
-    pnames = vector<string>(toCopy.pnames);
-    for(i = 0; i < toCopy.pvals.size(); i++) {
-        pvals.push_back(vector<string>(toCopy.pvals.at(i)));
-    }
-    mvnames = vector<string>(toCopy.mvnames);
-    for(i = 0; i < toCopy.mpnames.size(); i++) {
-        mpnames.push_back(vector<string>(toCopy.mpnames.at(i)));
-    }
-    parmap = map<string, double*>(toCopy.parmap);
-    datamap = map<string, double*>(toCopy.datamap);
-    tempvals = new map<string, double>[mvnames.size()];
-    for(i = 0; i < mvnames.size(); i++) {
-        tempvals[i] = map<string, double>(toCopy.tempvals[i]);
-    }
 
-    //###### Duplicate cells, measures outputs and maps######
-    if(toCopy.cell != NULL) {
-        cell = toCopy.cell->clone();
-    }
-    if(toCopy.douts != NULL) {
-        int size = int(toCopy.mvnames.size()+1+toCopy.numtrials*(toCopy.mvnames.size()+1));
-        douts = new Output[size];
-    }
-    if(toCopy.ics != NULL) {
-            ics = new Output(*toCopy.ics);
-    }
-    if(toCopy.measures != NULL) {
-        measures = new Measure[int(maxmeassize)];
-        for(i = 0; i < (int)maxmeassize; i++) {
-            measures[i] = Measure(toCopy.measures[i]);
-        }
-    }    
-   // make map of params
+    // make map of params
     pars["tMax"]=&tMax;
     pars["bcl"]=&bcl;
     pars["stimval"]=&stimval;
@@ -188,6 +158,45 @@ Protocol::Protocol(const Protocol& toCopy)
     pars["paceflag"]=&paceflag;
     pars["maxdoutsize"]=&maxdoutsize;
 
+   
+    pnames = vector<string>(toCopy.pnames);
+    for(i = 0; i < toCopy.pvals.size(); i++) {
+        pvals.push_back(vector<string>(toCopy.pvals.at(i)));
+    }
+    mvnames = vector<string>(toCopy.mvnames);
+    for(i = 0; i < toCopy.mpnames.size(); i++) {
+        mpnames.push_back(vector<string>(toCopy.mpnames.at(i)));
+    }
+    //###### Duplicate cells, measures outputs and maps######
+    if(toCopy.cell != NULL) {
+        cell = toCopy.cell->clone();
+    }
+    if(toCopy.douts != NULL) {
+        int size = int(toCopy.mvnames.size()+1+toCopy.numtrials*(toCopy.mvnames.size()+1));
+        douts = new Output[size];
+    }
+    if(toCopy.ics != NULL) {
+            ics = new Output(*toCopy.ics);
+    }
+    if(toCopy.measures != NULL) {
+        measures = new Measure[int(maxmeassize)];
+        for(i = 0; i < (int)maxmeassize; i++) {
+            measures[i] = *(new Measure(toCopy.measures[i]));
+        }
+    }
+
+    parmap = map<string, double*>(toCopy.parmap);
+    for(it = parmap.begin(); it != parmap.end(); it++) {
+        parmap[it->first] = cell->pars[it->first];
+    }
+    datamap = map<string, double*>(toCopy.datamap);
+    for(it = datamap.begin(); it != datamap.end(); it++) {
+        datamap[it->first] =  cell->vars[it->first];
+    }
+    tempvals = new map<string, double>[mvnames.size()];
+    for(i = 0; i < mvnames.size(); i++) {
+        tempvals[i] = map<string, double>(toCopy.tempvals[i]);
+    }
 };
 //######################################################
 // Destructor for parent cell class.
@@ -488,9 +497,7 @@ int Protocol::initializeMeasure(int measureSize) {
             }
         }
         tempvals = new map<string, double> [mvnames.size()];
-    
     }
-
     return 0;
 
 };
@@ -538,13 +545,12 @@ int Protocol::runSim() {
             
             time = cell->tstep(stimt);    // Update time
             cell->updateCurr();    // Update membrane currents
-
             if(int(paceflag)==1)  // Apply stimulus
                 stim();
 
             cell->updateConc();   // Update ion concentrations
             vM=cell->updateV();     // Update transmembrane potential
-            
+
             //##### Output select variables to file  ####################
             if(int(measflag)==1&&cell->t>meastime){
                 for (j=0; j<mvnames.size(); j++) {
@@ -877,7 +883,6 @@ int Output::writevals(map<string, double*> varmap, string file, char type)
 {
     map<string, double*>::iterator p;
     ofile.precision(10);
-    
     if(counter==0){
         if(!ofile.is_open())
             ofile.open(file);
@@ -890,8 +895,9 @@ int Output::writevals(map<string, double*> varmap, string file, char type)
         ofile << endl;
     }
     
-    for(p=varmap.begin(); p!=varmap.end(); ++p)
+    for(p=varmap.begin(); p!=varmap.end(); ++p) {
         ofile << *p->second << "\t";
+    }
     
     ofile << endl;
     
@@ -940,13 +946,15 @@ int Output::writevals(map<string, double> varmap, string file, char type)
             cout << "Error opening " << file << endl;
             exit(1);
         }
-        for(p=varmap.begin(); p!=varmap.end(); ++p)
+        for(p=varmap.begin(); p!=varmap.end(); ++p) {
             ofile << p->first << "\t";
+        }
         ofile << endl;
     }
     
-    for(p=varmap.begin(); p!=varmap.end(); ++p)
+    for(p=varmap.begin(); p!=varmap.end(); ++p) {
         ofile << p->second << "\t";
+    }
     
     ofile << endl;
     
@@ -1005,8 +1013,26 @@ Measure::Measure()
     datamap["dur"]=&dur;
 };
 
-Measure::Measure(const Measure& toCopy)
+Measure::Measure(const Measure& toCopy) {
+    this->copy(toCopy);
+};
+
+Measure::Measure( Measure&& toCopy) {
+    this->copy(toCopy); 
+};
+
+Measure& Measure::operator=(const Measure& toCopy) {
+    this->copy(toCopy);
+    return *this;
+};
+
+Measure::~Measure()
 {
+};
+
+void Measure::copy(const Measure& toCopy) {
+    std::map<string, double*>::iterator it;
+
     peak= toCopy.peak;
     min= toCopy.min;
     vartakeoff= toCopy.vartakeoff;
@@ -1031,6 +1057,7 @@ Measure::Measure(const Measure& toCopy)
     durflag = toCopy.durflag;
     percrepol = toCopy.percrepol;
     returnflag = toCopy.returnflag;
+    dur = toCopy.dur;
     varname = toCopy.varname;    
 
     varmap["cl"]=&cl;
@@ -1045,15 +1072,11 @@ Measure::Measure(const Measure& toCopy)
     varmap["mint"]=&mint;
     varmap["derivt"]=&derivt;
     varmap["deriv2ndt"]=&deriv2ndt;
-    
-    datamap["peak"]=&peak;
-    datamap["min"]=&min;
-    datamap["maxderiv"]=&maxderiv;
-    datamap["dur"]=&dur;
-};
 
-Measure::~Measure()
-{
+    datamap = toCopy.datamap;   
+    for(it = datamap.begin(); it != datamap.end() ; it++) {
+        datamap[it->first] = varmap[it->first];
+    } 
 };
 
 //################################################################

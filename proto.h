@@ -165,7 +165,9 @@ Measure& operator=(const Measure& toCopy);
     void reset();   //resets params to init vals
     map<string, double*> varmap; // map for refing properties that can be measured.
     map<string, double*> datamap; // map for refing properties that will be output.
-    
+
+private:
+    void copy(const Measure& toCopy);    
 };
 
 

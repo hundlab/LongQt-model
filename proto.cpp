@@ -807,8 +807,8 @@ Output::Output()
 };
 
 Output::Output(const Output& toCopy) {
-    counter = toCopy.counter;
-    interval = toCopy.interval;
+    counter = 0; //= toCopy.counter;
+    interval = 1; //= toCopy.interval;
 }
 
 Output::~Output()

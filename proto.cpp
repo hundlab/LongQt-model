@@ -789,7 +789,7 @@ bool Protocol::writedvars(map<string, double*> varmap, string file)
     for(it = varmap.begin(); it != varmap.end(); it++){
         ofile << it->first << endl;
     }
-    
+
     ofile.close();
     return 0;
 
@@ -926,7 +926,6 @@ int Output::writevals(map<string, double> varmap, string file, char type)
     }
     
     ofile << endl;
-    
     counter++;
     return 1;
 };

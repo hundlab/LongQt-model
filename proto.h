@@ -45,6 +45,7 @@ class Protocol
     virtual bool readMvars(string file);
     virtual int getNeededDOutputSize(); //get the size needed to construct the output array
     virtual int runSim();
+    virtual bool runTrial();
     virtual int readpars(map<string, double*> varmap, string file);
     virtual int parsemixedmap(map<string,double*> varmap, string file, vector<string>* cnames, vector<vector<string>>* twoDrnames);
     virtual int parse2Dmap(map<string,double*> varmap,map<string,double*> varmap2, string file, vector<string>* vnames, vector< vector<string> >* twoDmnames);
@@ -53,6 +54,8 @@ class Protocol
     virtual bool writepars(map<string, double*> varmap, string file); //write the contence of varmap to a file
     virtual bool writedvars(map<string, double*> varmap, string file); //write varmap keys to a file
     virtual bool write2Dmap(vector<string> vnames, vector< vector<string> > twoDmnames, string file);
+    virtual void setTrial(unsigned int current_trial);
+    virtual unsigned int getTrial();
 
     //##### Declare class variables ##############
     Cell* cell;        // pointer to cell class
@@ -91,7 +94,9 @@ class Protocol
     map<string, double*> parmap; // map for output params
     map<string, double*> datamap; // map for output state vars
     map<string, double> *tempvals;   // map to store measure vals
-   
+  
+    private:
+    unsigned int trial;
 };
 
 //#############################################################

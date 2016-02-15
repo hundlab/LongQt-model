@@ -27,6 +27,7 @@ Protocol::Protocol()
     savefile = "./data/s.txt"; // File to save final SV
 
     myId = 1;
+    trial = 0;
    
     writestd = 0; 
     writeflag = 0;      // 1 to write data to file during sim
@@ -104,7 +105,7 @@ Protocol::Protocol(const Protocol& toCopy)
     savefile = toCopy.savefile; // File to save final SV
 
     myId = toCopy.myId;
-   
+    trial = toCopy.trial;   
     writestd = toCopy.writestd; 
     writeflag = toCopy.writeflag;      // 1 to write data to file during sim
     dvarfile = toCopy.dvarfile;  // File with SV to write.
@@ -521,18 +522,26 @@ int Protocol::getNeededDOutputSize(){
 // Run the cell simulation
 //############################################################
 int Protocol::runSim() {
-    unsigned int i,j =0;
-    char writefile[50];     // Buffer for storing filenames
+    int return_val;
 
     //###############################################################
     // Loop over number of trials
     //###############################################################
-    for(i=0;i<int(numtrials);i++)
+    for(;trial<int(numtrials);trial++)
     {
-        assign_cell_pars(pnames,pvals,i);   // Assign cell pars before each trial.
+        return_val = (int)runTrial();     
+    }
+    return return_val;
+};
+
+bool Protocol::runTrial() {
+        unsigned int j =0;
+        char writefile[50];     // Buffer for storing filenames
+
         time = cell->t = 0.0;      // reset time
         doneflag=1;     // reset doneflag
   
+        setTrial(trial);
 //        if (int(readflag)==1)
 //            readvals(cell->vars, readfile);  // Init SVs before each trial.
         
@@ -557,16 +566,16 @@ int Protocol::runSim() {
                     if(measures[j].measure(cell->t,*cell->vars[measures[j].varname])){
                         tempvals[j]=copymapvals(measures[j].datamap);
                         if (int(writeflag)==1) {
-                            sprintf(writefile,propertyoutfile.c_str(),i,mvnames[j].c_str());
-                            douts[j+(i+1)*(mvnames.size()+1)].writevals(measures[j].datamap,writefile,'a');
+                            sprintf(writefile,propertyoutfile.c_str(),trial,mvnames[j].c_str());
+                            douts[j+(trial+1)*(mvnames.size()+1)].writevals(measures[j].datamap,writefile,'a');
                         }
                         measures[j].reset();
                     }
                 }
             }
             if (int(writeflag)==1&&time>writetime&&pCount%int(writeint)==0) {
-                sprintf(writefile,dvarsoutfile.c_str(),i);
-                douts[mvnames.size()+(i+1)*(mvnames.size()+1)].writevals(datamap,writefile,'a');
+                sprintf(writefile,dvarsoutfile.c_str(),trial);
+                douts[mvnames.size()+(trial+1)*(mvnames.size()+1)].writevals(datamap,writefile,'a');
             }
             cell->setV(vM); //Overwrite vOld with new value
             pCount++;
@@ -585,10 +594,8 @@ int Protocol::runSim() {
       
       // Output parameter values for each trial
       douts[mvnames.size()].writevals(parmap, finaldvarsoutfile.c_str(), 'a');
-      
-  }
-    return 0;
-};
+ 
+}
 
 //#############################################################
 // Read values of variables in varmap from file.
@@ -825,6 +832,16 @@ bool Protocol::writedvars(map<string, double*> varmap, string file)
     return 0;
 
 }
+
+void Protocol::setTrial(unsigned int current_trial) {
+    trial = current_trial;
+    assign_cell_pars(pnames,pvals,trial);   // Assign cell pars
+}
+
+unsigned int Protocol::getTrial() {
+    return trial;
+}
+
 
 //#############################################################
 // Output class constructor and destructor

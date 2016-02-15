@@ -41,8 +41,8 @@ Protocol::Protocol()
 
     propertyoutfile = "./data/dt%d_%s.dat";
     dvarsoutfile = "./data/dt%d_dvars.dat";
-    finalpropertyoutfile = "./data/dss_%s.dat";
-    finaldvarsoutfile = "./data/dss_pvars.dat";
+    finalpropertyoutfile = "./data/dss%d_%s.dat";
+    finaldvarsoutfile = "./data/dss%d_pvars.dat";
 
     measflag = 0;       // 1 to track SV props during sim
     measfile = "mvars.txt"; // File containing property names to track
@@ -527,9 +527,11 @@ int Protocol::runSim() {
     //###############################################################
     // Loop over number of trials
     //###############################################################
+    Cell* temp = cell->clone();
     for(;trial<int(numtrials);trial++)
     {
         return_val = (int)runTrial();     
+        cell = temp;
     }
     return return_val;
 };
@@ -587,13 +589,14 @@ bool Protocol::runTrial() {
       for (j=0; j<mvnames.size(); j++){
           if(writestd)
             map2screen(tempvals[j]);
-          sprintf(writefile,finalpropertyoutfile.c_str(),mvnames[j].c_str());
+          sprintf(writefile,finalpropertyoutfile.c_str(), trial, mvnames[j].c_str());
           douts[j].writevals(tempvals[j],writefile,'a');
           measures[j].reset();
       } 
       
       // Output parameter values for each trial
-      douts[mvnames.size()].writevals(parmap, finaldvarsoutfile.c_str(), 'a');
+      sprintf(writefile, finaldvarsoutfile.c_str(), trial);
+      douts[mvnames.size()].writevals(parmap, writefile, 'a');
  
 }
 

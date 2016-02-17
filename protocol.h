@@ -1,6 +1,6 @@
 //################################################
 // This header file contains protocol class
-// definition for simulation of excitable cell activity.
+// declaration for simulation of excitable cell activity.
 //
 // Copyright (C) 2015 Thomas J. Hund.
 // Updated 07/2015
@@ -10,19 +10,16 @@
 #ifndef PROTO
 #define PROTO
 
-
-#include "kurata08.h"
 #include <sstream>
 #include <random>
 #include <exception>
 #include <string>
-using namespace std;
 
-//######################################################
-//Define class for protocol.
-//######################################################
-class Output;  // forward declare Output class for use in Protocol
-class Measure; // forward declare Measure class for use in Protocol
+#include "kurata08.h"
+#include "measure.h"
+#include "output.h"
+
+using namespace std;
 
 class Protocol
 {
@@ -98,84 +95,5 @@ class Protocol
     private:
     unsigned int trial;
 };
-
-//#############################################################
-// Declare and define Output class used to read and write
-// values of variables supplied as argument (varmap).
-//#############################################################
-class Output
-{
-public:
-    Output();
-    Output(const Output& toCopy);
-    ~Output();
-    
-    ofstream ofile;
-    int counter;
-    int interval;   //write to file when counter%interval==0
-    
-    virtual int writevals(map<string, double*> varmap, string file, char type);
-    virtual int writevals(map<string, double*> varmap, string file);
-    virtual int writevals(map<string, double> varmap, string file, char type);
-    virtual int writevals(map<string, double> varmap, string file);
-};
-
-//#############################################################
-// Declare and define Measure class used to track properties
-// (e.g. peak, min, duration) of specified state variable.
-//#############################################################
-
-class Measure
-{
-public:
-    Measure();
-    Measure(const Measure& toCopy);
-    Measure( Measure&& toCopy);
-    ~Measure();
-    
-Measure& operator=(const Measure& toCopy);
-
-    double* var;
-    double varold;
-    double vartakeoff; //var value at point of max deflection.
-    double told;
-    double mint;    //time of min value.
-    double maxt;    //time of max value.
-    double durtime1;
-    double derivold; //dv/dt from prev. time step
-    double derivt;   // time of max deriv.
-    double derivt1;  // time of prev. cycle max deriv.
-    double derivt2;
-    double deriv2ndt;  // time of max 2nd deriv.
-    double peak;      // max var value
-    double min;       // min var value
-    double amp;
-    double ddr;      //diastolic depol. rate
-    double maxderiv;
-    double maxderiv1;
-    double maxderiv2;
-    double maxderiv2nd;
-    double cl;
-    double dur;   //duration
-    double percrepol;   //specify percent repolarization
-    double repol;           // repol var val for duration measure.
-    int minflag;
-    int maxflag;
-    int durflag;    //1 while measuring duration.
-    int ampflag;
-    int ddrflag;
-    int returnflag;
-    
-    string varname;
-    
-    int measure(double time,double var);  //measures props related to var; returns 1 when ready for output.
-    void reset();   //resets params to init vals
-    map<string, double*> varmap; // map for refing properties that can be measured.
-    map<string, double*> datamap; // map for refing properties that will be output.
-
-private:
-    void copy(const Measure& toCopy);    
-};
-
 
 #endif

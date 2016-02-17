@@ -527,11 +527,9 @@ int Protocol::runSim() {
     //###############################################################
     // Loop over number of trials
     //###############################################################
-    Cell* temp = cell->clone();
-    for(;trial<int(numtrials);trial++)
+    for(;trial<int(numtrials);setTrial(getTrial() +1))
     {
-        return_val = (int)runTrial();     
-        cell = temp;
+        return_val = (int)runTrial(); 
     }
     return return_val;
 };
@@ -543,7 +541,6 @@ bool Protocol::runTrial() {
         time = cell->t = 0.0;      // reset time
         doneflag=1;     // reset doneflag
   
-        setTrial(trial);
 //        if (int(readflag)==1)
 //            readvals(cell->vars, readfile);  // Init SVs before each trial.
         

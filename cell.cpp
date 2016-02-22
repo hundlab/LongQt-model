@@ -121,19 +121,16 @@ Cell::Cell(const Cell& toCopy)
     pars["ACap"]=&ACap;
     
 };
-
 //######################################################
 // Destructor for parent cell class.
 //#####################################################
 Cell::~Cell()
 {
 };
-
 //default copy function
 Cell* Cell::clone() {
     return new Cell(*this);
 };
-
 // Transmembrane potential 
 double Cell::updateV()
 {
@@ -144,13 +141,11 @@ double Cell::updateV()
     dVdtmax=dVdt;
   return vNew;
 };
-
 void Cell::setV(double v)
 {
   vNew=v;	
   vOld=v;
 };
-
 // Dynamic time step  
 double Cell::tstep(double stimt)
 {
@@ -171,7 +166,6 @@ double Cell::tstep(double stimt)
   
     return t;
 };
-
 // External stimulus.
 int Cell::externalStim(double stimval)
 {
@@ -179,14 +173,11 @@ int Cell::externalStim(double stimval)
     
   return 1;
 };
-
 // Overwritten in child classes with calls to fxns that update currents
 void Cell::updateCurr()
 {
 };
-
 // Ditto but for intracellular ion concentration changes
 void Cell::updateConc()
 {
 };
-

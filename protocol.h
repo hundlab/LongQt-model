@@ -53,6 +53,8 @@ class Protocol
     virtual bool write2Dmap(vector<string> vnames, vector< vector<string> > twoDmnames, string file);
     virtual void setTrial(unsigned int current_trial);
     virtual unsigned int getTrial();
+    virtual int parse2Dmap(map<string,double*> varmap,set<string> vars2, string file, vector<string>* vnames, vector< vector<string> >* twoDmnames);
+
 
     //##### Declare class variables ##############
     Cell* cell;        // pointer to cell class
@@ -89,7 +91,6 @@ class Protocol
     map<string, double*> pars;  // map of params
     map<string, double*> parmap; // map for output params
     map<string, double*> datamap; // map for output state vars
-    map<string, double> *tempvals;   // map to store measure vals
   
     private:
     unsigned int trial;

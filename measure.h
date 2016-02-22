@@ -35,24 +35,23 @@ public:
     
     bool measure(double time,double var);  //measures props related to var; returns 1 when ready for output.
     void reset();   //resets params to init vals
-    bool write(bool useFlags = true);
+    bool write(bool useFlags = true, bool reset = true);
 
     string varname;
     
+    bool setOutputfile(string filename);
+    set<string> getVariables();
+    map<string,double> getVariablesMap();
+    set<string> getSelection();
+    bool setSelection(set<string>);
+
 private:   
 
     void copy(const Measure& toCopy);    
 
     ofstream ofile;
-    public bool setOutputfile(string filename);
-
     map<string, double*> varmap; // map for refing properties that can be measured.
-    public set<string> getVariables();
-    public map<string,double> getVariablesMap();
-
     set<string> selection; // map for refing properties that will be output.
-    public map<string> getSelection();
-    public bool setSelection(map<string>);
 
     double* var;
     double varold;

@@ -85,7 +85,7 @@ bool Measure::setOutputfile(string filename) {
     exists = test.good();
     test.close();
     ofile.precision(10);
-    ofile.open(filename,ios_base::app)
+    ofile.open(filename,ios_base::app);
     if(!ofile.good()) {
         cout << "Error Opening " << filename << endl;
     } else if(!exists) {
@@ -97,24 +97,26 @@ bool Measure::setOutputfile(string filename) {
     ofile.close();
 }
 
-map<string> Measure::getSelection() {
+set<string> Measure::getSelection() {
     return selection;
 }
 
-bool Measure::setSelection(map<string>) {
+bool Measure::setSelection(set<string>) {
     bool toReturn = true;
     set<string>::iterator set_it;
     map<string,double*>::iterator map_it;
     
+    selection = set<string>();
+
     for(set_it = selection.begin(); set_it != selection.end(); set_it++) {
         map_it = varmap.find(*set_it);
         if(map_it != varmap.end()) {
-            selection.insert(set_it);
+            selection.insert(*set_it);
         } else {
             toReturn = false;
         }
     }
-    if(!ofile.good())
+    if(!ofile.good()) {
         return toReturn;
     }
     ofile.seekp(0);
@@ -126,7 +128,7 @@ bool Measure::setSelection(map<string>) {
     return toReturn;
 }
 
-map<string> Measure::getVariables() {
+set<string> Measure::getVariables() {
     set<string> toReturn;
     map<string,double*>::iterator it;
     for(it = varmap.begin(); it != varmap.end(); it++) {
@@ -189,7 +191,7 @@ void Measure::copy(const Measure& toCopy) {
     selection = toCopy.selection;
 };
 
-bool Measure::write(bool useFlags) {
+bool Measure::write(bool useFlags, bool reset) {
     set<string>::iterator it;
 
     if(useFlags&&!returnflag) {
@@ -203,8 +205,8 @@ bool Measure::write(bool useFlags) {
         ofile << *varmap[*it] << "\t";
     }
     ofile << endl;
-    if(useFlags) {
-        reset();
+    if(reset) {
+        this->reset();
     }
     return true;
 }
@@ -213,7 +215,7 @@ bool Measure::write(bool useFlags) {
 // Function to track properties (e.g. peak, min, duration) of
 // specified state variable and return status flag to calling fxn.
 //################################################################
-int Measure::measure(double time, double var)
+bool Measure::measure(double time, double var)
 {
     double deriv,deriv2nd;
     

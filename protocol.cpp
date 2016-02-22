@@ -195,10 +195,6 @@ Protocol::Protocol(const Protocol& toCopy)
     for(it = datamap.begin(); it != datamap.end(); it++) {
         datamap[it->first] =  cell->vars[it->first];
     }
-    tempvals = new map<string, double>[mvnames.size()];
-    for(i = 0; i < mvnames.size(); i++) {
-        tempvals[i] = map<string, double>(toCopy.tempvals[i]);
-    }
 };
 //######################################################
 // Destructor for parent cell class.
@@ -486,6 +482,7 @@ int Protocol::map2screen(map<string, double> varmap)
 //#############################################################
 int Protocol::initializeMeasure(int measureSize) {
     unsigned int i;
+    bool toReturn = true;
 
      measures = new Measure[measureSize];   // Array of measure streams.
     
@@ -494,13 +491,14 @@ int Protocol::initializeMeasure(int measureSize) {
     if (int(measflag)==1){
        for (i=0; i<mvnames.size(); i++) {
             if (i<int(maxmeassize)) {
-                measures[i].datamap = resizemap(measures[i].varmap,mpnames[i]);
+                set<string> temp = measures[i].getSelection();
+                temp.insert(mpnames[i].begin(), mpnames[i].end());
+                toReturn = measures[i].setSelection(temp);
                 measures[i].varname = mvnames[i];
             }
         }
-        tempvals = new map<string, double> [mvnames.size()];
     }
-    return 0;
+    return (int)toReturn;
 
 };
 
@@ -508,7 +506,8 @@ int Protocol::initializeMeasure(int measureSize) {
 // Read file into mvnames and mpnames
 // ##############################################################
 bool Protocol::readMvars(string file){
-     bool ret = !(bool)parse2Dmap(cell->vars,Measure().varmap, measfile, &mvnames, &mpnames);
+     set<string> temp = Measure().getVariables();
+     bool ret = !(bool)parse2Dmap(cell->vars,temp, measfile, &mvnames, &mpnames);
     return ret;
 };
 
@@ -568,12 +567,9 @@ bool Protocol::runTrial() {
             //##### Output select variables to file  ####################
             if(int(measflag)==1&&cell->t>meastime){
                 for (j=0; j<mvnames.size(); j++) {
-                    measures[j].measure(cell->t,*cell->vars[measures[j].varname])
+                    measures[j].measure(cell->t,*cell->vars[measures[j].varname]);
                     if(int(writeflag)==1) {
-                        measures[j].write();
-                    }
-                    if(j = mvnames.size() -1) {
-                        tempvals[j]=measures[j].getVariablesMap();
+                        measures[j].write(true, !(int(doneflag)&&(time<tMax)));
                     }
                 }
             }
@@ -590,9 +586,10 @@ bool Protocol::runTrial() {
       // Output final (ss) property values for each trial
       for (j=0; j<mvnames.size(); j++){
           if(writestd)
-            map2screen(tempvals[j]);
+            map2screen(measures[j].getVariablesMap());
           sprintf(writefile,finalpropertyoutfile.c_str(), trial, mvnames[j].c_str());
-          douts[j].writevals(tempvals[j],writefile,'a');
+          measures[j].setOutputfile(writefile);
+          measures[j].write(false, true);
           measures[j].reset();
       } 
       
@@ -680,6 +677,54 @@ int Protocol::parsemixedmap(map<string,double*> varmap, string file, vector<stri
    
     return 0;
 };
+
+//#############################################################
+// Create vectors based on 2D list in file.  First row element is checked in varmap
+// and gets stored in vector, rest of row checked in varmap2 and used to create row in 2D vector.
+// Returns vector with first column and rest of file in 2D vector.
+//#############################################################
+int Protocol::parse2Dmap(map<string,double*> varmap,set<string> vars2, string file, vector<string>* vnames, vector< vector<string> >* twoDmnames)
+{
+    ifstream ifile;
+    string line, name;
+    
+    vector<string> mnames;
+    
+    ifile.open(file);
+    if(!ifile.is_open()){
+        cout << "Error opening " << file << endl;
+        return 1;
+    }
+    
+    int counter = 0;
+    
+    while(!ifile.eof()){
+        getline(ifile,line);
+        stringstream linestream(line);
+        linestream >> name;
+        
+        if(varmap.count(name)>0){
+            (*vnames).push_back(name);
+            while (!linestream.eof()) {
+                linestream >> name;
+                if(vars2.count(name)>0){
+                    mnames.push_back(name);
+                }
+            }
+            if (mnames.size()>0)
+                (*twoDmnames).push_back(mnames);
+            else
+               (* vnames).pop_back();
+            
+            mnames.clear();
+        }
+        counter++;
+        
+    }
+    ifile.close();
+    return 0;
+};
+
 
 //#############################################################
 // Create vectors based on 2D list in file.  First row element is checked in varmap

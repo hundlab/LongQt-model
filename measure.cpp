@@ -55,10 +55,10 @@ Measure::Measure()
     varmap["derivt"]=&derivt;
     varmap["deriv2ndt"]=&deriv2ndt;
     
-    datamap["peak"]=&peak;
-    datamap["min"]=&min;
-    datamap["maxderiv"]=&maxderiv;
-    datamap["dur"]=&dur;
+    selection.insert("peak");
+    selection.insert("min");
+    selection.insert("maxderiv");
+    selection.insert("dur");
 };
 
 Measure::Measure(const Measure& toCopy) {
@@ -77,6 +77,71 @@ Measure& Measure::operator=(const Measure& toCopy) {
 Measure::~Measure()
 {
 };
+
+bool Measure::setOutputfile(string filename) {
+    ifstream test;
+    bool exists;
+    test.open(filename);
+    exists = test.good();
+    test.close();
+    ofile.precision(10);
+    ofile.open(filename,ios_base::app)
+    if(!ofile.good()) {
+        cout << "Error Opening " << filename << endl;
+    } else if(!exists) {
+        for(set<string>::iterator it = selection.begin(); it != selection.end(); it++) {
+            ofile << *it << "\t";
+        }
+        ofile << endl;
+    }
+    ofile.close();
+}
+
+map<string> Measure::getSelection() {
+    return selection;
+}
+
+bool Measure::setSelection(map<string>) {
+    bool toReturn = true;
+    set<string>::iterator set_it;
+    map<string,double*>::iterator map_it;
+    
+    for(set_it = selection.begin(); set_it != selection.end(); set_it++) {
+        map_it = varmap.find(*set_it);
+        if(map_it != varmap.end()) {
+            selection.insert(set_it);
+        } else {
+            toReturn = false;
+        }
+    }
+    if(!ofile.good())
+        return toReturn;
+    }
+    ofile.seekp(0);
+    for(set<string>::iterator it = selection.begin(); it != selection.end(); it++) {
+        ofile << *it << "\t";
+    }
+    ofile << endl;
+    
+    return toReturn;
+}
+
+map<string> Measure::getVariables() {
+    set<string> toReturn;
+    map<string,double*>::iterator it;
+    for(it = varmap.begin(); it != varmap.end(); it++) {
+        toReturn.insert(it->first);
+    }
+    return toReturn;
+}
+ 
+map<string,double> Measure::getVariablesMap() {
+    map<string,double> toReturn;
+    for(map<string,double*>::iterator it = varmap.begin(); it != varmap.end(); it++) {
+        toReturn.insert(std::pair<string,double>(it->first, *it->second));
+    }
+    return toReturn;
+}
 
 void Measure::copy(const Measure& toCopy) {
     std::map<string, double*>::iterator it;
@@ -121,11 +186,28 @@ void Measure::copy(const Measure& toCopy) {
     varmap["derivt"]=&derivt;
     varmap["deriv2ndt"]=&deriv2ndt;
 
-    datamap = toCopy.datamap;   
-    for(it = datamap.begin(); it != datamap.end() ; it++) {
-        datamap[it->first] = varmap[it->first];
-    } 
+    selection = toCopy.selection;
 };
+
+bool Measure::write(bool useFlags) {
+    set<string>::iterator it;
+
+    if(useFlags&&!returnflag) {
+        return false;
+    }
+
+    if(!ofile.good()) {
+        return false;
+    }
+    for(it = selection.begin(); it != selection.end(); it++) {
+        ofile << *varmap[*it] << "\t";
+    }
+    ofile << endl;
+    if(useFlags) {
+        reset();
+    }
+    return true;
+}
 
 //################################################################
 // Function to track properties (e.g. peak, min, duration) of

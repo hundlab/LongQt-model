@@ -79,7 +79,6 @@ class Protocol
     
     string readfile,savefile,dvarfile,pvarfile, measfile, simvarfile, propertyoutfile, dvarsoutfile, finalpropertyoutfile, finaldvarsoutfile;
 
-
     vector<string> pnames;              // stores cell param names
     vector< vector<string> > pvals;     // stores cell param vals
     vector<string> mvnames;     // vector of var names to be measured (e.g. Vm, Cai)

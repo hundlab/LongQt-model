@@ -549,6 +549,11 @@ bool Protocol::runTrial() {
         // Every time step, currents, concentrations, and Vm are calculated.
         //###############################################################
         int pCount = 0;
+
+        for(j=0; j<mvnames.size(); j++) {
+            sprintf(writefile,propertyoutfile.c_str(),trial,mvnames[j].c_str());
+            measures[j].setOutputfile(writefile);
+        }
         
         while(int(doneflag)&&(time<tMax)){
             
@@ -563,13 +568,12 @@ bool Protocol::runTrial() {
             //##### Output select variables to file  ####################
             if(int(measflag)==1&&cell->t>meastime){
                 for (j=0; j<mvnames.size(); j++) {
-                    if(measures[j].measure(cell->t,*cell->vars[measures[j].varname])){
-                        tempvals[j]=copymapvals(measures[j].datamap);
-                        if (int(writeflag)==1) {
-                            sprintf(writefile,propertyoutfile.c_str(),trial,mvnames[j].c_str());
-                            douts[j+(trial+1)*(mvnames.size()+1)].writevals(measures[j].datamap,writefile,'a');
-                        }
-                        measures[j].reset();
+                    measures[j].measure(cell->t,*cell->vars[measures[j].varname])
+                    if(int(writeflag)==1) {
+                        measures[j].write();
+                    }
+                    if(j = mvnames.size() -1) {
+                        tempvals[j]=measures[j].getVariablesMap();
                     }
                 }
             }

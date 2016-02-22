@@ -16,6 +16,7 @@
 #include <string>
 #include <cmath>
 #include <map>
+#include <set>
 #include <vector>
 #include <fstream>
 #include <iostream>
@@ -29,8 +30,29 @@ public:
     Measure(const Measure& toCopy);
     Measure( Measure&& toCopy);
     ~Measure();
+
+    Measure& operator=(const Measure& toCopy);
     
-Measure& operator=(const Measure& toCopy);
+    bool measure(double time,double var);  //measures props related to var; returns 1 when ready for output.
+    void reset();   //resets params to init vals
+    bool write(bool useFlags = true);
+
+    string varname;
+    
+private:   
+
+    void copy(const Measure& toCopy);    
+
+    ofstream ofile;
+    public bool setOutputfile(string filename);
+
+    map<string, double*> varmap; // map for refing properties that can be measured.
+    public set<string> getVariables();
+    public map<string,double> getVariablesMap();
+
+    set<string> selection; // map for refing properties that will be output.
+    public map<string> getSelection();
+    public bool setSelection(map<string>);
 
     double* var;
     double varold;
@@ -56,22 +78,13 @@ Measure& operator=(const Measure& toCopy);
     double dur;   //duration
     double percrepol;   //specify percent repolarization
     double repol;           // repol var val for duration measure.
-    int minflag;
-    int maxflag;
-    int durflag;    //1 while measuring duration.
-    int ampflag;
-    int ddrflag;
-    int returnflag;
+    bool minflag;
+    bool maxflag;
+    bool durflag;    //1 while measuring duration.
+    bool ampflag;
+    bool ddrflag;
+    bool returnflag;
     
-    string varname;
-    
-    int measure(double time,double var);  //measures props related to var; returns 1 when ready for output.
-    void reset();   //resets params to init vals
-    map<string, double*> varmap; // map for refing properties that can be measured.
-    map<string, double*> datamap; // map for refing properties that will be output.
-
-private:
-    void copy(const Measure& toCopy);    
 };
 
 #endif

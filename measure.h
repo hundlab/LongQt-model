@@ -43,7 +43,7 @@ public:
     set<string> getVariables();
     map<string,double> getVariablesMap();
     set<string> getSelection();
-    bool setSelection(set<string>);
+    bool setSelection(set<string> new_selection);
 
 private:   
 

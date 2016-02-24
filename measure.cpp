@@ -30,15 +30,15 @@ Measure::Measure()
     maxt = 0.0;
     varold = 100.0;
     derivold = 0.0;
-    minflag = 0;
-    maxflag = 0;
-    ampflag = 0;
-    ddrflag = 0;
+    minflag = false;
+    maxflag = false;
+    ampflag = false;
+    ddrflag = false;
     derivt2 = 0.0;
     derivt1 = 0.0;
     derivt = 0.0;
     deriv2ndt = 0.0;
-    durflag = 0;
+    durflag = false;
     percrepol = 50.0;
     returnflag = 0;
     
@@ -84,6 +84,9 @@ bool Measure::setOutputfile(string filename) {
     test.open(filename);
     exists = test.good();
     test.close();
+    if(ofile.is_open()) {
+        ofile.close();
+    }
     ofile.precision(10);
     ofile.open(filename,ios_base::app);
     if(!ofile.good()) {
@@ -94,21 +97,21 @@ bool Measure::setOutputfile(string filename) {
         }
         ofile << endl;
     }
-    ofile.close();
+    return true;
 }
 
 set<string> Measure::getSelection() {
     return selection;
 }
 
-bool Measure::setSelection(set<string>) {
+bool Measure::setSelection(set<string> new_selection) {
     bool toReturn = true;
     set<string>::iterator set_it;
     map<string,double*>::iterator map_it;
     
     selection = set<string>();
 
-    for(set_it = selection.begin(); set_it != selection.end(); set_it++) {
+    for(set_it = new_selection.begin(); set_it != new_selection.end(); set_it++) {
         map_it = varmap.find(*set_it);
         if(map_it != varmap.end()) {
             selection.insert(*set_it);
@@ -219,7 +222,7 @@ bool Measure::measure(double time, double var)
 {
     double deriv,deriv2nd;
     
-    returnflag = 0;  //default for return...set to 1 when props ready for output
+    returnflag = false;  //default for return...set to 1 when props ready for output
     
     deriv=(var-varold)/(time-told);
     deriv2nd=(deriv-derivold)/(time-told);
@@ -229,45 +232,45 @@ bool Measure::measure(double time, double var)
         derivt=time;
     }
     
-    if(deriv2nd>.02&&var>(0.01*abs(min)+min)&&ddrflag==0){   // Track 2nd deriv for SAN ddr
+    if(deriv2nd>.02&&var>(0.01*abs(min)+min)&&!ddrflag){   // Track 2nd deriv for SAN ddr
         vartakeoff=var;
         deriv2ndt=time;
         ddr=(vartakeoff-min)/(time-mint);
-        ddrflag=1;
+        ddrflag=true;
     }
     
-    if(minflag==1&&var>peak){          // Track value and time of peak
+    if(minflag&&var>peak){          // Track value and time of peak
         peak=var;
         maxt=time;
     }
     else if((peak-min)>0.3*abs(min))    // Assumes true max is more than 30% greater than the min.
-        maxflag=1;
+        maxflag=true;
     
     if(var<min){                        // Track value and time of min
         min=var;
         mint=time;
     }
     else
-        minflag=1;
+        minflag=true;
     
-    if(var>repol&&durflag==0){          // t1 for dur calculation = first time var crosses repol.
+    if(var>repol&&!durflag){          // t1 for dur calculation = first time var crosses repol.
         durtime1=time;            // will depend on percrepol - default is 50 but can be changed.
-        durflag=1;
+        durflag=true;
     }
     
-    if(maxflag==1&&minflag==1&&ampflag==0){
+    if(maxflag&&minflag&&!ampflag){
         amp=peak-min;
-        ampflag = 1;
+        ampflag = true;
         cl=derivt-derivt1;
         derivt2=derivt1;
         derivt1=derivt;
         repol = (1-percrepol*0.01)*amp+min;
     }
     
-    if(durflag==1&&var<repol){
+    if(durflag&&var<repol){
         dur=time-durtime1;
-        durflag=0;
-        returnflag = 1;  // lets calling fxn know that it is time to output and reset.
+        durflag=false;
+        returnflag = true;  // lets calling fxn know that it is time to output and reset.
     }
     
     told=time;

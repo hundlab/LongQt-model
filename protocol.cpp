@@ -548,12 +548,15 @@ bool Protocol::runTrial() {
         // Every time step, currents, concentrations, and Vm are calculated.
         //###############################################################
         int pCount = 0;
-
+        //open i/o streams
         for(j=0; j<mvnames.size(); j++) {
             sprintf(writefile,propertyoutfile.c_str(),trial,mvnames[j].c_str());
             measures[j].setOutputfile(writefile);
         }
-        
+
+        sprintf(writefile,dvarsoutfile.c_str(),trial);
+        cell->setOutputfileVariables(writefile);
+
         while(int(doneflag)&&(time<tMax)){
             
             time = cell->tstep(stimt);    // Update time
@@ -574,7 +577,7 @@ bool Protocol::runTrial() {
                 }
             }
             if (int(writeflag)==1&&time>writetime&&pCount%int(writeint)==0) {
-                sprintf(writefile,dvarsoutfile.c_str(),trial);
+                cell->writeVariables();
                 douts[mvnames.size()+(trial+1)*(mvnames.size()+1)].writevals(datamap,writefile,'a');
             }
             cell->setV(vM); //Overwrite vOld with new value
@@ -595,7 +598,8 @@ bool Protocol::runTrial() {
       
       // Output parameter values for each trial
       sprintf(writefile, finaldvarsoutfile.c_str(), trial);
-      douts[mvnames.size()].writevals(parmap, writefile, 'a');
+      cell->setOutputfileConstants(writefile);
+      cell->writeConstants();
  
 }
 

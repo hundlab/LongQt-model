@@ -36,6 +36,15 @@ class Cell
     virtual void updateConc();
     virtual double tstep(double stimt);
     virtual int externalStim(double stimval);
+    virtual bool setOutputfileConstants(string filename);
+    virtual bool setOuputfileVariables(string filename);
+    virtual bool setConstantSelection(set<string> new_selection);
+    virtual bool setVariableSelection(set<string> new_selection);
+    virtual set<string> getConstantSelection();
+    virtual set<string> getVariableSelection();
+    virtual void writeConstants();
+    virtual void writeVariables();
+
     //##### Declare class variables ##############
     double vOld;    // Transmembrane potential
     double vNew;
@@ -70,7 +79,15 @@ class Cell
     //##### Declare maps for vars/params ##############
     map<string, double*> vars;  // map of state vars
     map<string, double*> pars;  // map of params
-    
+
+  protected:
+    virtual void setOuputFile(string filename, map<string,double*> map, ofstream ofile);
+    virtual void write(set<string> selection, map<string,double*> map, ofstream ofile);
+    virtual bool setSelection(map<string, double*> map, set<string>* old_selection, set<string> new_selection, ofstream ofile);
+    ofstream parsofile;
+    ofstream varsofile;
+    set<string> parsSelection;
+    set<string> varsSelection;
 };
 
 

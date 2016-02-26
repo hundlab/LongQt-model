@@ -17,7 +17,7 @@
 Protocol::Protocol()
 {
     //##### Assign default parameters ##################
-    
+ map<string, double*> nvars;   
     doneflag = 1;       // set to 0 to end simulation
     
     tMax = 10000;   // max simulation time, ms
@@ -538,6 +538,18 @@ bool Protocol::runTrial() {
         unsigned int j =0;
         char writefile[50];     // Buffer for storing filenames
 
+//to be moved to a better location
+set<string> temp;
+temp.insert(pnames.begin(),pnames.end());
+cell->setConstantSelection(temp);
+temp.clear();
+for(map<string,double*>::iterator it = datamap.begin(); it != datamap.end(); it++) {
+    temp.insert(it->first);
+}
+cell->setVariableSelection(temp);
+
+//should not be here
+
         time = cell->t = 0.0;      // reset time
         doneflag=1;     // reset doneflag
   
@@ -555,7 +567,7 @@ bool Protocol::runTrial() {
         }
 
         sprintf(writefile,dvarsoutfile.c_str(),trial);
-        cell->setOutputfileVariables(writefile);
+        cell->setOuputfileVariables(writefile);
 
         while(int(doneflag)&&(time<tMax)){
             

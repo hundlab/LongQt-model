@@ -68,6 +68,7 @@ Cell::Cell()
 //#####################################################
 Cell::Cell(const Cell& toCopy)
 {
+
     //##### Assign default parameters ##################
     dtmin = toCopy.dtmin;
     dtmed = toCopy.dtmed;
@@ -95,8 +96,6 @@ Cell::Cell(const Cell& toCopy)
     iKt = toCopy.iKt;
     iCat = toCopy.iCat;
     
-    parsofile = toCopy.parsofile;
-    varsofile = toCopy.varsofile;
     parsSelection = toCopy.parsSelection;
     varsSelection = toCopy.varsSelection;
 
@@ -196,91 +195,59 @@ void Cell::updateConc()
 };
 
 bool Cell::setOuputfileVariables(string filename) {
-    return setOutputfile(filename, this->vars, varsofile);
-}
+    return setOutputfile(filename, this->varsSelection, &varsofile);
+};
 
 bool Cell::setOutputfileConstants(string filename) {
-    return setOutputfile(filename, this->pars, parsofile);
-}
+    return setOutputfile(filename, this->parsSelection, &parsofile);
+};
+
 void Cell::writeVariables() {
-    write(varsSelection, this->vars, varsofile);
-}
+    write(varsSelection, this->vars, &varsofile);
+};
 
 void Cell::writeConstants() {
-    write(parsSelection, this->pars, parsofile);
-}
+    write(parsSelection, this->pars, &parsofile);
+};
 
 bool Cell::setConstantSelection(set<string> selection) {
-    return setSelection(this->pars, &this->parsSelection, selection, parsofile);
-}
+    return setSelection(this->pars, &this->parsSelection, selection, &parsofile);
+};
 
 bool Cell::setVariableSelection(set<string> selection) {
-    return setSelection(this->vars, &this->varsSelection, selection, varsofile);
-}
+    return setSelection(this->vars, &this->varsSelection, selection, &varsofile);
+};
 
-set<string> getConstantSelection() {
+set<string> Cell::getConstantSelection() {
     return parsSelection;
-}
+};
 
-set<string> getVariableSelection() {
+set<string> Cell::getVariableSelection() {
     return varsSelection;
-}
- 
+};
 
-bool Cell::setSelection(map<string, double*> map, set<string>* old_selection, set<string> new_selection, ofstream ofile) {
+bool Cell::setSelection(map<string, double*> map, set<string>* old_selection, set<string> new_selection, ofstream* ofile) {
     bool toReturn = true;
     set<string>::iterator set_it;
-    map<string,double*>::iterator map_it;
     
     *old_selection = set<string>();
 
     for(set_it = new_selection.begin(); set_it != new_selection.end(); set_it++) {
-        map_it = map.find(*set_it);
-        if(map_it != map.end()) {
+        if(map.find(*set_it) != map.end()) {
             old_selection->insert(*set_it);
         } else {
             toReturn = false;
         }
     }
-    if(!ofile.good()) {
+    if(!ofile->good()) {
         return toReturn;
     }
-    ofile.seekp(0);
+    ofile->seekp(0);
     for(set<string>::iterator it = old_selection->begin(); it != old_selection->end(); it++) {
-        ofile << *it << "\t";
+        *ofile << *it << "\t";
     }
-    ofile << endl;
+    *ofile << endl;
     
     return toReturn;
-}
-
-bool Cell::setOutputfile(string filename, map<string,double*> map, ofstream ofile) {
-    ifstream test;
-    bool exists;
-    test.open(filename);
-    exists = test.good();
-    test.close();
-    if(ofile.is_open()) {
-        ofile.close();
-    }
-    ofile.precision(10);
-    ofile.open(filename,ios_base::app);
-    if(!ofile.good()) {
-        cout << "Error Opening " << filename << endl;
-    } else if(!exists) {
-        for(map<string,double*>::iterator it = map.begin(); it != map.end(); it++) {
-            ofile << it->first << "\t";
-        }
-        ofile << endl;
-    }
-    return true;
-
-}
-
-void Cell::write(set<string> selection, map<string, double*> map, ofstream ofile) {
-    for(set<string>::iterator it = map.begin(); it != map.end(); it++) {
-        ofile << map[*it] << "\t";
-    }
-    ofile << endl;
-}
+};
 

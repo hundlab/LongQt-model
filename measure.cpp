@@ -14,14 +14,8 @@
 // Measure class constructor and destructor
 //#############################################################
 
-
-void copy(const Measure& toCopy) {
-    MeasureKernel::copy(toCopy);
-    selection = toCopy.selection; 
-};
-
 bool Measure::setOutputfile(string filename) {
-    IOBase::setOutputfile(filename, this->selection, &ofile);
+    return IOBase::setOutputfile(filename, this->selection, &ofile);
 }
 
 set<string> Measure::getSelection() {

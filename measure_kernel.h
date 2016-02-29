@@ -44,9 +44,6 @@ public:
     map<string,double> getVariablesMap();
 
 protected:   
-
-    void copy(const MeasureKernel& toCopy);    
-
     map<string, double*> varmap; // map for refing properties that can be measured.
 
     double* var;
@@ -80,6 +77,7 @@ protected:
     bool ddrflag;
     bool returnflag;
     
+    void copy(const MeasureKernel& toCopy);    
 };
 
 #endif

@@ -12,9 +12,10 @@
 #define MEASURE_H
 
 #include "measure_kernel.h"
+#include "iobase.h"
 
 
-class Measure : public MeasureKernel, IOBase {
+class Measure : public MeasureKernel, public IOBase {
 public:
     Measure() : MeasureKernel() {
         selection.insert("peak");
@@ -24,13 +25,17 @@ public:
     };
 
     Measure(const Measure& toCopy) : MeasureKernel(toCopy) {
+        selection = toCopy.selection;
     };
     Measure( Measure&& toCopy) : MeasureKernel( toCopy) {
+        selection = toCopy.selection;
     };
+
     ~Measure() {};
 
     Measure& operator=(const Measure& toCopy) {
         this->copy(toCopy);
+        this->selection = toCopy.selection;
         return *this;
     };
     
@@ -39,7 +44,6 @@ public:
     set<string> getSelection();
     bool setSelection(set<string> new_selection);
 private:
-    void copy(const Measure& toCopy);
     set<string> selection; // map for refing properties that will be output.
     ofstream ofile;
 };

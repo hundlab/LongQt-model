@@ -48,6 +48,7 @@ bool Measure::setSelection(set<string> new_selection) {
     
     return toReturn;
 }
+
 bool Measure::write(bool useFlags, bool reset) {
     bool toReturn = false;
 
@@ -62,5 +63,6 @@ bool Measure::write(bool useFlags, bool reset) {
     }
     return toReturn;
 }
+
 
 

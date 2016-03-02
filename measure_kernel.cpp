@@ -14,7 +14,7 @@
 // Measure class constructor and destructor
 //#############################################################
 
-MeasureKernel::MeasureKernel()
+MeasureKernel::MeasureKernel(string varname)
 {
     peak=-100.0;
     min=100.0;
@@ -40,6 +40,8 @@ MeasureKernel::MeasureKernel()
     durflag = false;
     percrepol = 50.0;
     returnflag = 0;
+
+    this->varname = varname;
     
     varmap["cl"]=&cl;
     varmap["peak"]=&peak;

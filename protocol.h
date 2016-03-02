@@ -14,6 +14,7 @@
 #include <random>
 #include <exception>
 #include <string>
+#include <list>
 
 #include "kurata08.h"
 #include "measure.h"
@@ -54,13 +55,15 @@ class Protocol
     virtual void setTrial(unsigned int current_trial);
     virtual unsigned int getTrial();
     virtual int parse2Dmap(map<string,double*> varmap,set<string> vars2, string file, vector<string>* vnames, vector< vector<string> >* twoDmnames);
+    virtual bool writeMVarsFile(string file);
+    virtual bool readMvarsFile(string filename);
 
 
     //##### Declare class variables ##############
     Cell* cell;        // pointer to cell class
     Output* douts;     // point to output class for writing data
     Output *ics;        // Output for saving SVs at end of sim.
-    Measure* measures; // pointer to measure class for measuring SV props.
+    set<Measure> measures; // pointer to measure class for measuring SV props.
     double vM;         // membrane potential, mV
     double time;       // time, ms
     //##### Declare class params ##############

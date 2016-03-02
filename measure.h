@@ -17,7 +17,7 @@
 
 class Measure : public MeasureKernel, public IOBase {
 public:
-    Measure() : MeasureKernel() {
+    Measure(string varname = "") : MeasureKernel(varname) {
         selection.insert("peak");
         selection.insert("min");
         selection.insert("maxderiv");

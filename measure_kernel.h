@@ -28,7 +28,7 @@ using namespace std;
 class MeasureKernel
 {
 public:
-    MeasureKernel();
+    MeasureKernel(string varname = "");
     MeasureKernel(const MeasureKernel& toCopy);
     MeasureKernel( MeasureKernel&& toCopy);
     ~MeasureKernel();

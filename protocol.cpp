@@ -491,7 +491,7 @@ int Protocol::initializeMeasure(int measureSize) {
     if (int(measflag)==1){
        for (i=0; i<mvnames.size(); i++) {
             if (i<int(maxmeassize)) {
-                set<string> temp = measures[i].getSelection();
+                set<string> temp = measures[i].Selection;
                 temp.insert(mpnames[i].begin(), mpnames[i].end());
                 toReturn = measures[i].setSelection(temp);
                 measures[i].varname = mvnames[i];

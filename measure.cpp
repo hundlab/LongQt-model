@@ -18,16 +18,12 @@ bool Measure::setOutputfile(string filename) {
     return IOBase::setOutputfile(filename, this->selection, &ofile);
 }
 
-set<string> Measure::getSelection() {
-    return selection;
-}
-
 bool Measure::setSelection(set<string> new_selection) {
     bool toReturn = true;
     set<string>::iterator set_it;
     map<string,double*>::iterator map_it;
     
-    selection = set<string>();
+    selection.clear();
 
     for(set_it = new_selection.begin(); set_it != new_selection.end(); set_it++) {
         map_it = varmap.find(*set_it);
@@ -37,6 +33,7 @@ bool Measure::setSelection(set<string> new_selection) {
             toReturn = false;
         }
     }
+ 
     if(!ofile.good()) {
         return toReturn;
     }

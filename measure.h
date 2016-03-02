@@ -11,6 +11,8 @@
 #ifndef MEASURE_H
 #define MEASURE_H
 
+#include <functional> 
+
 #include "measure_kernel.h"
 #include "iobase.h"
 
@@ -41,8 +43,8 @@ public:
     
     bool write(bool useFlags = true, bool reset = true);
     bool setOutputfile(string filename);
-    set<string> getSelection();
     bool setSelection(set<string> new_selection);
+    const set<string>& Selection = cref(selection);
 private:
     set<string> selection; // map for refing properties that will be output.
     ofstream ofile;

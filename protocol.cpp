@@ -27,7 +27,6 @@ Protocol::Protocol()
     readfile = "./data/r.txt"; // File to read SV ICs
     savefile = "./data/s.txt"; // File to save final SV
 
-    myId = 1;
     trial = 0;
    
     writestd = 0; 
@@ -105,7 +104,6 @@ Protocol::Protocol(const Protocol& toCopy)
     readfile = toCopy.readfile; // File to read SV ICs
     savefile = toCopy.savefile; // File to save final SV
 
-    myId = toCopy.myId;
     trial = toCopy.trial;   
     writestd = toCopy.writestd; 
     writeflag = toCopy.writeflag;      // 1 to write data to file during sim
@@ -165,27 +163,15 @@ Protocol::Protocol(const Protocol& toCopy)
     for(i = 0; i < toCopy.pvals.size(); i++) {
         pvals.push_back(vector<string>(toCopy.pvals.at(i)));
     }
-    mvnames = vector<string>(toCopy.mvnames);
-    for(i = 0; i < toCopy.mpnames.size(); i++) {
-        mpnames.push_back(vector<string>(toCopy.mpnames.at(i)));
-    }
     //###### Duplicate cells, measures outputs and maps######
     if(toCopy.cell != NULL) {
         cell = toCopy.cell->clone();
     }
-    if(toCopy.douts != NULL) {
-        int size = int(toCopy.mvnames.size()+1+toCopy.numtrials*(toCopy.mvnames.size()+1));
-        douts = new Output[size];
-    }
     if(toCopy.ics != NULL) {
             ics = new Output(*toCopy.ics);
     }
-    if(toCopy.measures != NULL) {
-        measures = new Measure[int(maxmeassize)];
-        for(i = 0; i < (int)maxmeassize; i++) {
-            measures[i] = *(new Measure(toCopy.measures[i]));
-        }
-    }
+
+    measures = toCopy.measures;
 
     parmap = map<string, double*>(toCopy.parmap);
     for(it = parmap.begin(); it != parmap.end(); it++) {
@@ -477,45 +463,11 @@ int Protocol::map2screen(map<string, double> varmap)
     return 1;
 };
 
-//#############################################################
-// Set params for measuring state var props (dur, min, max, etc).
-//#############################################################
-int Protocol::initializeMeasure(int measureSize) {
-    unsigned int i;
-    bool toReturn = true;
-
-     measures = new Measure[measureSize];   // Array of measure streams.
-    
-    //Parse and resize 2D map based on measfile...move into measure?
-    
-    if (int(measflag)==1){
-       for (i=0; i<mvnames.size(); i++) {
-            if (i<int(maxmeassize)) {
-                set<string> temp = measures[i].Selection;
-                temp.insert(mpnames[i].begin(), mpnames[i].end());
-                toReturn = measures[i].setSelection(temp);
-                measures[i].varname = mvnames[i];
-            }
-        }
-    }
-    return (int)toReturn;
-
-};
-
-//###############################################################
-// Read file into mvnames and mpnames
-// ##############################################################
-bool Protocol::readMvars(string file){
-     set<string> temp = Measure().getVariables();
-     bool ret = !(bool)parse2Dmap(cell->vars,temp, measfile, &mvnames, &mpnames);
-    return ret;
-};
-
 //############################################################
 // Get the number of Doutput arrays to create
 //############################################################
 int Protocol::getNeededDOutputSize(){
-    return int(mvnames.size()+1+numtrials*(mvnames.size()+1));
+    return 0;//int(mvnames.size()+1+numtrials*(mvnames.size()+1));
 };
 
 //############################################################
@@ -560,9 +512,9 @@ cell->setVariableSelection(temp);
         //###############################################################
         int pCount = 0;
         //open i/o streams
-        for(set<Measure>::iterator it = measures.begin(); it != measures.end(); it++) {
-            sprintf(writefile,propertyoutfile.c_str(),trial,it->varname.c_str());
-            it->setOutputfile(writefile);
+        for(map<string,Measure>::iterator it = measures.begin(); it != measures.end(); it++) {
+            sprintf(writefile,propertyoutfile.c_str(),trial,it->second.varname.c_str());
+            it->second.setOutputfile(writefile);
         }
 
         sprintf(writefile,dvarsoutfile.c_str(),trial);
@@ -580,10 +532,10 @@ cell->setVariableSelection(temp);
 
             //##### Output select variables to file  ####################
             if(int(measflag)==1&&cell->t>meastime){
-                for (set<Measure>::iterator it = measures.begin(); it!=measures.end(); it++) {
-                    it->measure(cell->t,*cell->vars[it->varname]);
+                for (map<string,Measure>::iterator it = measures.begin(); it!=measures.end(); it++) {
+                    it->second.measure(cell->t,*cell->vars[it->second.varname]);
                     if(int(writeflag)==1) {
-                        it->write(true, !(int(doneflag)&&(time<tMax)));
+                        it->second.write(true, !(int(doneflag)&&(time<tMax)));
                     }
                 }
             }
@@ -598,13 +550,13 @@ cell->setVariableSelection(temp);
       if(writestd)   
         map2screen(parmap);  // send final property values to console
       // Output final (ss) property values for each trial
-      for (set<Measure>::iterator it = measures.begin(); it != measures.end(); it++){
+      for (map<string,Measure>::iterator it = measures.begin(); it != measures.end(); it++){
           if(writestd)
-            map2screen(it->getVariablesMap());
-          sprintf(writefile,finalpropertyoutfile.c_str(), trial, it->c_str());
-          it->setOutputfile(writefile);
-          it->write(false, true);
-          it->reset();
+            map2screen(it->second.getVariablesMap());
+          sprintf(writefile,finalpropertyoutfile.c_str(), trial, it->second.varname.c_str());
+          it->second.setOutputfile(writefile);
+          it->second.write(false, true);
+          it->second.reset();
       } 
       
       // Output parameter values for each trial
@@ -696,7 +648,7 @@ int Protocol::parsemixedmap(map<string,double*> varmap, string file, vector<stri
 //############################################################
 // write a mvars file for the measures list
 //############################################################
-bool Measure::writeMVarsFile(string file) {
+bool Protocol::writeMVarsFile(string file) {
     ofstream out;
     int ret = false;
 
@@ -706,9 +658,9 @@ bool Measure::writeMVarsFile(string file) {
         return ret;
     }
 
-    for(set<Measure>::iterator im = measures.begin(); im != measures.end(); im++) {
-        out << it->varname << "\t";
-        set<string> selection = it->getSelection();
+    for(map<string,Measure>::iterator im = measures.begin(); im != measures.end(); im++) {
+        out << im->second.varname << "\t";
+        set<string> selection = im->second.Selection;
         for(set<string>::iterator it = selection.begin(); it != selection.end(); it){
             out << *it << "\t";
         }
@@ -719,42 +671,53 @@ bool Measure::writeMVarsFile(string file) {
     return ret;
 }
 
-bool AddMeasure(Measure toInsert) {
-    if(cell->
-    return measures.insert(toInsert)->second;
-}
-
-set<Measure> getMeasures() {
-    return measures;
-}
-
-bool setMeasures(set<Measure> newMeasures) {
-    measures.clear();
-    return measures.insert(newMeasures.begin(), newMeasures.end())->second;
-}
-
-set<string> getMeasureSelection(string measureName) {
-    set<Measure>::iterator found = measures.find(measureName);
-    if(found != measures.end()) {
-        return found->getSelection();
-    }
-    return set<string>();
-}
-
-bool addToMeasreSelection(string measureName, string property) {
-    set<Measure>::iterator found = measures.find(measureName);
-    if(found != measures.end()) {
-        return found->addToSelection(property);
+bool Protocol::addMeasure(Measure toInsert) {
+    if(cell->vars.find(toInsert.varname) != cell->vars.end()) {
+        return measures.insert(pair<string,Measure>(toInsert.varname, toInsert)).second;
     }
     return false;
 }
+
+void Protocol::removeMeasure(string measureName) {
+    measures.erase(measureName);
+}
+
+bool Protocol::setMeasures(map<string,Measure> newMeasures) {
+    bool toReturn = true;
+    measures.clear();
+    measures.insert(newMeasures.begin(), newMeasures.end());
+    for(auto it = measures.begin(); it != measures.end(); it++) {
+        if(cell->vars.find(it->first) == cell->vars.end()) {
+            measures.erase(it);
+            toReturn = false;
+        }
+    }
+    return toReturn;
+}
+
+bool Protocol::addToMeasreSelection(string measureName, string property) {
+    try {
+        return measures.at(measureName).addToMeasureSelection(property);
+    } catch (const std::out_of_range& oor) {
+        return false;
+    }
+}
+
+void Protocol::removeFromMeasureSelection(string measureName, string property) {
+    try {
+        measures.at(measureName).removeFromSelection(property);
+    } catch ( const std::out_of_range& oor) {
+
+    }
+}
+
 
 //#############################################################
 //read and mvars style file and use it to set measures list 
 //where varname is the first word on the line
 //and all sequential words are properties to measure (the selection)
 //#############################################################
-bool Measure::readMvarsFile(string filename)
+bool Protocol::readMvarsFile(string filename)
 {
     ifstream ifile;
     string line, name;
@@ -764,7 +727,7 @@ bool Measure::readMvarsFile(string filename)
     
     ifile.open(filename);
     if(!ifile.good()){
-        cout << "Error opening " << file << endl;
+        cout << "Error opening " << filename << endl;
         return false;
     }
     
@@ -776,9 +739,9 @@ bool Measure::readMvarsFile(string filename)
         linestream >> temp.varname;
         while(!linestream.eof()) {
            linestream >> name;
-           selection.insert(name);
+           temp.addToMeasureSelection(name);
         }
-        measures.insert(temp);
+        measures.insert(pair<string,Measure>(temp.varname,temp));
     }
     
     ifile.close();

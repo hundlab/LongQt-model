@@ -43,8 +43,11 @@ public:
     
     bool write(bool useFlags = true, bool reset = true);
     bool setOutputfile(string filename);
-    bool setSelection(set<string> new_selection);
+
     const set<string>& Selection = cref(selection);
+    bool setSelection(set<string> new_selection);
+    bool addToMeasureSelection(string new_select);
+    void removeFromSelection(string to_remove);
 private:
     set<string> selection; // map for refing properties that will be output.
     ofstream ofile;

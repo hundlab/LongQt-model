@@ -27,6 +27,7 @@ class Protocol
   public:
     Protocol();
     Protocol(const Protocol& toCopy);
+    Protocol& operator=(const Protocol& toCopy) = default;
     ~Protocol();
   
     //##### Declare class functions ##############
@@ -63,7 +64,6 @@ class Protocol
     Cell* cell;        // pointer to cell class
     Output* douts;     // point to output class for writing data
     Output *ics;        // Output for saving SVs at end of sim.
-    set<Measure> measures; // pointer to measure class for measuring SV props.
     double vM;         // membrane potential, mV
     double time;       // time, ms
     //##### Declare class params ##############
@@ -78,25 +78,29 @@ class Protocol
     double tMax;
     double maxdoutsize,maxmeassize;
     
-    int myId;  // used to identify threaded protos
-
     default_random_engine generator;
     
     string readfile,savefile,dvarfile,pvarfile, measfile, simvarfile, propertyoutfile, dvarsoutfile, finalpropertyoutfile, finaldvarsoutfile;
 
     vector<string> pnames;              // stores cell param names
     vector< vector<string> > pvals;     // stores cell param vals
-    vector<string> mvnames;     // vector of var names to be measured (e.g. Vm, Cai)
-    vector< vector<string> > mpnames;   // vector of property names to measure (e.g. dur, min)
  
     
     //##### Declare maps for vars/params ##############
     map<string, double*> pars;  // map of params
     map<string, double*> parmap; // map for output params
     map<string, double*> datamap; // map for output state vars
-  
+
+    const map<string,Measure>& Measures = cref(measures);
+    bool addMeasure(Measure toInsert);
+    void removeMeasure(string measureName);
+    bool setMeasures(map<string,Measure> newMeasures);
+    bool addToMeasreSelection(string measureName, string property);
+    void removeFromMeasureSelection(string measureName, string property);
+
     private:
     unsigned int trial;
+    map<string,Measure> measures; // set of measure class for measuring SV props.
 };
 
 #endif

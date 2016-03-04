@@ -46,6 +46,18 @@ bool Measure::setSelection(set<string> new_selection) {
     return toReturn;
 }
 
+bool Measure::addToMeasureSelection(string new_select) {
+    if(varmap.find(new_select) != varmap.end()) {
+        return selection.insert(new_select).second;
+    } else {
+        return false;
+    }
+}
+
+void Measure::removeFromSelection(string to_remove) {
+    selection.erase(selection.find(to_remove));
+}
+
 bool Measure::write(bool useFlags, bool reset) {
     bool toReturn = false;
 

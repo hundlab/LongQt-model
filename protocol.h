@@ -27,7 +27,8 @@ class Protocol
   public:
     Protocol();
     Protocol(const Protocol& toCopy);
-    Protocol& operator=(const Protocol& toCopy) = default;
+    Protocol(Protocol&& toCopy);
+    Protocol& operator=(const Protocol& toCopy);
     ~Protocol();
   
     //##### Declare class functions ##############
@@ -40,8 +41,6 @@ class Protocol
     virtual map<string,double> copymapvals(map<string, double*> varmap);
     virtual int map2screen(map<string, double*> varmap);
     virtual int map2screen(map<string, double> varmap);
-    virtual int initializeMeasure(int measureSize);
-    virtual bool readMvars(string file);
     virtual int getNeededDOutputSize(); //get the size needed to construct the output array
     virtual int runSim();
     virtual bool runTrial();
@@ -101,6 +100,10 @@ class Protocol
     private:
     unsigned int trial;
     map<string,Measure> measures; // set of measure class for measuring SV props.
+
+    protected:
+    void copy(const Protocol& toCopy);    
+
 };
 
 #endif

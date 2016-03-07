@@ -20,10 +20,10 @@
 class Measure : public MeasureKernel, public IOBase {
 public:
     Measure(string varname = "") : MeasureKernel(varname) {
-        selection.insert("peak");
-        selection.insert("min");
-        selection.insert("maxderiv");
-        selection.insert("dur");
+//        selection.insert("peak");
+//        selection.insert("min");
+//        selection.insert("maxderiv");
+//        selection.insert("dur");
     };
 
     Measure(const Measure& toCopy) : MeasureKernel(toCopy) {

@@ -76,5 +76,7 @@ class CellKernel
     //##### Declare maps for vars/params ##############
     map<string, double*> vars;  // map of state vars
     map<string, double*> pars;  // map of params
+    set<string> getVariables();
+    set<string> getConstants();
 };
 #endif

@@ -86,10 +86,27 @@ Protocol::Protocol()
 };
 
 //######################################################
+// Destructor for parent cell class.
+//#####################################################
+Protocol::~Protocol(){};
+
+//######################################################
 // Deep Copy Constructor 
 //######################################################
-Protocol::Protocol(const Protocol& toCopy)
-{
+Protocol::Protocol(const Protocol& toCopy) {
+    this->copy(toCopy);
+};
+
+Protocol::Protocol(Protocol&& toCopy) {
+    this->copy(toCopy); 
+};
+
+Protocol& Protocol::operator=(const Protocol& toCopy) {
+    this->copy(toCopy);
+    return *this;
+};
+
+void Protocol::copy(const Protocol& toCopy) {
     unsigned int i = 0;
     std::map<string, double*>::iterator it;
 
@@ -181,11 +198,8 @@ Protocol::Protocol(const Protocol& toCopy)
     for(it = datamap.begin(); it != datamap.end(); it++) {
         datamap[it->first] =  cell->vars[it->first];
     }
-};
-//######################################################
-// Destructor for parent cell class.
-//#####################################################
-Protocol::~Protocol(){};
+
+}
 
 // External stimulus.
 int Protocol::stim()
@@ -212,7 +226,6 @@ int Protocol::stim()
     doneflag = 1;
     return 1;
 };
-
 //############################################################
 // Assign parameter values based on pnames and 2D vector pvals
 //############################################################
@@ -658,11 +671,11 @@ bool Protocol::writeMVarsFile(string file) {
         return ret;
     }
 
-    for(map<string,Measure>::iterator im = measures.begin(); im != measures.end(); im++) {
-        out << im->second.varname << "\t";
+    for(auto im = measures.begin(); im != measures.end(); im++) {
+        out << im->second.varname << " \t";
         set<string> selection = im->second.Selection;
-        for(set<string>::iterator it = selection.begin(); it != selection.end(); it){
-            out << *it << "\t";
+        for(set<string>::iterator it = selection.begin(); it != selection.end(); it++){
+            out << *it << " \t";
         }
         out << endl;
     }
@@ -721,9 +734,8 @@ bool Protocol::readMvarsFile(string filename)
 {
     ifstream ifile;
     string line, name;
-    set<string> possible_vars = cell->getVariableSelection();
+    set<string> possible_vars = cell->getVariables();
     
-    vector<string> mnames;
     
     ifile.open(filename);
     if(!ifile.good()){
@@ -731,17 +743,18 @@ bool Protocol::readMvarsFile(string filename)
         return false;
     }
     
-    getline(ifile,line);
-    stringstream linestream(line);
-
     while(!ifile.eof()) {
+        getline(ifile,line);
+        stringstream linestream(line);
         Measure temp;
         linestream >> temp.varname;
         while(!linestream.eof()) {
            linestream >> name;
            temp.addToMeasureSelection(name);
         }
-        measures.insert(pair<string,Measure>(temp.varname,temp));
+        if(possible_vars.find(temp.varname) != possible_vars.end()) {
+            measures.insert(pair<string,Measure>(temp.varname,temp));
+        }
     }
     
     ifile.close();

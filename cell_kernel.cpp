@@ -190,3 +190,19 @@ void CellKernel::updateCurr()
 void CellKernel::updateConc()
 {
 };
+
+set<string> CellKernel::getVariables() {
+    set<string> toReturn;
+    for(auto it = vars.begin(); it != vars.end(); it++) {
+        toReturn.insert(it->first);
+    }
+    return toReturn;
+};
+
+set<string> CellKernel::getConstants() {
+    set<string> toReturn;
+    for(auto it = pars.begin(); it != pars.end(); it++) {
+        toReturn.insert(it->first);
+    }
+    return toReturn;
+};

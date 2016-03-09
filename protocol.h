@@ -22,6 +22,8 @@
 
 using namespace std;
 
+typedef Cell* (*CellInitializer)(void);
+
 class Protocol
 {
   public:
@@ -57,7 +59,8 @@ class Protocol
     virtual int parse2Dmap(map<string,double*> varmap,set<string> vars2, string file, vector<string>* vnames, vector< vector<string> >* twoDmnames);
     virtual bool writeMVarsFile(string file);
     virtual bool readMvarsFile(string filename);
-
+    virtual bool setCell(string type, bool reset = false);
+    virtual list<string> cellOptions();
 
     //##### Declare class variables ##############
     Cell* cell;        // pointer to cell class
@@ -103,6 +106,7 @@ class Protocol
 
     protected:
     void copy(const Protocol& toCopy);    
+    map<string, CellInitializer> cellMap;
 
 };
 

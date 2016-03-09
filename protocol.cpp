@@ -10,7 +10,6 @@
 
 #include "protocol.h"
 
-
 //######################################################
 // Default Constructor 
 //######################################################
@@ -83,6 +82,9 @@ Protocol::Protocol()
     pars["paceflag"]=&paceflag;
     pars["maxdoutsize"]=&maxdoutsize;
 
+    //initalize cellMap
+    //will only have an effect the first time it is called
+    cellMap["ControlSa"] = [] () {return (Cell*) new ControlSa;};
 };
 
 //######################################################
@@ -976,4 +978,23 @@ unsigned int Protocol::getTrial() {
     return trial;
 }
 
+bool Protocol::setCell(string type, bool reset) {
+    if(cell != NULL && type == cell->type && !reset) {
+        return false;
+    }
+    try {
+        cell = (cellMap.at(type))();
+        measures.clear();
+        return true;
+    } catch(const std::out_of_range& oor) {
+        return false;
+    }
+}
 
+list<string> Protocol::cellOptions() {
+    list<string> options;
+    for(auto it = cellMap.begin(); it != cellMap.end(); it++) {
+        options.push_back(it->first);
+    }
+    return options;
+}

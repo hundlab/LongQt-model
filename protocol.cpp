@@ -21,15 +21,18 @@ Protocol::Protocol()
     
     tMax = 10000;   // max simulation time, ms
     
+    datadir = "data/";
+    workingdir = "./";
+
     readflag = 0;       // 1 to read SV ICs from file
     saveflag = 0;       // 1 to save final SV vals to file
-    readfile = "./data/r.txt"; // File to read SV ICs
-    savefile = "./data/s.txt"; // File to save final SV
+    readfile = "r.txt"; // File to read SV ICs
+    savefile = "s.txt"; // File to save final SV
 
     trial = 0;
    
     writestd = 0; 
-    writeflag = 0;      // 1 to write data to file during sim
+    writeflag = 1;      // 1 to write data to file during sim
     dvarfile = "dvars.txt";  // File with SV to write.
     writetime = 0;      // time to start writing.
     writeint = 50;     // interval for writing.
@@ -38,12 +41,13 @@ Protocol::Protocol()
     pvarfile = "pvars.txt"; // File to specify cell params
     simvarfile = "simvars.txt";  // File to specify sim params
 
-    propertyoutfile = "./data/dt%d_%s.dat";
-    dvarsoutfile = "./data/dt%d_dvars.dat";
-    finalpropertyoutfile = "./data/dss%d_%s.dat";
-    finaldvarsoutfile = "./data/dss%d_pvars.dat";
+    propertyoutfile = "dt%d_%s.dat";
+    dvarsoutfile = "dt%d_dvars.dat";
+    finalpropertyoutfile = "dss%d_%s.dat";
+    finaldvarsoutfile = "dss%d_pvars.dat";
 
-    measflag = 0;       // 1 to track SV props during sim
+
+    measflag = 1;       // 1 to track SV props during sim
     measfile = "mvars.txt"; // File containing property names to track
     meastime = 0;       // time to start tracking props
     maxmeassize = 10;   // Max number of SVs to track
@@ -66,21 +70,27 @@ Protocol::Protocol()
     //type = "Cell";  // class name
     
     // make map of params
-    pars["tMax"]=&tMax;
-    pars["bcl"]=&bcl;
-    pars["stimval"]=&stimval;
-    pars["stimdur"]=&stimdur;
-    pars["stimt"]=&stimt;
-    pars["numstims"]=&numstims;
-    pars["numtrials"]=&numtrials;
-    pars["readflag"]=&readflag;
-    pars["saveflag"]=&saveflag;
-    pars["writeflag"]=&writeflag;
-    pars["writetime"]=&writetime;
-    pars["measflag"]=&measflag;
-    pars["meastime"]=&meastime;
-    pars["paceflag"]=&paceflag;
-    pars["maxdoutsize"]=&maxdoutsize;
+    pars.doubles["tMax"]=&tMax;
+    pars.doubles["bcl"]=&bcl;
+    pars.doubles["stimval"]=&stimval;
+    pars.doubles["stimdur"]=&stimdur;
+    pars.doubles["stimt"]=&stimt;
+    pars.doubles["numstims"]=&numstims;
+    pars.doubles["numtrials"]=&numtrials;
+    pars.doubles["readflag"]=&readflag;
+    pars.doubles["saveflag"]=&saveflag;
+    pars.doubles["writeflag"]=&writeflag;
+    pars.doubles["writetime"]=&writetime;
+    pars.doubles["measflag"]=&measflag;
+    pars.doubles["meastime"]=&meastime;
+    pars.doubles["paceflag"]=&paceflag;
+    pars.doubles["maxdoutsize"]=&maxdoutsize;
+    pars.strings["workingdir"]=&workingdir;
+    pars.strings["datadir"]=&datadir;
+    pars.strings["pvarfile"]=&pvarfile;
+    pars.strings["dvarfile"]=&dvarfile;
+    pars.strings["measfile"]=&measfile;
+    pars.strings["simvarfile"]=&simvarfile;
 
     //initalize cellMap
     //will only have an effect the first time it is called
@@ -114,6 +124,9 @@ void Protocol::copy(const Protocol& toCopy) {
 
     //##### Assign default parameters ##################
     
+    workingdir = toCopy.workingdir;
+    datadir = toCopy.datadir;
+
     doneflag = toCopy.doneflag;       // set to 0 to end simulation
     
     tMax = toCopy.tMax;   // max simulation time, ms
@@ -161,23 +174,28 @@ void Protocol::copy(const Protocol& toCopy) {
     vM = toCopy.vM;
 
     // make map of params
-    pars["tMax"]=&tMax;
-    pars["bcl"]=&bcl;
-    pars["stimval"]=&stimval;
-    pars["stimdur"]=&stimdur;
-    pars["stimt"]=&stimt;
-    pars["numstims"]=&numstims;
-    pars["numtrials"]=&numtrials;
-    pars["readflag"]=&readflag;
-    pars["saveflag"]=&saveflag;
-    pars["writeflag"]=&writeflag;
-    pars["writetime"]=&writetime;
-    pars["measflag"]=&measflag;
-    pars["meastime"]=&meastime;
-    pars["paceflag"]=&paceflag;
-    pars["maxdoutsize"]=&maxdoutsize;
+    pars.doubles["tMax"]=&tMax;
+    pars.doubles["bcl"]=&bcl;
+    pars.doubles["stimval"]=&stimval;
+    pars.doubles["stimdur"]=&stimdur;
+    pars.doubles["stimt"]=&stimt;
+    pars.doubles["numstims"]=&numstims;
+    pars.doubles["numtrials"]=&numtrials;
+    pars.doubles["readflag"]=&readflag;
+    pars.doubles["saveflag"]=&saveflag;
+    pars.doubles["writeflag"]=&writeflag;
+    pars.doubles["writetime"]=&writetime;
+    pars.doubles["measflag"]=&measflag;
+    pars.doubles["meastime"]=&meastime;
+    pars.doubles["paceflag"]=&paceflag;
+    pars.doubles["maxdoutsize"]=&maxdoutsize;
+    pars.strings["workingdir"]=&workingdir;
+    pars.strings["datadir"]=&datadir;
+    pars.strings["pvarfile"]=&pvarfile;
+    pars.strings["dvarfile"]=&dvarfile;
+    pars.strings["measfile"]=&measfile;
+    pars.strings["simvarfile"]=&simvarfile;
 
-   
     pnames = vector<string>(toCopy.pnames);
     for(i = 0; i < toCopy.pvals.size(); i++) {
         pvals.push_back(vector<string>(toCopy.pvals.at(i)));
@@ -528,11 +546,11 @@ cell->setVariableSelection(temp);
         int pCount = 0;
         //open i/o streams
         for(map<string,Measure>::iterator it = measures.begin(); it != measures.end(); it++) {
-            sprintf(writefile,propertyoutfile.c_str(),trial,it->second.varname.c_str());
+            sprintf(writefile,(workingdir + datadir + propertyoutfile).c_str(),trial,it->second.varname.c_str());
             it->second.setOutputfile(writefile);
         }
 
-        sprintf(writefile,dvarsoutfile.c_str(),trial);
+        sprintf(writefile,(workingdir + datadir + dvarsoutfile).c_str(),trial);
         cell->setOuputfileVariables(writefile);
 
         while(int(doneflag)&&(time<tMax)){
@@ -568,14 +586,14 @@ cell->setVariableSelection(temp);
       for (map<string,Measure>::iterator it = measures.begin(); it != measures.end(); it++){
           if(writestd)
             map2screen(it->second.getVariablesMap());
-          sprintf(writefile,finalpropertyoutfile.c_str(), trial, it->second.varname.c_str());
+          sprintf(writefile,(workingdir + datadir + finalpropertyoutfile).c_str(), trial, it->second.varname.c_str());
           it->second.setOutputfile(writefile);
           it->second.write(false, true);
           it->second.reset();
       } 
       
       // Output parameter values for each trial
-      sprintf(writefile, finaldvarsoutfile.c_str(), trial);
+      sprintf(writefile,(workingdir + datadir + finaldvarsoutfile).c_str(), trial);
       cell->setOutputfileConstants(writefile);
       cell->writeConstants();
  
@@ -586,7 +604,7 @@ cell->setVariableSelection(temp);
 // Format of file should be "variable name" tab "value"
 //#############################################################
 
-int Protocol::readpars(map<string, double*> varmap, string file)
+int Protocol::readpars(string file)
 {
     ifstream ifile;
     
@@ -603,11 +621,22 @@ int Protocol::readpars(map<string, double*> varmap, string file)
     
     while(!ifile.eof()){
         ifile >> name;
-        if(varmap.count(name)>0){
-            ifile >> num;
-            *varmap[name] = num;
-        }
+        ifile >> num;
+        try {
+            *pars.doubles.at(name) = num;
+        } catch (const std::out_of_range& oor) {}
+        try {
+            *pars.strings.at(name) = num;
+        } catch (const std::out_of_range& oor) {}
+        try {
+            *pars.ints.at(name) = num;
+        } catch (const std::out_of_range& oor) {}
+        try {
+            *pars.bools.at(name) = num;
+        } catch (const std::out_of_range& oor) {}
+
     }
+
     
     ifile.close();
     return 0;
@@ -921,12 +950,11 @@ int Protocol::readpvars(){
 //############################################################
 // Write the contents of varmap to a file
 //############################################################
-bool Protocol::writepars(map<string, double*> varmap, string file)
+bool Protocol::writepars(string file)
 {
     ofstream ofile;
     string name;
     double num;
-    map<string, double*>::iterator it;
     
     if(!ofile.is_open())
         ofile.open(file);
@@ -935,10 +963,19 @@ bool Protocol::writepars(map<string, double*> varmap, string file)
         return 1;
     }
     
-    for(it = varmap.begin(); it != varmap.end(); it++){
+    for(auto it = pars.doubles.begin(); it != pars.doubles.end(); it++){
         ofile << it->first << "\t" << *(it->second) << endl;
     }
-    
+    for(auto it = pars.strings.begin(); it != pars.strings.end(); it++){
+        ofile << it->first << "\t" << *(it->second) << endl;
+    }
+    for(auto it = pars.ints.begin(); it != pars.ints.end(); it++){
+        ofile << it->first << "\t" << *(it->second) << endl;
+    }
+    for(auto it = pars.bools.begin(); it != pars.bools.end(); it++){
+        ofile << it->first << "\t" << *(it->second) << endl;
+    }
+
     ofile.close();
     return 0;
   

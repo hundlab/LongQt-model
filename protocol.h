@@ -15,6 +15,7 @@
 #include <exception>
 #include <string>
 #include <list>
+#include <unordered_map>
 
 #include "kurata08.h"
 #include "measure.h"
@@ -23,6 +24,18 @@
 using namespace std;
 
 typedef Cell* (*CellInitializer)(void);
+
+template<class T>
+class variablesMap {
+  public:
+    std::map<T, bool*> bools;
+    std::map<T, int*> ints;
+    std::map<T, double*> doubles;
+    std::map<T, string*> strings;
+    int size() {
+        return bools.size() + ints.size() + doubles.size() + strings.size();
+    }
+};
 
 class Protocol
 {
@@ -46,12 +59,12 @@ class Protocol
     virtual int getNeededDOutputSize(); //get the size needed to construct the output array
     virtual int runSim();
     virtual bool runTrial();
-    virtual int readpars(map<string, double*> varmap, string file);
+    virtual int readpars(string file);
     virtual int parsemixedmap(map<string,double*> varmap, string file, vector<string>* cnames, vector<vector<string>>* twoDrnames);
     virtual int parse2Dmap(map<string,double*> varmap,map<string,double*> varmap2, string file, vector<string>* vnames, vector< vector<string> >* twoDmnames);
     virtual int resizemap(map<string,double*> varmap, string file, map<string, double*>* vars);
     virtual int readpvars();
-    virtual bool writepars(map<string, double*> varmap, string file); //write the contence of varmap to a file
+    virtual bool writepars(string file); //write the contence of pars to a file
     virtual bool writedvars(map<string, double*> varmap, string file); //write varmap keys to a file
     virtual bool write2Dmap(vector<string> vnames, vector< vector<string> > twoDmnames, string file);
     virtual void setTrial(unsigned int current_trial);
@@ -84,12 +97,14 @@ class Protocol
     
     string readfile,savefile,dvarfile,pvarfile, measfile, simvarfile, propertyoutfile, dvarsoutfile, finalpropertyoutfile, finaldvarsoutfile;
 
+    string datadir, workingdir;
+
     vector<string> pnames;              // stores cell param names
     vector< vector<string> > pvals;     // stores cell param vals
  
     
     //##### Declare maps for vars/params ##############
-    map<string, double*> pars;  // map of params
+    variablesMap<string> pars;  // map of params
     map<string, double*> parmap; // map for output params
     map<string, double*> datamap; // map for output state vars
 

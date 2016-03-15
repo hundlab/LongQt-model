@@ -983,29 +983,50 @@ bool Protocol::writepars(string file)
 //############################################################
 //Wirte the keys from varmap to a file
 //############################################################
-bool Protocol::writedvars(map<string, double*> varmap, string file)
+bool Protocol::writedvars(string file)
 {
+    set<string> selection = cell->getVariableSelection();
     ofstream ofile;
     string name;
-    double num;
-    map<string, double*>::iterator it;
     
     if(!ofile.is_open())
-        ofile.open(file);
+        ofile.open(file, ios_base::trunc);
     if(!ofile.is_open()){
         cout << "Error opening " << file << endl;
-        return 1;
+        return false;
     }
 
-    for(it = varmap.begin(); it != varmap.end(); it++){
-        ofile << it->first << endl;
+    for(auto it = selection.begin(); it != selection.end(); it++){
+        ofile << *it << endl;
     }
 
     ofile.close();
-    return 0;
+    return true;
 
 }
+bool Protocol::readdvars(string file) {
+    bool toReturn = true;
+    ifstream ifile;
+    string name;
+    set<string> selection;
+    
+    if(!ifile.is_open()) {
+        ifile.open(file);
+    }
+    if(!ifile.good()){
+        cout << "Error opening " << file << endl;
+        return false;
+    }
 
+    while(!ifile.eof()) {
+        ifile >> name;
+        if(!selection.insert(name).second) {
+            toReturn = false;
+        }
+    }
+    cell->setVariableSelection(selection);
+    return toReturn;
+}
 void Protocol::setTrial(unsigned int current_trial) {
     trial = current_trial;
     assign_cell_pars(pnames,pvals,trial);   // Assign cell pars

@@ -65,7 +65,8 @@ class Protocol
     virtual int resizemap(map<string,double*> varmap, string file, map<string, double*>* vars);
     virtual int readpvars();
     virtual bool writepars(string file); //write the contence of pars to a file
-    virtual bool writedvars(map<string, double*> varmap, string file); //write varmap keys to a file
+    virtual bool writedvars(string file); //write varmap keys to a file
+    virtual bool readdvars(string file);
     virtual bool write2Dmap(vector<string> vnames, vector< vector<string> > twoDmnames, string file);
     virtual void setTrial(unsigned int current_trial);
     virtual unsigned int getTrial();

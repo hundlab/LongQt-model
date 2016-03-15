@@ -946,12 +946,13 @@ bool Protocol::writepars(map<string, double*> varmap, string file)
 //############################################################
 //Wirte the keys from varmap to a file
 //############################################################
-bool Protocol::writedvars(map<string, double*> varmap, string file)
+bool Protocol::writedvars(string file)
 {
     ofstream ofile;
     string name;
     double num;
-    map<string, double*>::iterator it;
+    set<string>::iterator it;
+    set<string> selection = this->cell.getVariablesSelection();
     
     if(!ofile.is_open())
         ofile.open(file);
@@ -960,13 +961,34 @@ bool Protocol::writedvars(map<string, double*> varmap, string file)
         return 1;
     }
 
-    for(it = varmap.begin(); it != varmap.end(); it++){
+    for(it = selection.begin(); it != selection.end(); it++){
         ofile << it->first << endl;
     }
 
     ofile.close();
     return 0;
 
+}
+
+bool Protocol::readdvars(string file) {
+    set<string>::iterator it;
+    set<string> selection = this->cell.getVariableSelection();
+    ifstream ifile;
+    string name;
+
+    if(!ifile.is_open())
+        ifile.open(file);
+    if(!ifile.is_open()){
+        cout << "Error opening " << file << endl;
+        return 1;
+    }
+
+    while(!ifile.eof()) {
+        ifile >> name;
+        selection.insert(name);
+    }
+
+    this->cell.setVariableSelection(selection);
 }
 
 void Protocol::setTrial(unsigned int current_trial) {

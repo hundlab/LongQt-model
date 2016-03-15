@@ -24,6 +24,14 @@
 using namespace std;
 
 typedef Cell* (*CellInitializer)(void);
+typedef string (*Getter)(void);
+typedef void (*Setter)(string);
+
+struct GetSetRef {
+    Getter get;
+    Setter set;
+    string type;
+};
 
 template<class T>
 class variablesMap {
@@ -105,7 +113,7 @@ class Protocol
  
     
     //##### Declare maps for vars/params ##############
-    variablesMap<string> pars;  // map of params
+    map<string, GetSetRef> pars;
     map<string, double*> parmap; // map for output params
     map<string, double*> datamap; // map for output state vars
 

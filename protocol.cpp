@@ -70,27 +70,23 @@ Protocol::Protocol()
     //type = "Cell";  // class name
     
     // make map of params
-    pars.doubles["tMax"]=&tMax;
-    pars.doubles["bcl"]=&bcl;
-    pars.doubles["stimval"]=&stimval;
-    pars.doubles["stimdur"]=&stimdur;
-    pars.doubles["stimt"]=&stimt;
-    pars.doubles["numstims"]=&numstims;
-    pars.doubles["numtrials"]=&numtrials;
-    pars.doubles["readflag"]=&readflag;
-    pars.doubles["saveflag"]=&saveflag;
-    pars.doubles["writeflag"]=&writeflag;
-    pars.doubles["writetime"]=&writetime;
-    pars.doubles["measflag"]=&measflag;
-    pars.doubles["meastime"]=&meastime;
-    pars.doubles["paceflag"]=&paceflag;
-    pars.doubles["maxdoutsize"]=&maxdoutsize;
-    pars.strings["workingdir"]=&workingdir;
-    pars.strings["datadir"]=&datadir;
-    pars.strings["pvarfile"]=&pvarfile;
-    pars.strings["dvarfile"]=&dvarfile;
-    pars.strings["measfile"]=&measfile;
-    pars.strings["simvarfile"]=&simvarfile;
+    pars["tMax"] = {.type = "double", .get = [] () {return to_string(tMax);}, .set = [] (string& value) {tMax = std::stod(value);}};
+    pars["bcl"] = {.type = "double", .get = [] () {return to_string(bcl);}, .set = [] (string& value) {bcl = std::stod(value);}};
+    pars["stimval"]={.type = "double", .get = [] () {return to_string(stimval);}, .set = [] (string& value) {stimval = std::stod(value);}};
+    pars["stimdur"]={.type = "double", .get = [] () {return to_string(stimdur);}, .set = [] (string& value) {stimdur = std::stod(value);}};
+    pars["stimt"]={.type = "double", .get = [] () {return to_string(stimt);}, .set = [] (string& value) {stimt = std::stod(value);}};
+    pars["numstims"]={.type = "int", .get = [] () {return to_string(numstims);}, .set = [] (string& value) {numstims = std::stoi(value);}};
+    pars["numtrials"]={.type = "int", .get = [] () {return to_string(numtrials);}, .set = [] (string& value) {numtrials = std::stoi(value);}};
+    pars["readflag"]={.type = "bool", .get = [] () {return to_string(readflag);}, .set = [] (string& value) {readflag = stob(value);}};
+    pars["saveflag"]={.type = "bool", .get = [] () {return to_string(saveflag);}, .set = [] (string& value) {saveflag = stob(value);}};
+    pars["writetime"]={.type = "double", .get = [] () {return to_string(writetime);}, .set = [] (string& value) {writetime = std::stod(value);}};
+    pars["meastime"]={.type = "double", .get = [] () {return to_string(meastime);}, .set = [] (string& value) {meastime = std::stod(value);}};
+    pars["paceflag"]={.type = "bool", .get = [] () {return to_string(paceflag);}, .set = [] (string& value) {paceflag = stob(value);}};
+    pars["datadir"]={.type = "directory", .get = [] () {return datadir;}, .set = [] (string& value) {datadir = value;}};
+    pars["pvarfile"]={.type = "file", .get = [] () {return pvarfile;}, .set = [] (string& value) {pvarfile = value;}};
+    pars["dvarfile"]={.type = "file", .get = [] () {return dvarfile;}, .set = [] (string& value) {dvarfile = value;}};
+    pars["measfile"]={.type = "file", .get = [] () {return measfile;}, .set = [] (string& value) {measfile = value;}};
+    pars["simvarfile"]={.type = "file", .get = [] () {return simvarfile;}, .set = [] (string& value) {simvarfile = value;}};
 
     //initalize cellMap
     //will only have an effect the first time it is called
@@ -174,28 +170,8 @@ void Protocol::copy(const Protocol& toCopy) {
     vM = toCopy.vM;
 
     // make map of params
-    pars.doubles["tMax"]=&tMax;
-    pars.doubles["bcl"]=&bcl;
-    pars.doubles["stimval"]=&stimval;
-    pars.doubles["stimdur"]=&stimdur;
-    pars.doubles["stimt"]=&stimt;
-    pars.doubles["numstims"]=&numstims;
-    pars.doubles["numtrials"]=&numtrials;
-    pars.doubles["readflag"]=&readflag;
-    pars.doubles["saveflag"]=&saveflag;
-    pars.doubles["writeflag"]=&writeflag;
-    pars.doubles["writetime"]=&writetime;
-    pars.doubles["measflag"]=&measflag;
-    pars.doubles["meastime"]=&meastime;
-    pars.doubles["paceflag"]=&paceflag;
-    pars.doubles["maxdoutsize"]=&maxdoutsize;
-    pars.strings["workingdir"]=&workingdir;
-    pars.strings["datadir"]=&datadir;
-    pars.strings["pvarfile"]=&pvarfile;
-    pars.strings["dvarfile"]=&dvarfile;
-    pars.strings["measfile"]=&measfile;
-    pars.strings["simvarfile"]=&simvarfile;
-
+    pars = toCopy.pars;
+    
     pnames = vector<string>(toCopy.pnames);
     for(i = 0; i < toCopy.pvals.size(); i++) {
         pvals.push_back(vector<string>(toCopy.pvals.at(i)));
@@ -623,18 +599,8 @@ int Protocol::readpars(string file)
         ifile >> name;
         ifile >> num;
         try {
-            *pars.doubles.at(name) = num;
+            *pars.at(name).set(num);
         } catch (const std::out_of_range& oor) {}
-        try {
-            *pars.strings.at(name) = num;
-        } catch (const std::out_of_range& oor) {}
-        try {
-            *pars.ints.at(name) = num;
-        } catch (const std::out_of_range& oor) {}
-        try {
-            *pars.bools.at(name) = num;
-        } catch (const std::out_of_range& oor) {}
-
     }
 
     
@@ -963,17 +929,8 @@ bool Protocol::writepars(string file)
         return 1;
     }
     
-    for(auto it = pars.doubles.begin(); it != pars.doubles.end(); it++){
-        ofile << it->first << "\t" << *(it->second) << endl;
-    }
-    for(auto it = pars.strings.begin(); it != pars.strings.end(); it++){
-        ofile << it->first << "\t" << *(it->second) << endl;
-    }
-    for(auto it = pars.ints.begin(); it != pars.ints.end(); it++){
-        ofile << it->first << "\t" << *(it->second) << endl;
-    }
-    for(auto it = pars.bools.begin(); it != pars.bools.end(); it++){
-        ofile << it->first << "\t" << *(it->second) << endl;
+    for(auto it = pars.begin(); it != pars.end(); it++){
+        ofile << it->first << "\t" << it->second->get() << endl;
     }
 
     ofile.close();

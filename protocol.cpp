@@ -7,8 +7,18 @@
 // Email thomas.hund@osumc.edu
 //#################################################
 
+#include <cstring>
 
 #include "protocol.h"
+
+//helper functions
+string to_string(const bool& b) {
+    return b ? "true" : "false";
+}
+
+bool stob(const string& s) {
+    return (strcasecmp("true",s.c_str()) == 0);
+}
 
 //######################################################
 // Default Constructor 
@@ -21,8 +31,7 @@ Protocol::Protocol()
     
     tMax = 10000;   // max simulation time, ms
     
-    datadir = "data/";
-    workingdir = "./";
+    datadir = "./data/";
 
     readflag = 0;       // 1 to read SV ICs from file
     saveflag = 0;       // 1 to save final SV vals to file
@@ -70,28 +79,31 @@ Protocol::Protocol()
     //type = "Cell";  // class name
     
     // make map of params
-    pars["tMax"] = {.type = "double", .get = [] () {return to_string(tMax);}, .set = [] (string& value) {tMax = std::stod(value);}};
-    pars["bcl"] = {.type = "double", .get = [] () {return to_string(bcl);}, .set = [] (string& value) {bcl = std::stod(value);}};
-    pars["stimval"]={.type = "double", .get = [] () {return to_string(stimval);}, .set = [] (string& value) {stimval = std::stod(value);}};
-    pars["stimdur"]={.type = "double", .get = [] () {return to_string(stimdur);}, .set = [] (string& value) {stimdur = std::stod(value);}};
-    pars["stimt"]={.type = "double", .get = [] () {return to_string(stimt);}, .set = [] (string& value) {stimt = std::stod(value);}};
-    pars["numstims"]={.type = "int", .get = [] () {return to_string(numstims);}, .set = [] (string& value) {numstims = std::stoi(value);}};
-    pars["numtrials"]={.type = "int", .get = [] () {return to_string(numtrials);}, .set = [] (string& value) {numtrials = std::stoi(value);}};
-    pars["readflag"]={.type = "bool", .get = [] () {return to_string(readflag);}, .set = [] (string& value) {readflag = stob(value);}};
-    pars["saveflag"]={.type = "bool", .get = [] () {return to_string(saveflag);}, .set = [] (string& value) {saveflag = stob(value);}};
-    pars["writetime"]={.type = "double", .get = [] () {return to_string(writetime);}, .set = [] (string& value) {writetime = std::stod(value);}};
-    pars["meastime"]={.type = "double", .get = [] () {return to_string(meastime);}, .set = [] (string& value) {meastime = std::stod(value);}};
-    pars["paceflag"]={.type = "bool", .get = [] () {return to_string(paceflag);}, .set = [] (string& value) {paceflag = stob(value);}};
-    pars["datadir"]={.type = "directory", .get = [] () {return datadir;}, .set = [] (string& value) {datadir = value;}};
-    pars["pvarfile"]={.type = "file", .get = [] () {return pvarfile;}, .set = [] (string& value) {pvarfile = value;}};
-    pars["dvarfile"]={.type = "file", .get = [] () {return dvarfile;}, .set = [] (string& value) {dvarfile = value;}};
-    pars["measfile"]={.type = "file", .get = [] () {return measfile;}, .set = [] (string& value) {measfile = value;}};
-    pars["simvarfile"]={.type = "file", .get = [] () {return simvarfile;}, .set = [] (string& value) {simvarfile = value;}};
+    GetSetRef toInsert;
+    pars["tMax"] = toInsert.Initialize("double",[this] () {return to_string(tMax);},[this] (const string& value) {tMax = std::stod(value);});
+    pars["bcl"] = toInsert.Initialize("double", [this] () {return to_string(bcl);}, [this] (const string& value) {bcl = std::stod(value);});
+    pars["stimval"]= toInsert.Initialize("double", [this] () {return to_string(stimval);}, [this] (const string& value) {stimval = std::stod(value);});
+    pars["stimdur"]= toInsert.Initialize("double", [this] () {return to_string(stimdur);}, [this] (const string& value) {stimdur = std::stod(value);});
+    pars["stimt"]= toInsert.Initialize("double", [this] () {return to_string(stimt);}, [this] (const string& value) {stimt = std::stod(value);});
+    pars["numstims"]= toInsert.Initialize("int", [this] () {return to_string(numstims);}, [this] (const string& value) {numstims = std::stoi(value);});
+    pars["numtrials"]= toInsert.Initialize("int", [this] () {return to_string(numtrials);}, [this] (const string& value) {numtrials = std::stoi(value);});
+    pars["readflag"]= toInsert.Initialize("bool", [this] () {return to_string(readflag);}, [this] (const string& value) {readflag = stob(value);});
+    pars["saveflag"]= toInsert.Initialize("bool", [this] () {return to_string(saveflag);}, [this] (const string& value) {saveflag = stob(value);});
+    pars["writetime"]= toInsert.Initialize("double", [this] () {return to_string(writetime);}, [this] (const string& value) {writetime = std::stod(value);});
+    pars["meastime"]= toInsert.Initialize("double", [this] () {return to_string(meastime);}, [this] (const string& value) {meastime = std::stod(value);});
+    pars["paceflag"]= toInsert.Initialize("bool", [this] () {return to_string(paceflag);}, [this] (const string& value) {paceflag = stob(value);});
+    pars["datadir"]= toInsert.Initialize("directory", [this] () {return datadir;}, [this] (const string& value) {datadir = value;});
+    pars["pvarfile"]= toInsert.Initialize("file", [this] () {return pvarfile;}, [this] (const string& value) {pvarfile = value;});
+    pars["dvarfile"]= toInsert.Initialize("file", [this] () {return dvarfile;}, [this] (const string& value) {dvarfile = value;});
+    pars["measfile"]= toInsert.Initialize("file", [this] () {return measfile;}, [this] (const string& value) {measfile = value;});
+    pars["simvarfile"]= toInsert.Initialize("file", [this] () {return simvarfile;}, [this] (const string& value) {simvarfile = value;});
 
     //initalize cellMap
     //will only have an effect the first time it is called
     cellMap["ControlSa"] = [] () {return (Cell*) new ControlSa;};
 };
+
+
 
 //######################################################
 // Destructor for parent cell class.
@@ -120,7 +132,6 @@ void Protocol::copy(const Protocol& toCopy) {
 
     //##### Assign default parameters ##################
     
-    workingdir = toCopy.workingdir;
     datadir = toCopy.datadir;
 
     doneflag = toCopy.doneflag;       // set to 0 to end simulation
@@ -483,7 +494,7 @@ int Protocol::getNeededDOutputSize(){
 // Run the cell simulation
 //############################################################
 int Protocol::runSim() {
-    int return_val;
+    int return_val = 0;
 
     //###############################################################
     // Loop over number of trials
@@ -522,11 +533,11 @@ cell->setVariableSelection(temp);
         int pCount = 0;
         //open i/o streams
         for(map<string,Measure>::iterator it = measures.begin(); it != measures.end(); it++) {
-            sprintf(writefile,(workingdir + datadir + propertyoutfile).c_str(),trial,it->second.varname.c_str());
+            sprintf(writefile,(datadir + propertyoutfile).c_str(),trial,it->second.varname.c_str());
             it->second.setOutputfile(writefile);
         }
 
-        sprintf(writefile,(workingdir + datadir + dvarsoutfile).c_str(),trial);
+        sprintf(writefile,(datadir + dvarsoutfile).c_str(),trial);
         cell->setOuputfileVariables(writefile);
 
         while(int(doneflag)&&(time<tMax)){
@@ -562,17 +573,18 @@ cell->setVariableSelection(temp);
       for (map<string,Measure>::iterator it = measures.begin(); it != measures.end(); it++){
           if(writestd)
             map2screen(it->second.getVariablesMap());
-          sprintf(writefile,(workingdir + datadir + finalpropertyoutfile).c_str(), trial, it->second.varname.c_str());
+          sprintf(writefile,(datadir + finalpropertyoutfile).c_str(), trial, it->second.varname.c_str());
           it->second.setOutputfile(writefile);
           it->second.write(false, true);
           it->second.reset();
       } 
       
       // Output parameter values for each trial
-      sprintf(writefile,(workingdir + datadir + finaldvarsoutfile).c_str(), trial);
+      sprintf(writefile,(datadir + finaldvarsoutfile).c_str(), trial);
       cell->setOutputfileConstants(writefile);
       cell->writeConstants();
- 
+
+      return true; 
 }
 
 //#############################################################
@@ -599,7 +611,7 @@ int Protocol::readpars(string file)
         ifile >> name;
         ifile >> num;
         try {
-            *pars.at(name).set(num);
+            pars.at(name).set(to_string(num));
         } catch (const std::out_of_range& oor) {}
     }
 
@@ -920,7 +932,6 @@ bool Protocol::writepars(string file)
 {
     ofstream ofile;
     string name;
-    double num;
     
     if(!ofile.is_open())
         ofile.open(file);
@@ -930,7 +941,7 @@ bool Protocol::writepars(string file)
     }
     
     for(auto it = pars.begin(); it != pars.end(); it++){
-        ofile << it->first << "\t" << it->second->get() << endl;
+        ofile << it->first << "\t" << it->second.get() << endl;
     }
 
     ofile.close();

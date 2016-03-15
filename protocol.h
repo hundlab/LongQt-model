@@ -24,24 +24,16 @@
 using namespace std;
 
 typedef Cell* (*CellInitializer)(void);
-typedef string (*Getter)(void);
-typedef void (*Setter)(string);
 
 struct GetSetRef {
-    Getter get;
-    Setter set;
+    function<string(void)> get;
+    function<void(const string&)> set;
     string type;
-};
-
-template<class T>
-class variablesMap {
-  public:
-    std::map<T, bool*> bools;
-    std::map<T, int*> ints;
-    std::map<T, double*> doubles;
-    std::map<T, string*> strings;
-    int size() {
-        return bools.size() + ints.size() + doubles.size() + strings.size();
+    GetSetRef Initialize(string type, function<string(void)> get, function<void(const string&)> set) {
+        this->type = type;
+        this->get = get;
+        this->set = set;
+        return *this;
     }
 };
 
@@ -91,13 +83,15 @@ class Protocol
     double vM;         // membrane potential, mV
     double time;       // time, ms
     //##### Declare class params ##############
-    double bcl,stimval,stimdur,stimt, numstims;   //variables for pacing.
+    double bcl,stimval,stimdur,stimt;
+    int numstims;   //variables for pacing.
     double meastime,writetime;
     double writeint;
     double doneflag;
-    double readflag,saveflag,writeflag,measflag,paceflag;
-    double numtrials;
-    double stimflag, stimcounter;
+    bool readflag,saveflag,writeflag,measflag,paceflag;
+    int numtrials;
+    bool stimflag;
+    double stimcounter;
     int writestd;    
     double tMax;
     double maxdoutsize,maxmeassize;
@@ -106,7 +100,7 @@ class Protocol
     
     string readfile,savefile,dvarfile,pvarfile, measfile, simvarfile, propertyoutfile, dvarsoutfile, finalpropertyoutfile, finaldvarsoutfile;
 
-    string datadir, workingdir;
+    string datadir;
 
     vector<string> pnames;              // stores cell param names
     vector< vector<string> > pvals;     // stores cell param vals

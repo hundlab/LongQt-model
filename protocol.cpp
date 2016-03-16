@@ -12,11 +12,11 @@
 #include "protocol.h"
 
 //helper functions
-string to_string(const bool& b) {
+string Protocol::to_string(const bool& b) {
     return b ? "true" : "false";
 }
 
-bool stob(const string& s) {
+bool Protocol::stob(const string& s) {
     return (strcasecmp("true",s.c_str()) == 0);
 }
 
@@ -80,24 +80,24 @@ Protocol::Protocol()
     
     // make map of params
     GetSetRef toInsert;
-    pars["tMax"] = toInsert.Initialize("double",[this] () {return to_string(tMax);},[this] (const string& value) {tMax = std::stod(value);});
-    pars["bcl"] = toInsert.Initialize("double", [this] () {return to_string(bcl);}, [this] (const string& value) {bcl = std::stod(value);});
-    pars["stimval"]= toInsert.Initialize("double", [this] () {return to_string(stimval);}, [this] (const string& value) {stimval = std::stod(value);});
-    pars["stimdur"]= toInsert.Initialize("double", [this] () {return to_string(stimdur);}, [this] (const string& value) {stimdur = std::stod(value);});
-    pars["stimt"]= toInsert.Initialize("double", [this] () {return to_string(stimt);}, [this] (const string& value) {stimt = std::stod(value);});
-    pars["numstims"]= toInsert.Initialize("int", [this] () {return to_string(numstims);}, [this] (const string& value) {numstims = std::stoi(value);});
-    pars["numtrials"]= toInsert.Initialize("int", [this] () {return to_string(numtrials);}, [this] (const string& value) {numtrials = std::stoi(value);});
+    pars["tMax"] = toInsert.Initialize("double",[this] () {return std::to_string(tMax);},[this] (const string& value) {tMax = std::stod(value);});
+    pars["bcl"] = toInsert.Initialize("double", [this] () {return std::to_string(bcl);}, [this] (const string& value) {bcl = std::stod(value);});
+    pars["stimval"]= toInsert.Initialize("double", [this] () {return std::to_string(stimval);}, [this] (const string& value) {stimval = std::stod(value);});
+    pars["stimdur"]= toInsert.Initialize("double", [this] () {return std::to_string(stimdur);}, [this] (const string& value) {stimdur = std::stod(value);});
+    pars["stimt"]= toInsert.Initialize("double", [this] () {return std::to_string(stimt);}, [this] (const string& value) {stimt = std::stod(value);});
+    pars["numstims"]= toInsert.Initialize("int", [this] () {return std::to_string(numstims);}, [this] (const string& value) {numstims = std::stoi(value);});
+    pars["numtrials"]= toInsert.Initialize("int", [this] () {return std::to_string(numtrials);}, [this] (const string& value) {numtrials = std::stoi(value);});
     pars["readflag"]= toInsert.Initialize("bool", [this] () {return to_string(readflag);}, [this] (const string& value) {readflag = stob(value);});
     pars["saveflag"]= toInsert.Initialize("bool", [this] () {return to_string(saveflag);}, [this] (const string& value) {saveflag = stob(value);});
-    pars["writetime"]= toInsert.Initialize("double", [this] () {return to_string(writetime);}, [this] (const string& value) {writetime = std::stod(value);});
-    pars["meastime"]= toInsert.Initialize("double", [this] () {return to_string(meastime);}, [this] (const string& value) {meastime = std::stod(value);});
+    pars["writetime"]= toInsert.Initialize("double", [this] () {return std::to_string(writetime);}, [this] (const string& value) {writetime = std::stod(value);});
+    pars["meastime"]= toInsert.Initialize("double", [this] () {return std::to_string(meastime);}, [this] (const string& value) {meastime = std::stod(value);});
     pars["paceflag"]= toInsert.Initialize("bool", [this] () {return to_string(paceflag);}, [this] (const string& value) {paceflag = stob(value);});
     pars["datadir"]= toInsert.Initialize("directory", [this] () {return datadir;}, [this] (const string& value) {datadir = value;});
     pars["pvarfile"]= toInsert.Initialize("file", [this] () {return pvarfile;}, [this] (const string& value) {pvarfile = value;});
     pars["dvarfile"]= toInsert.Initialize("file", [this] () {return dvarfile;}, [this] (const string& value) {dvarfile = value;});
     pars["measfile"]= toInsert.Initialize("file", [this] () {return measfile;}, [this] (const string& value) {measfile = value;});
     pars["simvarfile"]= toInsert.Initialize("file", [this] () {return simvarfile;}, [this] (const string& value) {simvarfile = value;});
-
+    pars["celltype"]= toInsert.Initialize("cell", [this] () {return cell->type;}, [this] (const string& value) {this->setCell(value);}); 
     //initalize cellMap
     //will only have an effect the first time it is called
     cellMap["ControlSa"] = [] () {return (Cell*) new ControlSa;};
@@ -1004,7 +1004,7 @@ unsigned int Protocol::getTrial() {
     return trial;
 }
 
-bool Protocol::setCell(string type, bool reset) {
+bool Protocol::setCell(const string& type, bool reset) {
     if(cell != NULL && type == cell->type && !reset) {
         return false;
     }

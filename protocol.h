@@ -49,41 +49,29 @@ class Protocol
     //##### Declare class functions ##############
     virtual int stim();
     virtual int assign_cell_pars(vector<string> pnames, vector< vector<string> > pvals, int trialnum);
-    virtual map<string, double*> resizemap(map<string,double*> varmap, string file);
-    virtual map<string, double*> resizemap(map<string,double*> varmap, vector<string> names);
-    virtual tuple< vector<string>, vector< vector<string> > > parse2Dmap(map<string,double*> varmap,map<string,double*> varmap2, string file);
-    virtual tuple< vector<string>, vector< vector<string> > > parsemixedmap(map<string,double*> varmap, string file);
-    virtual map<string,double> copymapvals(map<string, double*> varmap);
-    virtual int map2screen(map<string, double*> varmap);
-    virtual int map2screen(map<string, double> varmap);
-    virtual int getNeededDOutputSize(); //get the size needed to construct the output array
     virtual int runSim();
     virtual bool runTrial();
     virtual int readpars(string file);
-    virtual int parsemixedmap(map<string,double*> varmap, string file, vector<string>* cnames, vector<vector<string>>* twoDrnames);
-    virtual int parse2Dmap(map<string,double*> varmap,map<string,double*> varmap2, string file, vector<string>* vnames, vector< vector<string> >* twoDmnames);
-    virtual int resizemap(map<string,double*> varmap, string file, map<string, double*>* vars);
+/*!*/    virtual int parsemixedmap(map<string,double*> varmap, string file, vector<string>* cnames, vector<vector<string>>* twoDrnames);
     virtual int readpvars();
     virtual bool writepars(string file); //write the contence of pars to a file
     virtual bool writedvars(string file); //write varmap keys to a file
     virtual bool readdvars(string file);
-    virtual bool write2Dmap(vector<string> vnames, vector< vector<string> > twoDmnames, string file);
+/*!*/    virtual bool write2Dmap(vector<string> vnames, vector< vector<string> > twoDmnames, string file);
     virtual void setTrial(unsigned int current_trial);
     virtual unsigned int getTrial();
-    virtual int parse2Dmap(map<string,double*> varmap,set<string> vars2, string file, vector<string>* vnames, vector< vector<string> >* twoDmnames);
     virtual bool writeMVarsFile(string file);
     virtual bool readMvarsFile(string filename);
     virtual bool setCell(const string& type, bool reset = false);
     virtual list<string> cellOptions();
 
+    //#### Declare Static helper functions #####
     static string to_string(const bool& b);
     static bool stob(const string& s);
 
 
     //##### Declare class variables ##############
     Cell* cell;        // pointer to cell class
-    Output* douts;     // point to output class for writing data
-    Output *ics;        // Output for saving SVs at end of sim.
     double vM;         // membrane potential, mV
     double time;       // time, ms
     //##### Declare class params ##############
@@ -112,8 +100,6 @@ class Protocol
     
     //##### Declare maps for vars/params ##############
     map<string, GetSetRef> pars;
-    map<string, double*> parmap; // map for output params
-    map<string, double*> datamap; // map for output state vars
 
     const map<string,Measure>& Measures = cref(measures);
     bool addMeasure(Measure toInsert);
@@ -123,7 +109,7 @@ class Protocol
     void removeFromMeasureSelection(string measureName, string property);
 
     private:
-    unsigned int trial;
+    int trial;
     map<string,Measure> measures; // set of measure class for measuring SV props.
 
     protected:

@@ -191,20 +191,8 @@ void Protocol::copy(const Protocol& toCopy) {
     if(toCopy.cell != NULL) {
         cell = toCopy.cell->clone();
     }
-    if(toCopy.ics != NULL) {
-            ics = new Output(*toCopy.ics);
-    }
 
     measures = toCopy.measures;
-
-    parmap = map<string, double*>(toCopy.parmap);
-    for(it = parmap.begin(); it != parmap.end(); it++) {
-        parmap[it->first] = cell->pars[it->first];
-    }
-    datamap = map<string, double*>(toCopy.datamap);
-    for(it = datamap.begin(); it != datamap.end(); it++) {
-        datamap[it->first] =  cell->vars[it->first];
-    }
 
 }
 
@@ -299,196 +287,27 @@ int Protocol::assign_cell_pars(vector<string> pnames, vector< vector<string> > p
     return 1;
 };
 
-
-
-//#############################################################
-// Resize varmap based on list in file.
-//#############################################################
-map<string, double*> Protocol::resizemap(map<string,double*> varmap, string file)
-{
-    ifstream ifile;
-    map<string, double*> vars;
-    string name;
-    
-    ifile.open(file);
-    if(!ifile.is_open()){
+bool Protocol::write2Dmap(vector<string> vnames, vector< vector<string> > twoDmnames, string file) {
+    int ret = 0;
+    unsigned int i,j;
+    ofstream out;
+    out.open(file);
+    if(!out.is_open()){
         cout << "Error opening " << file << endl;
-        exit(1);
+        return 1;
     }
-    
-    while(!ifile.eof()){
-        ifile >> name;
-        if(varmap.count(name)>0)
-            vars[name] = varmap[name];
-    }
-    ifile.close();
-    return vars;
-};
 
-// Resize varmap based on list.
-map<string, double*> Protocol::resizemap(map<string,double*> varmap, vector<string> names)
-{
-    unsigned int i;
-    map<string, double*> vars;
-    
-    for (i=0; i<names.size(); i++){
-        if(varmap.count(names[i])>0)
-            vars[names[i]] = varmap[names[i]];
-    }
-    
-    return vars;
-};
-
-//#############################################################
-// Create vectors based on 2D list in file.  First row element is checked in varmap
-// and gets stored in vector, rest of row checked in varmap2 and used to create row in 2D vector.
-// Returns vector with first column and rest of file in 2D vector.
-//#############################################################
-tuple< vector<string>, vector< vector<string> > > Protocol::parse2Dmap(map<string,double*> varmap,map<string,double*> varmap2, string file)
-{
-    ifstream ifile;
-    string line, name;
-    
-    vector<string> vnames;
-    vector<string> mnames;
-    
-    vector< vector<string> > twoDmnames;
-    
-    ifile.open(file);
-    if(!ifile.is_open()){
-        cout << "Error opening " << file << endl;
-        exit(1);
-    }
-    
-    int counter = 0;
-    
-    while(!ifile.eof()){
-        getline(ifile,line);
-        stringstream linestream(line);
-        linestream >> name;
-        
-        if(varmap.count(name)>0){
-            vnames.push_back(name);
-            
-            while (!linestream.eof()) {
-                linestream >> name;
-                if(varmap2.count(name)>0){
-                    mnames.push_back(name);
-                }
-            }
-            if (mnames.size()>0)
-                twoDmnames.push_back(mnames);
-            else
-                vnames.pop_back();
-            
-            mnames.clear();
+    for(i = 0; i < vnames.size(); i++) {
+        out << vnames[i] << "\t";
+        for(j = 0; j < twoDmnames[i].size(); j++){
+            out << twoDmnames[i][j] << "\t";
         }
-        counter++;
-        
+        out << endl;
     }
-    ifile.close();
-    return make_tuple(vnames,twoDmnames);
-};
 
-//#############################################################
-// Create vectors based on mixed list in file.  First row element is checked in varmap
-// and gets stored in vector, rest of row used to create row in 2D vector.
-// Returns vector with first column and rest of file in 2D vector.
-//#############################################################
-tuple< vector<string>, vector< vector<string> > > Protocol::parsemixedmap(map<string,double*> varmap, string file)
-{
-    ifstream ifile;
-    string line, name;
-    
-    vector<string> cnames;
-    vector<string> rnames;
-    
-    vector< vector<string> > twoDrnames;
-    
-    ifile.open(file);
-    if(!ifile.is_open()){
-        cout << "Error opening " << file << endl;
-        exit(1);
-    }
-    
-    int counter = 0;
-    
-    while(!ifile.eof()){
-        getline(ifile,line);
-        stringstream linestream(line);
-        linestream >> name;
-        
-        if(varmap.count(name)>0){
-            cnames.push_back(name);
-            
-            while (!linestream.eof()) {
-                linestream >> name;
-                rnames.push_back(name);
-            }
-            if (rnames.size()>0)
-                twoDrnames.push_back(rnames);
-            else
-                cnames.pop_back();
-            
-            rnames.clear();
-        }
-        counter++;
-        
-    }
-    ifile.close();
-    return make_tuple(cnames,twoDrnames);
-};
+    return ret;
+}
 
-//#############################################################
-// Returns copy of variable values (not pointers) in varmap.
-//#############################################################
-map<string,double> Protocol::copymapvals(map<string, double*> varmap)
-{
-    map<string, double> vars;
-    map<string, double*>::iterator p;
-    
-    for(p=varmap.begin(); p!=varmap.end(); ++p)
-        vars[p->first] = *p->second;
-    
-    return vars;
-};
-
-//#############################################################
-// Write values of variables in varmap to screen.
-//#############################################################
-int Protocol::map2screen(map<string, double*> varmap)
-{
-    map<string, double*>::iterator p;
-    
-    for(p=varmap.begin(); p!=varmap.end(); ++p)
-        cout << p->first << " = " << *p->second << "; ";
-    
-    cout << endl;
-    
-    return 1;
-};
-
-//#############################################################
-// Write values of variables in varmap to screen.
-//#############################################################
-int Protocol::map2screen(map<string, double> varmap)
-{
-    map<string, double>::iterator p;
-    
-    for(p=varmap.begin(); p!=varmap.end(); ++p)
-        cout << p->first << " = " << p->second << "; ";
-    
-    cout << endl;
-    
-    return 1;
-};
-
-//############################################################
-// Get the number of Doutput arrays to create
-//############################################################
-int Protocol::getNeededDOutputSize(){
-    return 0;//int(mvnames.size()+1+numtrials*(mvnames.size()+1));
-};
 
 //############################################################
 // Run the cell simulation
@@ -499,7 +318,7 @@ int Protocol::runSim() {
     //###############################################################
     // Loop over number of trials
     //###############################################################
-    for(;trial<int(numtrials);setTrial(getTrial() +1))
+    for(;trial<numtrials;setTrial(getTrial() +1))
     {
         return_val = (int)runTrial(); 
     }
@@ -514,10 +333,6 @@ set<string> temp;
 temp.insert(pnames.begin(),pnames.end());
 cell->setConstantSelection(temp);
 temp.clear();
-for(map<string,double*>::iterator it = datamap.begin(); it != datamap.end(); it++) {
-    temp.insert(it->first);
-}
-cell->setVariableSelection(temp);
 
 //should not be here
 
@@ -567,12 +382,8 @@ cell->setVariableSelection(temp);
             pCount++;
         }
     
-      if(writestd)   
-        map2screen(parmap);  // send final property values to console
       // Output final (ss) property values for each trial
       for (map<string,Measure>::iterator it = measures.begin(); it != measures.end(); it++){
-          if(writestd)
-            map2screen(it->second.getVariablesMap());
           sprintf(writefile,(datadir + finalpropertyoutfile).c_str(), trial, it->second.varname.c_str());
           it->second.setOutputfile(writefile);
           it->second.write(false, true);
@@ -770,150 +581,6 @@ bool Protocol::readMvarsFile(string filename)
     return true;
 };
 
-
-//#############################################################
-// Create vectors based on 2D list in file.  First row element is checked in varmap
-// and gets stored in vector, rest of row checked in varmap2 and used to create row in 2D vector.
-// Returns vector with first column and rest of file in 2D vector.
-//#############################################################
-int Protocol::parse2Dmap(map<string,double*> varmap,set<string> vars2, string file, vector<string>* vnames, vector< vector<string> >* twoDmnames)
-{
-    ifstream ifile;
-    string line, name;
-    
-    vector<string> mnames;
-    
-    ifile.open(file);
-    if(!ifile.is_open()){
-        cout << "Error opening " << file << endl;
-        return 1;
-    }
-    
-    int counter = 0;
-    
-    while(!ifile.eof()){
-        getline(ifile,line);
-        stringstream linestream(line);
-        linestream >> name;
-        
-        if(varmap.count(name)>0){
-            (*vnames).push_back(name);
-            while (!linestream.eof()) {
-                linestream >> name;
-                if(vars2.count(name)>0){
-                    mnames.push_back(name);
-                }
-            }
-            if (mnames.size()>0)
-                (*twoDmnames).push_back(mnames);
-            else
-               (* vnames).pop_back();
-            
-            mnames.clear();
-        }
-        counter++;
-        
-    }
-    ifile.close();
-    return 0;
-};
-
-
-//#############################################################
-// Create vectors based on 2D list in file.  First row element is checked in varmap
-// and gets stored in vector, rest of row checked in varmap2 and used to create row in 2D vector.
-// Returns vector with first column and rest of file in 2D vector.
-//#############################################################
-int Protocol::parse2Dmap(map<string,double*> varmap,map<string,double*> varmap2, string file, vector<string>* vnames, vector< vector<string> >* twoDmnames)
-{
-    ifstream ifile;
-    string line, name;
-    
-    vector<string> mnames;
-    
-    ifile.open(file);
-    if(!ifile.is_open()){
-        cout << "Error opening " << file << endl;
-        return 1;
-    }
-    
-    int counter = 0;
-    
-    while(!ifile.eof()){
-        getline(ifile,line);
-        stringstream linestream(line);
-        linestream >> name;
-        
-        if(varmap.count(name)>0){
-            (*vnames).push_back(name);
-            while (!linestream.eof()) {
-                linestream >> name;
-                if(varmap2.count(name)>0){
-                    mnames.push_back(name);
-                }
-            }
-            if (mnames.size()>0)
-                (*twoDmnames).push_back(mnames);
-            else
-               (* vnames).pop_back();
-            
-            mnames.clear();
-        }
-        counter++;
-        
-    }
-    ifile.close();
-    return 0;
-};
-
-//############################################################
-// write 2Dmap to file
-//############################################################
-bool Protocol::write2Dmap(vector<string> vnames, vector< vector<string> > twoDmnames, string file) {
-    int ret = 0;
-    unsigned int i,j;
-    ofstream out;
-
-    out.open(file);
-    if(!out.is_open()){
-        cout << "Error opening " << file << endl;
-        return 1;
-    }
-
-    for(i = 0; i < vnames.size(); i++) {
-        out << vnames[i] << "\t";
-        for(j = 0; j < twoDmnames[i].size(); j++){
-            out << twoDmnames[i][j] << "\t";
-        }
-        out << endl;
-    }
-
-    return ret;
-}
-
-//#############################################################
-// Resize varmap based on list in file.
-//#############################################################
-int Protocol::resizemap(map<string,double*> varmap, string file, map<string, double*>* vars)
-{
-    ifstream ifile;
-    string name;
-    
-    ifile.open(file);
-    if(!ifile.is_open()){
-        cout << "Error opening " << file << endl;
-        return 1;
-    }
-    
-    while(!ifile.eof()){
-        ifile >> name;
-        if(varmap.count(name)>0)
-            (*vars)[name] = varmap[name];
-    }
-    ifile.close();
-    return 0;
-};
-
 //#############################################################
 // Set params for reading/saving model params.
 //#############################################################
@@ -921,7 +588,6 @@ int Protocol::readpvars(){
 
     int ret = 0;
     ret = parsemixedmap(cell->pars, pvarfile ,&pnames, &pvals);
-    parmap = resizemap(cell->pars,pnames);
     return ret;
 };
 

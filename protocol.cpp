@@ -26,7 +26,7 @@ bool Protocol::stob(const string& s) {
 Protocol::Protocol()
 {
     //##### Assign default parameters ##################
- map<string, double*> nvars;   
+    cell = new Cell();
     doneflag = 1;       // set to 0 to end simulation
     
     tMax = 10000;   // max simulation time, ms
@@ -100,6 +100,7 @@ Protocol::Protocol()
     pars["celltype"]= toInsert.Initialize("cell", [this] () {return cell->type;}, [this] (const string& value) {this->setCell(value);}); 
     //initalize cellMap
     //will only have an effect the first time it is called
+    cellMap["Cell"] = [] () {return new Cell;};
     cellMap["ControlSa"] = [] () {return (Cell*) new ControlSa;};
 };
 
@@ -188,9 +189,7 @@ void Protocol::copy(const Protocol& toCopy) {
         pvals.push_back(vector<string>(toCopy.pvals.at(i)));
     }
     //###### Duplicate cells, measures outputs and maps######
-    if(toCopy.cell != NULL) {
-        cell = toCopy.cell->clone();
-    }
+    cell = toCopy.cell->clone();
 
     measures = toCopy.measures;
 
@@ -681,6 +680,8 @@ bool Protocol::setCell(const string& type, bool reset) {
     try {
         cell = (cellMap.at(type))();
         measures.clear();
+        pvals.clear();
+        pnames.clear();
         return true;
     } catch(const std::out_of_range& oor) {
         return false;

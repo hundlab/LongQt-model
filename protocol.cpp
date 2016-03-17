@@ -422,7 +422,11 @@ int Protocol::readpars(string file)
         ifile >> name;
         ifile >> num;
         try {
-            pars.at(name).set(to_string(num));
+            if(pars.at(name).type == "bool") {
+                pars.at(name).set(to_string(num));
+            } else {
+                pars.at(name).set(std::to_string(num));
+            }
         } catch (const std::out_of_range& oor) {}
     }
 

@@ -407,7 +407,7 @@ int Protocol::readpars(string file)
     ifstream ifile;
     
     string name;
-    double num;
+    string value;
     map<string, double*>::iterator p;
     
     if(!ifile.is_open())
@@ -419,13 +419,9 @@ int Protocol::readpars(string file)
     
     while(!ifile.eof()){
         ifile >> name;
-        ifile >> num;
+        ifile >> value;
         try {
-            if(pars.at(name).type == "bool") {
-                pars.at(name).set(to_string(num));
-            } else {
-                pars.at(name).set(std::to_string(num));
-            }
+            pars.at(name).set(value);
         } catch (const std::out_of_range& oor) {}
     }
 

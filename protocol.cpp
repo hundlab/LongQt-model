@@ -325,7 +325,7 @@ int Protocol::runSim() {
 };
 
 bool Protocol::runTrial() {
-        char writefile[50];     // Buffer for storing filenames
+        char writefile[550];     // Buffer for storing filenames
 
 //to be moved to a better location
 set<string> temp;

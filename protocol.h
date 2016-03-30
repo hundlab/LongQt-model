@@ -47,7 +47,6 @@ class Protocol
     ~Protocol();
   
     //##### Declare class functions ##############
-    virtual int stim();
     virtual int assign_cell_pars(vector<string> pnames, vector< vector<string> > pvals, int trialnum);
     virtual int runSim();
     virtual bool runTrial();
@@ -75,18 +74,13 @@ class Protocol
     double vM;         // membrane potential, mV
     double time;       // time, ms
     //##### Declare class params ##############
-    double bcl,stimval,stimdur,stimt;
-    int numstims;   //variables for pacing.
     double meastime,writetime;
     double writeint;
     double doneflag;
     bool readflag,saveflag,writeflag,measflag,paceflag;
     int numtrials;
-    bool stimflag;
-    double stimcounter;
     int writestd;    
     double tMax;
-    double maxdoutsize,maxmeassize;
     
     default_random_engine generator;
     
@@ -108,11 +102,9 @@ class Protocol
     bool addToMeasreSelection(string measureName, string property);
     void removeFromMeasureSelection(string measureName, string property);
 
-    private:
+    protected:
     int trial;
     map<string,Measure> measures; // set of measure class for measuring SV props.
-
-    protected:
     void copy(const Protocol& toCopy);    
     map<string, CellInitializer> cellMap;
 

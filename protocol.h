@@ -102,9 +102,11 @@ class Protocol
     bool addToMeasreSelection(string measureName, string property);
     void removeFromMeasureSelection(string measureName, string property);
 
-    protected:
+    private:
     int trial;
     map<string,Measure> measures; // set of measure class for measuring SV props.
+
+    protected:
     void copy(const Protocol& toCopy);    
     map<string, CellInitializer> cellMap;
 

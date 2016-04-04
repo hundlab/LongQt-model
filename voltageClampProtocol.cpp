@@ -49,21 +49,16 @@ void voltageClamp::CCcopy(const voltageClamp& toCopy) {
 // External stimulus.
 int voltageClamp::clamp()
 {
-    if(!(t1 <= t2)&&(t2 <= t3)&&(t4 <=t5)) {
-        return 0;
-    }
-    if(cell->t <= t1) {
-//        cell->setV(v1);
-    } else if(cell->t < t2) {
-        cell->setV(v1);
-    } else if(cell->t < t3) {
-        cell->setV(v2);
-    } else if(cell->t < t4) {
-        cell->setV(v3);
-    } else if(cell->t < t5) {
-        cell->setV(v4);
-    } else {
+    if(cell->t >= t5 && t5 != 0) {
         cell->setV(v5);
+    } else if(cell->t >= t4 && t4 != 0) {
+        cell->setV(v4);
+    } else if(cell->t >= t3 && t3 != 0) {
+        cell->setV(v3);
+    } else if(cell->t >= t2 && t2 != 0) {
+        cell->setV(v2);
+    } else if(cell->t >= t1) {
+        cell->setV(v1);
     }
     return 1;
 };

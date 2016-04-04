@@ -44,20 +44,20 @@ class Protocol
     Protocol(const Protocol& toCopy);
     Protocol(Protocol&& toCopy);
     Protocol& operator=(const Protocol& toCopy);
+    virtual Protocol* clone();
     ~Protocol();
   
     //##### Declare class functions ##############
-    virtual int stim();
     virtual int assign_cell_pars(vector<string> pnames, vector< vector<string> > pvals, int trialnum);
     virtual int runSim();
     virtual bool runTrial();
     virtual int readpars(string file);
-/*!*/    virtual int parsemixedmap(map<string,double*> varmap, string file, vector<string>* cnames, vector<vector<string>>* twoDrnames);
+    virtual int parsemixedmap(map<string,double*> varmap, string file, vector<string>* cnames, vector<vector<string>>* twoDrnames);
     virtual int readpvars();
     virtual bool writepars(string file); //write the contence of pars to a file
     virtual bool writedvars(string file); //write varmap keys to a file
     virtual bool readdvars(string file);
-/*!*/    virtual bool write2Dmap(vector<string> vnames, vector< vector<string> > twoDmnames, string file);
+    virtual bool write2Dmap(vector<string> vnames, vector< vector<string> > twoDmnames, string file);
     virtual void setTrial(unsigned int current_trial);
     virtual unsigned int getTrial();
     virtual bool writeMVarsFile(string file);
@@ -75,18 +75,13 @@ class Protocol
     double vM;         // membrane potential, mV
     double time;       // time, ms
     //##### Declare class params ##############
-    double bcl,stimval,stimdur,stimt;
-    int numstims;   //variables for pacing.
     double meastime,writetime;
     double writeint;
     double doneflag;
     bool readflag,saveflag,writeflag,measflag,paceflag;
     int numtrials;
-    bool stimflag;
-    double stimcounter;
     int writestd;    
     double tMax;
-    double maxdoutsize,maxmeassize;
     
     default_random_engine generator;
     
@@ -108,12 +103,10 @@ class Protocol
     bool addToMeasreSelection(string measureName, string property);
     void removeFromMeasureSelection(string measureName, string property);
 
-    private:
-    int trial;
-    map<string,Measure> measures; // set of measure class for measuring SV props.
-
     protected:
     void copy(const Protocol& toCopy);    
+    map<string,Measure> measures; // set of measure class for measuring SV props.
+    int trial;
     map<string, CellInitializer> cellMap;
 
 };

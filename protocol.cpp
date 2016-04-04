@@ -45,7 +45,6 @@ Protocol::Protocol()
     dvarfile = "dvars.txt";  // File with SV to write.
     writetime = 0;      // time to start writing.
     writeint = 50;     // interval for writing.
-    maxdoutsize = 10;   // Max number of dout files.
     
     pvarfile = "pvars.txt"; // File to specify cell params
     simvarfile = "simvars.txt";  // File to specify sim params
@@ -59,19 +58,11 @@ Protocol::Protocol()
     measflag = 1;       // 1 to track SV props during sim
     measfile = "mvars.txt"; // File containing property names to track
     meastime = 0;       // time to start tracking props
-    maxmeassize = 10;   // Max number of SVs to track
     
     numtrials = 1;
     //######## Params for pacing protocol #########################
     paceflag = 0;   // 1 to pace cell.
-    numstims = 1;   // # of stimuli to apply
-    bcl = 1000;     // basic cycle length, ms
-    stimval = 0.0;  // stim current amplitude, uA/uF
-    stimdur = 1.0;  // stim duration, ms
-    stimt = 0.0;    // time of first stim, ms
     
-    stimcounter = 0;
-    stimflag = 0;
     
     //##### Initialize variables ##################
     time=0.0;
@@ -81,11 +72,6 @@ Protocol::Protocol()
     // make map of params
     GetSetRef toInsert;
     pars["tMax"] = toInsert.Initialize("double",[this] () {return std::to_string(tMax);},[this] (const string& value) {tMax = std::stod(value);});
-    pars["bcl"] = toInsert.Initialize("double", [this] () {return std::to_string(bcl);}, [this] (const string& value) {bcl = std::stod(value);});
-    pars["stimval"]= toInsert.Initialize("double", [this] () {return std::to_string(stimval);}, [this] (const string& value) {stimval = std::stod(value);});
-    pars["stimdur"]= toInsert.Initialize("double", [this] () {return std::to_string(stimdur);}, [this] (const string& value) {stimdur = std::stod(value);});
-    pars["stimt"]= toInsert.Initialize("double", [this] () {return std::to_string(stimt);}, [this] (const string& value) {stimt = std::stod(value);});
-    pars["numstims"]= toInsert.Initialize("int", [this] () {return std::to_string(numstims);}, [this] (const string& value) {numstims = std::stoi(value);});
     pars["numtrials"]= toInsert.Initialize("int", [this] () {return std::to_string(numtrials);}, [this] (const string& value) {numtrials = std::stoi(value);});
     pars["readflag"]= toInsert.Initialize("bool", [this] () {return to_string(readflag);}, [this] (const string& value) {readflag = stob(value);});
     pars["saveflag"]= toInsert.Initialize("bool", [this] () {return to_string(saveflag);}, [this] (const string& value) {saveflag = stob(value);});
@@ -127,6 +113,11 @@ Protocol& Protocol::operator=(const Protocol& toCopy) {
     return *this;
 };
 
+Protocol* Protocol::clone() {//public copy function
+        return new Protocol(*this);
+};
+
+
 void Protocol::copy(const Protocol& toCopy) {
     unsigned int i = 0;
     std::map<string, double*>::iterator it;
@@ -150,7 +141,6 @@ void Protocol::copy(const Protocol& toCopy) {
     dvarfile = toCopy.dvarfile;  // File with SV to write.
     writetime = toCopy.writetime;      // time to start writing.
     writeint = toCopy.writeint;     // interval for writing.
-    maxdoutsize = toCopy.maxdoutsize;   // Max number of dout files.
     
     pvarfile = toCopy.pvarfile; // File to specify cell params
     simvarfile = toCopy.simvarfile;  // File to specify sim params
@@ -163,19 +153,11 @@ void Protocol::copy(const Protocol& toCopy) {
     measflag = toCopy.measflag;       // 1 to track SV props during sim
     measfile = toCopy.measfile; // File containing property names to track
     meastime = toCopy.meastime;       // time to start tracking props
-    maxmeassize = toCopy.maxmeassize;   // Max number of SVs to track
     
     numtrials = toCopy.numtrials;
     //######## Params for pacing protocol #########################
     paceflag = toCopy.paceflag;   // 1 to pace cell.
-    numstims = toCopy.numstims;   // # of stimuli to apply
-    bcl = toCopy.bcl;     // basic cycle length, ms
-    stimval = toCopy.stimval;  // stim current amplitude, uA/uF
-    stimdur = toCopy.stimdur;  // stim duration, ms
-    stimt = toCopy.stimt;    // time of first stim, ms
     
-    stimcounter = toCopy.stimcounter;
-    stimflag = toCopy.stimflag;
     
     //##### Initialize variables ##################
     time= toCopy.time;
@@ -195,31 +177,6 @@ void Protocol::copy(const Protocol& toCopy) {
 
 }
 
-// External stimulus.
-int Protocol::stim()
-{
-  if(cell->t>=stimt&&cell->t<(stimt+stimdur)){
-      if(stimflag==0){
-          stimcounter++;
-          stimflag=1;
-          if(stimcounter>=int(numstims)){
-              doneflag = 0;
-              return 0;
-          }
-      }
-      cell->externalStim(stimval);
-    }
-    else if(stimflag==1){     //trailing edge of stimulus
-        stimt=stimt+bcl;
-        stimflag=0;
-        cell->apTime = 0.0;
-    }
-
-    cell->apTime = cell->apTime+cell->dt;
-
-    doneflag = 1;
-    return 1;
-};
 //############################################################
 // Assign parameter values based on pnames and 2D vector pvals
 //############################################################
@@ -324,78 +281,7 @@ int Protocol::runSim() {
     return return_val;
 };
 
-bool Protocol::runTrial() {
-        char writefile[550];     // Buffer for storing filenames
-
-//to be moved to a better location
-set<string> temp;
-temp.insert(pnames.begin(),pnames.end());
-cell->setConstantSelection(temp);
-temp.clear();
-
-//should not be here
-
-        time = cell->t = 0.0;      // reset time
-        doneflag=1;     // reset doneflag
-  
-//        if (int(readflag)==1)
-//            readvals(cell->vars, readfile);  // Init SVs before each trial.
-        
-        //###############################################################
-        // Every time step, currents, concentrations, and Vm are calculated.
-        //###############################################################
-        int pCount = 0;
-        //open i/o streams
-        for(map<string,Measure>::iterator it = measures.begin(); it != measures.end(); it++) {
-            sprintf(writefile,(datadir + propertyoutfile).c_str(),trial,it->second.varname.c_str());
-            it->second.setOutputfile(writefile);
-        }
-
-        sprintf(writefile,(datadir + dvarsoutfile).c_str(),trial);
-        cell->setOuputfileVariables(writefile);
-
-        while(int(doneflag)&&(time<tMax)){
-            
-            time = cell->tstep(stimt);    // Update time
-            cell->updateCurr();    // Update membrane currents
-            if(int(paceflag)==1)  // Apply stimulus
-                stim();
-
-            cell->updateConc();   // Update ion concentrations
-            vM=cell->updateV();     // Update transmembrane potential
-
-            //##### Output select variables to file  ####################
-            if(int(measflag)==1&&cell->t>meastime){
-                for (map<string,Measure>::iterator it = measures.begin(); it!=measures.end(); it++) {
-                    it->second.measure(cell->t,*cell->vars[it->second.varname]);
-                    if(int(writeflag)==1) {
-                        it->second.write(true, !(int(doneflag)&&(time<tMax)));
-                    }
-                }
-            }
-            if (int(writeflag)==1&&time>writetime&&pCount%int(writeint)==0) {
-                cell->writeVariables();
-//                douts[mvnames.size()+(trial+1)*(mvnames.size()+1)].writevals(datamap,writefile,'a');
-            }
-            cell->setV(vM); //Overwrite vOld with new value
-            pCount++;
-        }
-    
-      // Output final (ss) property values for each trial
-      for (map<string,Measure>::iterator it = measures.begin(); it != measures.end(); it++){
-          sprintf(writefile,(datadir + finalpropertyoutfile).c_str(), trial, it->second.varname.c_str());
-          it->second.setOutputfile(writefile);
-          it->second.write(false, true);
-          it->second.reset();
-      } 
-      
-      // Output parameter values for each trial
-      sprintf(writefile,(datadir + finaldvarsoutfile).c_str(), trial);
-      cell->setOutputfileConstants(writefile);
-      cell->writeConstants();
-
-      return true; 
-}
+bool Protocol::runTrial() { return true;}
 
 //#############################################################
 // Read values of variables in varmap from file.

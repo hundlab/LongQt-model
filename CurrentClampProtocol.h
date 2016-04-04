@@ -17,9 +17,10 @@ class CurrentClamp : public Protocol {
   public:
     CurrentClamp();
     CurrentClamp(const CurrentClamp& toCopy);
+    CurrentClamp* clone();
     CurrentClamp& operator=(const CurrentClamp& toCopy);
 
-    bool runTrial();
+    bool runTrial() override;
   private:
     double bcl,stimval,stimdur,stimt;
     int numstims;   //variables for pacing.

@@ -18,6 +18,10 @@ voltageClamp::voltageClamp()  : Protocol(){
     pars["t5"] = toInsert.Initialize("double",[this] () {return std::to_string(t5);},[this] (const string& value) {t5 = std::stod(value);});
 
 }
+//overriden deep copy funtion
+voltageClamp* voltageClamp::clone(){
+    return new voltageClamp(*this);
+};
 
 voltageClamp::voltageClamp(const voltageClamp& toCopy) : Protocol(toCopy){
     this->CCcopy(toCopy);
@@ -30,11 +34,37 @@ voltageClamp& voltageClamp::operator=(const voltageClamp& toCopy) {
 }
 
 void voltageClamp::CCcopy(const voltageClamp& toCopy) {
+    v1 = toCopy.v1;
+    v2= toCopy.v2;
+    v3 = toCopy.v3;
+    v4 = toCopy.v4;
+    v5 = toCopy.v5;
+    t1 = toCopy.t1;
+    t2 = toCopy.t2;
+    t3 = toCopy.t3;
+    t4 = toCopy.t4;
+    t5 = toCopy.t5;
 }
 
 // External stimulus.
 int voltageClamp::clamp()
 {
+    if(!(t1 <= t2)&&(t2 <= t3)&&(t4 <=t5)) {
+        return 0;
+    }
+    if(cell->t <= t1) {
+//        cell->setV(v1);
+    } else if(cell->t < t2) {
+        cell->setV(v1);
+    } else if(cell->t < t3) {
+        cell->setV(v2);
+    } else if(cell->t < t4) {
+        cell->setV(v3);
+    } else if(cell->t < t5) {
+        cell->setV(v4);
+    } else {
+        cell->setV(v5);
+    }
     return 1;
 };
 
@@ -73,11 +103,12 @@ temp.clear();
 //what should stimt be made to be??            
             time = cell->tstep(0.0);    // Update time
             cell->updateCurr();    // Update membrane currents
-//is this where clamp goes????????
-            clamp();
 
             cell->updateConc();   // Update ion concentrations
             vM=cell->updateV();     // Update transmembrane potential
+
+//is this where clamp goes????????
+            clamp();
 
             //##### Output select variables to file  ####################
             if(int(measflag)==1&&cell->t>meastime){

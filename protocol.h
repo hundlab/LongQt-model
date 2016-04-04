@@ -44,6 +44,7 @@ class Protocol
     Protocol(const Protocol& toCopy);
     Protocol(Protocol&& toCopy);
     Protocol& operator=(const Protocol& toCopy);
+    virtual Protocol* clone();
     ~Protocol();
   
     //##### Declare class functions ##############
@@ -102,12 +103,10 @@ class Protocol
     bool addToMeasreSelection(string measureName, string property);
     void removeFromMeasureSelection(string measureName, string property);
 
-    private:
-    int trial;
-    map<string,Measure> measures; // set of measure class for measuring SV props.
-
     protected:
     void copy(const Protocol& toCopy);    
+    map<string,Measure> measures; // set of measure class for measuring SV props.
+    int trial;
     map<string, CellInitializer> cellMap;
 
 };

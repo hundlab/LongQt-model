@@ -113,6 +113,11 @@ Protocol& Protocol::operator=(const Protocol& toCopy) {
     return *this;
 };
 
+Protocol* Protocol::clone() {//public copy function
+        return new Protocol(*this);
+};
+
+
 void Protocol::copy(const Protocol& toCopy) {
     unsigned int i = 0;
     std::map<string, double*>::iterator it;

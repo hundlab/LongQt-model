@@ -16,7 +16,10 @@ CurrentClamp::CurrentClamp()  : Protocol(){
     pars["bcl"] = toInsert.Initialize("double", [this] () {return std::to_string(bcl);}, [this] (const string& value) {bcl = std::stod(value);});
     pars["numstims"]= toInsert.Initialize("int", [this] () {return std::to_string(numstims);}, [this] (const string& value) {numstims = std::stoi(value);});
 }
-
+//overriden deep copy funtion
+CurrentClamp* CurrentClamp::clone(){
+    return new CurrentClamp(*this);
+};
 CurrentClamp::CurrentClamp(const CurrentClamp& toCopy) : Protocol(toCopy){
     this->CCcopy(toCopy);
 }

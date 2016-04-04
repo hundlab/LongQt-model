@@ -17,12 +17,13 @@ class voltageClamp : public Protocol {
   public:
     voltageClamp();
     voltageClamp(const voltageClamp& toCopy);
+    voltageClamp* clone();
     voltageClamp& operator=(const voltageClamp& toCopy);
 
-    bool runTrial();
+    bool runTrial() override;
   private:
     int clamp();
-    void CCcopy(const CurrentClamp& toCopy);
+    void CCcopy(const voltageClamp& toCopy);
 
     double v1, v2, v3, v4, v5;
     double t1, t2, t3, t4, t5;

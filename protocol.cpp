@@ -10,6 +10,7 @@
 #include <cstring>
 
 #include "protocol.h"
+#include "gpbatrial.h"
 
 //helper functions
 string Protocol::to_string(const bool& b) {
@@ -88,6 +89,7 @@ Protocol::Protocol()
     //will only have an effect the first time it is called
     cellMap["Cell"] = [] () {return new Cell;};
     cellMap["ControlSa"] = [] () {return (Cell*) new ControlSa;};
+    cellMap["GpbAtrial"] = [] () {return (Cell*) new GpbAtrial;};
 };
 
 

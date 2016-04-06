@@ -33,7 +33,11 @@ class GpbAtrial: public Cell
   public:
     // constructors
     GpbAtrial();
+    GpbAtrial(GpbAtrial& toCopy);
     virtual ~GpbAtrial();
+    
+    void Initialize();
+    GpbAtrial* clone();
 
     double Vsl;
     double Vjunc;
@@ -171,8 +175,8 @@ class GpbAtrial: public Cell
 	virtual void updateSRbuff(); //SR Ca buffer	 
 	virtual void updateIclca();
 	virtual void updateIclbk();
-        virtual int stim();
-    virtual map<string, double*> makemap();
+    int externalStim(double stimval);
+    virtual void makemap();
     struct GateVariable gate;
 };
 #endif

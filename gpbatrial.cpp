@@ -11,6 +11,18 @@
 
 GpbAtrial::GpbAtrial()
 {
+    this->Initialize();
+}
+
+GpbAtrial::GpbAtrial(GpbAtrial& toCopy) : Cell(toCopy) {
+   this->Initialize(); 
+}
+
+GpbAtrial::~GpbAtrial()
+{
+}
+
+void GpbAtrial::Initialize() {
     type = "Control";
     Cm = 1.0; //uF/cm2
     ACap = 1.10E-4; //capacitive area, cm2
@@ -23,8 +35,8 @@ GpbAtrial::GpbAtrial()
     vOld=vNew=-80.9763;
 
     apTime = 0.0;
-    flag = 0;
-    num = 0;
+//    flag = 0;
+//    num = 0;
 
     Vcell = 3.3E-5;//uL
     Vsr = 0.035*Vcell; 
@@ -102,10 +114,11 @@ GpbAtrial::GpbAtrial()
 	iClcajunc = iClcasl = iClca = iClbk = 0.0;
 	ipCajunc = ipCasl = ipCa = 0.0;
 	iCabjunc = iCabsl = iCab = 0.0;
-}
+    makemap();
 
-GpbAtrial::~GpbAtrial()
-{
+}
+GpbAtrial* GpbAtrial::clone() {
+    return new GpbAtrial(*this);
 }
 
 void GpbAtrial::updatecaI() {
@@ -564,6 +577,11 @@ void GpbAtrial::updateInab() {
 }
 
 // External stimulus.
+int GpbAtrial::externalStim(double stimval) {
+    iTot = iTot + stimval;
+    return 1;
+}
+/*
 int GpbAtrial::stim()
 {
   if(t>=stimt&&t<(stimt+dur)){
@@ -586,11 +604,10 @@ int GpbAtrial::stim()
 
   return 1;
 };
-
+*/
 // Create map for easy retrieval of variable values.
-map<string, double*> GpbAtrial::makemap()
+void GpbAtrial::makemap()
 {
-  map<string, double*> vars;
   vars["vOld"]=&vOld;
   vars["t"]=&t;
   vars["dVdt"]=&dVdt;
@@ -672,6 +689,4 @@ map<string, double*> GpbAtrial::makemap()
   vars["iCabjunc"]=&iCabjunc;
   vars["iCabsl"]=&iCabsl;
   vars["iCab"]=&iCab;
-
-  return vars;
 }

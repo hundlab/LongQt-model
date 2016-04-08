@@ -152,10 +152,12 @@ class GpbAtrial: public Cell
 	double F_slCaL;
 
  //###Concentration updating functions ######
+    void updateConc();
 	virtual void updatecaI();
 	virtual void updatenaI();
  //####Current updating functions #######
 	/*virtual void updateSRcurrents();*/
+    void updateCurr();
 	virtual void updateIcal();
 	virtual void updateIcab();
 	virtual void updateIpca();
@@ -175,6 +177,7 @@ class GpbAtrial: public Cell
 	virtual void updateSRbuff(); //SR Ca buffer	 
 	virtual void updateIclca();
 	virtual void updateIclbk();
+ //##################
     int externalStim(double stimval);
     virtual void makemap();
     struct GateVariable gate;

@@ -121,6 +121,11 @@ GpbAtrial* GpbAtrial::clone() {
     return new GpbAtrial(*this);
 }
 
+void GpbAtrial::updateConc() {
+    updatecaI();
+    updatenaI();
+}
+
 void GpbAtrial::updatecaI() {
 
 	double dCaj, dCasl, dcaI, dCasr;
@@ -264,6 +269,28 @@ void GpbAtrial::updateSRbuff(){
    dCsqnb = dt*(koncsqn*caSr*(0.140*(Vmyo/Vsr)-Csqnb)-koffcsqn*Csqnb);
 	
    Csqnb = Csqnb + dCsqnb;
+}
+
+void GpbAtrial::updateCurr() {
+    updateIcal();
+	updateIcab();
+	updateIpca();
+	updateIto();
+	updateIks();
+	updateIkr();
+	updateIk1();
+	updateIkur();
+	updateIpk();
+	updateInaca();
+	updateInak();
+	updateInab();
+	updateIna();
+	updateSRFlux();
+	updatecytobuff(); //cytosolic Ca buffers
+	updateJSLbuff(); //junctional and SL Ca buffers
+	updateSRbuff(); //SR Ca buffer	 
+	updateIclca();
+	updateIclbk();
 }
 
 void GpbAtrial::updateIcal(){

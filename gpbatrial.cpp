@@ -23,7 +23,7 @@ GpbAtrial::~GpbAtrial()
 }
 
 void GpbAtrial::Initialize() {
-    type = "Control";
+    type = "GpbAtrial";
     Cm = 1.0; //uF/cm2
     ACap = 1.10E-4; //capacitive area, cm2
     dVdt=dVdtmax=0.0;

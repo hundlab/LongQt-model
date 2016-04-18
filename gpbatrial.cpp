@@ -122,6 +122,11 @@ GpbAtrial* GpbAtrial::clone() {
 }
 
 void GpbAtrial::updateConc() {
+	updateSRFlux();
+	updatecytobuff(); //cytosolic Ca buffers
+	updateJSLbuff(); //junctional and SL Ca buffers
+	updateSRbuff(); //SR Ca buffer	 
+
     updatecaI();
     updatenaI();
 }
@@ -278,19 +283,31 @@ void GpbAtrial::updateCurr() {
 	updateIto();
 	updateIks();
 	updateIkr();
-	updateIk1();
 	updateIkur();
+	updateIk1();
 	updateIpk();
 	updateInaca();
 	updateInak();
 	updateInab();
-	updateIna();
-	updateSRFlux();
-	updatecytobuff(); //cytosolic Ca buffers
-	updateJSLbuff(); //junctional and SL Ca buffers
-	updateSRbuff(); //SR Ca buffer	 
 	updateIclca();
 	updateIclbk();
+	updateIna();
+
+
+
+
+	iNatotjunc = iNajunc+iNabjunc+3.0*iNcxjunc+3.0*iNaKjunc+iCanajunc;
+	iNatotsl = iNasl+iNabsl+3.0*iNcxsl+3.0*iNaKsl+iCanasl ;
+	iNat = iNatotjunc+iNatotsl;
+	iClt = iClca+iClbk;
+	iCatotjunc=iCajunc+iCabjunc+ipCajunc-2*iNcxjunc;
+	iCatotsl=iCasl+iCabsl+ipCasl-2*iNcxsl;
+	iCat=iCatotjunc+iCatotsl;
+	iKt =  iTo+iKr+iKs+iK1+iKur-2*iNak+iCak+iKp;
+	iTot = iNat+iClt+iCat+iKt;
+
+	
+
 }
 
 void GpbAtrial::updateIcal(){

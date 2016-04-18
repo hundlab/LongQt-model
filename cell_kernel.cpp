@@ -23,7 +23,7 @@ CellKernel::CellKernel()
     Rcg = 1.0;
     cellRadius = 0.001; // cm
     cellLength = 0.01;  // cm
-    type = "CellKernel";  // class name
+    type = "Cell";  // class name
     RGAS = 8314.0;
     TEMP = 310.0;
     FDAY = 96487.0;

@@ -24,7 +24,7 @@ class CurrentClamp : public Protocol {
   private:
     double bcl,stimval,stimdur,stimt;
     int numstims;   //variables for pacing.
-    bool stimflag;
+    bool stimflag,paceflag;
     double stimcounter;
 
     int stim();

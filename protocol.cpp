@@ -34,8 +34,6 @@ Protocol::Protocol()
     
     datadir = "./data/";
 
-    readflag = 0;       // 1 to read SV ICs from file
-    saveflag = 0;       // 1 to save final SV vals to file
     readfile = "r.txt"; // File to read SV ICs
     savefile = "s.txt"; // File to save final SV
 
@@ -62,7 +60,6 @@ Protocol::Protocol()
     
     numtrials = 1;
     //######## Params for pacing protocol #########################
-    paceflag = 0;   // 1 to pace cell.
     
     
     //##### Initialize variables ##################
@@ -74,11 +71,8 @@ Protocol::Protocol()
     GetSetRef toInsert;
     pars["tMax"] = toInsert.Initialize("double",[this] () {return std::to_string(tMax);},[this] (const string& value) {tMax = std::stod(value);});
     pars["numtrials"]= toInsert.Initialize("int", [this] () {return std::to_string(numtrials);}, [this] (const string& value) {numtrials = std::stoi(value);});
-    pars["readflag"]= toInsert.Initialize("bool", [this] () {return to_string(readflag);}, [this] (const string& value) {readflag = stob(value);});
-    pars["saveflag"]= toInsert.Initialize("bool", [this] () {return to_string(saveflag);}, [this] (const string& value) {saveflag = stob(value);});
     pars["writetime"]= toInsert.Initialize("double", [this] () {return std::to_string(writetime);}, [this] (const string& value) {writetime = std::stod(value);});
     pars["meastime"]= toInsert.Initialize("double", [this] () {return std::to_string(meastime);}, [this] (const string& value) {meastime = std::stod(value);});
-    pars["paceflag"]= toInsert.Initialize("bool", [this] () {return to_string(paceflag);}, [this] (const string& value) {paceflag = stob(value);});
     pars["datadir"]= toInsert.Initialize("directory", [this] () {return datadir;}, [this] (const string& value) {datadir = value;});
     pars["pvarfile"]= toInsert.Initialize("file", [this] () {return pvarfile;}, [this] (const string& value) {pvarfile = value;});
     pars["dvarfile"]= toInsert.Initialize("file", [this] () {return dvarfile;}, [this] (const string& value) {dvarfile = value;});
@@ -132,8 +126,6 @@ void Protocol::copy(const Protocol& toCopy) {
     
     tMax = toCopy.tMax;   // max simulation time, ms
     
-    readflag = toCopy.readflag;       // 1 to read SV ICs from file
-    saveflag = toCopy.saveflag;       // 1 to save final SV vals to file
     readfile = toCopy.readfile; // File to read SV ICs
     savefile = toCopy.savefile; // File to save final SV
 
@@ -157,8 +149,6 @@ void Protocol::copy(const Protocol& toCopy) {
     meastime = toCopy.meastime;       // time to start tracking props
     
     numtrials = toCopy.numtrials;
-    //######## Params for pacing protocol #########################
-    paceflag = toCopy.paceflag;   // 1 to pace cell.
     
     
     //##### Initialize variables ##################

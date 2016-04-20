@@ -78,7 +78,7 @@ class Protocol
     double meastime,writetime;
     double writeint;
     double doneflag;
-    bool readflag,saveflag,writeflag,measflag,paceflag;
+    bool writeflag,measflag;
     int numtrials;
     int writestd;    
     double tMax;

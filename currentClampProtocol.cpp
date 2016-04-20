@@ -6,6 +6,7 @@ CurrentClamp::CurrentClamp()  : Protocol(){
     stimval = 0.0;  // stim current amplitude, uA/uF
     bcl = 1000;     // basic cycle length, ms
     numstims = 1;   // # of stimuli to apply
+    paceflag = 0;   // 1 to pace cell.
     stimflag = 0;
     stimcounter = 0;
 
@@ -15,6 +16,7 @@ CurrentClamp::CurrentClamp()  : Protocol(){
     pars["stimval"]= toInsert.Initialize("double", [this] () {return std::to_string(stimval);}, [this] (const string& value) {stimval = std::stod(value);});
     pars["bcl"] = toInsert.Initialize("double", [this] () {return std::to_string(bcl);}, [this] (const string& value) {bcl = std::stod(value);});
     pars["numstims"]= toInsert.Initialize("int", [this] () {return std::to_string(numstims);}, [this] (const string& value) {numstims = std::stoi(value);});
+    pars["paceflag"]= toInsert.Initialize("bool", [this] () {return to_string(paceflag);}, [this] (const string& value) {paceflag = stob(value);});
 }
 //overriden deep copy funtion
 CurrentClamp* CurrentClamp::clone(){
@@ -38,6 +40,7 @@ void CurrentClamp::CCcopy(const CurrentClamp& toCopy) {
     numstims = toCopy.numstims;   // # of stimuli to apply
     stimflag = toCopy.stimflag;
     stimcounter = toCopy.stimcounter;
+    paceflag = toCopy.paceflag;   // 1 to pace cell.
 }
 
 // External stimulus.
@@ -80,9 +83,6 @@ temp.clear();
         time = cell->t = 0.0;      // reset time
         doneflag=1;     // reset doneflag
   
-//        if (int(readflag)==1)
-//            readvals(cell->vars, readfile);  // Init SVs before each trial.
-        
         //###############################################################
         // Every time step, currents, concentrations, and Vm are calculated.
         //###############################################################

@@ -12,6 +12,13 @@
 #include "protocol.h"
 #include "gpbatrial.h"
 
+#if defined(_WIN32) || defined(_WIN64)
+  #define snprintf _snprintf
+  #define vsnprintf _vsnprintf
+  #define strcasecmp _stricmp
+  #define strncasecmp _strnicmp
+#endif
+
 //helper functions
 string Protocol::to_string(const bool& b) {
     return b ? "true" : "false";

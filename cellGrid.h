@@ -28,8 +28,7 @@ struct cellInfo {
     Node n;
 }
 
-class Node {
-  public:
+struct Node {
     Cell* cell;
     double rd; // gap junctional disk resistance.
     double Rmyo; //Myoplasmic resistivity.
@@ -45,50 +44,18 @@ class Node {
     int numcells; 
     string nodeType;
 
-    vector<Node*> neighbors; 
-
-    Node() {
-        neighbors = vector<Node*>(4);
-    }
-
-    void setNeighbors(Node* above, Node* below, Node* left, Node* right) {
-        neighbors[DOWN] = below;
-        neighbors[LEFT] = left;
-        neighbors[RIGHT] = right;
-        neighbors[UP] = above;
-    }
-
-    void updateVm(double dt, Direction dir) {
-        bool edge = false;
-        Node* next = neighbors[dir];
-        Node* prev = neighbors[flip(dir)];
-        if(next == NULL) {
-            r = -B*dt*prev->cell->vOld+(B*dt-2)*cell->vOld+dt/cell->Cm*(cell->iTotold+cell->iTot);
-            edge = true;
-        }
-        d1 = B*dt;
-        d2 = -(B*dt+next->B*dt+2);
-        d3 = next->B*dt;
-        if(prev == NULL) {
-            r = (next->B*dt-2)*cell->vOld-next->B*dt*next->cell->vOld+dt/cell->Cm*(cell->iTotold+cell->iTot);
-            edge = true;
-        }
-        if(!edge) {
-            r = -B*dt*prev->cell->vOld+(B*dt+next->B*dt-2)*cell->vOld-next->B*dt*next->cell->vOld+dt/cell->Cm*(cell->iTotold+cell->iTot);
-        }
-
-
-        cell->iTotold=cell->iTot;
-        cell->dVdt=(vNew[i]-cell->vOld)/dt;
-        //##### Conservation for multicellular fiber ############
-        dIax[i]=-(cell->dVdt+cell->iTot);
-        cell->iKt=cell->iKt+dIax[i];
-        cell->setV(vNew[i]);
-
-    }
-
-    ~Node() {}
 };
+
+class Fiber {
+  public:
+    Fiber();
+    ~Fiber();
+    
+    virtual void updateVm();
+    virtual void tstep();
+
+    vector<Node*> nodes;
+}
 
 class cellGrid {
   public:
@@ -101,6 +68,8 @@ class cellGrid {
     virtual void updateVm();
     virtual int tstep();
 
-    
+  private:
+    vector<Fiber> fiber;
+    vector<Fiber> fibery; 
 };
 #endif

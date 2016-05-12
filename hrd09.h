@@ -61,11 +61,11 @@ using namespace std;
 //######################################################
 //Define class for normal canine ventricular cell.
 //######################################################
-class Control : public Cell
+class HRD09Control : public Cell
 {
   public:
-    Control();
-    ~Control(); 
+    HRD09Control();
+    ~HRD09Control(); 
   
   //##################################################
   // Declare functions/variables unique to Control
@@ -148,7 +148,7 @@ class Control : public Cell
     struct GateVariable Gate;
 };
 
-class BorderZone : public Control
+class BorderZone : public HRD09Control
 {
   public:
     BorderZone();

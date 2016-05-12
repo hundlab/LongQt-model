@@ -13,10 +13,10 @@
 // Constructor for control canine epicardial
 // ventricular model.
 //######################################################
-Control::Control()
+HRD09Control::HRD09Control()
 {
         //##### Initialize variables ##################
-        type = "Control";
+        type = "HRD09Control";
         dVdt=dVdtmax=5.434230843e-10;//check
         Cm = 1.0; //uF/cm2  must be defined for fiber...default = 1.
 	t=0.0;//check
@@ -131,12 +131,12 @@ Control::Control()
 // Destructor for control canine epicardial
 // ventricular model.
 //#####################################################
-Control::~Control()
+HRD09Control::~HRD09Control()
 {
 };
 
 // L-type Ca current 
-void Control::updateIlca()
+void HRD09Control::updateIlca()
 {
 	double taud,finf,fcainf,fcainf2,taufca,taufca2,tauf,dinf,taud2,d2inf;
 	double maxIca;
@@ -180,7 +180,7 @@ void Control::updateIlca()
 };
 
 // Background Ca current  
-void Control::updateIcab()
+void HRD09Control::updateIcab()
 {
 	double Ecan,maxicab;
 	double gamcai=1.0;
@@ -195,7 +195,7 @@ void Control::updateIcab()
 };
 
 // Sarcolemmal Ca pump
-void Control::updateIpca()
+void HRD09Control::updateIpca()
 {
 	double ipcabar=0.0575;//Different from HRd08 - 0.2675;   
 	double kmpca=0.0005;
@@ -204,7 +204,7 @@ void Control::updateIpca()
 };
 
 // Background Cl current
-void Control::updateIclb()
+void HRD09Control::updateIclb()
 {
 	double ecl;
 	double gclb=0.000225;   
@@ -215,7 +215,7 @@ void Control::updateIclb()
 };
 
 // Slow delayed rectifier K current
-void Control::updateIks()
+void HRD09Control::updateIks()
 {
 	double Gks, Eks;
 	double xsinf,tauxs1,tauxs2;
@@ -235,7 +235,7 @@ void Control::updateIks()
 };
 
 // Rapid delayed rectifier K current
-void Control::updateIkr()
+void HRD09Control::updateIkr()
 {
 	double Gkr, Ekr;
 	double xrinf,tauxr;
@@ -255,7 +255,7 @@ void Control::updateIkr()
 };
 
 // Plateau K current
-void Control::updateIkp()
+void HRD09Control::updateIkp()
 {
 	double Gkp = 0.00276;
 	double Ekp;
@@ -267,7 +267,7 @@ void Control::updateIkp()
 };
 
 // Time-independent K current
-void Control::updateIk1()
+void HRD09Control::updateIk1()
 {
 	double Gk1, Ek1;
 	double MaxGk1 =0.5;
@@ -283,7 +283,7 @@ void Control::updateIk1()
 };
 
 //K-Cl cotransporter
-void Control::updateIkcl()
+void HRD09Control::updateIkcl()
 {
 	double ecl, ek;
 	double gkcl=0.0000177;   
@@ -295,7 +295,7 @@ void Control::updateIkcl()
 };
 
 //Fast Na current
-void Control::updateIna()
+void HRD09Control::updateIna()
 {
 	double bj1a,bj2a,bj2b,aj1a,aj1b,aj1c;
 	double ms,tm,hs,th,js,tj;
@@ -365,7 +365,7 @@ void Control::updateIna()
 };
 
 // Late Na current
-void Control::updateInal()
+void HRD09Control::updateInal()
 {
 	double ENa;
 	double ms,tml,hlinf,thl;
@@ -393,7 +393,7 @@ void Control::updateInal()
 };
 
 //Na-Ca exchanger
-void Control::updateInaca()
+void HRD09Control::updateInaca()
 {
 	double eta=.35; 
 	double kmcaact=.000125;  
@@ -412,7 +412,7 @@ void Control::updateInaca()
 };
 
 //Na-Cl cotransporter
-void Control::updateInacl()
+void HRD09Control::updateInacl()
 {
 	double ENa;
 	double ecl;
@@ -425,7 +425,7 @@ void Control::updateInacl()
 };
 
 // Na-K ATPase
-void Control::updateInak()
+void HRD09Control::updateInak()
 {
 	double inakbar=0.93;
 	double kmnai=10.0;
@@ -440,7 +440,7 @@ void Control::updateInak()
 };
 
 // Transient outward K current
-void Control::updateIto()
+void HRD09Control::updateIto()
 {
     double azdv,bzdv,tauzdv,zssdv,aydv,bydv,tauydv,tauy2dv,yssdv,ay2dv,by2dv,yss2dv,rvdv;
     double Ek;
@@ -467,7 +467,7 @@ void Control::updateIto()
 };
 
 //Ca-dependent transient outward current
-void Control::updateIto2()
+void HRD09Control::updateIto2()
 {
 	double eto2,tauaa,aainf;
 	double ibar;
@@ -487,7 +487,7 @@ void Control::updateIto2()
 };
 
 // Ca release from sarcoplasmic reticulum
-void Control::updateIrel()
+void HRD09Control::updateIrel()
 {
 	double irelinf, taurel;
 	double kappa=0.1;
@@ -529,7 +529,7 @@ void Control::updateIrel()
 };
 
 // Ca transport into/out of sarcoplasmic reticulum
-void Control::updateSrFlux()
+void HRD09Control::updateSrFlux()
 {
 	double iupbar=0.008375;   
 	double kmup=0.00092;
@@ -555,7 +555,7 @@ void Control::updateSrFlux()
 };
 
 // Na concentration in myoplasm
-void Control::updateNai()	
+void HRD09Control::updateNai()	
 {
 	double dnai;
 	dnai=dt*(-iNat*ACap/(Vmyo*FDAY)+iNacl);
@@ -563,7 +563,7 @@ void Control::updateNai()
 };
 
 // K concentration in myoplasm
-void Control::updateKi()	
+void HRD09Control::updateKi()	
 {
 	double dki;
 	dki=dt*(-iKt*ACap/(Vmyo*FDAY)+iKcl);
@@ -571,7 +571,7 @@ void Control::updateKi()
 };
 
 // Cl concentration in myoplasm
-void Control::updateCli()   
+void HRD09Control::updateCli()   
 {
 	double dcli;
 	dcli=dt*(iClt*ACap/(Vmyo*FDAY)+iNacl+iKcl);
@@ -579,7 +579,7 @@ void Control::updateCli()
 };
 
 // Ca concentration in myoplasm
-void Control::updateCai()
+void HRD09Control::updateCai()
 {
 	double dcai,cait,b,c,d;
 	
@@ -608,7 +608,7 @@ void Control::updateCai()
 };
 
 // Ca concentration in subspace
-void Control::updateCaSub()
+void HRD09Control::updateCaSub()
 {
 	double taudiff,dcar,bss;
 	double bsrbar,kmbsr,bslbar,kmbsl;
@@ -639,7 +639,7 @@ void Control::updateCaSub()
 };
  
 // Ca concentration in sarcoplasmic reticulum
-void Control::updateSr() 	
+void HRD09Control::updateSr() 	
 {
 	double dcajsr,dcansr,dcsqn,csqnold,b1,c1;
 	double kmcsqn=0.8;
@@ -661,7 +661,7 @@ void Control::updateSr()
 };
 
 // CaMKII activity
-void Control::updateCamk()
+void HRD09Control::updateCamk()
 {
         double P=0.00003;          // rate of dephosphorylation .00003
         double calmodulin;         // free calmodulin bound to calcium.
@@ -696,7 +696,7 @@ void Control::updateCamk()
         caM=(0.75*fBound+fPhos+fOxP+.5*fOx);
 };
 
-void Control::updateCurr()
+void HRD09Control::updateCurr()
 {
    updateIna();    // Fast Na current
    updateInal();   // Late Na current
@@ -725,7 +725,7 @@ void Control::updateCurr()
 
 };
 
-void Control::updateConc()
+void HRD09Control::updateConc()
 {
    updateSrFlux(); // SR Ca fluxes
    updateIrel(); // SR Ca release
@@ -741,7 +741,7 @@ void Control::updateConc()
 
 
 // External stimulus.
-int Control::stim()
+int HRD09Control::stim()
 {
   if(t>=stimt&&t<(stimt+dur)){
     if(flag==0){
@@ -768,7 +768,7 @@ int Control::stim()
 };
 
 // Create map for easy retrieval of variable values.
-map<string, double*> Control::makemap()
+map<string, double*> HRD09Control::makemap()
 {
   map<string, double*> vars;
   vars["vOld"]=&vOld;

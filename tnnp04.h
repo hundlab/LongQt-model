@@ -18,6 +18,17 @@ using namespace std;
 #ifndef MODEL_TNNP
 #define MODEL_TNNP
 
+
+class TNNP04Control : public Cell
+{
+  public:
+    TNNP04Control();
+    TNNP04Control(const TNNP04Control& toCopy);
+    ~TNNP04Control();
+
+    void Initialize();
+    virtual TNNP04Control* clone();
+  
 /*########################*/
 /*    DEFINE STRUCTS	  */
 /*########################*/
@@ -36,12 +47,6 @@ using namespace std;
 	double j;
     };
  
-class Control : public Cell
-{
-  public:
-    Control();
-    ~Control();
-  
 
   //##################################################
   // Declare class functions 
@@ -67,8 +72,8 @@ class Control : public Cell
 	virtual void updateIna();
 	virtual void updateCurr();
 	virtual void updateConc();
-	virtual int stim();
-	virtual map<string, double*> makemap();
+	virtual int externalStim(double stimval);
+	virtual void makemap();
  
 //##### Declare class variables ##############
 	double Vc;

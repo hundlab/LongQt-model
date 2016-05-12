@@ -11,13 +11,25 @@
 //######################################################
 // Constructor
 //######################################################
-Control::Control()
+TNNP04Control::TNNP04Control()
 {
+    this->Initialize();
+}
+
+TNNP04Control::TNNP04Control(const TNNP04Control& toCopy) : Cell(toCopy) {
+    this->Initialize();
+}
+
+TNNP04Control::~TNNP04Control()
+{
+}
+
+void TNNP04Control::Initialize() {
 	RGAS = 8314.472;
         TEMP = 310.0;
         FDAY=96485.3415;
 
-	type = "Control";
+	type = "TNNP04Control";
         dVdt=dVdtmax=-7.293176907E-7;
         t=0.0;
         dt=dtmin=0.005;
@@ -29,8 +41,6 @@ Control::Control()
         sponRelflag = 0;
 
         apTime = 0.0;
-        flag = 0;
-        num = 0;
 
 	ACap = 1.85E-4;// cm2
     	Vc = 1.64E-5; //uL
@@ -65,13 +75,15 @@ Control::Control()
 	iNa = iNab = iNak = iNaca = 0.0;
 	iCal = iCab = iPca = 0.0;
 	iK1 = iTo = iKr = iKs = ipK = 0.0;
+
+    makemap();
 }
 
-Control::~Control()
-{
+TNNP04Control* TNNP04Control::clone() {
+    return new TNNP04Control(*this);
 }
 
-void Control::updateIcal(){
+void TNNP04Control::updateIcal(){
 	double d_inf, tau_d, gamma_d, alpha_d, beta_d;
 	double f_inf, tau_f;
 	double fca_inf, tau_fca, gamma_fca, alpha_fca, beta_fca;
@@ -110,21 +122,21 @@ void Control::updateIcal(){
 
 };
 
-void Control::updateIcab() {
+void TNNP04Control::updateIcab() {
 	double gcab = 0.000592;
 	double Eca = RGAS*TEMP/(2*FDAY)*log(caO/caI);
         
 	iCab = gcab*(vOld-Eca);	
 };
 
-void Control::updateIpca() {
+void TNNP04Control::updateIpca() {
 	double kpca = 0.0005;
 	double gpca = 0.825;
 
 	iPca = gpca*caI/(kpca+caI);
 };
 
-void Control::updateIna() {
+void TNNP04Control::updateIna() {
 	double m_inf, alpha_m, beta_m, tau_m;
 	double h_inf, alpha_h, beta_h, tau_h;
 	double j_inf, alpha_j, beta_j, tau_j;
@@ -179,7 +191,7 @@ void Control::updateIna() {
 	iNa = gna*Gate.m*Gate.m*Gate.m*Gate.h*Gate.j*(vOld-ENa);
 };
 
-void Control::updateInab() {
+void TNNP04Control::updateInab() {
 	double ENa;
 	double gnab = 0.00029;
 
@@ -187,7 +199,7 @@ void Control::updateInab() {
 	iNab = gnab*(vOld-ENa);
 }
 
-void Control::updateIto() {
+void TNNP04Control::updateIto() {
 	double r_inf, tau_r;//for epicardial and M Cells
 	double s_inf, tau_s;//for epicardial and M Cells
 	double gto = 0.294;  //endo = 0.073;
@@ -207,7 +219,7 @@ void Control::updateIto() {
 
 }
 
-void Control::updateIks() {
+void TNNP04Control::updateIks() {
 	double xs_inf, alpha_xs, beta_xs, tau_xs;
 	double condfact = 1.0;
 	double pKna = 0.03;
@@ -228,7 +240,7 @@ void Control::updateIks() {
 	iKs = gks*condfact*Gate.xs*Gate.xs*(vOld-EKs);
 }
 
-void Control::updateIkr() {
+void TNNP04Control::updateIkr() {
 	double xr1_inf, alpha_xr1, beta_xr1, tau_xr1;
 	double xr2_inf, alpha_xr2, beta_xr2, tau_xr2;
 	double EK;
@@ -252,7 +264,7 @@ void Control::updateIkr() {
 
 }
 
-void Control::updateIpk() {
+void TNNP04Control::updateIpk() {
 	double EK;
 	double gpk = 0.0146;
 
@@ -260,7 +272,7 @@ void Control::updateIpk() {
 	ipK = gpk*(vOld-EK)/(1+exp((25-vOld)/5.98));
 }
 
-void Control::updateIk1() {
+void TNNP04Control::updateIk1() {
 	double alpha_K1, beta_K1, xK1_inf;
 	double EK;
 	double gk1 = 5.405;
@@ -275,7 +287,7 @@ void Control::updateIk1() {
 	
 }
 
-void Control::updateInaca() {
+void TNNP04Control::updateInaca() {
 	double kNaca = 1000.0;
 	double gamma = 0.35;
 	double KmNai = 87.5;
@@ -287,7 +299,7 @@ void Control::updateInaca() {
 
 }
 
-void Control::updateInak() {
+void TNNP04Control::updateInak() {
 	double pnak = 1.362;
 	double KmK = 1.0;
 	double KmNa = 40.0;
@@ -300,7 +312,7 @@ void Control::updateInak() {
 
 }
 
-void Control::updatecaI() {
+void TNNP04Control::updatecaI() {
 	double dcaI;
 	double b1,c1;
 	double cmdnbar = .15;
@@ -314,7 +326,7 @@ void Control::updatecaI() {
         caI=(sqrt(b1*b1+4.0*c1)-b1)/2.0;
 }
 
-void Control::updatecaSr() {
+void TNNP04Control::updatecaSr() {
 	double dcaSr;
 	double b1,c1;
 	double csqnbar = 10.0;
@@ -328,7 +340,7 @@ void Control::updatecaSr() {
         caSr=(sqrt(b1*b1+4.0*c1)-b1)/2.0;
 }
 
-void Control::updateSRcurrents(){
+void TNNP04Control::updateSRcurrents(){
 
 	double g_inf, tau_g;
 	double gold;
@@ -380,7 +392,7 @@ void Control::updateSRcurrents(){
 	   iRel = (((a_rel*caSr*caSr)/(b_rel*b_rel+caSr*caSr))+c_rel)*Gate.g;
 }
 
-void Control::updatekI(){
+void TNNP04Control::updatekI(){
 	double dkI;
 
 	dkI = dt*((-iKt*ACap/(Vc*FDAY)));
@@ -389,7 +401,7 @@ void Control::updatekI(){
 
 }
 
-void Control::updatenaI() {
+void TNNP04Control::updatenaI() {
 	double dnaI;
 
 	dnaI = dt*(-(iNat)*ACap/(Vc*FDAY));
@@ -397,7 +409,7 @@ void Control::updatenaI() {
 	naI = naI + dnaI;
 }
 
-void Control::updateCurr(){
+void TNNP04Control::updateCurr(){
 	updateIcal();
 	updateIcab();
 	updateIpca();
@@ -416,7 +428,7 @@ void Control::updateCurr(){
 	iKt = iK1+iTo+iKr+iKs+ipK-2*iNak;
 	iTot=iNat+iCat+iKt;
 }
-void Control::updateConc(){
+void TNNP04Control::updateConc(){
 	updateSRcurrents();
 	updatecaI(); 
 	updatecaSr(); 
@@ -426,34 +438,15 @@ void Control::updateConc(){
 
 
 
-int Control::stim()
+int TNNP04Control::externalStim(double stimval)
 {
-  if(t>=stimt&&t<(stimt+dur)){
-    if(flag==0){
-      cout << "Stimulus to " << type << " at t = " << t << endl;
-      num++;
-      flag=1;
-      if(num>=numstims)
-   	 return 0;
-    }	
-    iKt = iKt + val;
-    iTot = iTot + val;
-  }
-  else if(flag==1){	//trailing edge of stimulus
-	stimt=stimt+bcl;
-	flag=0;
-	apTime = 0.0;
-  }	
-  
-  apTime = apTime+dt;
-	  
-  return 1;
+    iKt = iKt + stimval;
+    iTot = iTot + stimval;
+    return 1;
 };
 
-map<string, double*> Control::makemap()
+void TNNP04Control::makemap()
 {
-  map<string, double*> vars;
-
   vars["vOld"]=&vOld;
   vars["t"]=&t;
   vars["dVdt"]=&dVdt;
@@ -487,6 +480,4 @@ map<string, double*> Control::makemap()
   vars["Gate.m"]=&Gate.m;
   vars["Gate.h"]=&Gate.h;
   vars["Gate.j"]=&Gate.j;
-  
-  return vars;
 };

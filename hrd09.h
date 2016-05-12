@@ -18,6 +18,17 @@ using namespace std;
 #ifndef MODEL_H
 #define MODEL_H
 
+//######################################################
+//Define class for normal canine ventricular cell.
+//######################################################
+class HRD09Control : public Cell
+{
+  public:
+    HRD09Control();
+    HRD09Control(const HRD09Control& toCopy);
+    ~HRD09Control(); 
+    virtual HRD09Control* clone();
+  
 /*########################*/
 /*    DEFINE STRUCTS	  */
 /*########################*/
@@ -58,15 +69,6 @@ using namespace std;
 
    };
 
-//######################################################
-//Define class for normal canine ventricular cell.
-//######################################################
-class HRD09Control : public Cell
-{
-  public:
-    HRD09Control();
-    ~HRD09Control(); 
-  
   //##################################################
   // Declare functions/variables unique to Control
   // class. All functions/variables declared in parent 
@@ -101,8 +103,8 @@ class HRD09Control : public Cell
     virtual void updateCamk();
     virtual void updateCurr();
     virtual void updateConc();
-    virtual int stim();
-    virtual map<string, double*> makemap();
+    virtual int externalStim(double stimval);
+    virtual void makemap();
     //##### Declare class variables ##############
     double naI,naO,kI,kO,caI,caO,clI,clO;  // Ion concentrations
     double iNa;           // Fast inward Na current
@@ -146,25 +148,33 @@ class HRD09Control : public Cell
  
     struct RateConst Rate;
     struct GateVariable Gate;
+
+    private:
+    void Initialize();
 };
 
-class BorderZone : public HRD09Control
+class HRD09BorderZone : public HRD09Control
 {
   public:
-    BorderZone();
-    ~BorderZone();
+    HRD09BorderZone();
+    HRD09BorderZone(const HRD09BorderZone& toCopy);
+    ~HRD09BorderZone();
+
+    virtual HRD09BorderZone* clone();
 
   //##################################################
   // Declare functions that will be overwritten in 
-  // BorderZone class. All other functions/variables
+  // HRD09BorderZone class. All other functions/variables
   // are inherited from Control class.
   //##################################################
-    virtual void updateINa();
+    virtual void updateIna();
     virtual void updateIcab();
     virtual void updateIlca();
     virtual void updateIk1();
     virtual void updateIto();
     virtual void updateCamk();
+  private:
+    void Initialize();
 };
 
 #endif

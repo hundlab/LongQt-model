@@ -13,10 +13,24 @@
 // Constructor for canine infarct border zone epicardial
 // ventricular model.
 //######################################################
-BorderZone::BorderZone()
+HRD09BorderZone::HRD09BorderZone()
 {
-        //##### Initialize variables ##################
-        type = "BorderZone";
+    this->Initialize();
+};
+HRD09BorderZone::HRD09BorderZone(const HRD09BorderZone& toCopy) : HRD09Control(toCopy) {
+    this->Initialize();
+}
+//######################################################
+// Destructor for canine infarct border zone epicardial
+// ventricular model.
+//#####################################################
+HRD09BorderZone::~HRD09BorderZone()
+{
+};
+
+//##### Initialize variables ##################
+void HRD09BorderZone::Initialize() {
+        type = "HRD09BorderZone";
         dVdt=dVdtmax=1.017497198e-09;
         t=0.0;
 	dt=dtmin = 0.005;
@@ -28,8 +42,6 @@ BorderZone::BorderZone()
         sponRelflag = 0;
 
         apTime = 0.0;
-        flag = 0;
-        num = 0;
 
         naO = 140;
         caO = 1.8;
@@ -125,22 +137,19 @@ BorderZone::BorderZone()
         iUp = 0.001047447236;
 
         iCat = -2.441419895e-07;
-};
-//######################################################
-// Destructor for canine infarct border zone epicardial
-// ventricular model.
-//#####################################################
-BorderZone::~BorderZone()
-{
-};
 
+        makemap();
+}
+HRD09BorderZone* HRD09BorderZone::clone() {
+    return new HRD09BorderZone(*this);
+}
 //######################################################
 // L-type Ca current - BZ cell has decreased 
 // permeability (pca) compared to Control model.
 // Also, kinetic differences exist downstream of 
 // differences in CaMKII activity.
 //######################################################
-void BorderZone::updateIlca()
+void HRD09BorderZone::updateIlca()
 {
 	double taud,finf,fcainf,fcainf2,taufca,taufca2,tauf,dinf,taud2,d2inf;
 	double maxIca;
@@ -187,7 +196,7 @@ void BorderZone::updateIlca()
 // Background Ca current - BZ cell has decreased 
 // conductance (gcab) compared to Control model.  
 //######################################################
-void BorderZone::updateIcab()
+void HRD09BorderZone::updateIcab()
 {
 	double Ecan,maxicab;
 	double gamcai=1.0;
@@ -206,7 +215,7 @@ void BorderZone::updateIcab()
 // maximal conductance (MaxGk1) compared to control 
 // model.
 //######################################################
-void BorderZone::updateIk1()
+void HRD09BorderZone::updateIk1()
 {
 	double Gk1, Ek1;
 	double MaxGk1 =0.3;
@@ -227,7 +236,7 @@ void BorderZone::updateIk1()
 // Also, kinetic differences exist downstream of 
 // differences in CaMKII activity.
 //######################################################
-void BorderZone::updateIna()
+void HRD09BorderZone::updateIna()
 {
 	double bj1a,bj2a,bj2b,aj1a,aj1b,aj1c;
 	double ms,tm,hs,th,js,tj;
@@ -299,7 +308,7 @@ void BorderZone::updateIna()
 // Transient outward K current - Ito is absent 
 // (MaxGto = 0.0) in BZ model.
 //######################################################
-void BorderZone::updateIto()
+void HRD09BorderZone::updateIto()
 {
     double azdv,bzdv,tauzdv,zssdv,aydv,bydv,tauydv,tauy2dv,yssdv,ay2dv,by2dv,yss2dv,rvdv;
     double Ek;
@@ -329,7 +338,7 @@ void BorderZone::updateIto()
 // faster in BZ compared to Control resulting in CaMKII
 // overactivity.
 //######################################################
-void BorderZone::updateCamk()
+void HRD09BorderZone::updateCamk()
 {
    double P=0.00003;          // rate of dephosphorylation .00003
    double calmodulin;         // free calmodulin bound to calcium.

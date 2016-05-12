@@ -7,6 +7,21 @@
 #ifndef GPBATRIAL_H
 #define GPBATRIAL_H
 
+
+//####################################
+// subclass of Cell
+//####################################
+class GpbAtrial: public Cell
+{
+  public:
+    // constructors
+    GpbAtrial();
+    GpbAtrial(GpbAtrial& toCopy);
+    virtual ~GpbAtrial();
+    
+    void Initialize();
+    GpbAtrial* clone();
+
 /*########################*/
 /*    DEFINE STRUCTS	  */
 /*########################*/
@@ -25,19 +40,6 @@ struct GateVariable {
    double d;	
    double f;	
 };	
-//####################################
-// subclass of Cell
-//####################################
-class GpbAtrial: public Cell
-{
-  public:
-    // constructors
-    GpbAtrial();
-    GpbAtrial(GpbAtrial& toCopy);
-    virtual ~GpbAtrial();
-    
-    void Initialize();
-    GpbAtrial* clone();
 
     double Vsl;
     double Vjunc;

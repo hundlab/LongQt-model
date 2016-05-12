@@ -15,7 +15,21 @@
 //######################################################
 HRD09Control::HRD09Control()
 {
-        //##### Initialize variables ##################
+    this->Initialize();
+};
+HRD09Control::HRD09Control(const HRD09Control& toCopy) : Cell(toCopy) {
+    this->Initialize();
+}
+//######################################################
+// Destructor for control canine epicardial
+// ventricular model.
+//#####################################################
+HRD09Control::~HRD09Control()
+{
+};
+
+//##### Initialize variables ##################
+void HRD09Control::Initialize() {
         type = "HRD09Control";
         dVdt=dVdtmax=5.434230843e-10;//check
         Cm = 1.0; //uF/cm2  must be defined for fiber...default = 1.
@@ -29,8 +43,6 @@ HRD09Control::HRD09Control()
         sponRelflag = 0;
 
         apTime = 0.0;
-        flag = 0;
-        num = 0;
 
         naO = 140;
         caO = 1.8;
@@ -126,15 +138,14 @@ HRD09Control::HRD09Control()
         iUp = 0.0007639509773;//check
 
         iCat = -4.844236345e-08;//check
-};
-//######################################################
-// Destructor for control canine epicardial
-// ventricular model.
-//#####################################################
-HRD09Control::~HRD09Control()
-{
-};
 
+        makemap();
+
+}
+//overriden deep copy funtion
+HRD09Control* HRD09Control::clone(){
+    return new HRD09Control(*this);
+};
 // L-type Ca current 
 void HRD09Control::updateIlca()
 {
@@ -741,36 +752,18 @@ void HRD09Control::updateConc()
 
 
 // External stimulus.
-int HRD09Control::stim()
+int HRD09Control::externalStim(double stimval)
 {
-  if(t>=stimt&&t<(stimt+dur)){
-    if(flag==0){
-    cout << "Stimulus to " << type << " at t = THAT" << t << endl; 
-	num++;
-	flag=1;
-  	if(num>=numstims)
-		return 0;
-    }	
-    iKt = iKt + 0.5*val;
-    iClt = iClt + 0.5*val;
-    iTot = iTot + val;
- 
-  }
-  else if(flag==1){	//trailing edge of stimulus
-	stimt=stimt+bcl;
-	flag=0;
-	apTime = 0.0;
-  }	
+    iKt = iKt + 0.5*stimval;
+    iClt = iClt + 0.5*stimval;
+    iTot = iTot + stimval;
   
-  apTime = apTime+dt;
-	  
   return 1;
 };
 
 // Create map for easy retrieval of variable values.
-map<string, double*> HRD09Control::makemap()
+void HRD09Control::makemap()
 {
-  map<string, double*> vars;
   vars["vOld"]=&vOld;
   vars["t"]=&t;
   vars["dVdt"]=&dVdt;
@@ -832,6 +825,5 @@ map<string, double*> HRD09Control::makemap()
   vars["iKt"]=&iKt; //not initialized
   vars["iClt"]=&iClt; //not initialized
 
-  return vars;
 }
 

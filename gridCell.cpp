@@ -7,6 +7,23 @@
 
 #include "gridCell.h"
 
+gridCell::gridCell() {
+    this->Initialize();
+}
+void gridCell::Initialize() {
+     dx = 0.01;
+    dy = 0.01;
+    np = 1;
+    tcount = 0;
+}
+gridCell::gridCell(gridCell& toCopy) : Cell(toCopy) {
+   this->Initialize(); 
+}
+gridCell* gridCell::clone() {
+    return new gridCell(*this);
+}
+gridCell::~gridCell();
+
 bool gridCell::setOutputfileConstants(string filename) {
     int i = 0;
     bool toReturn = true;

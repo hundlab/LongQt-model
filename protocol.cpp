@@ -11,6 +11,7 @@
 
 #include "protocol.h"
 #include "gpbatrial.h"
+#include "gridCell.h"
 
 #if defined(_WIN32) || defined(_WIN64)
   #define snprintf _snprintf

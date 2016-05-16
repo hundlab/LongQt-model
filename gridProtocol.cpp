@@ -5,8 +5,11 @@
 //################################################
 
 #include "gridProtocol.h"
+#include "gridCell.h"
 
 gridProtocol::gridProtocol()  : CurrentClamp(){
+    cell = new gridCell();
+    cellMap["gridCell"] = [] () {return (Cell*) new gridCell;};
 }
 //overriden deep copy funtion
 gridProtocol* gridProtocol::clone(){

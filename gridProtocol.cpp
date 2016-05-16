@@ -7,7 +7,6 @@
 #include "gridProtocol.h"
 
 gridProtocol::gridProtocol()  : CurrentClamp(){
-   grid = new Grid();
 }
 //overriden deep copy funtion
 gridProtocol* gridProtocol::clone(){
@@ -17,7 +16,6 @@ gridProtocol::gridProtocol(const gridProtocol& toCopy) : CurrentClamp(toCopy){
     this->CCcopy(toCopy);
 }
 void gridProtocol::CCcopy(const gridProtocol& toCopy) {
-    this->grid = toCopy.grid;
     this->dataNodes = toCopy.dataNodes;
     this->stimNodes = toCopy.stimNodes;
 }

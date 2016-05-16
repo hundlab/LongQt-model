@@ -8,7 +8,8 @@
 #ifndef GRIDCELL_H
 #define GRIDCELL_H
 
-#include <cellGrid.h>
+#include "grid.h"
+#include "cell.h"
 
 class gridCell: public Cell {
   public:
@@ -30,8 +31,6 @@ class gridCell: public Cell {
     virtual bool setOuputfileVariables(string filename);
     virtual bool setConstantSelection(set<string> new_selection);
     virtual bool setVariableSelection(set<string> new_selection);
-    virtual set<string> getConstantSelection();
-    virtual set<string> getVariableSelection();
     virtual void writeConstants();
     virtual void writeVariables();
 

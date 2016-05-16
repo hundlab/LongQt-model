@@ -8,8 +8,8 @@
 #define GRIDPROTOCOL_H
 
 #include <set>
-#include "cellGrid.h"
 #include "currentClampProtocol.h"
+#include "node.h"
 
 class gridProtocol : public CurrentClamp {
   public:
@@ -22,7 +22,6 @@ class gridProtocol : public CurrentClamp {
     int stim();
   private:
     void CCcopy(const gridProtocol& toCopy);
-    Grid* grid;
     set<Node*> dataNodes;
     set<Node*> stimNodes;
 };

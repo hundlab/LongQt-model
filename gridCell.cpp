@@ -22,7 +22,7 @@ gridCell::gridCell(gridCell& toCopy) : Cell(toCopy) {
 gridCell* gridCell::clone() {
     return new gridCell(*this);
 }
-gridCell::~gridCell();
+gridCell::~gridCell() {}
 
 bool gridCell::setOutputfileConstants(string filename) {
     int i = 0;

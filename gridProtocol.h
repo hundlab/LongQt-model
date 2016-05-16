@@ -7,7 +7,11 @@
 #ifndef GRIDPROTOCOL_H
 #define GRIDPROTOCOL_H
 
-class gridProtocol : public Protocol {
+#include <set>
+#include "cellGrid.h"
+#include "currentClampProtocol.h"
+
+class gridProtocol : public CurrentClamp {
   public:
     gridProtocol();
     gridProtocol(const gridProtocol& toCopy);
@@ -15,7 +19,11 @@ class gridProtocol : public Protocol {
     gridProtocol& operator=(const gridProtocol& toCopy);
 
     bool runTrial() override;
+    int stim();
   private:
-    void CCcopt(const gridProtocol& toCopy);
+    void CCcopy(const gridProtocol& toCopy);
+    Grid* grid;
+    set<Node*> dataNodes;
+    set<Node*> stimNodes;
 };
 #endif

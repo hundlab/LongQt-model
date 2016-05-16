@@ -21,13 +21,14 @@ class CurrentClamp : public Protocol {
     CurrentClamp& operator=(const CurrentClamp& toCopy);
 
     bool runTrial() override;
-  private:
+  protected:
     double bcl,stimval,stimdur,stimt;
     int numstims;   //variables for pacing.
     bool stimflag,paceflag;
     double stimcounter;
 
-    int stim();
+    virtual int stim();
+  private:
     void CCcopy(const CurrentClamp& toCopy);
 };
 #endif

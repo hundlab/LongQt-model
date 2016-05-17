@@ -9,6 +9,7 @@
 
 gridProtocol::gridProtocol()  : CurrentClamp(){
     cell = new gridCell();
+    cellMap.clear();
     cellMap["gridCell"] = [] () {return (Cell*) new gridCell;};
 }
 //overriden deep copy funtion

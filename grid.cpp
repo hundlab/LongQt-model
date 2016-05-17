@@ -52,3 +52,9 @@ void Grid::setCellTypes(set<cellInfo> cells) {
     }
     }
 } 
+int Grid::rowCount() {
+    return fiber.size();
+}
+int Grid::columnCount() {
+    return fibery.size();
+}

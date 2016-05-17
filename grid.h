@@ -31,6 +31,8 @@ class Grid {
     virtual void removeRow(int pos);
     virtual void removeColumn(int pos);
     virtual void setCellTypes(set<cellInfo> cells); 
+    virtual int rowCount();
+    virtual int columnCount();
 
     vector<Fiber> fiber;
     vector<Fiber> fibery; 

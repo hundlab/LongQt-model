@@ -17,6 +17,7 @@ struct Node {
         r = 0;
         B = 0;
         vNew = 0;
+        cell = new Cell();
     }
     ~Node() {};
     Cell* cell;

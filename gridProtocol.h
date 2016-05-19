@@ -20,7 +20,12 @@ class gridProtocol : public CurrentClamp {
 
     bool runTrial() override;
     int stim();
+    map<string, CellInitializer>& getCellMap();
+    set<Node*>& getDataNodes();
+    set<Node*>& getStimNodes();
+
   private:
+    map<string, CellInitializer> baseCellMap;
     void CCcopy(const gridProtocol& toCopy);
     set<Node*> dataNodes;
     set<Node*> stimNodes;

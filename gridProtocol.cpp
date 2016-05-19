@@ -9,6 +9,7 @@
 
 gridProtocol::gridProtocol()  : CurrentClamp(){
     cell = new gridCell();
+    baseCellMap = cellMap;
     cellMap.clear();
     cellMap["gridCell"] = [] () {return (Cell*) new gridCell;};
 }
@@ -125,4 +126,13 @@ temp.clear();
       cell->writeConstants();
 
       return true; 
+}
+map<string, CellInitializer>& gridProtocol::getCellMap() {
+    return baseCellMap;
+}
+set<Node*>& gridProtocol::getStimNodes() {
+    return stimNodes;
+}
+set<Node*>& gridProtocol::getDataNodes() {
+    return dataNodes;
 }

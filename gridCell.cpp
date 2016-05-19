@@ -24,7 +24,9 @@ gridCell* gridCell::clone() {
     return new gridCell(*this);
 }
 gridCell::~gridCell() {}
-
+Grid* gridCell::getGrid() {
+    return &grid;
+}
 bool gridCell::setOutputfileConstants(string filename) {
     int i = 0;
     bool toReturn = true;
@@ -49,6 +51,27 @@ bool gridCell::setOuputfileVariables(string filename) {
     }
     return toReturn;
 }
+set<string> gridCell::getVariables() {
+    set<string> toReturn;
+    for(auto it = grid.fiber.begin(); it != grid.fiber.end(); it++) {
+        for(auto iv = it->nodes.begin(); iv != it->nodes.end(); iv++) {
+            set<string> ivSet = (*iv)->cell->getVariables();
+            toReturn.insert(ivSet.begin(), ivSet.end());
+        }
+    }
+    return toReturn;
+}
+set<string> gridCell::getConstants() {
+    set<string> toReturn;
+    for(auto it = grid.fiber.begin(); it != grid.fiber.end(); it++) {
+        for(auto iv = it->nodes.begin(); iv != it->nodes.end(); iv++) {
+            set<string> ivSet = (*iv)->cell->getConstants();
+            toReturn.insert(ivSet.begin(), ivSet.end());
+        }
+    }
+    return toReturn;
+}
+
 bool gridCell::setConstantSelection(set<string> new_selection) {
     bool toReturn = true;
     parsSelection = new_selection;

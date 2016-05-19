@@ -11,6 +11,8 @@
 #include "grid.h"
 #include "cell.h"
 
+#include <set>
+
 class gridCell: public Cell {
   public:
     gridCell();
@@ -19,12 +21,15 @@ class gridCell: public Cell {
 
     void Initialize();
     gridCell* clone();
+    Grid* getGrid();
 
     virtual void updateConc();
     virtual void updateCurr();
     virtual double updateV();
     virtual int externalStim(double stimval); //stimulates every cell
     virtual double tstep(double stimt);
+    virtual set<string> getVariables();
+    virtual set<string> getConstants();
 
 //cell io functions
     virtual bool setOutputfileConstants(string filename);

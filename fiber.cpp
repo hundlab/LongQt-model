@@ -2,7 +2,11 @@
 #include "tridag.h"
 
 Fiber::Fiber(int size) {
-   nodes.resize(size, NULL); 
+    unsigned int i = nodes.size();
+    nodes.resize(size, NULL);
+    for(;i < nodes.size(); i++) {
+        nodes[i] = new Node();
+    }
 }
 Fiber::~Fiber() {}
 //#############################################################

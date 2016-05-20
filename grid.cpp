@@ -35,22 +35,25 @@ void Grid::removeColumn(int pos) {
     }
 }
 void Grid::setCellTypes(set<cellInfo> cells) {
-    {int i = 0;
-    for(auto it = cells.begin(); it != cells.end(); it++, i++) {
-        Node* n = fiber[it->X].nodes[it->Y];
-        n->x = it->X*it->dx;
-        n->y = it->Y*it->dy;
-        if((it->np==1)||((i%it->np)==0)) {
-            n->B = 1000*n->cell->cellRadius/(2*n->cell->Rcg*(n->Rmyo*it->dx+n->rd)*n->cell->Cm*it->dx);
-        } else {
-            n->B = 1000*n->cell->cellRadius/(2*n->cell->Rcg*n->Rmyo*n->cell->Cm*it->dx*it->dx);
-        }
-        if(it->n->cell->type == string("Cell")) {
-            n->B = 0.0;
-        }
-    }
+    for(auto it = cells.begin(); it != cells.end(); it++) {
+        setCellTypes(*it);
     }
 } 
+void Grid::setCellTypes(const cellInfo& singleCell) {
+        Node* n = fiber[singleCell.X].nodes[singleCell.Y];
+        n->cell = singleCell.cell;
+        n->x = singleCell.X*singleCell.dx;
+        n->y = singleCell.Y*singleCell.dy;
+        if((singleCell.np==1)||((singleCell.X%singleCell.np)==0)) {
+            n->B = 1000*n->cell->cellRadius/(2*n->cell->Rcg*(n->Rmyo*singleCell.dx+n->rd)*n->cell->Cm*singleCell.dx);
+        } else {
+            n->B = 1000*n->cell->cellRadius/(2*n->cell->Rcg*n->Rmyo*n->cell->Cm*singleCell.dx*singleCell.dx);
+        }
+        if(singleCell.cell->type == string("Cell")) {
+            n->B = 0.0;
+        }
+   
+}
 int Grid::rowCount() {
     return fiber.size();
 }

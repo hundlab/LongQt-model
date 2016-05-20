@@ -18,7 +18,7 @@ struct cellInfo {
     double dx;
     double dy;
     int np;
-    string cellType;
+    Cell* cell;
 };
 
 class Grid {
@@ -31,6 +31,7 @@ class Grid {
     virtual void removeRow(int pos);
     virtual void removeColumn(int pos);
     virtual void setCellTypes(set<cellInfo> cells); 
+    virtual void setCellTypes(const cellInfo& singleCell);
     virtual int rowCount();
     virtual int columnCount();
     virtual void addBuffer();

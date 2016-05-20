@@ -45,7 +45,9 @@ class gridCell: public Cell {
     char buffer[500];
     double dx; //0.01
     double dy;
-    int np; //1
+    double np; //1
     int tcount;//0
+
+    void makeMap();
 };
 #endif

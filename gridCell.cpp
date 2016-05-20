@@ -16,6 +16,7 @@ void gridCell::Initialize() {
     np = 1;
     type = "gridCell";
     tcount = 0;
+    makeMap();
 }
 gridCell::gridCell(gridCell& toCopy) : Cell(toCopy) {
     this->Initialize(); 
@@ -56,7 +57,7 @@ bool gridCell::setOuputfileVariables(string filename) {
     return toReturn;
 }
 set<string> gridCell::getVariables() {
-    set<string> toReturn;
+    set<string> toReturn = Cell::getVariables();
     for(auto it = grid.fiber.begin(); it != grid.fiber.end(); it++) {
         for(auto iv = it->nodes.begin(); iv != it->nodes.end(); iv++) {
             set<string> ivSet = (*iv)->cell->getVariables();
@@ -66,7 +67,7 @@ set<string> gridCell::getVariables() {
     return toReturn;
 }
 set<string> gridCell::getConstants() {
-    set<string> toReturn;
+    set<string> toReturn = Cell::getConstants();
     for(auto it = grid.fiber.begin(); it != grid.fiber.end(); it++) {
         for(auto iv = it->nodes.begin(); iv != it->nodes.end(); iv++) {
             set<string> ivSet = (*iv)->cell->getConstants();
@@ -192,4 +193,9 @@ double gridCell::tstep(double stimt)
 	        dt = dtmax;
     }   
     return t;
+}
+void gridCell::makeMap() {//only aply to cells added after the change?
+    vars["dx"] = &dx;
+    vars["dy"] = &dy;
+    vars["np"] = &np;
 }

@@ -22,6 +22,7 @@ class gridCell: public Cell {
     void Initialize();
     gridCell* clone();
     Grid* getGrid();
+    void addBuffer();
 
     virtual void updateConc();
     virtual void updateCurr();

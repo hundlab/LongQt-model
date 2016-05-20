@@ -18,7 +18,7 @@ struct cellInfo {
     double dx;
     double dy;
     int np;
-    Node* n;
+    string cellType;
 };
 
 class Grid {
@@ -33,6 +33,7 @@ class Grid {
     virtual void setCellTypes(set<cellInfo> cells); 
     virtual int rowCount();
     virtual int columnCount();
+    virtual void addBuffer();
 
     vector<Fiber> fiber;
     vector<Fiber> fibery; 

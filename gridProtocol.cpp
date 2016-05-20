@@ -56,6 +56,7 @@ int gridProtocol::stim()
 bool gridProtocol::runTrial() {
         char writefile[150];     // Buffer for storing filenames
 
+((gridCell*)cell)->addBuffer();
 //to be moved to a better location
 set<string> temp;
 temp.insert(pnames.begin(),pnames.end());
@@ -74,12 +75,12 @@ temp.clear();
         //open i/o streams
         for(map<string,Measure>::iterator it = measures.begin(); it != measures.end(); it++) {
             sprintf(writefile,propertyoutfile.c_str(),trial,it->second.varname.c_str());
-            sprintf(writefile, (datadir + "cell_%i_%i_" + string(writefile)).c_str());
+            sprintf(writefile, (datadir + "/" + "cell_%%i_%%i_" + string(writefile)).c_str());
             it->second.setOutputfile(writefile);
         }
 
         sprintf(writefile,dvarsoutfile.c_str(),trial);
-        sprintf(writefile, (datadir + "cell_%i_%i_" + string(writefile)).c_str());
+        sprintf(writefile, (datadir + "/" + "cell_%%i_%%i_" + string(writefile)).c_str());
         cell->setOuputfileVariables(writefile);
 
         while(int(doneflag)&&(time<tMax)){
@@ -113,7 +114,7 @@ temp.clear();
       // Output final (ss) property values for each trial
       for (map<string,Measure>::iterator it = measures.begin(); it != measures.end(); it++){
         sprintf(writefile,finalpropertyoutfile.c_str(),trial,it->second.varname.c_str());
-        sprintf(writefile, (datadir + "cell_%i_%i_" + string(writefile)).c_str());
+        sprintf(writefile, (datadir + "/" + "cell_%%i_%%i_" + string(writefile)).c_str());
         it->second.setOutputfile(writefile);
         it->second.write(false, true);
         it->second.reset();
@@ -121,7 +122,7 @@ temp.clear();
       
       // Output parameter values for each trial
       sprintf(writefile,finaldvarsoutfile.c_str(),trial);
-      sprintf(writefile, (datadir + "cell_%i_%i_" + string(writefile)).c_str());
+      sprintf(writefile, (datadir + "/" + "cell_%%i_%%i_" + string(writefile)).c_str());
       cell->setOutputfileConstants(writefile);
       cell->writeConstants();
 

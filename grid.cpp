@@ -37,17 +37,16 @@ void Grid::removeColumn(int pos) {
 void Grid::setCellTypes(set<cellInfo> cells) {
     {int i = 0;
     for(auto it = cells.begin(); it != cells.end(); it++, i++) {
-        fiber[it->X].nodes[it->Y] = it->n;
-        fibery[it->Y].nodes[it->X] = it->n;
-        it->n->x = it->X*it->dx;
-        it->n->y = it->Y*it->dy;
-        if((it->np==1)||((i%it->np)==0)) { //may be different in x vrs y
-            it->n->B = 1000*it->n->cell->cellRadius/(2*it->n->cell->Rcg*(it->n->Rmyo*it->dx+it->n->rd)*it->n->cell->Cm*it->dx);
+        Node* n = fiber[it->X].nodes[it->Y];
+        n->x = it->X*it->dx;
+        n->y = it->Y*it->dy;
+        if((it->np==1)||((i%it->np)==0)) {
+            n->B = 1000*n->cell->cellRadius/(2*n->cell->Rcg*(n->Rmyo*it->dx+n->rd)*n->cell->Cm*it->dx);
         } else {
-            it->n->B = 1000*it->n->cell->cellRadius/(2*it->n->cell->Rcg*it->n->Rmyo*it->n->cell->Cm*it->dx*it->dx);
+            n->B = 1000*n->cell->cellRadius/(2*n->cell->Rcg*n->Rmyo*n->cell->Cm*it->dx*it->dx);
         }
         if(it->n->cell->type == string("Cell")) {
-            it->n->B = 0.0;
+            n->B = 0.0;
         }
     }
     }
@@ -57,4 +56,20 @@ int Grid::rowCount() {
 }
 int Grid::columnCount() {
     return fibery.size();
+}
+void Grid::addBuffer() {
+    addRow(fiber.size());
+    addColumn(fibery.size());
+    for(auto it = fiber[fiber.size()-1].nodes.begin();it != fiber[fiber.size()-1].nodes.end(); it++) {
+        (*it)->B = 0.0;
+    }
+    for(auto it = fiber[0].nodes.begin();it != fiber[0].nodes.end(); it++) {
+        (*it)->B = 0.0;
+    }
+    for(auto it = fibery[fibery.size()-1].nodes.begin();it != fibery[fibery.size()-1].nodes.end(); it++) {
+        (*it)->B = 0.0;
+    }
+    for(auto it = fibery[0].nodes.begin();it != fibery[0].nodes.end(); it++) {
+        (*it)->B = 0.0;
+    }
 }

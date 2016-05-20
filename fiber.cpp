@@ -14,7 +14,7 @@ Fiber::~Fiber() {}
 //#############################################################
 void Fiber::updateVm(double& dt) {
     int i;
-    int nn = nodes.size();
+    int nn = nodes.size()-1;
 
     for(i=0;i<nn;i++){
         nodes[i]->d1 = nodes[i]->B*dt;

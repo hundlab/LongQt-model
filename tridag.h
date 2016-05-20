@@ -5,9 +5,9 @@
 #ifndef TRIDAG_H
 #define TRIDAG_H
 
-void tridag(vector<Node*> nodes);
+void tridag(vector<Node*>& nodes);
 
-void tridag(vector<Node*> nodes)
+void tridag(vector<Node*>& nodes)
 {
 	int j;
 	double bet;

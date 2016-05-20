@@ -89,11 +89,11 @@ temp.clear();
         int pCount = 0;
         //open i/o streams
         for(map<string,Measure>::iterator it = measures.begin(); it != measures.end(); it++) {
-            sprintf(writefile,(datadir + propertyoutfile).c_str(),trial,it->second.varname.c_str());
+            sprintf(writefile,(datadir + "/" + propertyoutfile).c_str(),trial,it->second.varname.c_str());
             it->second.setOutputfile(writefile);
         }
 
-        sprintf(writefile,(datadir + dvarsoutfile).c_str(),trial);
+        sprintf(writefile,(datadir + "/" + dvarsoutfile).c_str(),trial);
         cell->setOuputfileVariables(writefile);
 
         while(int(doneflag)&&(time<tMax)){
@@ -125,14 +125,14 @@ temp.clear();
     
       // Output final (ss) property values for each trial
       for (map<string,Measure>::iterator it = measures.begin(); it != measures.end(); it++){
-          sprintf(writefile,(datadir + finalpropertyoutfile).c_str(), trial, it->second.varname.c_str());
+          sprintf(writefile,(datadir + "/" + finalpropertyoutfile).c_str(), trial, it->second.varname.c_str());
           it->second.setOutputfile(writefile);
           it->second.write(false, true);
           it->second.reset();
       } 
       
       // Output parameter values for each trial
-      sprintf(writefile,(datadir + finaldvarsoutfile).c_str(), trial);
+      sprintf(writefile,(datadir + "/" + finaldvarsoutfile).c_str(), trial);
       cell->setOutputfileConstants(writefile);
       cell->writeConstants();
 

@@ -18,7 +18,8 @@ void gridCell::Initialize() {
     tcount = 0;
 }
 gridCell::gridCell(gridCell& toCopy) : Cell(toCopy) {
-   this->Initialize(); 
+    this->Initialize(); 
+    this->grid = toCopy.grid;
 }
 gridCell* gridCell::clone() {
     return new gridCell(*this);
@@ -26,6 +27,9 @@ gridCell* gridCell::clone() {
 gridCell::~gridCell() {}
 Grid* gridCell::getGrid() {
     return &grid;
+}
+void gridCell::addBuffer() {
+    grid.addBuffer();
 }
 bool gridCell::setOutputfileConstants(string filename) {
     int i = 0;
@@ -108,8 +112,8 @@ void gridCell::writeVariables() {
 }
 double gridCell::updateV() {
     int i,j;
-    int cells = grid.fibery.size();
-    int fibers = grid.fiber.size();
+    int cells = grid.fibery.size()-1;
+    int fibers = grid.fiber.size()-1;
     if(tcount%2==0){
         for(i=0;i<fibers;i++){
             for(j=0;j<cells;j++){

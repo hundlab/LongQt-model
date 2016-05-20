@@ -33,7 +33,7 @@ CellKernel::CellKernel()
     t=0.0;
     dt=dtmin;
     vOld = vNew =  -88.0;
-    iTot = iTotold = 0.0;
+    iTot = iTotold = 0.000000000001;
     iNat = iKt = iCat = 0.0;
     
     // make map of state vars

@@ -169,8 +169,8 @@ double CellKernel::tstep(double stimt)
   {
     dt=dtmax;
   }
-  
-    return t;
+dt=dtmax;
+  return t;
 };
 
 // External stimulus.

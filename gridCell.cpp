@@ -175,11 +175,11 @@ double gridCell::tstep(double stimt)
     for(i=0;i<grid.fiber.size();i++){
         for(j=0;j<grid.fibery.size();j++){
             grid.fiber[i].nodes[j]->cell->t=t;
-            grid.fiber[i].nodes[j]->cell->dt = dt;      
+            grid.fiber[i].nodes[j]->cell->dt = dt;
                 if(tcount%2==0){  // used to prevent time step change in middle of ADI	
-                    if(grid.fiber[i].nodes[j]->cell->dVdt>1.0||(t>(stimt-1.0)&&t<stimt))
+                    if(grid.fiber[i].nodes[j]->cell->dVdt>grid.fiber[i].nodes[j]->cell->dvcut||(t>(stimt-2.0)&&t<stimt+10)||(apTime<5.0))
                         vmflag = 2;
-                    else if(grid.fiber[i].nodes[j]->cell->vOld>(-50)&&vmflag!=2)
+                    else if((apTime<40)&&vmflag!=2)
                         vmflag = 1;
                 }
         }
@@ -191,11 +191,12 @@ double gridCell::tstep(double stimt)
 	        dt = dtmed;
         else  
 	        dt = dtmax;
-    }   
+    }
+    
     return t;
 }
 void gridCell::makeMap() {//only aply to cells added after the change?
-    vars["dx"] = &dx;
-    vars["dy"] = &dy;
-    vars["np"] = &np;
+    pars["dx"] = &dx;
+    pars["dy"] = &dy;
+    pars["np"] = &np;
 }

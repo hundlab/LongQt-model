@@ -4,8 +4,8 @@
 //#################################################
 #include "cell.h" //parent class definitions
 
-#ifndef GPBATRIAL_H
-#define GPBATRIAL_H
+#ifndef GPBATRIALRYR_H
+#define GPBATRIALRYR_H
 
 /*########################*/
 /*    DEFINE STRUCTS	  */
@@ -38,12 +38,15 @@ struct GateVariable {
 //####################################
 // subclass of Cell
 //####################################
-class GpbAtrial: public Cell
+class gpbatrialRyr: public Cell
 {
   public:
     // constructors
-    GpbAtrial();
-    virtual ~GpbAtrial();
+    gpbatrialRyr();
+    virtual ~gpbatrialRyr();
+    gpbatrialRyr(const gpbatrialRyr& toCopy);
+    virtual gpbatrialRyr* clone();
+    virtual void Initialize();
 
     double Vsl;
     double Vjunc;
@@ -183,6 +186,15 @@ class GpbAtrial: public Cell
 	double ksrleak;
 
 
+        double koCaFactor ;  //change this
+        double kiCaFactor; //change this
+        double kimFactor ; //change this
+        double komFactor; //change this
+        double ksFactor ; //change this
+        double kmfFactor ; //change this
+        double kmrFactor ; //change this
+        double ksrleakFactor ;//change this
+
 
  //###Concentration updating functions ######
 	virtual void updatecaI();
@@ -214,7 +226,7 @@ class GpbAtrial: public Cell
 	virtual void updateConc();
 
 	virtual void updateInal();
-        virtual int stim();
+        virtual int externalStim(double val);
     virtual map<string, double*> makemap();
     struct GateVariable gate;
     struct RateConst Rate;

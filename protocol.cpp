@@ -13,6 +13,7 @@
 #include "gpbatrial.h"
 #include "hrd09.h"
 #include "tnnp04.h"
+#include "gpbatrialRyr.h"
 
 #if defined(_WIN32) || defined(_WIN64)
   #define snprintf _snprintf
@@ -96,6 +97,8 @@ Protocol::Protocol()
     cellMap["HRD09Control"] = [] () {return (Cell*) new HRD09Control;};
     cellMap["HRD09BorderZone"] = [] () {return (Cell*) new HRD09BorderZone;};
     cellMap["TNNP04Control"] = [] () {return (Cell*) new TNNP04Control;};
+    cellMap["gpbatrialRyr"] = [] () {return (Cell*) new gpbatrialRyr;};
+      
 };
 
 

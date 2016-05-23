@@ -24,7 +24,7 @@ gpbatrialRyr::~gpbatrialRyr()
 
 
 
-gpbatrialRyr::Initialize()
+void gpbatrialRyr::Initialize()
 {
     type = "gpbatrialRyr";
     Cm = 1.0; //uF/cm2
@@ -38,8 +38,6 @@ gpbatrialRyr::Initialize()
     vOld=vNew=-80.9763;
 
     apTime = 0.0;
-    flag = 0;
-    num = 0;
 
     Vcell = 3.3E-5;//uL
     Vsr = 0.035*Vcell; 
@@ -128,6 +126,19 @@ gpbatrialRyr::Initialize()
 
 //fraction of phosphorylated iNa channels
 	fiNalP = 0;
+
+
+    koCaFactor = 1;  //change this
+    kiCaFactor =1; //change this
+    kimFactor = 1; //change this
+    komFactor =1; //change this
+    ksFactor = 1; //change this
+    kmfFactor = 1; //change this
+    kmrFactor = 1; //change this
+    ksrleakFactor = 1;//change this
+
+
+    makemap();
 }
 
 //overriden deep copy funtion
@@ -255,18 +266,18 @@ void gpbatrialRyr::updateSRFlux(){
 	double kmr = 1.7; //change this
 	double hillSRcaP = 1.787;
 	double VmaxSRcaP = 0.0053114;
-	
 
 
 
-	koCa = 10.0;  //change this
-	kiCa =0.5; //change this
-	kim = 0.005; //change this
-	kom = 0.06; //change this
-	ks = 25.0; //change this
-	kmf = 2.5*0.000246; //change this
-	kmr = 1.7; //change this
-	ksrleak = 0.000005348;//change this
+
+    koCa = 10.0 *koCaFactor ;  //change this
+    kiCa =0.5*kiCaFactor; //change this
+    kim = 0.005*kimFactor; //change this
+    kom = 0.06*komFactor; //change this
+    ks = 25.0*ksFactor; //change this
+    kmf = 2.5*0.000246*kmfFactor; //change this
+    kmr = 1.7*kmrFactor; //change this
+    ksrleak = 0.000005348*ksrleakFactor;//change this
 
 
 
@@ -732,45 +743,27 @@ void gpbatrialRyr::updateCurr() {
 }
 
 void gpbatrialRyr::updateConc() {
-	cell.updateSRFlux();
-	cell.updatecytobuff();
-	cell.updateJSLbuff();
-	cell.updateSRbuff();
-        cell.updateCamk();
+    updateSRFlux();
+    updatecytobuff();
+    updateJSLbuff();
+    updateSRbuff();
+    updateCamk();
 
-	cell.updatecaI(); 
-	cell.updatenaI();
+    updatecaI();
+    updatenaI();
 
 }
 
 // External stimulus.
-int gpbatrialRyr::stim()
+int gpbatrialRyr::externalStim(double val)
 {
-  if(t>=stimt&&t<(stimt+dur)){
-    if(flag==0){
-      cout << "Stimulus to " << type << " at t = " << t << endl;
-      num++;
-      flag=1;
-      if(num>=numstims)
-         return 0;
-    }
-    iTot = iTot + val;
-  }
-  else if(flag==1){     //trailing edge of stimulus
-        stimt=stimt+bcl;
-        flag=0;
-        apTime = 0.0;
-  }
-
-  apTime = apTime+dt;
-
-  return 1;
+   iTot = iTot + val;
+   return 1;
 };
 
 // Create map for easy retrieval of variable values.
 map<string, double*> gpbatrialRyr::makemap()
 {
-  map<string, double*> vars;
   vars["vOld"]=&vOld;
   vars["t"]=&t;
   vars["dVdt"]=&dVdt;
@@ -863,6 +856,16 @@ map<string, double*> gpbatrialRyr::makemap()
   vars["iCabjunc"]=&iCabjunc;
   vars["iCabsl"]=&iCabsl;
   vars["iCab"]=&iCab;
+
+  pars["koCaFactor"]=&koCaFactor;
+  pars["kiCaFactor"]=&kiCaFactor;
+  pars["kimFactor"]=&kimFactor;
+  pars["komFactor"]=&komFactor;
+  pars["ksFactor"]=&ksFactor;
+  pars["kmfFactor"]=&kmfFactor;
+  pars["kmrFactor"]=&kmrFactor;
+  pars["ksrleakFactor"]=&ksrleakFactor;
+
 
   return vars;
 }

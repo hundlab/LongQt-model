@@ -33,6 +33,7 @@ class Cell : public CellKernel, public IOBase
 public:
     Cell() : CellKernel() {
         varsSelection.insert("t");
+        varsSelection.insert("vOld");
     };
 
     Cell(const Cell& toCopy) : CellKernel(toCopy) {

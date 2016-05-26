@@ -4,23 +4,8 @@
 //#################################################
 #include "cell.h" //parent class definitions
 
-#ifndef GPBATRIAL_H
-#define GPBATRIAL_H
-
-
-//####################################
-// subclass of Cell
-//####################################
-class GpbAtrial: public Cell
-{
-  public:
-    // constructors
-    GpbAtrial();
-    GpbAtrial(GpbAtrial& toCopy);
-    virtual ~GpbAtrial();
-    
-    void Initialize();
-    GpbAtrial* clone();
+#ifndef GPBATRIALRYR_H
+#define GPBATRIALRYR_H
 
 /*########################*/
 /*    DEFINE STRUCTS	  */
@@ -39,7 +24,29 @@ struct GateVariable {
    double f_cabsl;
    double d;	
    double f;	
+   double ml;
+   double hl;
 };	
+
+
+   struct RateConst {  //Rate constants for ion channel gates.
+	double aml;
+	double bml;
+   };
+
+
+//####################################
+// subclass of Cell
+//####################################
+class gpbatrialRyr: public Cell
+{
+  public:
+    // constructors
+    gpbatrialRyr();
+    virtual ~gpbatrialRyr();
+    gpbatrialRyr(const gpbatrialRyr& toCopy);
+    virtual gpbatrialRyr* clone();
+    virtual void Initialize();
 
     double Vsl;
     double Vjunc;
@@ -113,6 +120,17 @@ struct GateVariable {
 	double iNatotjunc;
 	double iNatotsl;
 	double iClt;
+	double iNal;
+	double fiNalP;
+
+      	double  caM;
+ 	double  fBlock ;
+	double	fBound ;
+	double	fI ;
+	double	fOx ;
+	double	fOxP;
+	double	fPhos;
+
 	
 //##### Buffers ########
 	//Sodium Buffers
@@ -134,6 +152,9 @@ struct GateVariable {
 	double SLHj;
 	double SLHsl;
 	
+
+	double fiNalNP;
+
 	//SR Ca buffer
 	double Csqnb;
 	double dCsqnb;
@@ -153,13 +174,33 @@ struct GateVariable {
 	double F_juncCaL;
 	double F_slCaL;
 
+
+//RYR testing
+	double koCa;  
+	double kiCa; 
+	double kim; 
+	double kom; 
+	double ks; 
+	double kmf; 
+	double kmr; 
+	double ksrleak;
+
+
+        double koCaFactor ;  //change this
+        double kiCaFactor; //change this
+        double kimFactor ; //change this
+        double komFactor; //change this
+        double ksFactor ; //change this
+        double kmfFactor ; //change this
+        double kmrFactor ; //change this
+        double ksrleakFactor ;//change this
+
+
  //###Concentration updating functions ######
-    void updateConc();
 	virtual void updatecaI();
 	virtual void updatenaI();
  //####Current updating functions #######
 	/*virtual void updateSRcurrents();*/
-    void updateCurr();
 	virtual void updateIcal();
 	virtual void updateIcab();
 	virtual void updateIpca();
@@ -173,15 +214,21 @@ struct GateVariable {
 	virtual void updateInak();
 	virtual void updateInab();
 	virtual void updateIna();
-	virtual void updateSRFlux();
+	virtual void updateCamk();
+//	virtual void updateSRFluxnew();
 	virtual void updatecytobuff(); //cytosolic Ca buffers
+	virtual void updateSRFlux();
 	virtual void updateJSLbuff(); //junctional and SL Ca buffers
 	virtual void updateSRbuff(); //SR Ca buffer	 
 	virtual void updateIclca();
 	virtual void updateIclbk();
- //##################
-    int externalStim(double stimval);
-    virtual void makemap();
+	virtual void updateCurr();
+	virtual void updateConc();
+
+	virtual void updateInal();
+        virtual int externalStim(double val);
+    virtual map<string, double*> makemap();
     struct GateVariable gate;
+    struct RateConst Rate;
 };
 #endif

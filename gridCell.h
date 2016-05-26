@@ -33,6 +33,10 @@ class gridCell: public Cell {
     virtual set<string> getConstants();
 
 //cell io functions
+    virtual void setGridfile(string name);
+    virtual string gridfile();
+    virtual bool writeGridfile();
+    virtual bool readGridfile(string filename);
     virtual bool setOutputfileConstants(string filename);
     virtual bool setOuputfileVariables(string filename);
     virtual bool setConstantSelection(set<string> new_selection);
@@ -47,6 +51,7 @@ class gridCell: public Cell {
     double dy;
     double np; //1
     int tcount;//0
+    string gridfileName;
 
     void makeMap();
 };

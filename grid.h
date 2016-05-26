@@ -27,10 +27,12 @@ class Grid {
     ~Grid();
 
     virtual void addRow(int pos); //create new row at 0 <= pos < len of empty cells
+    virtual void addRows(unsigned int num);
     virtual void addColumn(int pos); //same but for culumns
+    virtual void addColumns(unsigned int num);
     virtual void removeRow(int pos);
     virtual void removeColumn(int pos);
-    virtual void setCellTypes(set<cellInfo> cells); 
+    virtual void setCellTypes(set<cellInfo*>& cells); 
     virtual void setCellTypes(const cellInfo& singleCell);
     virtual int rowCount();
     virtual int columnCount();

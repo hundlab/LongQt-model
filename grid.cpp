@@ -14,12 +14,22 @@ void Grid::addRow(int pos) {
     }
     }
 }
+void Grid::addRows(unsigned int num) {
+    for(unsigned int i = 0; i < num; i++) {
+        this->addRow(0);
+    }
+}
 void Grid::addColumn(int pos) {
     fibery.insert(fibery.begin() +pos, Fiber(fiber.size()));
     {unsigned int i = 0;
     for(auto it = fiber.begin(); it != fiber.end()&&i<fibery[pos].nodes.size(); it++,i++) {
         it->nodes.insert(it->nodes.begin() + pos, fibery[pos].nodes[i]);
     }
+    }
+}
+void Grid::addColumns(unsigned int num) {
+    for(unsigned int i = 0; i < num; i++) {
+        this->addColumn(0);
     }
 }
 void Grid::removeRow(int pos) {
@@ -34,8 +44,8 @@ void Grid::removeColumn(int pos) {
         it->nodes.erase(it->nodes.begin() +pos);
     }
 }
-void Grid::setCellTypes(set<cellInfo> cells) {
-    for(auto it = cells.begin(); it != cells.end(); it++) {
+void Grid::setCellTypes(set<cellInfo*>& cells) {
+    for(auto it : cells) {
         setCellTypes(*it);
     }
 } 

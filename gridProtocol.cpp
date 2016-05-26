@@ -8,10 +8,14 @@
 #include "gridCell.h"
 
 gridProtocol::gridProtocol()  : CurrentClamp(){
-    cell = new gridCell();
+    gridCell* temp = new gridCell();
+    cell = temp;
     baseCellMap = cellMap;
     cellMap.clear();
     cellMap["gridCell"] = [] () {return (Cell*) new gridCell;};
+    GetSetRef toInsert;
+    pars["gridFile"]= toInsert.Initialize("file", [temp] () {return temp->gridfile();}, [temp] (const string& value) {temp->setGridfile(value);});
+
 }
 //overriden deep copy funtion
 gridProtocol* gridProtocol::clone(){

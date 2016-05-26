@@ -5,6 +5,10 @@
 // class definitions
 //################################################
 
+#include <iostream>
+#include <sstream>
+#include <set>
+
 #include "gridCell.h"
 
 gridCell::gridCell() {
@@ -15,11 +19,13 @@ void gridCell::Initialize() {
     dy = 0.01;
     np = 1;
     type = "gridCell";
+    gridfileName = "grid.txt";
     tcount = 0;
     makeMap();
 }
 gridCell::gridCell(gridCell& toCopy) : Cell(toCopy) {
     this->Initialize(); 
+    this->gridfileName = toCopy.gridfileName;
     this->grid = toCopy.grid;
 }
 gridCell* gridCell::clone() {
@@ -199,4 +205,70 @@ void gridCell::makeMap() {//only aply to cells added after the change?
     pars["dx"] = &dx;
     pars["dy"] = &dy;
     pars["np"] = &np;
+}
+void gridCell::setGridfile(string name) {
+    gridfileName = name;
+}
+string gridCell::gridfile() {
+    return gridfileName;
+}
+bool gridCell::writeGridfile() {
+    bool succes = true;
+    ofstream ofile;
+    int i = 0;
+    int j = 0;
+
+    ofile.open(gridfileName);
+    succes = ofile.good();
+    if(!succes) {
+        return succes;
+    }
+    ofile << grid.rowCount() << " " << grid.columnCount() << endl;
+    ofile << np << " " << dx << " " << dy << endl;
+    for(auto it : grid.fiber) {
+        for(auto iv : it.nodes) {
+            ofile <<" "<<iv->cell->type<<" "<<i<<" "<<j<<"\t";
+            i++;
+        }
+        ofile << endl;
+        j++;
+    }
+    return succes;    
+}
+bool gridCell::readGridfile(string filename) {
+    bool succes = true;
+    ifstream ifile;
+    cellInfo* info;
+    double np, dx, dy;
+    set<cellInfo*> cells;
+    string line;
+    
+    ifile.open(filename);
+    if(!(succes = ifile.good())) return succes;
+
+    int rows, columns, X ,Y;
+    X=0;Y=0;
+    ifile >> rows >> columns;
+    grid.addRows(rows);
+    grid.addColumns(columns);
+    ifile >> np >> dx >> dy;
+
+    while(!ifile.eof()){
+        getline(ifile,line);
+        stringstream linestream(line);
+        while(!linestream.eof()) {
+            info = new cellInfo;
+            info->dx = dx;
+            info->dy = dy;
+            info->np = np;
+            info->X = X;
+            info->Y = Y;
+            info->cell = new Cell();//waaaah!
+            cells.insert(info);
+            X++;
+        }
+        Y++;
+    }
+    grid.setCellTypes(cells);
+    return succes;
 }

@@ -10,6 +10,7 @@
 #include <set>
 
 #include "gridCell.h"
+#include "cellUtils.h"
 
 gridCell::gridCell() {
     this->Initialize();
@@ -104,16 +105,16 @@ bool gridCell::setVariableSelection(set<string> new_selection) {
     return toReturn;
 }
 void gridCell::writeConstants() {
-    for(auto it = grid.fiber.begin(); it != grid.fiber.end(); it++) {
-        for(auto iv = it->nodes.begin(); iv != it->nodes.end(); iv++) {
-            (*iv)->cell->writeConstants();
+    for(auto it : grid.fiber) {
+        for(auto iv : it.nodes) {
+            iv->cell->writeConstants();
         }
     }
 }
 void gridCell::writeVariables() {
-    for(auto it = grid.fiber.begin(); it != grid.fiber.end(); it++) {
-        for(auto iv = it->nodes.begin(); iv != it->nodes.end(); iv++) {
-            (*iv)->cell->writeVariables();
+    for(auto it : grid.fiber) {
+        for(auto iv : it.nodes) {
+            iv->cell->writeVariables();
         }
     }
 }
@@ -212,17 +213,21 @@ void gridCell::setGridfile(string name) {
 string gridCell::gridfile() {
     return gridfileName;
 }
-bool gridCell::writeGridfile() {
+bool gridCell::writeGridfile(string fileName) {
     bool succes = true;
     ofstream ofile;
     int i = 0;
     int j = 0;
+    if(fileName == "") {
+        fileName = this->gridfileName;
+    }
 
-    ofile.open(gridfileName);
+    ofile.open(fileName);
     succes = ofile.good();
     if(!succes) {
         return succes;
     }
+    ofile << "##BEGIN GRID\n";
     ofile << grid.rowCount() << " " << grid.columnCount() << endl;
     ofile << np << " " << dx << " " << dy << endl;
     for(auto it : grid.fiber) {
@@ -231,8 +236,10 @@ bool gridCell::writeGridfile() {
             i++;
         }
         ofile << endl;
+        i=0;
         j++;
     }
+    ofile << "##END GRID\n";
     return succes;    
 }
 bool gridCell::readGridfile(string filename) {
@@ -241,33 +248,47 @@ bool gridCell::readGridfile(string filename) {
     cellInfo* info;
     double np, dx, dy;
     set<cellInfo*> cells;
-    string line;
+    string type;
+    stringstream line;
+    string temp;
     
     ifile.open(filename);
     if(!(succes = ifile.good())) return succes;
-
-    int rows, columns, X ,Y;
-    X=0;Y=0;
+    while(!ifile.eof() && line.str() != "##BEGIN GRID") {
+        getline(ifile,temp);
+        line.clear();
+        line.str(temp);
+    }
+    int rows, columns;
     ifile >> rows >> columns;
     grid.addRows(rows);
     grid.addColumns(columns);
     ifile >> np >> dx >> dy;
-
-    while(!ifile.eof()){
-        getline(ifile,line);
-        stringstream linestream(line);
-        while(!linestream.eof()) {
+    if(ifile.eof()) {
+        return succes = false;
+    }
+ 
+    getline(ifile,temp);
+    line.clear();
+    line.str(temp);
+    while(!ifile.eof() && line.str() != "##END GRID"){
+        while(!line.eof()) {
             info = new cellInfo;
             info->dx = dx;
             info->dy = dy;
             info->np = np;
-            info->X = X;
-            info->Y = Y;
-            info->cell = new Cell();//waaaah!
+            line >> type >> info->X >> info->Y;
+            try {
+                info->cell = cellUtils().cellMap.at(type)();
+            } catch(const std::out_of_range& oor) {
+                succes = false;
+                info->cell = new Cell();
+            }
             cells.insert(info);
-            X++;
         }
-        Y++;
+        getline(ifile,temp);
+        line.clear();
+        line.str(temp);
     }
     grid.setCellTypes(cells);
     return succes;

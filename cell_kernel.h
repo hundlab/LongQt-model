@@ -78,5 +78,7 @@ class CellKernel
     map<string, double*> pars;  // map of params
     virtual set<string> getVariables();
     virtual set<string> getConstants();
+  protected:
+    void copyVarPar(const CellKernel& toCopy);
 };
 #endif

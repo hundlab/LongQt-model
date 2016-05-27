@@ -10,6 +10,7 @@
 #include <set>
 #include "currentClampProtocol.h"
 #include "node.h"
+#include "grid.h"
 
 class gridProtocol : public CurrentClamp {
   public:
@@ -23,11 +24,15 @@ class gridProtocol : public CurrentClamp {
     map<string, CellInitializer>& getCellMap();
     set<Node*>& getDataNodes();
     set<Node*>& getStimNodes();
+    virtual bool writepars(string file);
+    virtual int readpars(string file);
 
   private:
     map<string, CellInitializer> baseCellMap;
     void CCcopy(const gridProtocol& toCopy);
     set<Node*> dataNodes;
     set<Node*> stimNodes;
+    string setToString(set<Node*>& nodes, Grid* grid);
+    set<Node*> stringToSet(string nodesList, Grid* grid);
 };
 #endif

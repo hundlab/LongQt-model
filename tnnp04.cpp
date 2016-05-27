@@ -18,6 +18,7 @@ TNNP04Control::TNNP04Control()
 
 TNNP04Control::TNNP04Control(const TNNP04Control& toCopy) : Cell(toCopy) {
     this->Initialize();
+    CellKernel::copyVarPar(toCopy);
 }
 
 TNNP04Control::~TNNP04Control()

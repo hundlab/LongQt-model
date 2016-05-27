@@ -19,6 +19,8 @@ HRD09Control::HRD09Control()
 };
 HRD09Control::HRD09Control(const HRD09Control& toCopy) : Cell(toCopy) {
     this->Initialize();
+    CellKernel::copyVarPar(toCopy);
+
 }
 //######################################################
 // Destructor for control canine epicardial

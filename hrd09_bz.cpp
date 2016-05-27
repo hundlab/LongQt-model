@@ -19,6 +19,7 @@ HRD09BorderZone::HRD09BorderZone()
 };
 HRD09BorderZone::HRD09BorderZone(const HRD09BorderZone& toCopy) : HRD09Control(toCopy) {
     this->Initialize();
+    CellKernel::copyVarPar(toCopy);
 }
 //######################################################
 // Destructor for canine infarct border zone epicardial

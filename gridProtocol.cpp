@@ -10,11 +10,15 @@
 gridProtocol::gridProtocol()  : CurrentClamp(){
     gridCell* temp = new gridCell();
     cell = temp;
+    Grid* grid = temp->getGrid();
     baseCellMap = cellMap;
     cellMap.clear();
     cellMap["gridCell"] = [] () {return (Cell*) new gridCell;};
     GetSetRef toInsert;
     pars["gridFile"]= toInsert.Initialize("file", [temp] () {return temp->gridfile();}, [temp] (const string& value) {temp->setGridfile(value);});
+    pars["measNodes"]= toInsert.Initialize("set", [grid,this] () {return setToString(dataNodes,grid);}, [grid,this] (const string& value) {dataNodes = stringToSet(value,grid);});
+    pars["stimNodes"]= toInsert.Initialize("set", [grid,this] () {return setToString(stimNodes,grid);}, [grid,this] (const string& value) {stimNodes = stringToSet(value,grid);});
+
 
 }
 //overriden deep copy funtion
@@ -140,4 +144,35 @@ set<Node*>& gridProtocol::getStimNodes() {
 }
 set<Node*>& gridProtocol::getDataNodes() {
     return dataNodes;
+}
+bool gridProtocol::writepars(string file) {
+    bool toReturn = ((gridCell*)this->cell)->writeGridfile(file);
+    toReturn &= CurrentClamp::writepars(file);
+    return toReturn;
+}
+int gridProtocol::readpars(string file) {
+    bool toReturn = CurrentClamp::readpars(file);
+    toReturn &= ((gridCell*)this->cell)->readGridfile(file);
+    return toReturn;
+}
+string gridProtocol::setToString(set<Node*>& nodes, Grid* grid) {
+    stringstream toReturn;
+    for(auto it : nodes) {
+        pair<int,int> p = grid->findNode(it);
+        toReturn << p.first << " " << p.second << "\t";
+    }
+    return toReturn.str();
+}
+set<Node*> gridProtocol::stringToSet(string nodesList, Grid* grid) {
+    set<Node*> toReturn;
+    stringstream stream(nodesList);
+    while(!stream.eof()) {
+        pair<int,int> p(-1,-1);
+        stream >> p.first >> p.second;
+        Node* n = grid->findNode(p);
+        if(n != NULL) {
+            toReturn.insert(n);
+        }
+    }
+    return toReturn;
 }

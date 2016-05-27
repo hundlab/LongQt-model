@@ -10,11 +10,6 @@
 #include <cstring>
 
 #include "protocol.h"
-#include "gpbatrial.h"
-#include "gridCell.h"
-#include "hrd09.h"
-#include "tnnp04.h"
-#include "gpbatrialRyr.h"
 
 #if defined(_WIN32) || defined(_WIN64)
   #define snprintf _snprintf
@@ -24,12 +19,19 @@
 #endif
 
 //helper functions
+string trim(string str)
+{
+    string toFind = " \t\n\v\f\r";
+    str.erase(0, str.find_first_not_of(toFind));
+    str.erase(str.find_last_not_of(toFind)+1);
+    return str;
+}
 string Protocol::to_string(const bool& b) {
     return b ? "true" : "false";
 }
 
 bool Protocol::stob(const string& s) {
-    return (strcasecmp("true",s.c_str()) == 0);
+    return (strcasecmp("true",trim(s).c_str()) == 0);
 }
 
 //######################################################
@@ -90,16 +92,8 @@ Protocol::Protocol()
     pars["measfile"]= toInsert.Initialize("file", [this] () {return measfile;}, [this] (const string& value) {measfile = value;});
     pars["simvarfile"]= toInsert.Initialize("file", [this] () {return simvarfile;}, [this] (const string& value) {simvarfile = value;});
     pars["celltype"]= toInsert.Initialize("cell", [this] () {return cell->type;}, [this] (const string& value) {this->setCell(value);}); 
-    //initalize cellMap
-    //will only have an effect the first time it is called
-    cellMap["Cell"] = [] () {return new Cell;};
-    cellMap["ControlSa"] = [] () {return (Cell*) new ControlSa;};
-    cellMap["GpbAtrial"] = [] () {return (Cell*) new GpbAtrial;};
-    cellMap["HRD09Control"] = [] () {return (Cell*) new HRD09Control;};
-    cellMap["HRD09BorderZone"] = [] () {return (Cell*) new HRD09BorderZone;};
-    cellMap["TNNP04Control"] = [] () {return (Cell*) new TNNP04Control;};
-    cellMap["gpbatrialRyr"] = [] () {return (Cell*) new gpbatrialRyr;};
-      
+
+    cellMap = cellUtils().cellMap;
 };
 
 
@@ -301,6 +295,7 @@ int Protocol::readpars(string file)
     ifstream ifile;
     
     string name;
+    string temp;
     string value;
     map<string, double*>::iterator p;
     
@@ -311,15 +306,26 @@ int Protocol::readpars(string file)
         return 1;
     }
     
-    while(!ifile.eof()){
-        ifile >> name;
-        ifile >> value;
+    stringstream line;
+    while(!ifile.eof() && line.str() != "##BEGIN PARS") {
+        getline(ifile,temp);
+        line.clear();
+        line.str(temp);
+    }
+    getline(ifile,temp);
+    line.clear();
+    line.str(temp);
+    while(!ifile.eof() && line.str() != "##END PARS"){
+        line >> name;
+        getline(line,value);
         try {
-            pars.at(name).set(value);
+            pars.at(name).set(trim(value));
         } catch (const std::out_of_range& oor) {}
+        getline(ifile,temp);
+        line.clear();
+        line.str(temp);
     }
 
-    
     ifile.close();
     return 0;
   
@@ -493,16 +499,16 @@ bool Protocol::writepars(string file)
     string name;
     
     if(!ofile.is_open())
-        ofile.open(file);
+        ofile.open(file, std::ofstream::out | std::ofstream::app);
     if(!ofile.is_open()){
         cout << "Error opening " << file << endl;
         return 1;
     }
-    
+    ofile << "##BEGIN PARS\n";
     for(auto it = pars.begin(); it != pars.end(); it++){
         ofile << it->first << "\t" << it->second.get() << endl;
     }
-
+    ofile << "##END PARS\n";
     ofile.close();
     return 0;
   

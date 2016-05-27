@@ -16,6 +16,7 @@ gpbatrialRyr::gpbatrialRyr()
 
 gpbatrialRyr::gpbatrialRyr(const gpbatrialRyr& toCopy) : Cell(toCopy) {
    this->Initialize(); 
+    CellKernel::copyVarPar(toCopy);
 }
 
 gpbatrialRyr::~gpbatrialRyr()

@@ -50,7 +50,8 @@ void Grid::setCellTypes(set<cellInfo*>& cells) {
     }
 } 
 void Grid::setCellTypes(const cellInfo& singleCell) {
-        Node* n = fiber[singleCell.X].nodes[singleCell.Y];
+    try {
+        Node* n = fiber.at(singleCell.X).nodes.at(singleCell.Y);
         n->cell = singleCell.cell;
         n->x = singleCell.X*singleCell.dx;
         n->y = singleCell.Y*singleCell.dy;
@@ -62,7 +63,9 @@ void Grid::setCellTypes(const cellInfo& singleCell) {
         if(singleCell.cell->type == string("Cell")) {
             n->B = 0.0;
         }
-   
+    } catch(const std::out_of_range& oor) {
+        return;
+    }
 }
 int Grid::rowCount() {
     return fiber.size();
@@ -73,16 +76,40 @@ int Grid::columnCount() {
 void Grid::addBuffer() {
     addRow(fiber.size());
     addColumn(fibery.size());
-    for(auto it = fiber[fiber.size()-1].nodes.begin();it != fiber[fiber.size()-1].nodes.end(); it++) {
-        (*it)->B = 0.0;
+    for(auto it : fiber[fiber.size()-1].nodes) {
+        it->B = 0.0;
     }
-    for(auto it = fiber[0].nodes.begin();it != fiber[0].nodes.end(); it++) {
-        (*it)->B = 0.0;
+    for(auto it : fiber[0].nodes) {
+        it->B = 0.0;
     }
-    for(auto it = fibery[fibery.size()-1].nodes.begin();it != fibery[fibery.size()-1].nodes.end(); it++) {
-        (*it)->B = 0.0;
+    for(auto it : fibery[fibery.size()-1].nodes) {
+        it->B = 0.0;
     }
-    for(auto it = fibery[0].nodes.begin();it != fibery[0].nodes.end(); it++) {
-        (*it)->B = 0.0;
+    for(auto it : fibery[0].nodes) {
+        it->B = 0.0;
+    }
+}
+pair<int,int> Grid::findNode(const Node* node) {
+    pair<int,int> p(-1,-1);
+    int i,j;
+    i = j = 0;
+    for(auto it : fiber) {
+        for(auto iv : it.nodes) {
+            if(iv == node) {
+                p = make_pair(i,j);
+                return p;
+            }
+            i++;
+        }
+        i=0;
+        j++;
+    }
+    return p;
+}
+Node* Grid::findNode(const pair<int,int>& p) {
+    try {
+        return fiber.at(p.second).nodes.at(p.first);
+    } catch(const std::out_of_range& oor) {
+        return NULL;
     }
 }

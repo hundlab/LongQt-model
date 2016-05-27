@@ -15,7 +15,8 @@ GpbAtrial::GpbAtrial()
 }
 
 GpbAtrial::GpbAtrial(GpbAtrial& toCopy) : Cell(toCopy) {
-   this->Initialize(); 
+    this->Initialize(); 
+    CellKernel::copyVarPar(toCopy);
 }
 
 GpbAtrial::~GpbAtrial()

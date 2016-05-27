@@ -17,13 +17,11 @@
 #include <list>
 #include <unordered_map>
 
-#include "kurata08.h"
 #include "measure.h"
 #include "output.h"
+#include "cellUtils.h"
 
 using namespace std;
-
-typedef Cell* (*CellInitializer)(void);
 
 struct GetSetRef {
     function<string(void)> get;
@@ -103,12 +101,12 @@ class Protocol
     bool addToMeasreSelection(string measureName, string property);
     void removeFromMeasureSelection(string measureName, string property);
 
+    map<string, CellInitializer> cellMap;
+
     protected:
     void copy(const Protocol& toCopy);    
     map<string,Measure> measures; // set of measure class for measuring SV props.
     int trial;
-    map<string, CellInitializer> cellMap;
-
 };
 
 #endif

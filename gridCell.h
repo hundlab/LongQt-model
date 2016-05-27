@@ -35,7 +35,7 @@ class gridCell: public Cell {
 //cell io functions
     virtual void setGridfile(string name);
     virtual string gridfile();
-    virtual bool writeGridfile();
+    virtual bool writeGridfile(string fileName ="");
     virtual bool readGridfile(string filename);
     virtual bool setOutputfileConstants(string filename);
     virtual bool setOuputfileVariables(string filename);

@@ -43,6 +43,7 @@ class gridCell: public Cell {
     virtual bool setVariableSelection(set<string> new_selection);
     virtual void writeConstants();
     virtual void writeVariables();
+    virtual void closeFiles();
 
   private:
     Grid grid;

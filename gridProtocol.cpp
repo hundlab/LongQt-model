@@ -174,5 +174,10 @@ set<Node*> gridProtocol::stringToSet(string nodesList, Grid* grid) {
             toReturn.insert(n);
         }
     }
+    for(auto measure : measures) {
+        measure.second.closeFiles();
+    }
+    cell->closeFiles();
+
     return toReturn;
 }

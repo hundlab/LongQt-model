@@ -133,6 +133,10 @@ temp.clear();
       sprintf(writefile,(datadir + "/" + finaldvarsoutfile).c_str(), trial);
       cell->setOutputfileConstants(writefile);
       cell->writeConstants();
+      for(auto measure : measures) {
+          measure.second.closeFiles();
+      }
+      cell->closeFiles();
 
       return true; 
 }

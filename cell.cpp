@@ -66,4 +66,7 @@ bool Cell::setSelection(map<string, double*> map, set<string>* old_selection, se
     return toReturn;
 };
 
-
+void Cell::closeFiles() {
+    IOBase::closeFile(&parsofile);
+    IOBase::closeFile(&varsofile);
+}

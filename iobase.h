@@ -25,6 +25,7 @@ class IOBase {
     protected:
         virtual bool write(set<string> selection, map<string, double*> map, ofstream* ofile);
         virtual bool setOutputfile(string filename, set<string> set, ofstream* ofile);
+	virtual void closeFile(ofstream* ofile);
 };
 
 

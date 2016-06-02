@@ -73,5 +73,7 @@ bool Measure::write(bool useFlags, bool reset) {
     return toReturn;
 }
 
-
+void Measure::closeFiles() {
+    IOBase::closeFile(&ofile);
+}
 

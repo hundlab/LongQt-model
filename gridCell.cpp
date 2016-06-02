@@ -118,6 +118,13 @@ void gridCell::writeVariables() {
         }
     }
 }
+void gridCell::closeFiles() {
+     for(auto it : grid.fiber) {
+        for(auto iv : it.nodes) {
+            iv->cell->closeFiles();
+        }
+    }   
+}
 double gridCell::updateV() {
     int i,j;
     int cells = grid.fibery.size()-1;

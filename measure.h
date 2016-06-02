@@ -33,7 +33,11 @@ public:
         selection = toCopy.selection;
     };
 
-    ~Measure() {};
+    ~Measure() {
+        if(ofile.is_open()) {
+            ofile.close();
+        }
+    };
 
     Measure& operator=(const Measure& toCopy) {
         this->copy(toCopy);
@@ -48,6 +52,7 @@ public:
     bool setSelection(set<string> new_selection);
     bool addToMeasureSelection(string new_select);
     void removeFromSelection(string to_remove);
+    void closeFiles();
 private:
     set<string> selection; // map for refing properties that will be output.
     ofstream ofile;

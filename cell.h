@@ -54,6 +54,7 @@ public:
     virtual set<string> getVariableSelection();
     virtual void writeConstants();
     virtual void writeVariables();
+    virtual void closeFiles();
 protected:
     virtual bool setSelection(map<string, double*> map, set<string>* old_selection, set<string> new_selection, ofstream* ofile);
     ofstream parsofile;

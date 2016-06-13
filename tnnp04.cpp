@@ -30,7 +30,7 @@ void TNNP04Control::Initialize() {
         TEMP = 310.0;
         FDAY=96485.3415;
 
-	type = "TNNP04Control";
+	type = "Human Ventricular (Ten Tusscher)";
         dVdt=dVdtmax=-7.293176907E-7;
         t=0.0;
         dt=dtmin=0.005;

@@ -32,7 +32,7 @@ HRD09Control::~HRD09Control()
 
 //##### Initialize variables ##################
 void HRD09Control::Initialize() {
-        type = "HRD09Control";
+        type = "Canine Ventricular (Hund-Rudy)";
         dVdt=dVdtmax=5.434230843e-10;//check
         Cm = 1.0; //uF/cm2  must be defined for fiber...default = 1.
 	t=0.0;//check

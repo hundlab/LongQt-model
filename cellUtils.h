@@ -15,13 +15,12 @@ class cellUtils {
   public:
     map<string, CellInitializer> cellMap;
     cellUtils() {
-        cellMap["Cell"] = [] () {return new Cell;};
-        cellMap["Rabbit Sinus Node (Kurata)"] = [] () {return (Cell*) new ControlSa;};
-        cellMap["Human Atrial (Grandi)"] = [] () {return (Cell*) new GpbAtrial;};
-        cellMap["Canine Ventricular (Hund-Rudy)"] = [] () {return (Cell*) new HRD09Control;};
-        cellMap["Canine Ventricular Border Zone (Hund-Rudy)"] = [] () {return (Cell*) new HRD09BorderZone;};
-        cellMap["Human Ventricular (Ten Tusscher)"] = [] () {return (Cell*) new TNNP04Control;};
-        cellMap["gpbatrialRyr"] = [] () {return (Cell*) new gpbatrialRyr;};
+        cellMap[ControlSa().type] = [] () {return (Cell*) new ControlSa;};
+        cellMap[GpbAtrial().type] = [] () {return (Cell*) new GpbAtrial;};
+        cellMap[HRD09Control().type] = [] () {return (Cell*) new HRD09Control;};
+        cellMap[HRD09BorderZone().type] = [] () {return (Cell*) new HRD09BorderZone;};
+        cellMap[TNNP04Control().type] = [] () {return (Cell*) new TNNP04Control;};
+        cellMap[gpbatrialRyr().type] = [] () {return (Cell*) new gpbatrialRyr;};
    }
 };
 #endif

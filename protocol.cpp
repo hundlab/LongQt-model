@@ -10,6 +10,7 @@
 #include <cstring>
 
 #include "protocol.h"
+#include "hrd09.h"
 
 #if defined(_WIN32) || defined(_WIN64)
   #define snprintf _snprintf
@@ -94,6 +95,7 @@ Protocol::Protocol()
     pars["celltype"]= toInsert.Initialize("cell", [this] () {return cell->type;}, [this] (const string& value) {this->setCell(value);}); 
 
     cellMap = cellUtils().cellMap;
+    this->setCell(HRD09Control().type);
 };
 
 

@@ -31,7 +31,7 @@ HRD09BorderZone::~HRD09BorderZone()
 
 //##### Initialize variables ##################
 void HRD09BorderZone::Initialize() {
-        type = "Canine Ventricular Border Zone (Hund-Rudy)";
+        type = "Canine Ventricular Border Zone (Hund-Rudy 2009)";
         dVdt=dVdtmax=1.017497198e-09;
         t=0.0;
 	dt=dtmin = 0.005;

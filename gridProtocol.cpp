@@ -12,6 +12,7 @@ gridProtocol::gridProtocol()  : CurrentClamp(){
     cell = temp;
     Grid* grid = temp->getGrid();
     baseCellMap = cellMap;
+    baseCellMap["Inexcitable Cell"] = [] () {return new Cell;};
     cellMap.clear();
     cellMap["gridCell"] = [] () {return (Cell*) new gridCell;};
     GetSetRef toInsert;

@@ -17,7 +17,7 @@ ControlSa::ControlSa()
     dtmed = 0.05;
     dtmax = 0.05;
     dvcut = 1.0;
-    type = "Rabbit Sinus Node (Kurata)";
+    type = "Rabbit Sinus Node (Kurata 2008)";
     apTime = 0.0;
      
     naO = 140;

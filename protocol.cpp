@@ -248,13 +248,13 @@ int Protocol::assign_cell_pars(vector<string> pnames, vector< vector<string> > p
 };
 
 bool Protocol::write2Dmap(vector<string> vnames, vector< vector<string> > twoDmnames, string file) {
-    int ret = 0;
+    bool ret = true;
     unsigned int i,j;
     ofstream out;
     out.open(file);
     if(!out.is_open()){
         cout << "Error opening " << file << endl;
-        return 1;
+        return false;
     }
 
     for(i = 0; i < vnames.size(); i++) {
@@ -322,7 +322,7 @@ int Protocol::readpars(string file)
         getline(line,value);
         try {
             pars.at(name).set(trim(value));
-        } catch (const std::out_of_range& oor) {}
+        } catch (const std::out_of_range&) {}
         getline(ifile,temp);
         line.clear();
         line.str(temp);
@@ -384,7 +384,7 @@ int Protocol::parsemixedmap(map<string,double*> varmap, string file, vector<stri
 //############################################################
 bool Protocol::writeMVarsFile(string file) {
     ofstream out;
-    int ret = false;
+    bool ret = false;
 
     out.open(file);
     if(!out.good()){
@@ -432,7 +432,7 @@ bool Protocol::setMeasures(map<string,Measure> newMeasures) {
 bool Protocol::addToMeasreSelection(string measureName, string property) {
     try {
         return measures.at(measureName).addToMeasureSelection(property);
-    } catch (const std::out_of_range& oor) {
+    } catch (const std::out_of_range&) {
         return false;
     }
 }
@@ -440,7 +440,7 @@ bool Protocol::addToMeasreSelection(string measureName, string property) {
 void Protocol::removeFromMeasureSelection(string measureName, string property) {
     try {
         measures.at(measureName).removeFromSelection(property);
-    } catch ( const std::out_of_range& oor) {
+    } catch ( const std::out_of_range&) {
 
     }
 }
@@ -581,7 +581,7 @@ bool Protocol::setCell(const string& type, bool reset) {
         pvals.clear();
         pnames.clear();
         return true;
-    } catch(const std::out_of_range& oor) {
+    } catch(const std::out_of_range&) {
         return false;
     }
 }

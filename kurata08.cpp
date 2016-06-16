@@ -367,14 +367,14 @@ ControlSa* ControlSa::clone(){
 //L-type Ca2+ current
 void ControlSa::updateIcal()
 {
-        double dinf,ddinf,finf,fdinf,fcainf,taud,taudd,tauf,taufd,taufca;
+        double dinf,finf,fcainf,taud,tauf,taufca;//ddinf,fdinf,taudd,taufd,
         double alphad, betad;
-        double alphadd, betadd;
+        //double alphadd, betadd;
 	
         double gCal = icalFactor*0.58;  // nS/pF
         double kmfca = 0.00035; //0.00035mM
         double alphafca = 0.021; //ms-1
-        double betafca = 60; //mM-1*ms-1
+//        double betafca = 60; //mM-1*ms-1
         double ecal = 45.0; //mV
 
         dinf = 1/(1+exp(-(vOld+14.1)/6.0));
@@ -622,8 +622,8 @@ void ControlSa::updateIup()
 {
 	double iUpbar = iupFactor*0.01;
         double kmup=0.0006; //0.0006 mM^M
-        double kmcamk=0.15;
-        double deltaiup=.75;
+//        double kmcamk=0.15;
+//        double deltaiup=.75;
         double isofact;
 
         isofact = 0.0;//0.85*pow(isoConc,0.934)/(pow(isoConc,0.934)+0.0052);
@@ -670,15 +670,15 @@ void ControlSa::updateKi()
 //Bulk Ca2+
 void ControlSa::updateCai()
 {
-        double dcai,beta;
+        double dcai;//,beta;
         double dcmdni,dtrpnca,dtrpnmg,dtrpnmgmg;
         double trpncabar = 0.031;   // mM Troponin-Ca2+ site
-        double kmtrpnca = 0.0050225225;  // kb/kf
+//        double kmtrpnca = 0.0050225225;  // kb/kf
         double trpnmgbar = 0.062;   //0.062 mM Troponin-Mg2+ site
-        double kmtrpnmg = 0.00003298199;
-        double kmtrpnmgmg = 0.3298199;
+//        double kmtrpnmg = 0.00003298199;
+//        double kmtrpnmgmg = 0.3298199;
         double cmdnbar = 0.045;  //0.045
-        double kmcmdn = 0.002380325;
+//        double kmcmdn = 0.002380325;
 
         dcai=dt*(-iCait*ACap/(Vmyo*2.0*FDAY)-(iUp)*Vnsr/Vmyo+iDiff*Vss/Vmyo);
         dcmdni=dt*(227.7*caI*(1-cmdnI)-0.542*cmdnI);
@@ -696,7 +696,7 @@ void ControlSa::updateCai()
 void ControlSa::updateCar()
 {
         double beta,dcar;
-        double dcmdnr;
+//        double dcmdnr;
         double kmcmdn = 0.002380325;  //mM
         double cmdnbar = 0.045;  //mM
 
@@ -710,7 +710,7 @@ void ControlSa::updateCar()
 void ControlSa::updateCasr()
 {
         double dcajsr,dcansr,beta;
-        double dcsqn;
+//        double dcsqn;
         double kmcsqn=0.8333333;
         double csqnbar=10.0;
 

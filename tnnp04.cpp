@@ -88,7 +88,7 @@ void TNNP04Control::updateIcal(){
 	double d_inf, tau_d, gamma_d, alpha_d, beta_d;
 	double f_inf, tau_f;
 	double fca_inf, tau_fca, gamma_fca, alpha_fca, beta_fca;
-	double dfca,fcaold;
+    double fcaold;//dfca,
 	double gcal = 0.000175;
 	double condfact = 1.0;
 

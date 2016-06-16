@@ -9,7 +9,6 @@
 
 
 #include "iobase.h"
-#include <unistd.h>
 bool IOBase::setOutputfile(string filename, set<string> set, ofstream* ofile) {
     ifstream test;
     bool exists;
@@ -17,22 +16,19 @@ bool IOBase::setOutputfile(string filename, set<string> set, ofstream* ofile) {
     test.open(filename);
     exists = test.good();
     test.close();
-for(int i = 0; i <10; i++) {
     if(ofile->is_open()) {
         ofile->close();
     }
     ofile->precision(10);
     ofile->open(filename,ios_base::app);
     if(!ofile->good()) {
-        cout << "Error Opening " << filename <<" " << i << endl;
-	sleep(10);
+        cout << "Error Opening " << filename << endl;
     } else if(!exists) {
         for(it = set.begin(); it != set.end(); it++) {
             *ofile << *it << "\t";
         }
         *ofile << endl;
     return true;
-    }
     }
 return false;
 };

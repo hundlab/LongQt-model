@@ -211,12 +211,12 @@ void CellKernel::copyVarPar(const CellKernel& toCopy) {
     for(auto it : vars) {
         try {
             *it.second = *toCopy.vars.at(it.first);
-        } catch(const std::out_of_range& oor) {}
+        } catch(const std::out_of_range&) {}
     }
     for(auto it : pars) {
         try {
             *it.second = *toCopy.pars.at(it.first);
-        } catch(const std::out_of_range& oor) {}
+        } catch(const std::out_of_range&) {}
 
     }
 }

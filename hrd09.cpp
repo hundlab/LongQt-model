@@ -151,7 +151,7 @@ HRD09Control* HRD09Control::clone(){
 // L-type Ca current 
 void HRD09Control::updateIlca()
 {
-	double taud,finf,fcainf,fcainf2,taufca,taufca2,tauf,dinf,taud2,d2inf;
+    double taud,finf,fcainf,fcainf2,taufca,taufca2,tauf,dinf;//,taud2,d2inf;
 	double maxIca;
 	
 	double gamcai=1.0;
@@ -455,7 +455,7 @@ void HRD09Control::updateInak()
 // Transient outward K current
 void HRD09Control::updateIto()
 {
-    double azdv,bzdv,tauzdv,zssdv,aydv,bydv,tauydv,tauy2dv,yssdv,ay2dv,by2dv,yss2dv,rvdv;
+    double tauzdv,zssdv,tauydv,tauy2dv,yssdv,yss2dv,rvdv;//azdv,bzdv,aydv,bydv,ay2dv,by2dv,
     double Ek;
     double MaxGto = 0.19; // different from HRd08 - 0.9;
 
@@ -512,7 +512,7 @@ void HRD09Control::updateIrel()
   	double KMCAM=0.2; 
 	double deltaalpharel = 1.0;  //Different from HRd08 - 0.0
 	double alpharel;
-	double grel,grelbar;  //for spontaneous release
+//	double grel,grelbar;  //for spontaneous release
 	double camkfact;
 
 	camkfact=1/(1+pow((KMCAM/caM),5.0)); 
@@ -625,7 +625,7 @@ void HRD09Control::updateCaSub()
 {
 	double taudiff,dcar,bss;
 	double bsrbar,kmbsr,bslbar,kmbsl;
-	double b1,c1,d1,bsr,bsl,cart,carold;
+    double b1,c1,d1,bsr,bsl,cart;//,carold;
 
 	taudiff=.2; 
 	bsrbar=0.047; 
@@ -688,7 +688,7 @@ void HRD09Control::updateCamk()
         double kox = 0.0002909;    // ms-1  
         double kred = 0.0000228;   // um/ms
         double kt;  
-        double kbp = 0.0022;       // ms;
+//        double kbp = 0.0022;       // ms;
         double kn93 = 0.0;         // concentration of KN-93, um
         double kbli = 0.0022;      // ms-1
         double kibl = 0.0008536;   // um-1.ms-1

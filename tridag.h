@@ -12,7 +12,7 @@ void tridag(vector<Node*>& nodes)
 	int j;
 	double bet;
 
-	int n=nodes.size()-1;
+    int n=static_cast<int>(nodes.size())-1;
 	vector<double> gam(n);
 	if (nodes[0]->d2==0.0) 
 	  cerr << "Error 1 in tridag";

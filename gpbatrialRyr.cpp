@@ -162,7 +162,7 @@ void gpbatrialRyr::updateCamk()
         double kox = 0.0002909;    // ms-1  
         double kred = 0.0000228;   // um/ms
         double kt;  
-        double kbp = 0.0022;       // ms;
+//        double kbp = 0.0022;       // ms;
         double kn93 = 0.0;         // concentration of KN-93, um
         double kbli = 0.0022;      // ms-1
         double kibl = 0.0008536;   // um-1.ms-1
@@ -190,7 +190,7 @@ void gpbatrialRyr::updateInal()
 	double ms,tml,hlinf,thl;
 	double camfact;
 	double KMCAM=0.3;  
-	double deltag = 0.0095;
+//	double deltag = 0.0095;
 		
 	camfact=1/(1+pow((KMCAM/caM),4.0));
 

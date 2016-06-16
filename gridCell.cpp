@@ -127,8 +127,8 @@ void gridCell::closeFiles() {
 }
 double gridCell::updateV() {
     int i,j;
-    int cells = grid.fibery.size()-1;
-    int fibers = grid.fiber.size()-1;
+    int cells = static_cast<int>(grid.fibery.size())-1;
+    int fibers = static_cast<int>(grid.fiber.size())-1;
     if(tcount%2==0){
         for(i=0;i<fibers;i++){
             for(j=0;j<cells;j++){
@@ -253,7 +253,8 @@ bool gridCell::readGridfile(string filename) {
     bool succes = true;
     ifstream ifile;
     cellInfo* info;
-    double np, dx, dy;
+    double dx, dy;
+    int np;
     set<cellInfo*> cells;
     string type;
     stringstream line;
@@ -287,7 +288,7 @@ bool gridCell::readGridfile(string filename) {
             line >> type >> info->X >> info->Y;
             try {
                 info->cell = cellUtils().cellMap.at(type)();
-            } catch(const std::out_of_range& oor) {
+            } catch(const std::out_of_range&) {
                 succes = false;
                 info->cell = new Cell();
             }

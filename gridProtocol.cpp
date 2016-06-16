@@ -152,9 +152,9 @@ bool gridProtocol::writepars(string file) {
     return toReturn;
 }
 int gridProtocol::readpars(string file) {
-    bool toReturn = CurrentClamp::readpars(file);
+    bool toReturn = (bool)CurrentClamp::readpars(file);
     toReturn &= ((gridCell*)this->cell)->readGridfile(file);
-    return toReturn;
+    return (int)toReturn;
 }
 string gridProtocol::setToString(set<Node*>& nodes, Grid* grid) {
     stringstream toReturn;

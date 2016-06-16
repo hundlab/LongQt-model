@@ -2,7 +2,7 @@
 #include "tridag.h"
 
 Fiber::Fiber(int size) {
-    unsigned int i = nodes.size();
+    unsigned int i = static_cast<int>(nodes.size());
     nodes.resize(size, NULL);
     for(;i < nodes.size(); i++) {
         nodes[i] = new Node();
@@ -14,7 +14,7 @@ Fiber::~Fiber() {}
 //#############################################################
 void Fiber::updateVm(double& dt) {
     int i;
-    int nn = nodes.size()-1;
+    int nn = static_cast<int>(nodes.size())-1;
 
     for(i=0;i<nn;i++){
         nodes[i]->d1 = nodes[i]->B*dt;

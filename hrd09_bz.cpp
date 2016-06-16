@@ -152,7 +152,7 @@ HRD09BorderZone* HRD09BorderZone::clone() {
 //######################################################
 void HRD09BorderZone::updateIlca()
 {
-	double taud,finf,fcainf,fcainf2,taufca,taufca2,tauf,dinf,taud2,d2inf;
+    double taud,finf,fcainf,fcainf2,taufca,taufca2,tauf,dinf;//,taud2,d2inf;
 	double maxIca;
 	
 	double gamcai=1.0;
@@ -311,7 +311,7 @@ void HRD09BorderZone::updateIna()
 //######################################################
 void HRD09BorderZone::updateIto()
 {
-    double azdv,bzdv,tauzdv,zssdv,aydv,bydv,tauydv,tauy2dv,yssdv,ay2dv,by2dv,yss2dv,rvdv;
+    double tauzdv,zssdv,tauydv,tauy2dv,yssdv,yss2dv,rvdv;//azdv,bzdv,ay2dv,by2dv,aydv,bydv,
     double Ek;
     double MaxGto = 0.0;
 
@@ -353,7 +353,7 @@ void HRD09BorderZone::updateCamk()
    double kox = 0.0002909;    // ms-1
    double kred = 0.0000228;   // um/ms
    double kt;
-   double kbp = 0.0022;       // ms;
+//   double kbp = 0.0022;       // ms;
    double kn93 = 0.0;         // concentration of KN-93, um
    double kbli = 0.0022;      // ms-1
    double kibl = 0.0008536;   // um-1.ms-1

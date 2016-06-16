@@ -7,7 +7,7 @@ Grid::Grid(){
 Grid::~Grid(){}
 
 void Grid::addRow(int pos) {
-    fiber.insert(fiber.begin() +pos, Fiber(fibery.size()));
+    fiber.insert(fiber.begin() +pos, Fiber(static_cast<int>(fibery.size())));
     {unsigned int i = 0;
     for(auto it = fibery.begin(); it != fibery.end()&&i<fiber[pos].nodes.size(); it++,i++) {
         it->nodes.insert(it->nodes.begin() + pos, fiber[pos].nodes[i]);
@@ -20,7 +20,7 @@ void Grid::addRows(unsigned int num) {
     }
 }
 void Grid::addColumn(int pos) {
-    fibery.insert(fibery.begin() +pos, Fiber(fiber.size()));
+    fibery.insert(fibery.begin() +pos, Fiber(static_cast<int>(fiber.size())));
     {unsigned int i = 0;
     for(auto it = fiber.begin(); it != fiber.end()&&i<fibery[pos].nodes.size(); it++,i++) {
         it->nodes.insert(it->nodes.begin() + pos, fibery[pos].nodes[i]);
@@ -64,18 +64,19 @@ void Grid::setCellTypes(const cellInfo& singleCell) {
             n->B = 0.0;
         }
     } catch(const std::out_of_range& oor) {
+        cerr << oor.what() << ": " << "new cell was not in range of grid" << endl;
         return;
     }
 }
 int Grid::rowCount() {
-    return fiber.size();
+    return static_cast<int>(fiber.size());
 }
 int Grid::columnCount() {
-    return fibery.size();
+    return static_cast<int>(fibery.size());
 }
 void Grid::addBuffer() {
-    addRow(fiber.size());
-    addColumn(fibery.size());
+    addRow(static_cast<int>(fiber.size()));
+    addColumn(static_cast<int>(fibery.size()));
     for(auto it : fiber[fiber.size()-1].nodes) {
         it->B = 0.0;
     }
@@ -109,7 +110,7 @@ pair<int,int> Grid::findNode(const Node* node) {
 Node* Grid::findNode(const pair<int,int>& p) {
     try {
         return fiber.at(p.second).nodes.at(p.first);
-    } catch(const std::out_of_range& oor) {
+    } catch(const std::out_of_range&) {
         return NULL;
     }
 }

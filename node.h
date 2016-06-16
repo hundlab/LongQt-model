@@ -15,7 +15,6 @@ struct Node {
         d2 = 0;
         d3 = 0;
         r = 0;
-        B = 0;
         vNew = 0;
         cell = new Cell();
     }
@@ -31,7 +30,6 @@ struct Node {
     double d2; //diagonal elements for tridag solver
     double d3; //off-diagonal for tridag solver
     double r; //right side of eqn for tridag solver
-    double B; //coefficients for tridag solver.
     double vNew; //vOld(t+1) for tridag solver
     string nodeType;
 

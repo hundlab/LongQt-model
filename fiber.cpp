@@ -4,9 +4,12 @@
 Fiber::Fiber(int size) {
     unsigned int i = nodes.size();
     nodes.resize(size, NULL);
+    B.resize(size +1);
     for(;i < nodes.size(); i++) {
         nodes[i] = new Node();
+        B[i] = 0;
     }
+    B[size] = 0;
 }
 Fiber::~Fiber() {}
 //#############################################################
@@ -14,17 +17,18 @@ Fiber::~Fiber() {}
 //#############################################################
 void Fiber::updateVm(double& dt) {
     int i;
-    int nn = nodes.size()-1;
+    int nn = nodes.size();
+    if(nn <= 1) { return;}
 
     for(i=0;i<nn;i++){
-        nodes[i]->d1 = nodes[i]->B*dt;
-        nodes[i]->d2 = -(nodes[i]->B*dt+nodes[i+1]->B*dt+2);
-        nodes[i]->d3 = nodes[i+1]->B*dt;
+        nodes[i]->d1 = B[i]*dt;
+        nodes[i]->d2 = -(B[i]*dt+B[i+1]*dt+2);
+        nodes[i]->d3 = B[i+1]*dt;
         if(i>0&&i<(nn-1))
-            nodes[i]->r = -nodes[i]->B*dt*nodes[i-1]->cell->vOld+(nodes[i]->B*dt+nodes[i+1]->B*dt-2)*nodes[i]->cell->vOld-nodes[i+1]->B*dt*nodes[i+1]->cell->vOld+dt/nodes[i]->cell->Cm*(nodes[i]->cell->iTotold+nodes[i]->cell->iTot);
+            nodes[i]->r = -B[i]*dt*nodes[i-1]->cell->vOld+(B[i]*dt+B[i+1]*dt-2)*nodes[i]->cell->vOld-B[i+1]*dt*nodes[i+1]->cell->vOld+dt/nodes[i]->cell->Cm*(nodes[i]->cell->iTotold+nodes[i]->cell->iTot);
     }
-    nodes[0]->r = (nodes[1]->B*dt-2)*nodes[0]->cell->vOld-nodes[1]->B*dt*nodes[1]->cell->vOld+dt/nodes[0]->cell->Cm*(nodes[0]->cell->iTotold+nodes[0]->cell->iTot);
-    nodes[nn-1]->r = -nodes[nn-1]->B*dt*nodes[nn-2]->cell->vOld+(nodes[nn-1]->B*dt-2)*nodes[nn-1]->cell->vOld+dt/nodes[nn-1]->cell->Cm*(nodes[nn-1]->cell->iTotold+nodes[nn-1]->cell->iTot);
+    nodes[0]->r = (B[1]*dt-2)*nodes[0]->cell->vOld-B[1]*dt*nodes[1]->cell->vOld+dt/nodes[0]->cell->Cm*(nodes[0]->cell->iTotold+nodes[0]->cell->iTot);
+    nodes[nn-1]->r = -B[nn-1]*dt*nodes[nn-2]->cell->vOld+(B[nn-1]*dt-2)*nodes[nn-1]->cell->vOld+dt/nodes[nn-1]->cell->Cm*(nodes[nn-1]->cell->iTotold+nodes[nn-1]->cell->iTot);
 
     tridag(nodes);
    

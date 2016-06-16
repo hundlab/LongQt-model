@@ -133,11 +133,11 @@ double gridCell::updateV() {
         for(i=0;i<fibers;i++){
             for(j=0;j<cells;j++){
                 if(i>0&&i<(fibers-1))
-                    grid.fiber[i].nodes[j]->cell->iTot-=grid.fibery[j].nodes[i]->B*(grid.fiber[i-1].nodes[j]->cell->vOld-grid.fiber[i].nodes[j]->cell->vOld)-grid.fibery[j].nodes[i+1]->B*(grid.fiber[i].nodes[j]->cell->vOld-grid.fiber[i+1].nodes[j]->cell->vOld);
+                    grid.fiber[i].nodes[j]->cell->iTot-=grid.fibery[j].B[i]*(grid.fiber[i-1].nodes[j]->cell->vOld-grid.fiber[i].nodes[j]->cell->vOld)-grid.fibery[j].B[i+1]*(grid.fiber[i].nodes[j]->cell->vOld-grid.fiber[i+1].nodes[j]->cell->vOld);
                 else if(i==0)
-                    grid.fiber[i].nodes[j]->cell->iTot-=-grid.fibery[j].nodes[i+1]->B*(grid.fiber[i].nodes[j]->cell->vOld-grid.fiber[i+1].nodes[j]->cell->vOld);
+                    grid.fiber[i].nodes[j]->cell->iTot-=-grid.fibery[j].B[i+1]*(grid.fiber[i].nodes[j]->cell->vOld-grid.fiber[i+1].nodes[j]->cell->vOld);
                 else if(i==fibers-1)
-                    grid.fiber[i].nodes[j]->cell->iTot-=grid.fibery[j].nodes[i]->B*(grid.fiber[i-1].nodes[j]->cell->vOld-grid.fiber[i].nodes[j]->cell->vOld);
+                    grid.fiber[i].nodes[j]->cell->iTot-=grid.fibery[j].B[i]*(grid.fiber[i-1].nodes[j]->cell->vOld-grid.fiber[i].nodes[j]->cell->vOld);
             }
             grid.fiber[i].updateVm(dt);
         }
@@ -146,11 +146,11 @@ double gridCell::updateV() {
         for(i=0;i<cells;i++){
             for(j=0;j<fibers;j++){
                 if(i>0&&i<(cells-1))
-                    grid.fibery[i].nodes[j]->cell->iTot-=grid.fiber[j].nodes[i]->B*(grid.fibery[i-1].nodes[j]->cell->vOld-grid.fibery[i].nodes[j]->cell->vOld)-grid.fiber[j].nodes[i+1]->B*(grid.fibery[i].nodes[j]->cell->vOld-grid.fibery[i+1].nodes[j]->cell->vOld);
+                    grid.fibery[i].nodes[j]->cell->iTot-=grid.fiber[j].B[i]*(grid.fibery[i-1].nodes[j]->cell->vOld-grid.fibery[i].nodes[j]->cell->vOld)-grid.fiber[j].B[i+1]*(grid.fibery[i].nodes[j]->cell->vOld-grid.fibery[i+1].nodes[j]->cell->vOld);
                 else if(i==0)
-                    grid.fibery[i].nodes[j]->cell->iTot-=-grid.fiber[j].nodes[i+1]->B*(grid.fibery[i].nodes[j]->cell->vOld-grid.fibery[i+1].nodes[j]->cell->vOld);
+                    grid.fibery[i].nodes[j]->cell->iTot-=-grid.fiber[j].B[i+1]*(grid.fibery[i].nodes[j]->cell->vOld-grid.fibery[i+1].nodes[j]->cell->vOld);
                 else if(i==cells-1)
-                    grid.fibery[i].nodes[j]->cell->iTot-=grid.fiber[j].nodes[i]->B*(grid.fibery[i-1].nodes[j]->cell->vOld-grid.fibery[i].nodes[j]->cell->vOld);
+                    grid.fibery[i].nodes[j]->cell->iTot-=grid.fiber[j].B[i]*(grid.fibery[i-1].nodes[j]->cell->vOld-grid.fibery[i].nodes[j]->cell->vOld);
             }
             grid.fibery[i].updateVm(dt);
         }

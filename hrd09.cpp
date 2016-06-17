@@ -195,12 +195,12 @@ void HRD09Control::updateIlca()
 // Background Ca current  
 void HRD09Control::updateIcab()
 {
-	double Ecan,maxicab;
+	double maxicab;//Ecan,
 	double gamcai=1.0;
 	double gamcao=0.341;
 	double gcab=1.995084E-7;//2.25084E-7; different from HRd08
 	
-	Ecan=(RGAS*TEMP/(2*FDAY))*log(caO/caI);	
+//	Ecan=(RGAS*TEMP/(2*FDAY))*log(caO/caI);	
 	
 	maxicab=4*(vOld)*(FDAY*FDAY/(RGAS*TEMP))*(gamcai*caI*exp(2*(vOld)*FDAY/(RGAS*TEMP))-gamcao*caO)/(exp(2*(vOld)*FDAY/(RGAS*TEMP))-1.0);
 
@@ -482,12 +482,12 @@ void HRD09Control::updateIto()
 //Ca-dependent transient outward current
 void HRD09Control::updateIto2()
 {
-	double eto2,tauaa,aainf;
+	double tauaa,aainf;//eto2,
 	double ibar;
 	double pcl=0.0000004;
 	double z=-1.0;
     
-	eto2 = -(RGAS*TEMP/FDAY)*log(clO/clI);  
+//	eto2 = -(RGAS*TEMP/FDAY)*log(clO/clI);  
 	ibar=pcl*(vOld)*FDAY*FDAY/(RGAS*TEMP)*(clI-clO*exp(-z*FDAY*(vOld)/(RGAS*TEMP)))/(1-exp(-z*FDAY*(vOld)/(RGAS*TEMP)));
 
 	aainf = 1/(1+0.1502/caR);    
@@ -623,7 +623,7 @@ void HRD09Control::updateCai()
 // Ca concentration in subspace
 void HRD09Control::updateCaSub()
 {
-	double taudiff,dcar,bss;
+	double taudiff,dcar;//,bss;
 	double bsrbar,kmbsr,bslbar,kmbsl;
     double b1,c1,d1,bsr,bsl,cart;//,carold;
 
@@ -633,7 +633,7 @@ void HRD09Control::updateCaSub()
 	bslbar=1.124; 
 	kmbsl=.0087;  
 	
-	bss=1/(1+bsrbar*kmbsr/((kmbsr+caR)*(kmbsr+caR))+bslbar*kmbsl/((kmbsl+caR)*(kmbsl+caR))); 
+//	bss=1/(1+bsrbar*kmbsr/((kmbsr+caR)*(kmbsr+caR))+bslbar*kmbsl/((kmbsl+caR)*(kmbsl+caR))); 
 	iDiff=(caR-caI)/taudiff;
 	dcar=dt*(-(iCa-2*iNacar)*ACap/(Vss*2.0*FDAY)+iRel*Vjsr/Vss-iDiff); 
 	
@@ -654,7 +654,7 @@ void HRD09Control::updateCaSub()
 // Ca concentration in sarcoplasmic reticulum
 void HRD09Control::updateSr() 	
 {
-	double dcajsr,dcansr,dcsqn,csqnold,b1,c1;
+	double dcajsr,dcansr,b1,c1;//,dcsqn,csqnold
 	double kmcsqn=0.8;
 	double csqnbar=10.0;
 		
@@ -663,9 +663,9 @@ void HRD09Control::updateSr()
 	c1=kmcsqn*(csqn+dcajsr+caJsr);
 	
 	caJsr=(sqrt(b1*b1+4.0*c1)-b1)/2.0;
-	csqnold=csqn;
+//	csqnold=csqn;
 	csqn=csqnbar*(caJsr/(caJsr+kmcsqn));
-	dcsqn=(csqn-csqnold)/dt;
+//	dcsqn=(csqn-csqnold)/dt;
 
 	caJsrtotal=caJsr+csqn;
 	

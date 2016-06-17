@@ -24,6 +24,7 @@ struct cellInfo {
 class Grid {
   public:
     Grid();
+    Grid(const Grid& other);
     ~Grid();
 
     virtual void addRow(int pos); //create new row at 0 <= pos < len of empty cells

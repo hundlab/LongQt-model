@@ -27,7 +27,7 @@ void gridCell::Initialize() {
 gridCell::gridCell(gridCell& toCopy) : Cell(toCopy) {
     this->Initialize(); 
     this->gridfileName = toCopy.gridfileName;
-    this->grid = toCopy.grid;
+    this->grid = Grid(toCopy.grid);
 }
 gridCell* gridCell::clone() {
     return new gridCell(*this);
@@ -45,7 +45,7 @@ bool gridCell::setOutputfileConstants(string filename) {
     for(auto it = grid.fiber.begin(); it != grid.fiber.end(); it++, i++) {
         int j = 0;
         for(auto iv = it->nodes.begin(); iv != it->nodes.end(); iv++, j++) {
-            sprintf(buffer,filename.c_str(),i,j);
+            sprintf(buffer,filename.c_str(),j,i);
             toReturn = toReturn&&(*iv)->cell->setOutputfileConstants(string(buffer));
         }
     }
@@ -57,7 +57,7 @@ bool gridCell::setOuputfileVariables(string filename) {
     for(auto it = grid.fiber.begin(); it != grid.fiber.end(); it++, i++) {
         int j = 0;
         for(auto iv = it->nodes.begin(); iv != it->nodes.end(); iv++, j++) {
-            sprintf(buffer,filename.c_str(),i,j);
+            sprintf(buffer,filename.c_str(),j,i);
             toReturn = toReturn&&(*iv)->cell->setOuputfileVariables(string(buffer));
         }
     }
@@ -127,9 +127,9 @@ void gridCell::closeFiles() {
 }
 double gridCell::updateV() {
     int i,j;
-    int cells = static_cast<int>(grid.fibery.size())-1;
-    int fibers = static_cast<int>(grid.fiber.size())-1;
-    if(tcount%2==0){
+    int cells = static_cast<int>(grid.fibery.size());
+    int fibers = static_cast<int>(grid.fiber.size());
+    if((tcount%2==0||cells<2)&&fibers>2){
         for(i=0;i<fibers;i++){
             for(j=0;j<cells;j++){
                 if(i>0&&i<(fibers-1))

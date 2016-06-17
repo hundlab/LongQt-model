@@ -85,19 +85,19 @@ void gpbatrialRyr::Initialize()
 //SR Ca buffer
     Csqnb = 1.242988;
 //##### Gating Variables #####
-	gate.m = 0.001405627;
-	gate.h = .9867005;
-	gate.j = .991562;
-	gate.xkr = .008641386;
-	gate.xks = .005412034;
-	gate.xf = 0.004051574;
-	gate.yf = .9945511;
-	gate.xkur = 0.0;
-	gate.ykur = 1.0;
-	gate.d = 0.000007175662;
-	gate.f = 1.00;
-	gate.f_cabj = .02421991;
-	gate.f_cabsl = .01452605;
+	Gate.m = 0.001405627;
+	Gate.h = .9867005;
+	Gate.j = .991562;
+	Gate.xkr = .008641386;
+	Gate.xks = .005412034;
+	Gate.xf = 0.004051574;
+	Gate.yf = .9945511;
+	Gate.xkur = 0.0;
+	Gate.ykur = 1.0;
+	Gate.d = 0.000007175662;
+	Gate.f = 1.00;
+	Gate.f_cabj = .02421991;
+	Gate.f_cabsl = .01452605;
 	
 //####### RyR channel fractions
 	Ryrr = 0.8884332;
@@ -188,11 +188,11 @@ void gpbatrialRyr::updateInal()
 {
 	double ENa;
 	double ms,tml,hlinf,thl;
-	double camfact;
-	double KMCAM=0.3;  
+//	double camfact;
+//	double KMCAM=0.3;  
 //	double deltag = 0.0095;
 		
-	camfact=1/(1+pow((KMCAM/caM),4.0));
+//	camfact=1/(1+pow((KMCAM/caM),4.0));
 
 	ENa=(RGAS*TEMP/FDAY)*log(naO/naI);
 	
@@ -203,16 +203,16 @@ void gpbatrialRyr::updateInal()
 
 	ms=Rate.aml/(Rate.aml+Rate.bml);	
 	tml=1/(Rate.aml+Rate.bml);
-	gate.ml=ms-(ms-gate.ml)*exp(-dt/tml);
+	Gate.ml=ms-(ms-Gate.ml)*exp(-dt/tml);
 	
 	thl=600;
-	gate.hl=hlinf-(hlinf-gate.hl)*exp(-dt/thl);
+	Gate.hl=hlinf-(hlinf-Gate.hl)*exp(-dt/thl);
 	
 
 
 	//WT
-	double iNalNP=(0.0065*8)*gate.ml*gate.ml*gate.ml*gate.hl*(vOld-ENa); 
-	double iNalP = (0.0065*57)*gate.ml*gate.ml*gate.ml*gate.hl*(vOld-ENa); 
+	double iNalNP=(0.0065*8)*Gate.ml*Gate.ml*Gate.ml*Gate.hl*(vOld-ENa); 
+	double iNalP = (0.0065*57)*Gate.ml*Gate.ml*Gate.ml*Gate.hl*(vOld-ENa); 
 	double dfiNalP = (caM/(caM + .15) - fiNalP)/100*dt;
 	fiNalP = fiNalP + dfiNalP;
 	fiNalNP = 1- fiNalP;
@@ -220,13 +220,13 @@ void gpbatrialRyr::updateInal()
 	
 
 	//SA	
-	//double iNalP = (0.0065*8)*gate.ml*gate.ml*gate.ml*gate.hl*(vOld-ENa); 
+	//double iNalP = (0.0065*8)*Gate.ml*Gate.ml*Gate.ml*Gate.hl*(vOld-ENa); 
 	//iNal = iNalP;	
 
 
 
 	//SE	
-	//double iNalP = (0.0065*57)*gate.ml*gate.ml*gate.ml*gate.hl*(vOld-ENa); 
+	//double iNalP = (0.0065*57)*Gate.ml*Gate.ml*Gate.ml*Gate.hl*(vOld-ENa); 
 	//iNal = iNalP;	
 };
 
@@ -419,14 +419,14 @@ void gpbatrialRyr::updateIcal(){
 	f_inf = 1/(1+exp((vOld+30)/7))+0.2/(1+exp((50-vOld)/20)); 
 	tauf = 1/(0.0197*exp(-(0.0337*(vOld+25))*(0.0337*(vOld+25)))+0.02);
 
- 	gate.f = f_inf-(f_inf-gate.f)*exp(-dt/tauf);
-	gate.d = d_inf-(d_inf-gate.d)*exp(-dt/taud);
+ 	Gate.f = f_inf-(f_inf-Gate.f)*exp(-dt/tauf);
+	Gate.d = d_inf-(d_inf-Gate.d)*exp(-dt/taud);
 
-	df_cabjdt = 1.7*cajI*(1-gate.f_cabj)-11.9E-3*gate.f_cabj; 
-	df_cabsldt = 1.7*caslI*(1-gate.f_cabsl)-11.9E-3*gate.f_cabsl; 
+	df_cabjdt = 1.7*cajI*(1-Gate.f_cabj)-11.9E-3*Gate.f_cabj; 
+	df_cabsldt = 1.7*caslI*(1-Gate.f_cabsl)-11.9E-3*Gate.f_cabsl; 
 	
-	gate.f_cabj=gate.f_cabj+df_cabjdt*dt;
-	gate.f_cabsl=gate.f_cabsl+df_cabsldt*dt;
+	Gate.f_cabj=Gate.f_cabj+df_cabjdt*dt;
+	Gate.f_cabsl=Gate.f_cabsl+df_cabsldt*dt;
 	
 	icajbar = pca*4*(vOld*Frdy*FoRT)*(0.341*cajI*exp(2*vOld*FoRT)-0.341*caO) /(exp(2*vOld*FoRT)-1);
 	icaslbar = pca*4*(vOld*Frdy*FoRT)*(0.341*caslI*exp(2*vOld*FoRT)-0.341*caO) /(exp(2*vOld*FoRT)-1);
@@ -434,12 +434,12 @@ void gpbatrialRyr::updateIcal(){
 	icanajbar = pna*(vOld*Frdy*FoRT)*(0.75*najI*exp(vOld*FoRT)-0.75*naO)/(exp(vOld*FoRT)-1);
 	icanaslbar = pna*(vOld*Frdy*FoRT)*(0.75*naslI*exp(vOld*FoRT)-0.75*naO)/(exp(vOld*FoRT)-1);
 	
-	iCajunc = (F_juncCaL*icajbar*gate.d*gate.f*((1-gate.f_cabj)))*0.45*1;
-	iCasl = (F_slCaL*icaslbar*gate.d*gate.f*((1-gate.f_cabsl)))*0.45*1;
+	iCajunc = (F_juncCaL*icajbar*Gate.d*Gate.f*((1-Gate.f_cabj)))*0.45*1;
+	iCasl = (F_slCaL*icaslbar*Gate.d*Gate.f*((1-Gate.f_cabsl)))*0.45*1;
 	iCa = iCajunc+iCasl;
-	iCak = (icakbar*gate.d*gate.f*(F_juncCaL*((1-gate.f_cabj))+F_slCaL*((1-gate.f_cabsl))))*0.45*1;
-	iCanajunc = (F_juncCaL*icanajbar*gate.d*gate.f*((1-gate.f_cabj)))*0.45*1;
-	iCanasl = (F_slCaL*icanaslbar*gate.d*gate.f*((1-gate.f_cabsl)))*.45*1;
+	iCak = (icakbar*Gate.d*Gate.f*(F_juncCaL*((1-Gate.f_cabj))+F_slCaL*((1-Gate.f_cabsl))))*0.45*1;
+	iCanajunc = (F_juncCaL*icanajbar*Gate.d*Gate.f*((1-Gate.f_cabj)))*0.45*1;
+	iCanasl = (F_slCaL*icanaslbar*Gate.d*Gate.f*((1-Gate.f_cabsl)))*.45*1;
 	iCana = iCanajunc+iCanasl;
 	iCaL = iCa+iCak+iCana;
 }
@@ -491,7 +491,7 @@ void gpbatrialRyr::updateIto() {
 	
 	double Ek = RGAS*TEMP/FDAY*log(kO/kI);
 	
-	iTos = 0.0;//gtos*gate.xs*gate.ys*(vOld-Ek);
+	iTos = 0.0;//gtos*Gate.xs*Gate.ys*(vOld-Ek);
 	
 	xs_inf = ((1)/(1+exp(-(vOld+1.0)/11.0)));
 	tau_xf = 3.5*exp(-((vOld/30.0)*(vOld/30.0)))+1.5;
@@ -499,10 +499,10 @@ void gpbatrialRyr::updateIto() {
 	ys_inf = ((1.0)/(1+exp((vOld+40.5)/11.5)));
 	tau_yf = 25.635*exp(-(((vOld+52.45)/15.8827)*((vOld+52.45)/15.8827)))+24.14;
 
-	gate.xf = xs_inf-(xs_inf-gate.xf)*exp(-dt/tau_xf);
-	gate.yf = ys_inf-(ys_inf-gate.yf)*exp(-dt/tau_yf);
+	Gate.xf = xs_inf-(xs_inf-Gate.xf)*exp(-dt/tau_xf);
+	Gate.yf = ys_inf-(ys_inf-Gate.yf)*exp(-dt/tau_yf);
 	
-	iTof = gtof*gate.xf*gate.yf*(vOld-Ek);
+	iTof = gtof*Gate.xf*Gate.yf*(vOld-Ek);
 	
 	iTo = iTos+iTof;
 }
@@ -520,10 +520,10 @@ void gpbatrialRyr::updateIkur() {
 	ykur_inf = ((1)/(1+exp((vOld+7.5)/10)));
 	tau_ykur = 590/(1+exp((vOld+60)/10.0))+3050;
 
- 	gate.xkur = xkur_inf-(xkur_inf-gate.xkur)*exp(-dt/tau_xkur);
-	gate.ykur = ykur_inf-(ykur_inf-gate.ykur)*exp(-dt/tau_ykur);
+ 	Gate.xkur = xkur_inf-(xkur_inf-Gate.xkur)*exp(-dt/tau_xkur);
+	Gate.ykur = ykur_inf-(ykur_inf-Gate.ykur)*exp(-dt/tau_ykur);
 	
-	iKur = 1*gkur*gate.xkur*gate.ykur*(vOld-Ek);
+	iKur = 1*gkur*Gate.xkur*Gate.ykur*(vOld-Ek);
 }
 
 void gpbatrialRyr::updateIks() {
@@ -538,10 +538,10 @@ void gpbatrialRyr::updateIks() {
 	xs_inf = 1.0/(1.0+exp((-3.8-vOld)/14.25));
 	tau_xs = 990.1/(1.0+exp((-2.436-vOld)/14.12));
 
-	gate.xks = xs_inf-(xs_inf-gate.xks)*exp(-dt/tau_xs);
+	Gate.xks = xs_inf-(xs_inf-Gate.xks)*exp(-dt/tau_xs);
 
-	iKsjunc = Fjunc*gksjunc*gate.xks*gate.xks*(vOld-EKsjunc);
-	iKssl = Fsl*gkssl*gate.xks*gate.xks*(vOld-EKssl);
+	iKsjunc = Fjunc*gksjunc*Gate.xks*Gate.xks*(vOld-EKsjunc);
+	iKssl = Fsl*gkssl*Gate.xks*Gate.xks*(vOld-EKssl);
 
 	iKs = iKsjunc+iKssl;
 
@@ -558,11 +558,11 @@ void gpbatrialRyr::updateIkr() {
 	alpha_xr = (550.0/(1.0+exp((-22.0-vOld)/9.0)))*(6.0/(1.0+exp((vOld+11.0)/9.0)));
 	beta_xr = 230.0/(1.0+exp((vOld+40.0)/20.0));
 	tau_xr = alpha_xr + beta_xr;
-	gate.xkr = xr_inf-(xr_inf-gate.xkr)*exp(-dt/tau_xr);
+	Gate.xkr = xr_inf-(xr_inf-Gate.xkr)*exp(-dt/tau_xr);
 	
 	r_kr = 1.0/(1.0+exp((vOld+74.0)/24.0));
 
-	iKr = gkr*gate.xkr*r_kr*(vOld-Ek);
+	iKr = gkr*Gate.xkr*r_kr*(vOld-Ek);
 }
 
 void gpbatrialRyr::updateIk1() {
@@ -693,12 +693,12 @@ void gpbatrialRyr::updateIna() {
 	tau_j = 1/(alpha_j+beta_j);
 	j_inf = 1/((1+exp((vOld+71.55)/7.43))*(1+exp((vOld+71.55)/7.43)));   
 
-	gate.m = m_inf-(m_inf-gate.m)*exp(-dt/tau_m);
-	gate.h = h_inf-(h_inf-gate.h)*exp(-dt/tau_h);
-	gate.j = j_inf-(j_inf-gate.j)*exp(-dt/tau_j);
+	Gate.m = m_inf-(m_inf-Gate.m)*exp(-dt/tau_m);
+	Gate.h = h_inf-(h_inf-Gate.h)*exp(-dt/tau_h);
+	Gate.j = j_inf-(j_inf-Gate.j)*exp(-dt/tau_j);
 
-	iNajunc = Fjunc*gna*gate.m*gate.m*gate.m*gate.h*gate.j*(vOld-Enajunc);
-	iNasl = Fsl*gna*gate.m*gate.m*gate.m*gate.h*gate.j*(vOld-Enasl);		
+	iNajunc = Fjunc*gna*Gate.m*Gate.m*Gate.m*Gate.h*Gate.j*(vOld-Enajunc);
+	iNasl = Fsl*gna*Gate.m*Gate.m*Gate.m*Gate.h*Gate.j*(vOld-Enasl);		
 	iNa = iNajunc + iNasl;
 }
 
@@ -786,20 +786,20 @@ map<string, double*> gpbatrialRyr::makemap()
   vars["iNak"]=&iNak;
   vars["iNaca"]=&iNaca;
 
-  vars["gate.m"]=&gate.m;
-  vars["gate.h"]=&gate.h;
-  vars["gate.j"]=&gate.j;
-  vars["gate.xkr"]=&gate.xkr;
-  vars["gate.xks"]=&gate.xks;
-  vars["gate.xf"]=&gate.xf;
-  vars["gate.yf"]=&gate.yf;
-  vars["gate.xkur"]=&gate.xkur;
-  vars["gate.ykur"]=&gate.ykur;
-  vars["gate.d"]=&gate.d;
-  vars["gate.f"]=&gate.f;
-  vars["gate.f_cabj"]=&gate.f_cabj;
-  vars["gate.f_cabsl"]=&gate.f_cabsl;
-  vars["gate.h "]=&gate.h;
+  vars["Gate.m"]=&Gate.m;
+  vars["Gate.h"]=&Gate.h;
+  vars["Gate.j"]=&Gate.j;
+  vars["Gate.xkr"]=&Gate.xkr;
+  vars["Gate.xks"]=&Gate.xks;
+  vars["Gate.xf"]=&Gate.xf;
+  vars["Gate.yf"]=&Gate.yf;
+  vars["Gate.xkur"]=&Gate.xkur;
+  vars["Gate.ykur"]=&Gate.ykur;
+  vars["Gate.d"]=&Gate.d;
+  vars["Gate.f"]=&Gate.f;
+  vars["Gate.f_cabj"]=&Gate.f_cabj;
+  vars["Gate.f_cabsl"]=&Gate.f_cabsl;
+  vars["Gate.h "]=&Gate.h;
 
   vars["koCa"]=&koCa;
   vars["kiCa"]=&kiCa;  

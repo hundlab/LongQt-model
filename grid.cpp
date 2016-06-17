@@ -1,9 +1,21 @@
 #include "grid.h"
 
-Grid::Grid(){
-
+Grid::Grid(){}
+Grid::Grid(const Grid& other) {
+    fiber = vector<Fiber>(other.fiber.size(), Fiber(other.fibery.size()));
+    fibery = vector<Fiber>(other.fibery.size(), Fiber(other.fiber.size()));
+    for(unsigned int i = 0; i < fiber.size();i++) {
+        fiber[i].B = other.fiber[i].B;
+        for(unsigned int j = 0; j < fibery.size(); j++) {
+            Node* n = new Node(*other.fiber[i].nodes[j]);
+            fiber[i].nodes[j] = n;
+            fibery[j].nodes[i] = n;
+        }
+    }
+    for(unsigned int i = 0; i < fibery.size(); i++) {
+        fibery[i].B = other.fibery[i].B;
+    }
 }
-
 Grid::~Grid(){}
 
 void Grid::addRow(int pos) {
@@ -38,12 +50,14 @@ void Grid::removeRow(int pos) {
     fiber.erase(fiber.begin()+pos);
     for(auto it = fibery.begin(); it!=fibery.end() ; it++) {
         it->nodes.erase(it->nodes.begin() +pos);
+        it->B.erase(it->B.begin() +pos);
     }
 }
 void Grid::removeColumn(int pos) {
     fibery.erase(fibery.begin()+pos);
     for(auto it = fiber.begin(); it!=fiber.end() ; it++) {
         it->nodes.erase(it->nodes.begin() +pos);
+        it->B.erase(it->B.begin() +pos);
     }
 }
 void Grid::setCellTypes(set<cellInfo*>& cells) {
@@ -65,10 +79,10 @@ void Grid::setCellTypes(const cellInfo& singleCell) {
         if(singleCell.cell->type == string("Cell")) {
             fiber.at(singleCell.X).B.at(singleCell.Y) = fibery.at(singleCell.Y).B.at(singleCell.X) = 0.0;
         }
-        if(singleCell.X == 0 ||singleCell.X == fiber.size()) {
+        if(singleCell.X == 0 ||static_cast<unsigned int>(singleCell.X) == fiber.size()) {
             fibery.at(singleCell.Y).B.at(singleCell.X) = 0.0;
         }
-        if(singleCell.Y == fibery.size() || singleCell.Y == 0) {
+        if(static_cast<unsigned int>(singleCell.Y) == fibery.size() || singleCell.Y == 0) {
             fiber.at(singleCell.X).B.at(singleCell.Y) = 0.0;
         }
     } catch(const std::out_of_range& oor) {
@@ -94,16 +108,16 @@ pair<int,int> Grid::findNode(const Node* node) {
                 p = make_pair(i,j);
                 return p;
             }
-            i++;
+            j++;
         }
-        i=0;
-        j++;
+        j=0;
+        i++;
     }
     return p;
 }
 Node* Grid::findNode(const pair<int,int>& p) {
     try {
-        return fiber.at(p.second).nodes.at(p.first);
+        return fiber.at(p.first).nodes.at(p.second);
     } catch(const std::out_of_range&) {
         return NULL;
     }

@@ -18,6 +18,20 @@ struct Node {
         vNew = 0;
         cell = new Cell();
     }
+    Node(const Node& other) {
+        rd = other.rd;
+        Rmyo = other.Rmyo;
+        dIax = other.dIax;
+        x = other.x;
+        y = other.y;
+        d1 = other.d1;
+        d2 = other.d2;
+        d3 = other.d3;
+        r = other.r;
+        vNew = other.vNew;
+        nodeType = other.nodeType;
+        cell = other.cell->clone();
+    }
     ~Node() {};
     Cell* cell;
     double rd; // gap junctional disk resistance.

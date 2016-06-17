@@ -199,12 +199,12 @@ void HRD09BorderZone::updateIlca()
 //######################################################
 void HRD09BorderZone::updateIcab()
 {
-	double Ecan,maxicab;
+	double maxicab;//Ecan,
 	double gamcai=1.0;
 	double gamcao=0.341;
 	double gcab=3.0E-7;
 	
-	Ecan=(RGAS*TEMP/(2*FDAY))*log(caO/caI);	
+//	Ecan=(RGAS*TEMP/(2*FDAY))*log(caO/caI);	
 	
 	maxicab=4*(vOld)*(FDAY*FDAY/(RGAS*TEMP))*(gamcai*caI*exp(2*(vOld)*FDAY/(RGAS*TEMP))-gamcao*caO)/(exp(2*(vOld)*FDAY/(RGAS*TEMP))-1.0);
 

@@ -10,17 +10,15 @@
 gridProtocol::gridProtocol()  : CurrentClamp(){
     gridCell* temp = new gridCell();
     cell = temp;
-    Grid* grid = temp->getGrid();
+    grid = temp->getGrid();
     baseCellMap = cellMap;
     baseCellMap["Inexcitable Cell"] = [] () {return new Cell;};
     cellMap.clear();
     cellMap["gridCell"] = [] () {return (Cell*) new gridCell;};
     GetSetRef toInsert;
     pars["gridFile"]= toInsert.Initialize("file", [temp] () {return temp->gridfile();}, [temp] (const string& value) {temp->setGridfile(value);});
-    pars["measNodes"]= toInsert.Initialize("set", [grid,this] () {return setToString(dataNodes,grid);}, [grid,this] (const string& value) {dataNodes = stringToSet(value,grid);});
-    pars["stimNodes"]= toInsert.Initialize("set", [grid,this] () {return setToString(stimNodes,grid);}, [grid,this] (const string& value) {stimNodes = stringToSet(value,grid);});
-
-
+    pars["measNodes"]= toInsert.Initialize("set", [this] () {return setToString(dataNodes);}, [this] (const string& value) {dataNodes = stringToSet(value);});
+    pars["stimNodes"]= toInsert.Initialize("set", [this] () {return setToString(stimNodes);}, [this] (const string& value) {stimNodes = stringToSet(value);});
 }
 //overriden deep copy funtion
 gridProtocol* gridProtocol::clone(){
@@ -32,12 +30,13 @@ gridProtocol::gridProtocol(const gridProtocol& toCopy) : CurrentClamp(toCopy){
 void gridProtocol::CCcopy(const gridProtocol& toCopy) {
     this->dataNodes = toCopy.dataNodes;
     this->stimNodes = toCopy.stimNodes;
+    this->grid = ((gridCell*)this->cell)->getGrid();
 }
 // External stimulus.
 int gridProtocol::stim()
 {
-    for(auto it = stimNodes.begin(); it != stimNodes.end(); it++) {
-        Cell* cell = (*it)->cell;
+    for(auto it : stimNodes) {
+        Cell* cell = grid->findNode(it)->cell;
         if(cell->t>=stimt&&cell->t<(stimt+stimdur)){
             if(stimflag==0){
                 stimcounter++;
@@ -105,11 +104,11 @@ temp.clear();
 
             //##### Output select variables to file  ####################
             if(int(measflag)==1&&cell->t>meastime){
-                for (map<string,Measure>::iterator it = measures.begin(); it!=measures.end(); it++) {
-                    for(auto iv = dataNodes.begin(); iv != dataNodes.end(); iv++) {
-                        it->second.measure((*iv)->cell->t,*(*iv)->cell->vars[it->second.varname]);
+                for (auto it : measures) {
+                    for(auto iv : dataNodes) {
+                        it.second.measure(grid->findNode(iv)->cell->t,*grid->findNode(iv)->cell->vars[it.second.varname]);
                         if(int(writeflag)==1) {
-                            it->second.write(true, !(int(doneflag)&&(time<tMax)));
+                            it.second.write(true, !(int(doneflag)&&(time<tMax)));
                         }
                     }
                 }
@@ -140,10 +139,10 @@ temp.clear();
 map<string, CellInitializer>& gridProtocol::getCellMap() {
     return baseCellMap;
 }
-set<Node*>& gridProtocol::getStimNodes() {
+set<pair<int,int>>& gridProtocol::getStimNodes() {
     return stimNodes;
 }
-set<Node*>& gridProtocol::getDataNodes() {
+set<pair<int,int>>& gridProtocol::getDataNodes() {
     return dataNodes;
 }
 bool gridProtocol::writepars(string file) {
@@ -156,23 +155,22 @@ int gridProtocol::readpars(string file) {
     toReturn &= ((gridCell*)this->cell)->readGridfile(file);
     return (int)toReturn;
 }
-string gridProtocol::setToString(set<Node*>& nodes, Grid* grid) {
+string gridProtocol::setToString(set<pair<int,int>>& nodes) {
     stringstream toReturn;
-    for(auto it : nodes) {
-        pair<int,int> p = grid->findNode(it);
-        toReturn << p.first << " " << p.second << "\t";
+    for(auto node : nodes) {
+        toReturn << node.first << " " << node.second << "\t";
     }
     return toReturn.str();
 }
-set<Node*> gridProtocol::stringToSet(string nodesList, Grid* grid) {
-    set<Node*> toReturn;
+set<pair<int,int>> gridProtocol::stringToSet(string nodesList) {
+    set<pair<int,int>> toReturn;
     stringstream stream(nodesList);
     while(!stream.eof()) {
         pair<int,int> p(-1,-1);
         stream >> p.first >> p.second;
         Node* n = grid->findNode(p);
         if(n != NULL) {
-            toReturn.insert(n);
+            toReturn.insert(p);
         }
     }
     for(auto measure : measures) {

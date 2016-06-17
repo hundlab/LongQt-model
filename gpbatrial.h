@@ -182,6 +182,6 @@ struct GateVariable {
  //##################
     int externalStim(double stimval);
     virtual void makemap();
-    struct GateVariable gate;
+    struct GateVariable Gate;
 };
 #endif

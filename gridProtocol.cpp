@@ -19,6 +19,7 @@ gridProtocol::gridProtocol()  : CurrentClamp(){
     pars["gridFile"]= toInsert.Initialize("file", [temp] () {return temp->gridfile();}, [temp] (const string& value) {temp->setGridfile(value);});
     pars["measNodes"]= toInsert.Initialize("set", [this] () {return setToString(dataNodes);}, [this] (const string& value) {dataNodes = stringToSet(value);});
     pars["stimNodes"]= toInsert.Initialize("set", [this] () {return setToString(stimNodes);}, [this] (const string& value) {stimNodes = stringToSet(value);});
+    pars.erase("numtrials");
 }
 //overriden deep copy funtion
 gridProtocol* gridProtocol::clone(){

@@ -46,7 +46,7 @@ bool gridCell::setOutputfileConstants(string filename) {
         int j = 0;
         for(auto iv = it->nodes.begin(); iv != it->nodes.end(); iv++, j++) {
             sprintf(buffer,filename.c_str(),j,i);
-            toReturn = toReturn&&(*iv)->cell->setOutputfileConstants(string(buffer));
+            toReturn &= (*iv)->cell->setOutputfileConstants(string(buffer));
         }
     }
     return toReturn;
@@ -58,7 +58,7 @@ bool gridCell::setOuputfileVariables(string filename) {
         int j = 0;
         for(auto iv = it->nodes.begin(); iv != it->nodes.end(); iv++, j++) {
             sprintf(buffer,filename.c_str(),j,i);
-            toReturn = toReturn&&(*iv)->cell->setOuputfileVariables(string(buffer));
+            toReturn &= (*iv)->cell->setOuputfileVariables(string(buffer));
         }
     }
     return toReturn;
@@ -89,7 +89,7 @@ bool gridCell::setConstantSelection(set<string> new_selection) {
     parsSelection = new_selection;
     for(auto it = grid.fiber.begin(); it != grid.fiber.end(); it++) {
         for(auto iv = it->nodes.begin(); iv != it->nodes.end(); iv++) {
-            toReturn = toReturn&&(*iv)->cell->setConstantSelection(new_selection);
+            toReturn &=(*iv)->cell->setConstantSelection(new_selection);
         }
     }
     return toReturn;
@@ -99,7 +99,7 @@ bool gridCell::setVariableSelection(set<string> new_selection) {
     varsSelection = new_selection;
     for(auto it = grid.fiber.begin(); it != grid.fiber.end(); it++) {
         for(auto iv = it->nodes.begin(); iv != it->nodes.end(); iv++) {
-            toReturn = toReturn&&(*iv)->cell->setVariableSelection(new_selection);
+            toReturn &= (*iv)->cell->setVariableSelection(new_selection);
         }
     }
     return toReturn;
@@ -127,29 +127,29 @@ void gridCell::closeFiles() {
 }
 double gridCell::updateV() {
     int i,j;
-    int cells = static_cast<int>(grid.fibery.size());
-    int fibers = static_cast<int>(grid.fiber.size());
-    if((tcount%2==0||cells<2)&&fibers>2){
-        for(i=0;i<fibers;i++){
-            for(j=0;j<cells;j++){
-                if(i>0&&i<(fibers-1))
+    int xLen = static_cast<int>(grid.fibery.size());
+    int yLen = static_cast<int>(grid.fiber.size());
+    if((tcount%2==0)){
+        for(i=0;i<yLen;i++){
+            for(j=0;j<xLen&&yLen>1;j++){
+                if(i>0&&i<(yLen-1))
                     grid.fiber[i].nodes[j]->cell->iTot-=grid.fibery[j].B[i]*(grid.fiber[i-1].nodes[j]->cell->vOld-grid.fiber[i].nodes[j]->cell->vOld)-grid.fibery[j].B[i+1]*(grid.fiber[i].nodes[j]->cell->vOld-grid.fiber[i+1].nodes[j]->cell->vOld);
                 else if(i==0)
                     grid.fiber[i].nodes[j]->cell->iTot-=-grid.fibery[j].B[i+1]*(grid.fiber[i].nodes[j]->cell->vOld-grid.fiber[i+1].nodes[j]->cell->vOld);
-                else if(i==fibers-1)
+                else if(i==yLen-1)
                     grid.fiber[i].nodes[j]->cell->iTot-=grid.fibery[j].B[i]*(grid.fiber[i-1].nodes[j]->cell->vOld-grid.fiber[i].nodes[j]->cell->vOld);
             }
             grid.fiber[i].updateVm(dt);
         }
     }
     else{
-        for(i=0;i<cells;i++){
-            for(j=0;j<fibers;j++){
-                if(i>0&&i<(cells-1))
+        for(i=0;i<xLen;i++){
+            for(j=0;j<yLen&&xLen>1;j++){
+                if(i>0&&i<(xLen-1))
                     grid.fibery[i].nodes[j]->cell->iTot-=grid.fiber[j].B[i]*(grid.fibery[i-1].nodes[j]->cell->vOld-grid.fibery[i].nodes[j]->cell->vOld)-grid.fiber[j].B[i+1]*(grid.fibery[i].nodes[j]->cell->vOld-grid.fibery[i+1].nodes[j]->cell->vOld);
                 else if(i==0)
                     grid.fibery[i].nodes[j]->cell->iTot-=-grid.fiber[j].B[i+1]*(grid.fibery[i].nodes[j]->cell->vOld-grid.fibery[i+1].nodes[j]->cell->vOld);
-                else if(i==cells-1)
+                else if(i==xLen-1)
                     grid.fibery[i].nodes[j]->cell->iTot-=grid.fiber[j].B[i]*(grid.fibery[i-1].nodes[j]->cell->vOld-grid.fibery[i].nodes[j]->cell->vOld);
             }
             grid.fibery[i].updateVm(dt);
@@ -299,5 +299,38 @@ bool gridCell::readGridfile(string filename) {
         line.str(temp);
     }
     grid.setCellTypes(cells);
+    return succes;
+}
+bool gridCell:: readCellState(string filename) {
+    ifstream ifile;
+    ifile.open(filename);
+    if(!ifile.good()) {
+        cout << "Error Opening " << filename << "\n";
+        return false;
+    }
+    bool succes = true;
+    succes &= Cell::readCellState(ifile);
+    for(auto fiber : grid.fiber) {
+        for(auto node : fiber.nodes) {
+            succes &= node->cell->readCellState(ifile);
+        }
+    }
+    ifile.close();
+    return succes;
+}
+bool gridCell::writeCellState(string filename) {
+    ofstream ofile;
+    ofile.open(filename,ios_base::app);
+    if(!ofile.good()) {
+        cout << "Error Opening " << filename << "\n";
+        return false;
+    }
+    bool succes = true;
+    succes &= Cell::writeCellState(ofile);
+    for(auto fiber : grid.fiber) {
+        for(auto node : fiber.nodes) {
+            succes &= node->cell->writeCellState(ofile);
+        }
+    }
     return succes;
 }

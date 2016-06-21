@@ -190,7 +190,28 @@ void CellKernel::updateCurr()
 void CellKernel::updateConc()
 {
 };
-
+double CellKernel::var(string name) {
+    return *vars.at(name);
+}
+bool CellKernel::setVar(string name, double val) {
+    try {
+        *vars.at(name) = val;
+    } catch(out_of_range&) {
+        return false;
+    }
+    return true;
+}
+double CellKernel::par(string name) {
+    return *pars.at(name);
+}
+bool CellKernel::setPar(string name, double val) {
+    try {
+        *pars.at(name) = val;
+    } catch(out_of_range&) {
+        return false;
+    }
+    return true;
+}
 set<string> CellKernel::getVariables() {
     set<string> toReturn;
     for(auto it = vars.begin(); it != vars.end(); it++) {

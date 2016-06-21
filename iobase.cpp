@@ -23,14 +23,14 @@ bool IOBase::setOutputfile(string filename, set<string> set, ofstream* ofile) {
     ofile->open(filename,ios_base::app);
     if(!ofile->good()) {
         cout << "Error Opening " << filename << endl;
+        return false;
     } else if(!exists) {
         for(it = set.begin(); it != set.end(); it++) {
             *ofile << *it << "\t";
         }
         *ofile << endl;
-    return true;
     }
-return false;
+    return true;
 };
  
 
@@ -47,6 +47,6 @@ bool IOBase::write(set<string> selection, map<string, double*> map, ofstream* of
 
 void IOBase::closeFile(ofstream* ofile) {
     if(ofile->is_open()) {
-	ofile->close();
+    	ofile->close();
     }
 }

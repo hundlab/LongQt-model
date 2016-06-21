@@ -44,6 +44,8 @@ class gridCell: public Cell {
     virtual void writeConstants();
     virtual void writeVariables();
     virtual void closeFiles();
+    virtual bool readCellState(string filename);
+    virtual bool writeCellState(string filename);
 
   private:
     Grid grid;

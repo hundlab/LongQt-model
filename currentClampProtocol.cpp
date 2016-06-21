@@ -82,7 +82,11 @@ temp.clear();
 
         time = cell->t = 0.0;      // reset time
         doneflag=1;     // reset doneflag
-  
+        if(readCellState) {
+            sprintf(writefile,(datadir + "/" + cellStateFile).c_str(),trial);
+            cell->readCellState(writefile);
+        }
+ 
         //###############################################################
         // Every time step, currents, concentrations, and Vm are calculated.
         //###############################################################
@@ -139,6 +143,10 @@ temp.clear();
           measure.second.closeFiles();
       }
       cell->closeFiles();
+      if(writeCellState) {
+          sprintf(writefile,(datadir + "/" + cellStateFile).c_str(),trial);
+          cell->writeCellState(writefile);
+      }
 
       return true; 
 }

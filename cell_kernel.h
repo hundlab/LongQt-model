@@ -76,6 +76,10 @@ class CellKernel
     //##### Declare maps for vars/params ##############
     map<string, double*> vars;  // map of state vars
     map<string, double*> pars;  // map of params
+    virtual double var(string name);
+    virtual bool setVar(string name, double val);
+    virtual double par(string name);
+    virtual bool setPar(string name, double val);
     virtual set<string> getVariables();
     virtual set<string> getConstants();
   protected:

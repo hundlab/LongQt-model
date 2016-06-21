@@ -20,6 +20,8 @@ gridProtocol::gridProtocol()  : CurrentClamp(){
     pars["measNodes"]= toInsert.Initialize("set", [this] () {return setToString(dataNodes);}, [this] (const string& value) {dataNodes = stringToSet(value);});
     pars["stimNodes"]= toInsert.Initialize("set", [this] () {return setToString(stimNodes);}, [this] (const string& value) {stimNodes = stringToSet(value);});
     pars.erase("numtrials");
+    pars["paceflag"].set("true");
+    pars.erase("paceflag");
 }
 //overriden deep copy funtion
 gridProtocol* gridProtocol::clone(){
@@ -76,7 +78,12 @@ temp.clear();
 
         time = cell->t = 0.0;      // reset time
         doneflag=1;     // reset doneflag
-  
+
+        if(readCellState) {
+            sprintf(writefile,(datadir + "/" + cellStateFile).c_str(),trial);
+            cell->readCellState(writefile);
+        }
+ 
         //###############################################################
         // Every time step, currents, concentrations, and Vm are calculated.
         //###############################################################
@@ -134,6 +141,15 @@ temp.clear();
       sprintf(writefile, (datadir + "/" + "cell_%%i_%%i_" + string(writefile)).c_str());
       cell->setOutputfileConstants(writefile);
       cell->writeConstants();
+      for(auto measure : measures) {
+          measure.second.closeFiles();
+      }
+      cell->closeFiles();
+      if(writeCellState) {
+          sprintf(writefile,(datadir + "/" + cellStateFile).c_str(),trial);
+          cell->writeCellState(writefile);
+      }
+
 
       return true; 
 }

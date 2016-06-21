@@ -8,6 +8,7 @@
 //####################################################
 
 #include "cell.h"
+#include <sstream>
 
 bool Cell::setOuputfileVariables(string filename) {
     return setOutputfile(filename, this->varsSelection, &varsofile);
@@ -69,4 +70,79 @@ bool Cell::setSelection(map<string, double*> map, set<string>* old_selection, se
 void Cell::closeFiles() {
     IOBase::closeFile(&parsofile);
     IOBase::closeFile(&varsofile);
+}
+bool Cell::writeCellState(string filename) {
+    ofstream ofile;
+    ofile.open(filename,ios_base::app);
+    if(!ofile.good()) {
+        cout << "Error Opening " << filename << endl;
+        return false;
+    }
+    bool ret = this->writeCellState(ofile);
+    ofile.close();
+    return ret;
+}
+bool Cell::writeCellState(ofstream& ofile) {
+    if(!ofile.good()) {
+        cout << "Error Opening File for writing cell state" << endl;
+        return false;
+    }
+    ofile << "##BEGIN VARS\n";
+    for(auto val : vars) {
+        ofile << val.first << "\t" << *val.second << "\n";
+    }
+    ofile << "##END VARS\n";
+    ofile << "##BEGIN PARS\n";
+    for(auto val : pars) {
+        ofile << val.first << "\t" << *val.second << "\n";
+    }
+    ofile << "##END PARS\n";
+    return true;
+
+}
+bool Cell::readCellState(string filename) {
+    ifstream ifile;
+    ifile.open(filename);
+    if(!ifile.good()) {
+        cout << "Error Opening " << filename << "\n";
+        return false;
+    }
+    bool ret = this->readCellState(ifile);
+    ifile.close();
+    return ret;
+}
+bool Cell::readCellState(ifstream& ifile) {
+    if(!ifile.good()) {
+        cout << "Error Opening File For Reading Cell State" << "\n";
+        return false;
+    }
+    string temp, name, val;
+    bool Nvars = false;
+    bool Npars = false;
+    while(!ifile.eof()&&!(Nvars&&Npars)) {
+        getline(ifile,temp);
+        if(temp == "##BEGIN VARS"&&!Nvars) {
+            Nvars = true;
+            while(!ifile.eof() && temp != "##END VARS") {
+                stringstream linestream(temp);
+                linestream >> name >> val;
+                try {
+                    *vars.at(name) = std::stod(val);
+                } catch(out_of_range&) {}
+                getline(ifile,temp);
+            }
+        }
+        if(temp == "##BEGIN PARS"&&!Npars) {
+            Npars = true;
+            while(!ifile.eof() && temp != "##END PARS") {
+                stringstream linestream(temp);
+                linestream >> name >> val;
+                try {
+                    *vars.at(name) = std::stod(val);
+                } catch(out_of_range&) {}
+                getline(ifile,temp);
+            }
+        }
+    }
+    return true;
 }

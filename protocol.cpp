@@ -66,6 +66,7 @@ Protocol::Protocol()
     dvarsoutfile = "dt%d_dvars.dat";
     finalpropertyoutfile = "dss%d_%s.dat";
     finaldvarsoutfile = "dss%d_pvars.dat";
+    cellStateFile = "dss%d_state.dat";
 
 
     measflag = 1;       // 1 to track SV props during sim
@@ -73,6 +74,7 @@ Protocol::Protocol()
     meastime = 0;       // time to start tracking props
     
     numtrials = 1;
+    writeCellState = readCellState = false;
     //######## Params for pacing protocol #########################
     
     
@@ -87,11 +89,14 @@ Protocol::Protocol()
     pars["numtrials"]= toInsert.Initialize("int", [this] () {return std::to_string(numtrials);}, [this] (const string& value) {numtrials = std::stoi(value);});
     pars["writetime"]= toInsert.Initialize("double", [this] () {return std::to_string(writetime);}, [this] (const string& value) {writetime = std::stod(value);});
     pars["meastime"]= toInsert.Initialize("double", [this] () {return std::to_string(meastime);}, [this] (const string& value) {meastime = std::stod(value);});
+    pars["writeCellState"]= toInsert.Initialize("bool", [this] () {return to_string(writeCellState);}, [this] (const string& value) {writeCellState = stob(value);});
+    pars["readCellState"]= toInsert.Initialize("bool", [this] () {return to_string(readCellState);}, [this] (const string& value) {readCellState = stob(value);});
     pars["datadir"]= toInsert.Initialize("directory", [this] () {return datadir;}, [this] (const string& value) {datadir = value;});
     pars["pvarfile"]= toInsert.Initialize("file", [this] () {return pvarfile;}, [this] (const string& value) {pvarfile = value;});
     pars["dvarfile"]= toInsert.Initialize("file", [this] () {return dvarfile;}, [this] (const string& value) {dvarfile = value;});
     pars["measfile"]= toInsert.Initialize("file", [this] () {return measfile;}, [this] (const string& value) {measfile = value;});
     pars["simvarfile"]= toInsert.Initialize("file", [this] () {return simvarfile;}, [this] (const string& value) {simvarfile = value;});
+//    pars["cellStateFile"]= toInsert.Initialize("file", [this] () {return cellStateFile;}, [this] (const string& value) {cellStateFile = value;});
     pars["celltype"]= toInsert.Initialize("cell", [this] () {return cell->type;}, [this] (const string& value) {this->setCell(value);}); 
 
     cellMap = cellUtils().cellMap;
@@ -155,13 +160,15 @@ void Protocol::copy(const Protocol& toCopy) {
     dvarsoutfile = toCopy.dvarsoutfile;
     finalpropertyoutfile = toCopy.finalpropertyoutfile;
     finaldvarsoutfile = toCopy.finaldvarsoutfile;
+    cellStateFile = toCopy.cellStateFile;
 
     measflag = toCopy.measflag;       // 1 to track SV props during sim
     measfile = toCopy.measfile; // File containing property names to track
     meastime = toCopy.meastime;       // time to start tracking props
     
     numtrials = toCopy.numtrials;
-    
+    writeCellState = toCopy.writeCellState;
+    readCellState = toCopy.readCellState;
     
     //##### Initialize variables ##################
     time= toCopy.time;

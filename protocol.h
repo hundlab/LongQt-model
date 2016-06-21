@@ -77,13 +77,14 @@ class Protocol
     double writeint;
     double doneflag;
     bool writeflag,measflag;
+    bool writeCellState, readCellState;
     int numtrials;
     int writestd;    
     double tMax;
     
     default_random_engine generator;
     
-    string readfile,savefile,dvarfile,pvarfile, measfile, simvarfile, propertyoutfile, dvarsoutfile, finalpropertyoutfile, finaldvarsoutfile;
+    string readfile,savefile,dvarfile,pvarfile, measfile, simvarfile, propertyoutfile, dvarsoutfile, finalpropertyoutfile, finaldvarsoutfile, cellStateFile;
 
     string datadir;
 

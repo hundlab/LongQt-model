@@ -55,6 +55,10 @@ public:
     virtual void writeConstants();
     virtual void writeVariables();
     virtual void closeFiles();
+    virtual bool writeCellState(string filename);
+    virtual bool writeCellState(ofstream& ofile);
+    virtual bool readCellState(string filename);
+    virtual bool readCellState(ifstream& ifile);
 protected:
     virtual bool setSelection(map<string, double*> map, set<string>* old_selection, set<string> new_selection, ofstream* ofile);
     ofstream parsofile;

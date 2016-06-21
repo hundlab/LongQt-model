@@ -65,7 +65,6 @@ int voltageClamp::clamp()
 
 bool voltageClamp::runTrial() {
         char writefile[150];     // Buffer for storing filenames
-
 //to be moved to a better location
 set<string> temp;
 temp.insert(pnames.begin(),pnames.end());
@@ -75,6 +74,11 @@ temp.clear();
 //should not be here
 
         time = cell->t = 0.0;      // reset time
+        if(readCellState) {
+            sprintf(writefile,(datadir + "/" + cellStateFile).c_str(),trial);
+            cell->readCellState(writefile);
+        }
+
         doneflag=1;     // reset doneflag
   
 //        if (int(readflag)==1)
@@ -137,6 +141,11 @@ temp.clear();
           measure.second.closeFiles();
       }
       cell->closeFiles();
+      if(writeCellState) {
+          sprintf(writefile,(datadir + "/" + cellStateFile).c_str(),trial);
+          cell->writeCellState(writefile);
+      }
+
 
       return true; 
 }

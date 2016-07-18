@@ -87,6 +87,7 @@ class Protocol
     string readfile,savefile,dvarfile,pvarfile, measfile, simvarfile, propertyoutfile, dvarsoutfile, finalpropertyoutfile, finaldvarsoutfile, cellStateFile;
 
     string datadir;
+    string cellStateDir;
 
     vector<string> pnames;              // stores cell param names
     vector< vector<string> > pvals;     // stores cell param vals

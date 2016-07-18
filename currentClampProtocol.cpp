@@ -83,7 +83,7 @@ temp.clear();
         time = cell->t = 0.0;      // reset time
         doneflag=1;     // reset doneflag
         if(readCellState) {
-            sprintf(writefile,(datadir + "/" + cellStateFile).c_str(),trial);
+            sprintf(writefile,(cellStateDir + "/" + cellStateFile).c_str(),trial);
             cell->readCellState(writefile);
         }
  

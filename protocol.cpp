@@ -47,6 +47,7 @@ Protocol::Protocol()
     tMax = 10000;   // max simulation time, ms
     
     datadir = "./data/";
+    cellStateDir = datadir;
 
     readfile = "r.txt"; // File to read SV ICs
     savefile = "s.txt"; // File to save final SV
@@ -92,6 +93,7 @@ Protocol::Protocol()
     pars["writeCellState"]= toInsert.Initialize("bool", [this] () {return to_string(writeCellState);}, [this] (const string& value) {writeCellState = stob(value);});
     pars["readCellState"]= toInsert.Initialize("bool", [this] () {return to_string(readCellState);}, [this] (const string& value) {readCellState = stob(value);});
     pars["datadir"]= toInsert.Initialize("directory", [this] () {return datadir;}, [this] (const string& value) {datadir = value;});
+    pars["cellStateDir"]= toInsert.Initialize("directory", [this] () {return cellStateDir;}, [this] (const string& value) {cellStateDir = value;});
     pars["pvarfile"]= toInsert.Initialize("file", [this] () {return pvarfile;}, [this] (const string& value) {pvarfile = value;});
     pars["dvarfile"]= toInsert.Initialize("file", [this] () {return dvarfile;}, [this] (const string& value) {dvarfile = value;});
     pars["measfile"]= toInsert.Initialize("file", [this] () {return measfile;}, [this] (const string& value) {measfile = value;});
@@ -138,6 +140,7 @@ void Protocol::copy(const Protocol& toCopy) {
     //##### Assign default parameters ##################
     
     datadir = toCopy.datadir;
+    cellStateDir = toCopy.cellStateDir;
 
     doneflag = toCopy.doneflag;       // set to 0 to end simulation
     

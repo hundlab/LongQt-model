@@ -18,7 +18,6 @@
 #include <unordered_map>
 
 #include "measure.h"
-#include "output.h"
 #include "cellUtils.h"
 
 using namespace std;

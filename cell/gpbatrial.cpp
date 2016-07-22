@@ -687,7 +687,6 @@ void GpbAtrial::makemap()
   vars["Gate.f"]=&Gate.f;
   vars["Gate.f_cabj"]=&Gate.f_cabj;
   vars["Gate.f_cabsl"]=&Gate.f_cabsl;
-  vars["Gate.h "]=&Gate.h;
 
   vars["iTos"]=&iTos;
   vars["iTof"]=&iTof;

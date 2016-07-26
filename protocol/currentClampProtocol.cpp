@@ -139,8 +139,8 @@ temp.clear();
       sprintf(writefile,(datadir + "/" + finaldvarsoutfile).c_str(), trial);
       cell->setOutputfileConstants(writefile);
       cell->writeConstants();
-      for(auto measure : measures) {
-          measure.second.closeFiles();
+      for(map<string,Measure>::iterator it = measures.begin(); it != measures.end(); it++) {
+          it->second.closeFiles();
       }
       cell->closeFiles();
       if(writeCellState) {

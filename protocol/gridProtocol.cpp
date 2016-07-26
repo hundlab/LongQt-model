@@ -141,8 +141,8 @@ temp.clear();
       sprintf(writefile, (datadir + "/" + "cell_%%i_%%i_" + string(writefile)).c_str());
       cell->setOutputfileConstants(writefile);
       cell->writeConstants();
-      for(auto measure : measures) {
-          measure.second.closeFiles();
+      for(map<string,Measure>::iterator it = measures.begin(); it != measures.end(); it++) {
+          it->measure.second.closeFiles();
       }
       cell->closeFiles();
       if(writeCellState) {
@@ -190,8 +190,8 @@ set<pair<int,int>> gridProtocol::stringToSet(string nodesList) {
             toReturn.insert(p);
         }
     }
-    for(auto measure : measures) {
-        measure.second.closeFiles();
+    for(map<string,Measure>::iterator it = measures.begin(); it != measures.end(); it++) {
+        it->measure.second.closeFiles();
     }
     cell->closeFiles();
 

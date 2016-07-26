@@ -114,7 +114,7 @@ temp.clear();
             if(int(measflag)==1&&cell->t>meastime){
                 for (auto it : measures) {
                     for(auto iv : dataNodes) {
-                        it.second.measure(grid->findNode(iv)->cell->t,*grid->findNode(iv)->cell->vars[it.second.varname]);
+                        it.second.measure(grid->findNode(iv)->cell->t,grid->findNode(iv)->cell->var(it.second.varname));
                         if(int(writeflag)==1) {
                             it.second.write(true, !(int(doneflag)&&(time<tMax)));
                         }
@@ -142,7 +142,7 @@ temp.clear();
       cell->setOutputfileConstants(writefile);
       cell->writeConstants();
       for(map<string,Measure>::iterator it = measures.begin(); it != measures.end(); it++) {
-          it->measure.second.closeFiles();
+          it->second.closeFiles();
       }
       cell->closeFiles();
       if(writeCellState) {
@@ -191,7 +191,7 @@ set<pair<int,int>> gridProtocol::stringToSet(string nodesList) {
         }
     }
     for(map<string,Measure>::iterator it = measures.begin(); it != measures.end(); it++) {
-        it->measure.second.closeFiles();
+        it->second.closeFiles();
     }
     cell->closeFiles();
 

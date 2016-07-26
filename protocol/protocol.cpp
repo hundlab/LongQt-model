@@ -348,7 +348,7 @@ int Protocol::readpars(string file)
 // and gets stored in vector, rest of row used to create row in 2D vector.
 // Writes paramiter names into cnames and paramiter values into twoDrnames.
 //#############################################################
-int Protocol::parsemixedmap(map<string,double*> varmap, string file, vector<string>* cnames, vector<vector<string>>* twoDrnames)
+int Protocol::parsemixedmap(set<string> varset, string file, vector<string>* cnames, vector<vector<string>>* twoDrnames)
 {
     ifstream ifile;
     string line, name;
@@ -367,7 +367,7 @@ int Protocol::parsemixedmap(map<string,double*> varmap, string file, vector<stri
         getline(ifile,line);
         stringstream linestream(line);
         linestream >> name;
-        if(varmap.count(name)>0){
+        if(varset.count(name)>0){
             (*cnames).push_back(name);
             
             while (!linestream.eof()) {
@@ -498,7 +498,7 @@ bool Protocol::readMvarsFile(string filename)
 int Protocol::readpvars(){
 
     int ret = 0;
-    ret = parsemixedmap(cell->pars, pvarfile ,&pnames, &pvals);
+    ret = parsemixedmap(cell->getConstants(), pvarfile ,&pnames, &pvals);
     return ret;
 };
 

@@ -72,9 +72,9 @@ void Grid::setCellTypes(const cellInfo& singleCell) {
         n->x = singleCell.X*singleCell.dx;
         n->y = singleCell.Y*singleCell.dy;
         if((singleCell.np==1)||((singleCell.X%singleCell.np)==0)) {
-            fiber.at(singleCell.X).B.at(singleCell.Y) = fibery.at(singleCell.Y).B.at(singleCell.X) = 1000*n->cell->cellRadius/(2*n->cell->Rcg*(n->Rmyo*singleCell.dx+n->rd)*n->cell->Cm*singleCell.dx);
+            fiber.at(singleCell.X).B.at(singleCell.Y) = fibery.at(singleCell.Y).B.at(singleCell.X) = 1000*n->cell->var("cellRadius")/(2*n->cell->var("Rcg")*(n->Rmyo*singleCell.dx+n->rd)*n->cell->var("Cm")*singleCell.dx);
         } else {
-            fiber.at(singleCell.X).B.at(singleCell.Y) = fibery.at(singleCell.Y).B.at(singleCell.X) = 1000*n->cell->cellRadius/(2*n->cell->Rcg*n->Rmyo*n->cell->Cm*singleCell.dx*singleCell.dx);
+            fiber.at(singleCell.X).B.at(singleCell.Y) = fibery.at(singleCell.Y).B.at(singleCell.X) = 1000*n->cell->var("cellRadius")/(2*n->cell->var("Rcg")*n->Rmyo*n->cell->var("Cm")*singleCell.dx*singleCell.dx);
         }
         if(singleCell.cell->type == string("Cell")) {
             fiber.at(singleCell.X).B.at(singleCell.Y) = fibery.at(singleCell.Y).B.at(singleCell.X) = 0.0;

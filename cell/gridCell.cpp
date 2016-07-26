@@ -133,11 +133,11 @@ double gridCell::updateV() {
         for(i=0;i<yLen;i++){
             for(j=0;j<xLen&&yLen>1;j++){
                 if(i>0&&i<(yLen-1))
-                    grid.fiber[i].nodes[j]->cell->iTot-=grid.fibery[j].B[i]*(grid.fiber[i-1].nodes[j]->cell->vOld-grid.fiber[i].nodes[j]->cell->vOld)-grid.fibery[j].B[i+1]*(grid.fiber[i].nodes[j]->cell->vOld-grid.fiber[i+1].nodes[j]->cell->vOld);
+                    grid.fiber[i].nodes[j]->cell->setPar("iTot",grid.fiber[i].nodes[j]->cell->par("iTot")-grid.fibery[j].B[i]*(grid.fiber[i-1].nodes[j]->cell->par("vOld")-grid.fiber[i].nodes[j]->cell->par("vOld"))-grid.fibery[j].B[i+1]*(grid.fiber[i].nodes[j]->cell->par("vOld")-grid.fiber[i+1].nodes[j]->cell->par("vOld")));
                 else if(i==0)
-                    grid.fiber[i].nodes[j]->cell->iTot-=-grid.fibery[j].B[i+1]*(grid.fiber[i].nodes[j]->cell->vOld-grid.fiber[i+1].nodes[j]->cell->vOld);
+                    grid.fiber[i].nodes[j]->cell->setPar("iTot",grid.fiber[i].nodes[j]->cell->par("iTot")-(-grid.fibery[j].B[i+1]*(grid.fiber[i].nodes[j]->cell->par("vOld")-grid.fiber[i+1].nodes[j]->cell->par("vOld"))));
                 else if(i==yLen-1)
-                    grid.fiber[i].nodes[j]->cell->iTot-=grid.fibery[j].B[i]*(grid.fiber[i-1].nodes[j]->cell->vOld-grid.fiber[i].nodes[j]->cell->vOld);
+                    grid.fiber[i].nodes[j]->cell->setPar("iTot",grid.fiber[i].nodes[j]->cell->par("iTot")-grid.fibery[j].B[i]*(grid.fiber[i-1].nodes[j]->cell->par("vOld")-grid.fiber[i].nodes[j]->cell->par("vOld")));
             }
             grid.fiber[i].updateVm(dt);
         }
@@ -146,11 +146,11 @@ double gridCell::updateV() {
         for(i=0;i<xLen;i++){
             for(j=0;j<yLen&&xLen>1;j++){
                 if(i>0&&i<(xLen-1))
-                    grid.fibery[i].nodes[j]->cell->iTot-=grid.fiber[j].B[i]*(grid.fibery[i-1].nodes[j]->cell->vOld-grid.fibery[i].nodes[j]->cell->vOld)-grid.fiber[j].B[i+1]*(grid.fibery[i].nodes[j]->cell->vOld-grid.fibery[i+1].nodes[j]->cell->vOld);
+                    grid.fiber[i].nodes[j]->cell->setPar("iTot",grid.fiber[i].nodes[j]->cell->par("iTot")-grid.fiber[j].B[i]*(grid.fibery[i-1].nodes[j]->cell->par("vOld")-grid.fibery[i].nodes[j]->cell->par("vOld"))-grid.fiber[j].B[i+1]*(grid.fibery[i].nodes[j]->cell->par("vOld")-grid.fibery[i+1].nodes[j]->cell->par("vOld")));
                 else if(i==0)
-                    grid.fibery[i].nodes[j]->cell->iTot-=-grid.fiber[j].B[i+1]*(grid.fibery[i].nodes[j]->cell->vOld-grid.fibery[i+1].nodes[j]->cell->vOld);
+                    grid.fiber[i].nodes[j]->cell->setPar("iTot",grid.fiber[i].nodes[j]->cell->par("iTot")-(-grid.fiber[j].B[i+1]*(grid.fibery[i].nodes[j]->cell->par("vOld")-grid.fibery[i+1].nodes[j]->cell->par("vOld"))));
                 else if(i==xLen-1)
-                    grid.fibery[i].nodes[j]->cell->iTot-=grid.fiber[j].B[i]*(grid.fibery[i-1].nodes[j]->cell->vOld-grid.fibery[i].nodes[j]->cell->vOld);
+                    grid.fiber[i].nodes[j]->cell->setPar("iTot",grid.fiber[i].nodes[j]->cell->par("iTot")-grid.fiber[j].B[i]*(grid.fibery[i-1].nodes[j]->cell->par("vOld")-grid.fibery[i].nodes[j]->cell->par("vOld")));
             }
             grid.fibery[i].updateVm(dt);
         }
@@ -188,10 +188,10 @@ double gridCell::tstep(double stimt)
     t=t+dt;
     for(i=0;i<grid.fiber.size();i++){
         for(j=0;j<grid.fibery.size();j++){
-            grid.fiber[i].nodes[j]->cell->t=t;
-            grid.fiber[i].nodes[j]->cell->dt = dt;
+            grid.fiber[i].nodes[j]->cell->setPar("t",t);
+            grid.fiber[i].nodes[j]->cell->setPar("dt",dt);
                 if(tcount%2==0){  // used to prevent time step change in middle of ADI	
-                    if(grid.fiber[i].nodes[j]->cell->dVdt>grid.fiber[i].nodes[j]->cell->dvcut||(t>(stimt-2.0)&&t<stimt+10)||(apTime<5.0))
+                    if(grid.fiber[i].nodes[j]->cell->par("dVdt")>grid.fiber[i].nodes[j]->cell->var("dvcut")||(t>(stimt-2.0)&&t<stimt+10)||(apTime<5.0))
                         vmflag = 2;
                     else if((apTime<40)&&vmflag!=2)
                         vmflag = 1;

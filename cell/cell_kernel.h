@@ -42,11 +42,22 @@ class CellKernel
     virtual double tstep(double stimt);
     virtual int externalStim(double stimval);
 
-    //##### Declare class variables ##############
+    virtual double var(string name);
+    virtual bool setVar(string name, double val);
+    virtual double par(string name);
+    virtual bool setPar(string name, double val);
+    virtual set<string> getVariables();
+    virtual set<string> getConstants();
+ 
+    const char* type;
     double vOld;    // Transmembrane potential
     double vNew;
     double t;       // time, ms
     double dt;	  // Time increment
+    double apTime;
+    double dtmin,dtmed,dtmax,dvcut;
+  protected:
+    //##### Declare class variables ##############
     double iNat;  // Total transmembrane sodium current.
     double iKt;  // Total transmembrane potassium current.
     double iCat;  // Total transmembrane calcium current.
@@ -64,25 +75,15 @@ class CellKernel
     double dVdt;
     double dVdtmax;
     
-    double dtmin,dtmed,dtmax,dvcut;
-    double apTime;
     
     double RGAS;
     double TEMP;
     double FDAY;
 
-    const char* type;
     
     //##### Declare maps for vars/params ##############
     map<string, double*> vars;  // map of state vars
     map<string, double*> pars;  // map of params
-    virtual double var(string name);
-    virtual bool setVar(string name, double val);
-    virtual double par(string name);
-    virtual bool setPar(string name, double val);
-    virtual set<string> getVariables();
-    virtual set<string> getConstants();
-  protected:
     void copyVarPar(const CellKernel& toCopy);
 };
 #endif

@@ -49,7 +49,7 @@ class Protocol
     virtual int runSim();
     virtual bool runTrial();
     virtual int readpars(string file);
-    virtual int parsemixedmap(map<string,double*> varmap, string file, vector<string>* cnames, vector<vector<string>>* twoDrnames);
+    virtual int parsemixedmap(set<string> varset, string file, vector<string>* cnames, vector<vector<string>>* twoDrnames);
     virtual int readpvars();
     virtual bool writepars(string file); //write the contence of pars to a file
     virtual bool writedvars(string file); //write varmap keys to a file

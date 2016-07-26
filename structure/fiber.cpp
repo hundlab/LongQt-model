@@ -25,19 +25,19 @@ void Fiber::updateVm(double& dt) {
         nodes[i]->d2 = -(B[i]*dt+B[i+1]*dt+2);
         nodes[i]->d3 = B[i+1]*dt;
         if(i>0&&i<(nn-1))
-            nodes[i]->r = -B[i]*dt*nodes[i-1]->cell->vOld+(B[i]*dt+B[i+1]*dt-2)*nodes[i]->cell->vOld-B[i+1]*dt*nodes[i+1]->cell->vOld+dt/nodes[i]->cell->Cm*(nodes[i]->cell->iTotold+nodes[i]->cell->iTot);
+            nodes[i]->r = -B[i]*dt*nodes[i-1]->cell->par("vOld")+(B[i]*dt+B[i+1]*dt-2)*nodes[i]->cell->par("vOld")-B[i+1]*dt*nodes[i+1]->cell->par("vOld")+dt/nodes[i]->cell->par("Cm")*(nodes[i]->cell->par("iTotold")+nodes[i]->cell->par("iTot"));
     }
-    nodes[0]->r = (B[1]*dt-2)*nodes[0]->cell->vOld-B[1]*dt*nodes[1]->cell->vOld+dt/nodes[0]->cell->Cm*(nodes[0]->cell->iTotold+nodes[0]->cell->iTot);
-    nodes[nn-1]->r = -B[nn-1]*dt*nodes[nn-2]->cell->vOld+(B[nn-1]*dt-2)*nodes[nn-1]->cell->vOld+dt/nodes[nn-1]->cell->Cm*(nodes[nn-1]->cell->iTotold+nodes[nn-1]->cell->iTot);
+    nodes[0]->r = (B[1]*dt-2)*nodes[0]->cell->par("vOld")-B[1]*dt*nodes[1]->cell->par("vOld")+dt/nodes[0]->cell->par("Cm")*(nodes[0]->cell->par("iTotold")+nodes[0]->cell->par("iTot"));
+    nodes[nn-1]->r = -B[nn-1]*dt*nodes[nn-2]->cell->par("vOld")+(B[nn-1]*dt-2)*nodes[nn-1]->cell->par("vOld")+dt/nodes[nn-1]->cell->par("Cm")*(nodes[nn-1]->cell->par("iTotold")+nodes[nn-1]->cell->par("iTot"));
 
     tridag(nodes);
    
     for(i=0;i<nn;i++){
-        nodes[i]->cell->iTotold=nodes[i]->cell->iTot;
-        nodes[i]->cell->dVdt=(nodes[i]->vNew-nodes[i]->cell->vOld)/dt;
+        nodes[i]->cell->setPar("iTotold",nodes[i]->cell->par("iTot"));
+        nodes[i]->cell->setPar("dVdt",(nodes[i]->vNew-nodes[i]->cell->par("vOld"))/dt);
         //##### Conservation for multicellular fiber ############
-        nodes[i]->dIax=-(nodes[i]->cell->dVdt+nodes[i]->cell->iTot);
-        nodes[i]->cell->iKt=nodes[i]->cell->iKt+nodes[i]->dIax;
+        nodes[i]->dIax=-(nodes[i]->cell->par("dVdt")+nodes[i]->cell->par("iTot"));
+        nodes[i]->cell->setPar("iKt",nodes[i]->cell->par("iKt")+nodes[i]->dIax);
         nodes[i]->cell->setV(nodes[i]->vNew);
    }
 }

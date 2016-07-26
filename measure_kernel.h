@@ -52,7 +52,8 @@ protected:
     double told;
     double mint;    //time of min value.
     double maxt;    //time of max value.
-    double durtime1;
+    double dur50time1;
+    double dur75time1;
     double derivold; //dv/dt from prev. time step
     double derivt;   // time of max deriv.
     double derivt1;  // time of prev. cycle max deriv.
@@ -67,12 +68,15 @@ protected:
     double maxderiv2;
     double maxderiv2nd;
     double cl;
-    double dur;   //duration
+    double dur50;   //duration
+    double dur75;
     double percrepol;   //specify percent repolarization
-    double repol;           // repol var val for duration measure.
+    double repol50;           // repol var val for duration measure.
+    double repol75;
     bool minflag;
     bool maxflag;
-    bool durflag;    //1 while measuring duration.
+    bool dur50flag;    //1 while measuring duration.
+    bool dur75flag;
     bool ampflag;
     bool ddrflag;
     bool returnflag;

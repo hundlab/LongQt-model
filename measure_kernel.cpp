@@ -19,8 +19,9 @@ MeasureKernel::MeasureKernel(string varname)
     peak=-100.0;
     min=100.0;
     vartakeoff=-100.0;
-    repol = -25.0;
     amp = 70.0;
+    repol50 = -25.0;
+    repol75 = -25.0;
     maxderiv=0.0;
     maxderiv2nd=0.0;
     cl=0.0;
@@ -37,7 +38,8 @@ MeasureKernel::MeasureKernel(string varname)
     derivt1 = 0.0;
     derivt = 0.0;
     deriv2ndt = 0.0;
-    durflag = false;
+    dur50flag = false;
+    dur75flag = false;
     percrepol = 50.0;
     returnflag = 0;
 
@@ -49,8 +51,10 @@ MeasureKernel::MeasureKernel(string varname)
     varmap["amp"]=&amp;
     varmap["ddr"]=&ddr;
     varmap["maxderiv"]=&maxderiv;
-    varmap["dur"]=&dur;
-    varmap["durtime1"]=&durtime1;
+    varmap["dur50"]=&dur50;
+    varmap["dur75"]=&dur75;
+    varmap["dur50time1"]=&dur50time1;
+    varmap["dur75time1"]=&dur75time1;
     varmap["vartakeoff"]=&vartakeoff;
     varmap["mint"]=&mint;
     varmap["derivt"]=&derivt;
@@ -98,7 +102,8 @@ void MeasureKernel::copy(const MeasureKernel& toCopy) {
     peak= toCopy.peak;
     min= toCopy.min;
     vartakeoff= toCopy.vartakeoff;
-    repol = toCopy.repol;
+    repol50 = toCopy.repol50;
+    repol75 = toCopy.repol75;
     amp = toCopy.amp;
     maxderiv= toCopy.maxderiv;
     maxderiv2nd= toCopy.maxderiv2nd;
@@ -116,10 +121,12 @@ void MeasureKernel::copy(const MeasureKernel& toCopy) {
     derivt1 = toCopy.derivt1;
     derivt = toCopy.derivt;
     deriv2ndt = toCopy.deriv2ndt;
-    durflag = toCopy.durflag;
+    dur50flag = toCopy.dur50flag;
+    dur75flag = toCopy.dur75flag;
     percrepol = toCopy.percrepol;
     returnflag = toCopy.returnflag;
-    dur = toCopy.dur;
+    dur50 = toCopy.dur50;
+    dur75 = toCopy.dur75;
     varname = toCopy.varname;    
 
     varmap["cl"]=&cl;
@@ -128,8 +135,10 @@ void MeasureKernel::copy(const MeasureKernel& toCopy) {
     varmap["amp"]=&amp;
     varmap["ddr"]=&ddr;
     varmap["maxderiv"]=&maxderiv;
-    varmap["dur"]=&dur;
-    varmap["durtime1"]=&durtime1;
+    varmap["dur50"]=&dur50;
+    varmap["dur75"]=&dur75;
+    varmap["dur50time1"]=&dur50time1;
+    varmap["dur75time1"]=&dur75time1;
     varmap["vartakeoff"]=&vartakeoff;
     varmap["mint"]=&mint;
     varmap["derivt"]=&derivt;
@@ -176,9 +185,13 @@ bool MeasureKernel::measure(double time, double var)
     else
         minflag=true;
     
-    if(var>repol&&!durflag){          // t1 for dur calculation = first time var crosses repol.
-        durtime1=time;            // will depend on percrepol - default is 50 but can be changed.
-        durflag=true;
+    if(var>repol50&&!dur50flag){          // t1 for dur calculation = first time var crosses repol.
+        dur50time1=time;            // will depend on percrepol - default is 50 but can be changed.
+        dur50flag=true;
+    }
+    if(var>repol75&&!dur75flag){          // t1 for dur calculation = first time var crosses repol.
+        dur75time1=time;
+        dur75flag=true;
     }
     
     if(maxflag&&minflag&&!ampflag){
@@ -187,12 +200,18 @@ bool MeasureKernel::measure(double time, double var)
         cl=derivt-derivt1;
         derivt2=derivt1;
         derivt1=derivt;
-        repol = (1-percrepol*0.01)*amp+min;
+        repol50 = (1-percrepol*0.01)*amp+min;
+        repol75 = (1-0.75)*amp+min;
     }
     
-    if(durflag&&var<repol){
-        dur=time-durtime1;
-        durflag=false;
+    if(dur50flag&&var<repol50){
+        dur50=time-dur50time1;
+        dur50flag=false;
+        returnflag = true;  // lets calling fxn know that it is time to output and reset.
+    }
+    if(dur75flag&&var<repol75){
+        dur75=time-dur75time1;
+        dur75flag=false;
         returnflag = true;  // lets calling fxn know that it is time to output and reset.
     }
     

@@ -138,7 +138,7 @@ temp.clear();
       cell->setOutputfileConstants(writefile);
       cell->writeConstants();
       for(map<string,Measure>::iterator it = measures.begin(); it != measures.end(); it++) {
-          it->measure.second.closeFiles();
+          it->second.closeFiles();
       }
       cell->closeFiles();
       if(writeCellState) {

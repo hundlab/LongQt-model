@@ -781,7 +781,7 @@ void HRD09Control::makemap()
   vars["csqn"]=&csqn;
   vars["caM"]=&caM;
   vars["fBound"]=&fBound;
-  vars["fBlock"]=&fBlock;
+//  vars["fBlock"]=&fBlock;
   vars["fI"]=&fI;
   vars["fOx"]=&fOx;
   vars["fOxP"]=&fOxP;

@@ -25,7 +25,7 @@ class cellUtils {
         cellMap[HRD09Control().type] = [] () {return (Cell*) new HRD09Control;};
         cellMap[HRD09BorderZone().type] = [] () {return (Cell*) new HRD09BorderZone;};
         cellMap[TNNP04Control().type] = [] () {return (Cell*) new TNNP04Control;};
-        cellMap[gpbatrialRyr().type] = [] () {return (Cell*) new gpbatrialRyr;};
+//        cellMap[gpbatrialRyr().type] = [] () {return (Cell*) new gpbatrialRyr;};
     //defualt vals for a simulation with cell types
         protocolCellDefaults[ControlSa().type] = {{"paceflag","true"},{"stimval","-60"},{"stimdur","1"},{"tMax","500000"},{"writetime","495000"},{"bcl","1000"},{"numstims","500"}};
         protocolCellDefaults[GpbAtrial().type] = {{"paceflag","true"},{"stimval","-12.5"},{"stimdur","5"},{"tMax","500000"},{"writetime","495000"},{"bcl","1000"},{"numstims","500"}};

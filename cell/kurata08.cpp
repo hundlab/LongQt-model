@@ -40,7 +40,7 @@ ControlSa::ControlSa()
     ikrFactor = 1;
     iksFactor = 1;
     itoFactor = 1;
-    itrekFactor = 1;
+//    itrekFactor = 1;
     isusFactor = 1;
     ikachFactor = 1;
     istFactor = 1;
@@ -131,7 +131,7 @@ ControlSa::ControlSa()
     vars["iNak"]=&iNak;
     vars["iNaca"]=&iNaca;
     vars["iTo"]=&iTo;
-    vars["iTrek"]=&iTrek;
+//    vars["iTrek"]=&iTrek;
     vars["iSus"]=&iSus;
     vars["Gate.q"]=&Gate.q;
     vars["Gate.r"]=&Gate.r;
@@ -160,7 +160,7 @@ ControlSa::ControlSa()
     pars["ikrFactor"] = &ikrFactor;
     pars["iksFactor"] = &iksFactor;
     pars["itoFactor"] = &itoFactor;
-    pars["itrekFactor"] = &itrekFactor;
+//    pars["itrekFactor"] = &itrekFactor;
     pars["isusFactor"] = &isusFactor;
     pars["ikachFactor"] = &ikachFactor;
     pars["istFactor"] = &istFactor;
@@ -207,7 +207,7 @@ ControlSa::ControlSa(const ControlSa& toCopy ) : Cell(toCopy)
     ikrFactor = toCopy.ikrFactor;
     iksFactor = toCopy.iksFactor;
     itoFactor = toCopy.itoFactor;
-    itrekFactor = toCopy.itrekFactor;
+//    itrekFactor = toCopy.itrekFactor;
     isusFactor = toCopy.isusFactor;
     ikachFactor = toCopy.ikachFactor;
     istFactor = toCopy.istFactor;
@@ -312,7 +312,7 @@ ControlSa::ControlSa(const ControlSa& toCopy ) : Cell(toCopy)
     vars["iNak"]=&iNak;
     vars["iNaca"]=&iNaca;
     vars["iTo"]=&iTo;
-    vars["iTrek"]=&iTrek;
+//    vars["iTrek"]=&iTrek;
     vars["iSus"]=&iSus;
     vars["Gate.q"]=&Gate.q;
     vars["Gate.r"]=&Gate.r;
@@ -327,8 +327,8 @@ ControlSa::ControlSa(const ControlSa& toCopy ) : Cell(toCopy)
     vars["iHna"]=&iHna;
     vars["iHk"]=&iHk;
     vars["Gate.y"]=&Gate.y;
-    vars["iCait"]=&iCait;
-    vars["iCart"]=&iCart;
+//    vars["iCait"]=&iCait;
+//    vars["iCart"]=&iCart;
     
     pars["Vnsr"] = &Vnsr;
     pars["Vjsr"] = &Vjsr;
@@ -341,7 +341,7 @@ ControlSa::ControlSa(const ControlSa& toCopy ) : Cell(toCopy)
     pars["ikrFactor"] = &ikrFactor;
     pars["iksFactor"] = &iksFactor;
     pars["itoFactor"] = &itoFactor;
-    pars["itrekFactor"] = &itrekFactor;
+//    pars["itrekFactor"] = &itrekFactor;
     pars["isusFactor"] = &isusFactor;
     pars["ikachFactor"] = &ikachFactor;
     pars["istFactor"] = &istFactor;
@@ -735,15 +735,15 @@ void ControlSa::updateCurr()
    updateIks();    // Slow delayed rectifier current
    updateIkr();    // Rapid delayed rectifier current
    updateI4ap();    // Transient outward K current
-    updateItrek();    // Transient outward K current
+//    updateItrek();    // Transient outward K current
    updateIkach();    // Transient outward K current
    updateIh();    // Transient outward K current
 
    iNat=iHna+iSt+iNab+3*iNak+3*iNaca;
    iCart=iCal+iCatt-2*iNaca;
    iCat=iCart;
-   iKt=iTo+iKr+iKs+iHk+iKach+iSus+iTrek-2*iNak;
-
+//   iKt=iTo+iKr+iKs+iHk+iKach+iSus+iTrek-2*iNak;
+    iKt=iTo+iKr+iKs+iHk+iKach+iSus-2*iNak;
    iTotold=iTot;
    iTot=iNat+iCait+iKt+iCart;
 

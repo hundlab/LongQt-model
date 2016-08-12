@@ -146,8 +146,8 @@ ControlSa::ControlSa()
     vars["iHna"]=&iHna;
     vars["iHk"]=&iHk;
     vars["Gate.y"]=&Gate.y;
-    vars["iCait"]=&iCait;
-    vars["iCart"]=&iCart;
+//    vars["iCait"]=&iCait;
+//    vars["iCart"]=&iCart;
     
     pars["Vnsr"] = &Vnsr;
     pars["Vjsr"] = &Vjsr;

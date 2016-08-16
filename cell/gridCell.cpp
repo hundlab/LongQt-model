@@ -239,7 +239,7 @@ bool gridCell::writeGridfile(string fileName) {
     ofile << np << " " << dx << " " << dy << endl;
     for(auto it : grid.fiber) {
         for(auto iv : it.nodes) {
-            ofile <<" "<<iv->cell->type<<" "<<i<<" "<<j<<"\t";
+            ofile <<"\t"<<iv->cell->type<<"| "<<i<<" "<<j;
             i++;
         }
         ofile << endl;
@@ -277,6 +277,7 @@ bool gridCell::readGridfile(string filename) {
     }
  
     getline(ifile,temp);
+    getline(ifile,temp);
     line.clear();
     line.str(temp);
     while(!ifile.eof() && line.str() != "##END GRID"){
@@ -285,7 +286,18 @@ bool gridCell::readGridfile(string filename) {
             info->dx = dx;
             info->dy = dy;
             info->np = np;
-            line >> type >> info->X >> info->Y;
+            char nextChar;
+            bool firstCharFound =false;
+            line.get(nextChar);
+            type = "";
+            while(!line.eof() && nextChar != '|') {
+                if(firstCharFound||!isspace(nextChar)) {
+                    type = type + nextChar;
+                    firstCharFound = true;
+                }
+                line.get(nextChar);
+            }
+            line >> info->Y >> info->X;
             try {
                 info->cell = cellUtils().cellMap.at(type)();
             } catch(const std::out_of_range&) {

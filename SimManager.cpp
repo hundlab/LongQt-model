@@ -9,13 +9,21 @@ SimManager::SimManager(Protocol* proto, QThread::Priority priority) {
     proto->dvarsoutfile = "dt%d_dvars" + string(".dat");
     proto->finalpropertyoutfile = "dss%d_%s" + string(".dat");
     proto->finaldvarsoutfile = "dss%d_pvars" + string(".dat");
+    connect(this, &SimManager::runSims, this, &SimManager::started);
     this->constructPool();
 }
 void SimManager::constructPool() {
     QMutex* trialLock = new QMutex();
     int* trialnum = new int;
     *trialnum = this->proto->getTrial();
-    SharedNumber sharedTrialnum(trialnum, trialLock);
+    SharedNumber* sharedTrialnum = new SharedNumber(trialnum, trialLock);
+    connect(this, &SimManager::finished, sharedTrialnum, &QObject::deleteLater);
+    connect(sharedTrialnum, &SharedNumber::valueChanged, this, &SimManager::currentTrialChanged);
+    connect(sharedTrialnum, &SharedNumber::valueChanged, [this] (int currentTrial) {
+        if(this->proto->numtrials <= currentTrial) {
+            emit finished();
+        }
+    });
     int numThreads = QThread::idealThreadCount();
     if(numThreads <= 0) {
         numThreads = THREAD_COUNT_DEFAULT;
@@ -30,4 +38,5 @@ void SimManager::constructPool() {
         thread->start(this->priority);
         localPool.insert(worker,thread);
     }
+    emit numTrialsChanged(0,this->proto->numtrials);
 }

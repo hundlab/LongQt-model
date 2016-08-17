@@ -15,8 +15,8 @@ Q_OBJECT
   signals:
     void finished();
     void started();
-    void progressRangeChanged(int,int);
-    void progressValueChanged(int);
+    void numTrialsChanged(int,int);
+    void currentTrialChanged(int);
     void runSims();
     void quit();
   private:

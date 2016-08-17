@@ -572,9 +572,13 @@ bool Protocol::readdvars(string file) {
     cell->setVariableSelection(selection);
     return toReturn;
 }
-void Protocol::setTrial(unsigned int current_trial) {
-    trial = current_trial;
-    assign_cell_pars(pnames,pvals,trial);   // Assign cell pars
+bool Protocol::setTrial(int current_trial) {
+    if(0 <= current_trial && current_trial < this->numtrials) {
+        trial = current_trial;
+        assign_cell_pars(pnames,pvals,trial);   // Assign cell pars
+        return true;
+    }
+    return false;
 }
 
 unsigned int Protocol::getTrial() {

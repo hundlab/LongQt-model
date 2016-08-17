@@ -55,7 +55,7 @@ class Protocol
     virtual bool writedvars(string file); //write varmap keys to a file
     virtual bool readdvars(string file);
     virtual bool write2Dmap(vector<string> vnames, vector< vector<string> > twoDmnames, string file);
-    virtual void setTrial(unsigned int current_trial);
+    virtual bool setTrial(int current_trial);
     virtual unsigned int getTrial();
     virtual bool writeMVarsFile(string file);
     virtual bool readMvarsFile(string filename);

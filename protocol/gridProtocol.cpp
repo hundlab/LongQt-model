@@ -67,7 +67,6 @@ int gridProtocol::stim()
 bool gridProtocol::runTrial() {
         char writefile[150];     // Buffer for storing filenames
 
-((gridCell*)cell)->addBuffer();
 //to be moved to a better location
 set<string> temp;
 temp.insert(pnames.begin(),pnames.end());

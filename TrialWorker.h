@@ -14,11 +14,21 @@ Q_OBJECT
     }
     ~SharedNumber() {}
     int getNum() {
+        lock->lock();
+         this->current = *num;
+        lock->unlock();
         return this->current;
     }
     int operator++(int) {
         lock->lock();
-         this->current = *num++;
+         this->current = (*num)++;
+        lock->unlock();
+        emit valueChanged(this->current);
+        return this->current;
+    }
+    int operator--(int) {
+        lock->lock();
+         this->current = (*num)--;
         lock->unlock();
         emit valueChanged(this->current);
         return this->current;
@@ -37,6 +47,9 @@ Q_OBJECT
     ~TrialWorker() {}
   public slots:
     void work(); 
+  signals:
+    void currentProtoChanged(int);
+    void finished();
   private:
     Protocol* proto;
     SharedNumber* trialnum;

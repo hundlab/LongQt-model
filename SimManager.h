@@ -11,19 +11,28 @@ class SimManager : public QObject {
 Q_OBJECT
   public:
     SimManager(Protocol* proto, QThread::Priority priority = QThread::InheritPriority);
-    ~SimManager() {};
+    ~SimManager() {
+        for(auto drop = localPool.begin(); drop != localPool.end();drop++) {
+            drop.key()->deleteLater();
+            drop.value()->exit();
+            drop.value()->deleteLater();
+        }
+    };
+  public slots:
+    void runSims();
+    void checkFinished();
   signals:
     void finished();
     void started();
     void numTrialsChanged(int,int);
     void currentTrialChanged(int);
-    void runSims();
     void quit();
   private:
     Protocol* proto;
     QThread::Priority priority;
     void constructPool();
     QMap<TrialWorker*,QThread*> localPool;
+    int numThreadsRunning;
 };
 
 #endif

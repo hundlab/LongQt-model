@@ -9,34 +9,44 @@ SimManager::SimManager(Protocol* proto, QThread::Priority priority) {
     proto->dvarsoutfile = "dt%d_dvars" + string(".dat");
     proto->finalpropertyoutfile = "dss%d_%s" + string(".dat");
     proto->finaldvarsoutfile = "dss%d_pvars" + string(".dat");
-    connect(this, &SimManager::runSims, this, &SimManager::started);
+//    connect(this, &SimManager::quit, this, &QObject::deleteLater);
+}
+void SimManager::runSims() {
     this->constructPool();
+    for(auto drop = localPool.begin();drop != localPool.end();drop++) {
+        drop.value()->start(this->priority);
+    }    
+    emit started();
+}
+void SimManager::checkFinished() {
+    this->numThreadsRunning--;
+    if(this->numThreadsRunning <= 0) {
+        emit finished();
+    }
 }
 void SimManager::constructPool() {
     QMutex* trialLock = new QMutex();
     int* trialnum = new int;
     *trialnum = this->proto->getTrial();
-    SharedNumber* sharedTrialnum = new SharedNumber(trialnum, trialLock);
-    connect(this, &SimManager::finished, sharedTrialnum, &QObject::deleteLater);
-    connect(sharedTrialnum, &SharedNumber::valueChanged, this, &SimManager::currentTrialChanged);
-    connect(sharedTrialnum, &SharedNumber::valueChanged, [this] (int currentTrial) {
-        if(this->proto->numtrials <= currentTrial) {
-            emit finished();
-        }
-    });
+    (*trialnum)--;
     int numThreads = QThread::idealThreadCount();
     if(numThreads <= 0) {
         numThreads = THREAD_COUNT_DEFAULT;
     }
+    this->numThreadsRunning = numThreads;
     for(int i = 0; i < numThreads; i++) {
-        TrialWorker* worker = new TrialWorker(this->proto->clone(), sharedTrialnum, this);
         QThread* thread = new QThread();
+        SharedNumber* sharedTrialnum = new SharedNumber(trialnum, trialLock);
+        TrialWorker* worker = new TrialWorker(this->proto->clone(), sharedTrialnum);
         worker->moveToThread(thread);
-        connect(thread, &QThread::finished, worker, &QObject::deleteLater);
-        connect(this, &SimManager::runSims, worker, &TrialWorker::work);
-        connect(this, &SimManager::quit, thread, &QThread::quit);
-        thread->start(this->priority);
         localPool.insert(worker,thread);
+
+        connect(this, &SimManager::finished, sharedTrialnum, &QObject::deleteLater);
+        connect(worker, &TrialWorker::currentProtoChanged, this, &SimManager::currentTrialChanged);
+        connect(thread, &QThread::started, worker, &TrialWorker::work);
+        connect(this, &SimManager::quit, thread, &QThread::requestInterruption);
+        connect(worker, &TrialWorker::finished, this, &SimManager::checkFinished);
+        
     }
     emit numTrialsChanged(0,this->proto->numtrials);
 }

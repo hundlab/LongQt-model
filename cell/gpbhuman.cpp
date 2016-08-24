@@ -35,8 +35,6 @@ void GpbVent::Initialize() {
     vOld=vNew=-80.9763;
 
     apTime = 0.0;
-    flag = 0;
-    num = 0;
 
     Vcell = 3.3E-5;//uL
     Vsr = 0.035*Vcell; 
@@ -611,37 +609,15 @@ void GpbVent::updateConc(){
 }
 
 
-
 // External stimulus.
-int GpbVent::externalStim()
-{
-  if(t>=stimt&&t<(stimt+dur)){
-    if(flag==0){
-      cout << "Stimulus to " << type << " at t = THAT" << t << endl;
-      num++;
-      flag=1;
-      if(num>=numstims)
-         return 0;
-    }
-    iTot = iTot + val;
-  }
-  else if(flag==1){     //trailing edge of stimulus
-        stimt=stimt+bcl;
-        flag=0;
-        apTime = 0.0;
-  }
-
-  apTime = apTime+dt;
-
-  return 1;
-};
-
-
+int GpbVent::externalStim(double stimval) {
+    iTot = iTot + stimval;
+    return 1;
+}
 
 // Create map for easy retrieval of variable values.
-map<string, double*> GpbVent::makemap()
+void GpbVent::makemap()
 {
-  map<string, double*> vars;
   vars["vOld"]=&vOld;
   vars["t"]=&t;
   vars["dVdt"]=&dVdt;
@@ -723,7 +699,6 @@ map<string, double*> GpbVent::makemap()
   vars["iCabsl"]=&iCabsl;
   vars["iCab"]=&iCab;
 
-  return vars;
 }
 
 

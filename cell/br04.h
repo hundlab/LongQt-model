@@ -81,9 +81,9 @@ class Br04 : public Cell
     virtual void updateKi();
     virtual void updateCurr();
     virtual void updateConc();	
-    virtual int stim();
-    virtual int tstep();
-    virtual map<string, double*> makemap();
+    virtual int externalStim(double stimval);
+//    virtual int tstep();
+    virtual void makemap();
     //##### Declare class variables ##############
     double naI,naO,kI,kO,caI,caO;  // Ion concentrations, mM
     

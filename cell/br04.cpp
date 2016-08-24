@@ -34,8 +34,6 @@ void Br04::Initialize() {
         sponRelflag = 0;
 
         apTime = 0.0;
-        flag = 0;
-        num = 0;
 
         naO = 140;
         caO = 1.8;
@@ -600,32 +598,12 @@ void Br04::updateNai() {
         naI = naI + dnaI;
 
 };
-
 // External stimulus.
-int Br04::stim()
-{
-  if(t>=stimt&&t<(stimt+dur)){
-    if(flag==0){
-      cout << "Stimulus to " << type << " at t = " << t << endl;
-      num++;
-      flag=1;
-      if(num>=numstims)
-         return 0;
-    }
-    iKt = iKt + val;
-    iTot = iTot + val;
-  }
-  else if(flag==1){     //trailing edge of stimulus
-        stimt=stimt+bcl;
-        flag=0;
-        apTime = 0.0;
-  }
-
-  apTime = apTime+dt;
-
-  return 1;
-};
-
+int Br04::externalStim(double stimval) {
+    iTot = iTot + stimval;
+    return 1;
+}
+/*
 int Br04::tstep(){
 
         t = t+dt;
@@ -659,7 +637,7 @@ int Br04::tstep(){
         else
                 return 1;
 };
-
+*/
 void Br04::updateCurr()
 {
 
@@ -704,9 +682,8 @@ void Br04:: updateConc()
 
 
 // Create map for easy retrieval of variable values.
-map<string, double*> Br04::makemap()
+void Br04::makemap()
 {
-  map<string, double*> vars;
  
   vars["vOld"]=&vOld;
   vars["t"]=&t;
@@ -775,6 +752,5 @@ map<string, double*> Br04::makemap()
   vars["caTrpn_low"]=&caTrpn_low;
   vars["caTrpn_high"]=&caTrpn_high;
   
-  return vars;
 };
 

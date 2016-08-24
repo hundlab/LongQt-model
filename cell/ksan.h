@@ -88,7 +88,8 @@ class Ksan : public Cell
    virtual void updateCurr();
    virtual void updateConc();	
 
-   virtual map<string, double*> makemap();
+   virtual void makemap();
+   virtual int externalStim(double stimval);
 
     //##### Declare class variables ##############
 

@@ -35,8 +35,6 @@ void GpbAtrialWT::Initialize() {
     vOld=vNew=-80.9763;
 
     apTime = 0.0;
-    flag = 0;
-    num = 0;
 
     Vcell = 3.3E-5;//uL
     Vsr = 0.035*Vcell; 
@@ -136,9 +134,6 @@ GpbAtrialWT* GpbAtrialWT::clone() {
 }
 
 
-GpbAtrialWT::~GpbAtrialWT()
-{
-}
 
 // CaMKII activity
 void GpbAtrialWT::updateCamk()
@@ -744,36 +739,14 @@ void GpbAtrialWT::updateConc() {
 	updatenaI();
 
 }
-
 // External stimulus.
-int GpbAtrialWT::stim()
-{
-  if(t>=stimt&&t<(stimt+dur)){
-    if(flag==0){
-      cout << "Stimulus to " << type << " at t = " << t << endl;
-      num++;
-      flag=1;
-      if(num>=numstims)
-         return 0;
-    }
-    iNatotsl = iNatotsl + val;
-    iTot = iTot + val;
-  }
-  else if(flag==1){     //trailing edge of stimulus
-        stimt=stimt+bcl;
-        flag=0;
-        apTime = 0.0;
-  }
-
-  apTime = apTime+dt;
-
-  return 1;
-};
-
+int GpbAtrialWT::externalStim(double stimval) {
+    iTot = iTot + stimval;
+    return 1;
+}
 // Create map for easy retrieval of variable values.
-map<string, double*> GpbAtrialWT::makemap()
+void GpbAtrialWT::makemap()
 {
-  map<string, double*> vars;
   vars["vOld"]=&vOld;
   vars["t"]=&t;
   vars["dVdt"]=&dVdt;
@@ -867,5 +840,4 @@ map<string, double*> GpbAtrialWT::makemap()
   vars["iCabsl"]=&iCabsl;
   vars["iCab"]=&iCab;
 
-  return vars;
 }

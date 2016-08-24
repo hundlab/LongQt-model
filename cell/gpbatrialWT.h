@@ -222,8 +222,8 @@ struct GateVariable {
 	virtual void updateConc();
 
 	virtual void updateInal();
-        virtual int stim();
-    virtual map<string, double*> makemap();
+        virtual int externalStim(double stimval);
+    virtual void makemap();
     struct GateVariable gate;
     struct RateConst Rate;
 };

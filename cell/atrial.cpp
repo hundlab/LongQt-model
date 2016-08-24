@@ -32,8 +32,6 @@ void Courtemanche98::Initialize() {
         vOld = vNew =  -81.2; //mV
 
         apTime = 0.0;
-        flag = 0;
-        num = 0;
 
         naO = 140; //mM
         caO = 1.8; //mM
@@ -506,36 +504,14 @@ void Courtemanche98::updateConc()
    updatecaUp();
    updatecaRel();
 };
-
 // External stimulus.
-int Courtemanche98::stim()
-{
-  if(t>=stimt&&t<(stimt+dur)){
-    if(flag==0){
-    cout << "Stimulus to " << type << " at t = " << t << endl;  // Output stimulus number
-        num++;
-        flag=1;
-        if(num>=numstims)
-                return 0;
-    }
-    iKt = iKt + val;
-    iTot = iTot + val;
-  }
-  else if(flag==1){     //trailing edge of stimulus
-        stimt=stimt+bcl;
-        flag=0;
-        apTime = 0.0;
-  }
-
-  apTime = apTime+dt;
-
-  return 1;
-};
-
+int Courtemanche98::externalStim(double stimval) {
+    iTot = iTot + stimval;
+    return 1;
+}
 // Create map for easy retrieval of variable values.
-map<string, double*> Courtemanche98::makemap()
+void Courtemanche98::makemap()
 {
-  map<string, double*> vars;
   vars["vOld"]=&vOld;
   vars["t"]=&t;
   vars["dVdt"]=&dVdt;
@@ -584,6 +560,5 @@ map<string, double*> Courtemanche98::makemap()
   vars["iKt"]=&iKt;
   //vars["iTot"] = &iTot;
 
-  return vars;
 }
 

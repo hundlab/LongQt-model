@@ -177,7 +177,7 @@ struct GateVariable {
 	virtual void updateCurr();
 	virtual void updateConc();
     virtual int externalStim(double stimval);
-    virtual map<string, double*> makemap();
+    virtual void makemap();
 
     struct GateVariable gate;
 };

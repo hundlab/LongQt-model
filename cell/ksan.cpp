@@ -469,9 +469,8 @@ void Ksan::updateCurr()
 	iTot=(iNat+iCat+iKt)/TotCap;
 }
 
-map<string, double*> Ksan::makemap()
+void Ksan::makemap()
 {
-  map<string, double*> vars;
   vars["vOld"]=&vOld;
   vars["t"]=&t;
   vars["dVdt"]=&dVdt;
@@ -544,7 +543,11 @@ map<string, double*> Ksan::makemap()
   vars["Jtr"]=&Jtr;
   vars["Jcadif"]=&Jcadif;
 
+}
 
-  return vars;
+// External stimulus.
+int Ksan::externalStim(double stimval) {
+    iTot = iTot + stimval;
+    return 1;
 }
 

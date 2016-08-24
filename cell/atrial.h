@@ -90,8 +90,8 @@ class Courtemanche98 : public Cell
     virtual void updatenaI();
     virtual void updatekI();
 
-    virtual int stim();
-    virtual map<string, double*> makemap();
+    virtual int externalStim(double stimval);
+    virtual void makemap();
 
     //##### Declare class variables ##############
     double naI,naO,kI,kO,caI,caO;  // Ion concentrations, mM

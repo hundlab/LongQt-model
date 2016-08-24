@@ -8,6 +8,12 @@
 #include "gpbatrialRyr.h"
 #include "kurata08.h"
 #include "gridCell.h"
+#include "gpbhuman.h"
+#include "ksan.h"
+#include "gpbatrialWT.h"
+#include "gpbatrialSE.h"
+#include "atrial.h"
+#include "br04.h"
 
 #include <map>
 #include <list>
@@ -26,6 +32,15 @@ class cellUtils {
         cellMap[HRD09Control().type] = [] () {return (Cell*) new HRD09Control;};
         cellMap[HRD09BorderZone().type] = [] () {return (Cell*) new HRD09BorderZone;};
         cellMap[TNNP04Control().type] = [] () {return (Cell*) new TNNP04Control;};
+        cellMap[GpbVent().type] = [] () {return (Cell*) new GpbVent;};
+        cellMap[Br04().type] = [] () {return (Cell*) new Br04;};
+        cellMap[Ksan().type] = [] () {return (Cell*) new Ksan;};
+        cellMap[Courtemanche98().type] = [] () {return (Cell*) new Courtemanche98;};
+        cellMap[GpbAtrialWT().type] = [] () {return (Cell*) new GpbAtrialWT;};
+        cellMap[GpbAtrialSE().type] = [] () {return (Cell*) new GpbAtrialSE;};
+
+
+
 //        cellMap[gpbatrialRyr().type] = [] () {return (Cell*) new gpbatrialRyr;};
     //defualt vals for a simulation with cell types
         protocolCellDefaults[ControlSa().type] = {{"paceflag","true"},{"stimval","-60"},{"stimdur","1"},{"tMax","500000"},{"writetime","495000"},{"bcl","1000"},{"numstims","500"}};

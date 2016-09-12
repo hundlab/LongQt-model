@@ -113,6 +113,7 @@ void GpbVent::Initialize() {
 	ipCajunc = ipCasl = ipCa = 0.0;
 	iCabjunc = iCabsl = iCab = 0.0;
 
+    this->makemap();
 }
 GpbVent* GpbVent::clone() {
     return new GpbVent(*this);
@@ -639,19 +640,19 @@ void GpbVent::makemap()
   vars["iNak"]=&iNak;
   vars["iNaca"]=&iNaca;
 
-  vars["gate.m"]=&gate.m;
-  vars["gate.h"]=&gate.h;
-  vars["gate.j"]=&gate.j;
-  vars["gate.xkr"]=&gate.xkr;
-  vars["gate.xks"]=&gate.xks;
-  vars["gate.xf"]=&gate.xf;
-  vars["gate.yf"]=&gate.yf;
+  vars["Gate.m"]=&gate.m;
+  vars["Gate.h"]=&gate.h;
+  vars["Gate.j"]=&gate.j;
+  vars["Gate.xkr"]=&gate.xkr;
+  vars["Gate.xks"]=&gate.xks;
+  vars["Gate.xf"]=&gate.xf;
+  vars["Gate.yf"]=&gate.yf;
 
-  vars["gate.d"]=&gate.d;
-  vars["gate.f"]=&gate.f;
-  vars["gate.f_cabj"]=&gate.f_cabj;
-  vars["gate.f_cabsl"]=&gate.f_cabsl;
-  vars["gate.h "]=&gate.h;
+  vars["Gate.d"]=&gate.d;
+  vars["Gate.f"]=&gate.f;
+  vars["Gate.f_cabj"]=&gate.f_cabj;
+  vars["Gate.f_cabsl"]=&gate.f_cabsl;
+  vars["Gate.h "]=&gate.h;
 
   vars["iTos"]=&iTos;
   vars["iTof"]=&iTof;

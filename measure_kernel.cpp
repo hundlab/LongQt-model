@@ -219,10 +219,8 @@ void MeasureKernel::reset()
 };
 
 void MeasureKernel::mkmap() {
-    varmap["cl"]=&cl;
     varmap["peak"]=&peak;
-    varmap["min"]=&min;
-    varmap["amp"]=&amp;
+    varmap["cl"]=&cl;
     varmap["ddr"]=&ddr;
     varmap["maxderiv"]=&maxderiv;
     varmap["dur50"]=&dur50;

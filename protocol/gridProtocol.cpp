@@ -44,7 +44,7 @@ int gridProtocol::stim()
             if(stimflag==0){
                 stimcounter++;
                 stimflag=1;
-                if(stimcounter>=int(numstims)){
+                if(stimcounter>int(numstims)){
                     doneflag = 0;
                     return 0;
                 }

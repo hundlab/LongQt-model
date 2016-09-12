@@ -97,6 +97,7 @@ RGAS = 8.314472;
 TEMP = 310.5;
 FDAY = 96.4845;
  
+this->makemap();
 }
 Ksan* Ksan::clone() {
     return new Ksan(*this);

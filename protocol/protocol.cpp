@@ -231,7 +231,7 @@ int Protocol::assign_cell_pars(vector<string> pnames, vector< vector<string> > p
             if (pvals[j].size()>2) {     // if 3 args, 2nd arg is initial val, 3rd arg is inc
                 if (trialnum>0){
                     increment = atof(pvals[j][2].c_str());
-                    *cell->pars[pnames[j]] = *cell->pars[pnames[j]] - increment;
+                    *cell->pars[pnames[j]] = *cell->pars[pnames[j]] + increment;
                 }
                 else
                     *cell->pars[pnames[j]] = atof(pvals[j][1].c_str());
@@ -239,13 +239,13 @@ int Protocol::assign_cell_pars(vector<string> pnames, vector< vector<string> > p
             else if (pvals[j].size()>1){  // if only two args, 2nd arg is inc
                 if (trialnum>0){
                     increment = atof(pvals[j][1].c_str());
-                    *cell->pars[pnames[j]] = *cell->pars[pnames[j]] - increment;
+                    *cell->pars[pnames[j]] = *cell->pars[pnames[j]] + increment;
                 }
             }
             else {
                 if (trialnum>0){     // if only one arg, set incr to vary param over range
                     increment = *cell->pars[pnames[j]]/(numtrials-trialnum);
-                    *cell->pars[pnames[j]] = *cell->pars[pnames[j]] - increment;
+                    *cell->pars[pnames[j]] = *cell->pars[pnames[j]] + increment;
                 }
             }
         }

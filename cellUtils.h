@@ -32,12 +32,12 @@ class cellUtils {
         cellMap[HRD09Control().type] = [] () {return (Cell*) new HRD09Control;};
         cellMap[HRD09BorderZone().type] = [] () {return (Cell*) new HRD09BorderZone;};
         cellMap[TNNP04Control().type] = [] () {return (Cell*) new TNNP04Control;};
-        cellMap[GpbVent().type] = [] () {return (Cell*) new GpbVent;};
-        cellMap[Br04().type] = [] () {return (Cell*) new Br04;};
-        cellMap[Ksan().type] = [] () {return (Cell*) new Ksan;};
-        cellMap[Courtemanche98().type] = [] () {return (Cell*) new Courtemanche98;};
-        cellMap[GpbAtrialWT().type] = [] () {return (Cell*) new GpbAtrialWT;};
-        cellMap[GpbAtrialSE().type] = [] () {return (Cell*) new GpbAtrialSE;};
+//        cellMap[GpbVent().type] = [] () {return (Cell*) new GpbVent;};
+//        cellMap[Br04().type] = [] () {return (Cell*) new Br04;};
+//        cellMap[Ksan().type] = [] () {return (Cell*) new Ksan;};
+//        cellMap[Courtemanche98().type] = [] () {return (Cell*) new Courtemanche98;};
+//        cellMap[GpbAtrialWT().type] = [] () {return (Cell*) new GpbAtrialWT;};
+//        cellMap[GpbAtrialSE().type] = [] () {return (Cell*) new GpbAtrialSE;};
 
 
 

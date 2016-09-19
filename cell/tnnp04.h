@@ -110,6 +110,21 @@ class TNNP04Control : public Cell
 	double iNak;
 	double iNab;
 	double iNa;
+
+	double iRelfactor;
+	double ileakfactor;
+	double Icalfactor;
+	double Icabfactor;
+	double Ipcafactor;
+	double Itofactor;
+	double Iksfactor;
+	double Ikrfactor;
+	double Ik1factor;
+	double Ipkfactor;
+	double Inacafactor;
+	double Inakfactor;
+	double Inabfactor;
+	double Inafactor;
 	
     	struct GateVariable Gate;
 };

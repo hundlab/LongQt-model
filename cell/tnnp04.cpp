@@ -77,6 +77,22 @@ void TNNP04Control::Initialize() {
 	iCal = iCab = iPca = 0.0;
 	iK1 = iTo = iKr = iKs = ipK = 0.0;
 
+	iRelfactor=1;
+	ileakfactor=1;
+	Icalfactor=1;
+	Icabfactor=1;
+	Ipcafactor=1;
+	Itofactor=1;
+	Iksfactor=1;
+	Ikrfactor=1;
+	Ik1factor=1;
+	Ipkfactor=1;
+	Inacafactor=1;
+	Inakfactor=1;
+	Inabfactor=1;
+	Inafactor=1;
+
+
     makemap();
 }
 
@@ -119,7 +135,7 @@ void TNNP04Control::updateIcal(){
 	if(isoFlag==1)
 	  condfact = 2.429;
 
-	iCal = gcal*condfact*Gate.d*Gate.f*Gate.fca*4*(vOld*FDAY*FDAY/(RGAS*TEMP))*((caI*exp(2*vOld*FDAY/(RGAS*TEMP))-0.341*caO)/(exp(2*vOld*FDAY/(RGAS*TEMP))-1.0));
+	iCal = Icalfactor*gcal*condfact*Gate.d*Gate.f*Gate.fca*4*(vOld*FDAY*FDAY/(RGAS*TEMP))*((caI*exp(2*vOld*FDAY/(RGAS*TEMP))-0.341*caO)/(exp(2*vOld*FDAY/(RGAS*TEMP))-1.0));
 
 };
 
@@ -127,14 +143,14 @@ void TNNP04Control::updateIcab() {
 	double gcab = 0.000592;
 	double Eca = RGAS*TEMP/(2*FDAY)*log(caO/caI);
         
-	iCab = gcab*(vOld-Eca);	
+	iCab = Icabfactor*gcab*(vOld-Eca);	
 };
 
 void TNNP04Control::updateIpca() {
 	double kpca = 0.0005;
 	double gpca = 0.825;
 
-	iPca = gpca*caI/(kpca+caI);
+	iPca = Ipcafactor*gpca*caI/(kpca+caI);
 };
 
 void TNNP04Control::updateIna() {
@@ -189,7 +205,7 @@ void TNNP04Control::updateIna() {
 	Gate.h = h_inf-(h_inf-Gate.h)*exp(-dt/tau_h);
 	Gate.j = j_inf-(j_inf-Gate.j)*exp(-dt/tau_j);
 	
-	iNa = gna*Gate.m*Gate.m*Gate.m*Gate.h*Gate.j*(vOld-ENa);
+	iNa = Inafactor*gna*Gate.m*Gate.m*Gate.m*Gate.h*Gate.j*(vOld-ENa);
 };
 
 void TNNP04Control::updateInab() {
@@ -197,7 +213,7 @@ void TNNP04Control::updateInab() {
 	double gnab = 0.00029;
 
 	ENa = RGAS*TEMP/FDAY*log(naO/naI);
-	iNab = gnab*(vOld-ENa);
+	iNab = Inabfactor*gnab*(vOld-ENa);
 }
 
 void TNNP04Control::updateIto() {
@@ -216,7 +232,7 @@ void TNNP04Control::updateIto() {
 	Gate.s = s_inf-(s_inf-Gate.s)*exp(-dt/tau_s);
 
 	EK = RGAS*TEMP/FDAY*log(kO/kI);
-	iTo = gto*Gate.r*Gate.s*(vOld-EK);
+	iTo = Itofactor*gto*Gate.r*Gate.s*(vOld-EK);
 
 }
 
@@ -238,7 +254,7 @@ void TNNP04Control::updateIks() {
 	  condfact = 1.8;
 
 	EKs = RGAS*TEMP/FDAY*log((kO+pKna*naO)/(kI+pKna*naI));
-	iKs = gks*condfact*Gate.xs*Gate.xs*(vOld-EKs);
+	iKs = Iksfactor*gks*condfact*Gate.xs*Gate.xs*(vOld-EKs);
 }
 
 void TNNP04Control::updateIkr() {
@@ -261,7 +277,7 @@ void TNNP04Control::updateIkr() {
 	Gate.xr2 = xr2_inf-(xr2_inf-Gate.xr2)*exp(-dt/tau_xr2);
 
 	EK = RGAS*TEMP/FDAY*log(kO/kI);
-	iKr = gkr*pow(kO/5.4,0.5)*Gate.xr1*Gate.xr2*(vOld-EK);
+	iKr = Ikrfactor*gkr*pow(kO/5.4,0.5)*Gate.xr1*Gate.xr2*(vOld-EK);
 
 }
 
@@ -270,7 +286,7 @@ void TNNP04Control::updateIpk() {
 	double gpk = 0.0146;
 
 	EK = RGAS*TEMP/FDAY*log(kO/kI);
-	ipK = gpk*(vOld-EK)/(1+exp((25-vOld)/5.98));
+	ipK = Ipkfactor*gpk*(vOld-EK)/(1+exp((25-vOld)/5.98));
 }
 
 void TNNP04Control::updateIk1() {
@@ -284,7 +300,7 @@ void TNNP04Control::updateIk1() {
 	beta_K1 = (3*exp(0.0002*(vOld-EK+100))+exp(0.1*(vOld-EK-10)))/(1+exp(-0.5*(vOld-EK)));
 	xK1_inf = alpha_K1/(alpha_K1+beta_K1);
 	
-	iK1 = gk1*pow(kO/5.4,0.5)*xK1_inf*(vOld-EK);
+	iK1 = Ik1factor*gk1*pow(kO/5.4,0.5)*xK1_inf*(vOld-EK);
 	
 }
 
@@ -296,7 +312,7 @@ void TNNP04Control::updateInaca() {
 	double ksat = 0.1;
 	double alpha = 2.5;
 
-	iNaca = ((kNaca*exp(gamma*vOld/RGAS/TEMP)*naI*naI*naI*caO)-(kNaca*exp((gamma-1)*vOld*FDAY/RGAS/TEMP)*naO*naO*naO*caI*alpha))/((KmNai*KmNai*KmNai+naO*naO*naO)*(KmCa+caO)*(1+(ksat*exp((gamma-1)*vOld*FDAY/RGAS/TEMP))));
+	iNaca = Inacafactor*((kNaca*exp(gamma*vOld/RGAS/TEMP)*naI*naI*naI*caO)-(kNaca*exp((gamma-1)*vOld*FDAY/RGAS/TEMP)*naO*naO*naO*caI*alpha))/((KmNai*KmNai*KmNai+naO*naO*naO)*(KmCa+caO)*(1+(ksat*exp((gamma-1)*vOld*FDAY/RGAS/TEMP))));
 
 }
 
@@ -309,7 +325,7 @@ void TNNP04Control::updateInak() {
 	if(isoFlag==1)
 	  condfact = 1.4;
 
-	iNak = pnak*condfact*kO*naI/((kO+KmK)*(naI+KmNa)*(1+0.1245*exp(-0.1*vOld*FDAY/RGAS/TEMP)+0.0353*exp(-vOld*FDAY/RGAS/TEMP)));
+	iNak = Inakfactor*pnak*condfact*kO*naI/((kO+KmK)*(naI+KmNa)*(1+0.1245*exp(-0.1*vOld*FDAY/RGAS/TEMP)+0.0353*exp(-vOld*FDAY/RGAS/TEMP)));
 
 }
 
@@ -386,9 +402,9 @@ void TNNP04Control::updateSRcurrents(){
 	if(isoFlag==1)
 	  iupcondfact = 1.2;
 
-	iLeak = Vleak*iupcondfact*(caSr-caI);
+	iLeak = ileakfactor*Vleak*iupcondfact*(caSr-caI);
 	iUp = Vmaxup/(1+(Kup*Kup/(caI*caI)));
-	iRel = (((a_rel*caSr*caSr)/(b_rel*b_rel+caSr*caSr))+c_rel)*Gate.d*Gate.g;
+	iRel = iRelfactor*(((a_rel*caSr*caSr)/(b_rel*b_rel+caSr*caSr))+c_rel)*Gate.d*Gate.g;
 	if(sponRelflag==1)
 	   iRel = (((a_rel*caSr*caSr)/(b_rel*b_rel+caSr*caSr))+c_rel)*Gate.g;
 }

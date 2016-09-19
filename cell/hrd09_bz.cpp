@@ -139,6 +139,16 @@ void HRD09BorderZone::Initialize() {
 
         iCat = -2.441419895e-07;
 
+
+
+    Inafactor=1;
+    Icabfactor=1;
+    Ilcafactor=1;
+    Ik1factor=1;
+    Itofactor=1;
+
+
+
         makemap();
 }
 HRD09BorderZone* HRD09BorderZone::clone() {
@@ -190,7 +200,7 @@ void HRD09BorderZone::updateIlca()
 	
 	maxIca=pca*4*(vOld)*(FDAY*FDAY/(RGAS*TEMP))*(gamcai*caR*exp(2*(vOld)*FDAY/(RGAS*TEMP))-gamcao*caO)/(exp(2*(vOld)*FDAY/(RGAS*TEMP))-1.0);
 	
-	iCa=Gate.d*Gate.f*Gate.fca*Gate.fca2*maxIca;
+	iCa=Ilcafactor*Gate.d*Gate.f*Gate.fca*Gate.fca2*maxIca;
 };
 
 //######################################################
@@ -208,7 +218,7 @@ void HRD09BorderZone::updateIcab()
 	
 	maxicab=4*(vOld)*(FDAY*FDAY/(RGAS*TEMP))*(gamcai*caI*exp(2*(vOld)*FDAY/(RGAS*TEMP))-gamcao*caO)/(exp(2*(vOld)*FDAY/(RGAS*TEMP))-1.0);
 
-	iCab=gcab*maxicab; 
+	iCab=Icabfactor*gcab*maxicab; 
 };
 
 //######################################################
@@ -228,7 +238,7 @@ void HRD09BorderZone::updateIk1()
 	Rate.bk1=(.49124*exp(.08032*(vOld-Ek1+5.476))+exp(.06175*(vOld-Ek1-594.31)))/(1+exp(-.5143*(vOld-Ek1+4.753)));
 
 	Gate.k1=Rate.ak1/(Rate.ak1+Rate.bk1);
-	iK1=Gk1*Gate.k1*(vOld-Ek1);
+	iK1=Ik1factor*Gk1*Gate.k1*(vOld-Ek1);
 };
 
 //######################################################
@@ -301,7 +311,7 @@ void HRD09BorderZone::updateIna()
 	tj=1/(Rate.aj+Rate.bj);
 	Gate.j=js-(js-Gate.j)*exp(-dt/tj);
 
-	iNa=(MaxGNa*Gate.m*Gate.m*Gate.m*Gate.h*Gate.j)*(vOld-ENa);	
+	iNa= Inafactor*(MaxGNa*Gate.m*Gate.m*Gate.m*Gate.h*Gate.j)*(vOld-ENa);	
 
 };
 
@@ -330,7 +340,7 @@ void HRD09BorderZone::updateIto()
    Gate.i=yssdv-(yssdv-Gate.i)*exp(-dt/tauydv);
    Gate.i2=yss2dv-(yss2dv-Gate.i2)*exp(-dt/tauy2dv);
 
-   iTo=MaxGto*Gate.a*Gate.a*Gate.a*Gate.i*Gate.i2*rvdv*(vOld-Ek);
+   iTo=Itofactor*MaxGto*Gate.a*Gate.a*Gate.a*Gate.i*Gate.i2*rvdv*(vOld-Ek);
 
 };
 

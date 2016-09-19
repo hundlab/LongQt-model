@@ -151,6 +151,32 @@ class HRD09Control : public Cell
 
     private:
     void Initialize();
+
+    double Inafactor;
+    double Inalfactor;
+    double Inakfactor;
+    double Inacafactorss;
+    double Inacafactorbulk;
+    double Icabfactor;
+    double Iclbfactor;
+    double Inaclfactor;
+    double Ilcafactor;
+    double Ipcafactor;
+    double Iksfactor;
+    double Ikrfactor;
+    double Ikclfactor;
+    double Ik1factor;
+    double Ikpfactor;
+    double Itofactor;
+    double Ito2factor;
+    double Irelfactor;
+    double Itrfactor;
+    double Iupfactor;
+    double Ileakfactor;
+
+
+
+
 };
 
 class HRD09BorderZone : public HRD09Control

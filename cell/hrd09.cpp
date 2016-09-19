@@ -141,6 +141,28 @@ void HRD09Control::Initialize() {
 
         iCat = -4.844236345e-08;//check
 
+    Inafactor=1;
+    Inakfactor=1;
+    Inalfactor=1;
+    Inacafactorss=1;
+    Inacafactorbulk=1;
+	Icabfactor=1;
+    Iclbfactor=1;
+    Inaclfactor=1;
+    Ilcafactor=1;
+    Ipcafactor=1;
+    Iksfactor=1;
+    Ikrfactor=1;
+    Ikclfactor=1;
+    Ik1factor=1;
+    Ikpfactor=1;
+    Itofactor=1;
+    Ito2factor=1;
+    Irelfactor=1;
+    Itrfactor=1;
+    Iupfactor=1;
+    Ileakfactor = 1;
+
         makemap();
 
 }
@@ -189,7 +211,7 @@ void HRD09Control::updateIlca()
 	
 	maxIca=pca*4*(vOld)*(FDAY*FDAY/(RGAS*TEMP))*(gamcai*caR*exp(2*(vOld)*FDAY/(RGAS*TEMP))-gamcao*caO)/(exp(2*(vOld)*FDAY/(RGAS*TEMP))-1.0);
 	
-	iCa=Gate.d*Gate.f*Gate.fca*Gate.fca2*maxIca;
+	iCa=Ilcafactor*Gate.d*Gate.f*Gate.fca*Gate.fca2*maxIca;
 };
 
 // Background Ca current  
@@ -204,7 +226,7 @@ void HRD09Control::updateIcab()
 	
 	maxicab=4*(vOld)*(FDAY*FDAY/(RGAS*TEMP))*(gamcai*caI*exp(2*(vOld)*FDAY/(RGAS*TEMP))-gamcao*caO)/(exp(2*(vOld)*FDAY/(RGAS*TEMP))-1.0);
 
-	iCab=gcab*maxicab; 
+	iCab=Icabfactor*gcab*maxicab; 
 };
 
 // Sarcolemmal Ca pump
@@ -213,7 +235,7 @@ void HRD09Control::updateIpca()
 	double ipcabar=0.0575;//Different from HRd08 - 0.2675;   
 	double kmpca=0.0005;
 	
-	iPca=ipcabar*caI/(kmpca+caI);  
+	iPca=Ipcafactor*ipcabar*caI/(kmpca+caI);  
 };
 
 // Background Cl current
@@ -223,7 +245,7 @@ void HRD09Control::updateIclb()
 	double gclb=0.000225;   
 	
 	ecl=-(RGAS*TEMP/(FDAY))*log(clO/clI);	
-	iClb=gclb*(vOld-ecl);
+	iClb=Iclbfactor*gclb*(vOld-ecl);
 	
 };
 
@@ -244,7 +266,7 @@ void HRD09Control::updateIks()
 	Gate.xs=xsinf-(xsinf-Gate.xs)*exp(-dt/tauxs1);
 	Gate.xs2=xsinf-(xsinf-Gate.xs2)*exp(-dt/tauxs2);
 	
-	iKs=Gks*Gate.xs*Gate.xs2*(vOld-Eks);		
+	iKs=Iksfactor*Gks*Gate.xs*Gate.xs2*(vOld-Eks);		
 };
 
 // Rapid delayed rectifier K current
@@ -264,7 +286,7 @@ void HRD09Control::updateIkr()
 	
 	Gate.r=1/(1+exp((vOld+10.0)/15.4));
 	
-	iKr=Gkr*Gate.xr*Gate.r*(vOld-Ekr);			
+	iKr=Ikrfactor*Gkr*Gate.xr*Gate.r*(vOld-Ekr);			
 };
 
 // Plateau K current
@@ -276,7 +298,7 @@ void HRD09Control::updateIkp()
  	Ekp=(RGAS*TEMP/FDAY)*log(kO/kI);   
 	Gate.kp=1/(1+exp((7.488-vOld)/5.98));
 	
-	iKp=Gkp*Gate.kp*(vOld-Ekp);	
+	iKp=Ikpfactor*Gkp*Gate.kp*(vOld-Ekp);	
 };
 
 // Time-independent K current
@@ -292,7 +314,7 @@ void HRD09Control::updateIk1()
 	Rate.bk1=(.49124*exp(.08032*(vOld-Ek1+5.476))+exp(.06175*(vOld-Ek1-594.31)))/(1+exp(-.5143*(vOld-Ek1+4.753)));
 
 	Gate.k1=Rate.ak1/(Rate.ak1+Rate.bk1);
-	iK1=Gk1*Gate.k1*(vOld-Ek1);
+	iK1=Ik1factor*Gk1*Gate.k1*(vOld-Ek1);
 };
 
 //K-Cl cotransporter
@@ -304,7 +326,7 @@ void HRD09Control::updateIkcl()
 	
 	ek=(RGAS*TEMP/FDAY)*log(kO/kI);
 	ecl=-(RGAS*TEMP/(FDAY))*log(clO/clI);	
-	iKcl=gkcl*(ek-ecl)/((ek-ecl)+deltanct); 
+	iKcl=Ikclfactor*gkcl*(ek-ecl)/((ek-ecl)+deltanct); 
 };
 
 //Fast Na current
@@ -372,7 +394,7 @@ void HRD09Control::updateIna()
 	tj=1/(Rate.aj+Rate.bj);
 	Gate.j=js-(js-Gate.j)*exp(-dt/tj);
 
-	iNa=(MaxGNa*Gate.m*Gate.m*Gate.m*Gate.h*Gate.j)*(vOld-ENa);
+	iNa=Inafactor*(MaxGNa*Gate.m*Gate.m*Gate.m*Gate.h*Gate.j)*(vOld-ENa);
 
 
 };
@@ -402,7 +424,7 @@ void HRD09Control::updateInal()
 	thl=600;
 	Gate.hl=hlinf-(hlinf-Gate.hl)*exp(-dt/thl);
 		
-	iNal=(0.0065+camfact*deltag)*Gate.ml*Gate.ml*Gate.ml*Gate.hl*(vOld-ENa); 	
+	iNal=Inalfactor*(0.0065+camfact*deltag)*Gate.ml*Gate.ml*Gate.ml*Gate.hl*(vOld-ENa); 	
 };
 
 //Na-Ca exchanger
@@ -419,9 +441,9 @@ void HRD09Control::updateInaca()
 	double percr = 0.2;  // fraction of Na-Ca exchanger in subspace 
 	
 	//Na-Ca exchanger sensing Ca in subspace
-	iNacar = percr*(1/(1+(kmcaact/(caR))*(kmcaact/(caR))))*(vmax*(naI*naI*naI*caO*exp(eta*vOld*FDAY/(RGAS*TEMP))-naO*naO*naO*caR*exp((eta-1)*vOld*FDAY/(RGAS*TEMP)))/((1+ksat*exp((eta-1)*vOld*FDAY/(RGAS*TEMP)))*(kmcao*naI*naI*naI+kmnao*kmnao*kmnao*caR+kmnai*kmnai*kmnai*caO*(1+caR/kmcai)+kmcai*naO*naO*naO*(1+naI*naI*naI/(kmnai*kmnai*kmnai))+naI*naI*naI*caO+naO*naO*naO*caR)));
+	iNacar = Inacafactorss*percr*(1/(1+(kmcaact/(caR))*(kmcaact/(caR))))*(vmax*(naI*naI*naI*caO*exp(eta*vOld*FDAY/(RGAS*TEMP))-naO*naO*naO*caR*exp((eta-1)*vOld*FDAY/(RGAS*TEMP)))/((1+ksat*exp((eta-1)*vOld*FDAY/(RGAS*TEMP)))*(kmcao*naI*naI*naI+kmnao*kmnao*kmnao*caR+kmnai*kmnai*kmnai*caO*(1+caR/kmcai)+kmcai*naO*naO*naO*(1+naI*naI*naI/(kmnai*kmnai*kmnai))+naI*naI*naI*caO+naO*naO*naO*caR)));
 	//Na-Ca exchanger sensing bulk myocplasmic Ca
-	iNaca = (1-percr)*(1/(1+(kmcaact/(caI))*(kmcaact/(caI))))*(vmax*(naI*naI*naI*caO*exp(eta*vOld*FDAY/(RGAS*TEMP))-naO*naO*naO*caI*exp((eta-1)*vOld*FDAY/(RGAS*TEMP)))/((1+ksat*exp((eta-1)*vOld*FDAY/(RGAS*TEMP)))*(kmcao*naI*naI*naI+kmnao*kmnao*kmnao*caI+kmnai*kmnai*kmnai*caO*(1+caI/kmcai)+kmcai*naO*naO*naO*(1+naI*naI*naI/(kmnai*kmnai*kmnai))+naI*naI*naI*caO+naO*naO*naO*caI)));
+	iNaca = Inacafactorbulk*(1-percr)*(1/(1+(kmcaact/(caI))*(kmcaact/(caI))))*(vmax*(naI*naI*naI*caO*exp(eta*vOld*FDAY/(RGAS*TEMP))-naO*naO*naO*caI*exp((eta-1)*vOld*FDAY/(RGAS*TEMP)))/((1+ksat*exp((eta-1)*vOld*FDAY/(RGAS*TEMP)))*(kmcao*naI*naI*naI+kmnao*kmnao*kmnao*caI+kmnai*kmnai*kmnai*caO*(1+caI/kmcai)+kmcai*naO*naO*naO*(1+naI*naI*naI/(kmnai*kmnai*kmnai))+naI*naI*naI*caO+naO*naO*naO*caI)));
 };
 
 //Na-Cl cotransporter
@@ -434,7 +456,7 @@ void HRD09Control::updateInacl()
 	ENa=(RGAS*TEMP/FDAY)*log(naO/naI);
 	
 	ecl=-(RGAS*TEMP/(FDAY))*log(clO/clI);	
-	iNacl=gnacl*(ENa-ecl)*(ENa-ecl)*(ENa-ecl)*(ENa-ecl)/((ENa-ecl)*(ENa-ecl)*(ENa-ecl)*(ENa-ecl)+deltanct*deltanct*deltanct*deltanct);
+	iNacl=Inaclfactor*gnacl*(ENa-ecl)*(ENa-ecl)*(ENa-ecl)*(ENa-ecl)/((ENa-ecl)*(ENa-ecl)*(ENa-ecl)*(ENa-ecl)+deltanct*deltanct*deltanct*deltanct);
 };
 
 // Na-K ATPase
@@ -449,7 +471,7 @@ void HRD09Control::updateInak()
 	sigma=(exp(naO/67.3)-1.0)/7.0;
 	fnak=1.0/(1.0+.1245*exp(-.1*vOld*FDAY/(RGAS*TEMP))+.0365*sigma*exp(-vOld*FDAY/(RGAS*TEMP)));
 	
-	iNak=inakbar*fnak*1/(1+(kmnai/naI)*(kmnai/naI))*kO/(kO+kmko); 
+	iNak= Inakfactor*inakbar*fnak*1/(1+(kmnai/naI)*(kmnai/naI))*kO/(kO+kmko); 
 };
 
 // Transient outward K current
@@ -474,7 +496,7 @@ void HRD09Control::updateIto()
    Gate.i=yssdv-(yssdv-Gate.i)*exp(-dt/tauydv);
    Gate.i2=yss2dv-(yss2dv-Gate.i2)*exp(-dt/tauy2dv);
 
-   iTo=MaxGto*Gate.a*Gate.a*Gate.a*Gate.i*Gate.i2*rvdv*(vOld-Ek);
+   iTo=Itofactor*MaxGto*Gate.a*Gate.a*Gate.a*Gate.i*Gate.i2*rvdv*(vOld-Ek);
 
 
 };
@@ -496,7 +518,7 @@ void HRD09Control::updateIto2()
 		
 	Gate.aa=aainf-(aainf-Gate.aa)*exp(-dt/tauaa);
 	
-	iTo2 = Gate.aa*ibar;
+	iTo2 = Ito2factor*Gate.aa*ibar;
 };
 
 // Ca release from sarcoplasmic reticulum
@@ -538,7 +560,7 @@ void HRD09Control::updateIrel()
 	// ###################################
 
 	ryRopen=ryRopen-dt*((irelinf+ryRopen)/taurel);
-	iRel=ryRopen*(caJsr-caR);
+	iRel=Irelfactor*ryRopen*(caJsr-caR);
 };
 
 // Ca transport into/out of sarcoplasmic reticulum
@@ -561,10 +583,10 @@ void HRD09Control::updateSrFlux()
         camfactlk=1/(1+pow((KMCAMlk/caM),5.0));
         
 	plb=deltakmup*camfact;
-	iUp=iupbar*caI/(caI+kmup-plb);   	
-	iLeak=0.75*(iupbar/nsrbar)*(1+deltaileak*camfactlk)*caNsr;    
+	iUp=Iupfactor*iupbar*caI/(caI+kmup-plb);   	
+	iLeak=Ileakfactor*0.75*(iupbar/nsrbar)*(1+deltaileak*camfactlk)*caNsr;    
 	
- 	iTr=(caNsr-caJsr)/tautr;  
+ 	iTr=Itrfactor*(caNsr-caJsr)/tautr;  
 };
 
 // Na concentration in myoplasm

@@ -96,6 +96,26 @@ cellLength=0.00663767257;   //cm
 RGAS = 8.314472;
 TEMP = 310.5;
 FDAY = 96.4845;
+
+Istfactor=1;
+Ibnafactor=1;
+Ibcafactor=1;
+Ibkfactor=1;
+IK1factor=1;
+ICaTfactor=1;
+IKrfactor=1;
+IKsfactor=1;
+ICaL12factor=1;
+ICaL13factor=1;
+INafactorxr=1;
+INafactorxs=1;
+Iffactor=1;
+Itofactor=1;
+Isusfactor=1;
+INaKfactor=1;
+iNaCafactor=1;
+
+
  
 this->makemap();
 }
@@ -119,7 +139,7 @@ qi = alphaqi/(alphaqi + betaqi);
 tauqi = 1.0/(alphaqi + betaqi);
 Gate.dst = Gate.dst + dt*((qa-Gate.dst)/tauqa);
 Gate.fst = Gate.fst + dt*((qi-Gate.fst)/tauqi);
-ist = gst*Gate.dst*Gate.fst*(vOld - eist);
+ist = Istfactor*gst*Gate.dst*Gate.fst*(vOld - eist);
 }
 
 /* Ib ************************************************************************/
@@ -132,9 +152,9 @@ void Ksan::updateIb()
   double ek  = (RGAS*TEMP/FDAY)*log(kO/kI);
   double ena = (RGAS*TEMP/FDAY)*log(naO/naI);
 
-  ibna = gbna*(vOld - ena);
-  ibca = gbca*(vOld - eca);
-  ibk  =  gbk*(vOld - ek);
+  ibna = Ibnafactor*gbna*(vOld - ena);
+  ibca = Ibcafactor*gbca*(vOld - eca);
+  ibk  =  Ibkfactor*gbk*(vOld - ek);
  } 
 /*IK1**********************************************************************/
 void Ksan::updateIK1()
@@ -144,7 +164,7 @@ void Ksan::updateIK1()
   double ek  = (RGAS*TEMP/FDAY)*log(kO/kI);
 
   xk1inf = 1.0/(1.0 + exp(0.070727*(vOld - ek)));
-  ik1 = gk1*xk1inf*(kO/(kO + 0.228880))*(vOld - ek);
+  ik1 = IK1factor*gk1*xk1inf*(kO/(kO + 0.228880))*(vOld - ek);
 }
 /**ICaT Cav3.1**************************************************************/
 void Ksan::updateICaT()
@@ -159,7 +179,7 @@ void Ksan::updateICaT()
   tau_ft = 1.0/(0.0153*exp(-(vOld+61.7)/83.3)+0.015*exp((vOld+61.7)/15.38));
   ft_inf = 1.0/(1.0+exp((vOld + 61.7)/5.6));
   Gate.ft = Gate.ft + dt*((ft_inf - Gate.ft)/tau_ft);
-  icat = gcat*Gate.ft*Gate.dt*(vOld - ecat);          
+  icat = ICaTfactor*gcat*Gate.ft*Gate.dt*(vOld - ecat);          
 }
 /*Ikr********************************************************************/
 void Ksan::updateIKr()
@@ -175,7 +195,7 @@ void Ksan::updateIKr()
   ikr_inact_inf = 1.0/(1.0 + exp((vOld+20.758474-4.0)/(19.0)));
   tau_ikr_inact = 0.2+0.9*1.0/(0.1*exp(vOld/54.645)+0.656*exp(vOld/106.157));
   Gate.ikr_inact = Gate.ikr_inact + dt*(ikr_inact_inf - Gate.ikr_inact)/tau_ikr_inact;
-  ikr = gkr*Gate.ikr_act*Gate.ikr_inact*(vOld - ek);
+  ikr = IKrfactor*gkr*Gate.ikr_act*Gate.ikr_inact*(vOld - ek);
 }
 /**IKs********************************************************************/
 void Ksan::updateIKs()
@@ -189,7 +209,7 @@ void Ksan::updateIKs()
   
   Gate.iks_act = Gate.iks_act + dt*(iks_act_inf - Gate.iks_act)/tau_iks_act;
   
-  iks = gks*Gate.iks_act*Gate.iks_act*(vOld - eks);
+  iks = IKsfactor*gks*Gate.iks_act*Gate.iks_act*(vOld - eks);
 }
 /*ICaL*******************************************************************/
 void Ksan::updateICaL()
@@ -235,8 +255,8 @@ void Ksan::updateICaL()
   fca_inf = kmfca/(kmfca+caSub);
   taufca = fca_inf/alpha_fca;
   Gate.fca = Gate.fca + dt*(fca_inf - Gate.fca)/taufca;
-  ical12 = gcal12*Gate.fl12*Gate.dl12*Gate.fca*(vOld-ecal);
-  ical13 = gcal13*Gate.fl13*Gate.dl13*Gate.fca*(vOld-ecal);
+  ical12 =   ICaL12factor*gcal12*Gate.fl12*Gate.dl12*Gate.fca*(vOld-ecal);
+  ical13 = ICaL13factor*gcal13*Gate.fl13*Gate.dl13*Gate.fca*(vOld-ecal);
 }
 /**INa**********************************************************************/
 void Ksan::updateINa()
@@ -274,13 +294,13 @@ void Ksan::updateINa()
   hsr = (1.0-fna)*Gate.h_ttxr+fna*Gate.j_ttxr;
   
   if(fabs(vOld)>0.005)
-    ina_ttxs= gna_ttxs*Gate.m_ttxs*Gate.m_ttxs*Gate.m_ttxs*hs*naO*(FDAY*FDAY/(RGAS*TEMP))*((exp((vOld-ena)*FDAY/(RGAS*TEMP))-1.0)/(exp(vOld*FDAY/(RGAS*TEMP))-1.0))*vOld;
+    ina_ttxs= INafactorxs*gna_ttxs*Gate.m_ttxs*Gate.m_ttxs*Gate.m_ttxs*hs*naO*(FDAY*FDAY/(RGAS*TEMP))*((exp((vOld-ena)*FDAY/(RGAS*TEMP))-1.0)/(exp(vOld*FDAY/(RGAS*TEMP))-1.0))*vOld;
   else
-    ina_ttxs= gna_ttxs*Gate.m_ttxs*Gate.m_ttxs*Gate.m_ttxs*hs*naO*FDAY*((exp((vOld-ena)*FDAY/(RGAS*TEMP))-1.0));
+    ina_ttxs= INafactorxs*gna_ttxs*Gate.m_ttxs*Gate.m_ttxs*Gate.m_ttxs*hs*naO*FDAY*((exp((vOld-ena)*FDAY/(RGAS*TEMP))-1.0));
   if(fabs(vOld)>0.005)
-    ina_ttxr = gna_ttxr*Gate.m_ttxr*Gate.m_ttxr*Gate.m_ttxr*hsr*naO*(FDAY*FDAY/(RGAS*TEMP))*((exp((vOld-enattxr)*FDAY/(RGAS*TEMP))-1.0)/(exp(vOld*FDAY/(RGAS*TEMP))-1.0))*vOld;
+    ina_ttxr = INafactorxr*gna_ttxr*Gate.m_ttxr*Gate.m_ttxr*Gate.m_ttxr*hsr*naO*(FDAY*FDAY/(RGAS*TEMP))*((exp((vOld-enattxr)*FDAY/(RGAS*TEMP))-1.0)/(exp(vOld*FDAY/(RGAS*TEMP))-1.0))*vOld;
   else
-    ina_ttxr = gna_ttxr*Gate.m_ttxr*Gate.m_ttxr*Gate.m_ttxr*hsr*naO*FDAY*((exp((vOld-enattxr)*FDAY/(RGAS*TEMP))-1.0));
+    ina_ttxr = INafactorxr*gna_ttxr*Gate.m_ttxr*Gate.m_ttxr*Gate.m_ttxr*hsr*naO*FDAY*((exp((vOld-enattxr)*FDAY/(RGAS*TEMP))-1.0));
 }
 /**If**************************************************************************/
 void Ksan::updateIf()
@@ -296,7 +316,7 @@ void Ksan::updateIf()
   Gate.y_1_2 = Gate.y_1_2 + dt*(y_inf - Gate.y_1_2)/tau_y_1_2;
   ihk  = 0.6167*gh*Gate.y_1_2*(vOld - ek);
   ihna = 0.3833*gh*Gate.y_1_2*(vOld - ena);
-  ih = (ihk + ihna);
+  ih = Iffactor*(ihk + ihna);
 }
 /*Ito*************************************************************************/
 void Ksan::updateIto()
@@ -311,7 +331,7 @@ void Ksan::updateIto()
   r_inf = 1.0/(1.0+exp(-(vOld-19.3)/15.0));
   tau_r = (2.75+14.40516/(1.037*exp(0.09*(vOld+30.61))+0.369*exp(-0.12*(vOld+23.84))))/0.303;
   Gate.r = Gate.r + dt*((r_inf-Gate.r)/tau_r);
-  ito = gto*Gate.q*Gate.r*(vOld-ek);
+  ito = Itofactor*gto*Gate.q*Gate.r*(vOld-ek);
  }
 /*Isus***********************************************************************/
 void Ksan::updateIsus()
@@ -319,7 +339,7 @@ void Ksan::updateIsus()
   double gsus=0.00039060;
   double ek  = (RGAS*TEMP/FDAY)*log(kO/kI);
 
-  isus = gsus*Gate.r*(vOld-ek);
+  isus = Isusfactor*gsus*Gate.r*(vOld-ek);
 }
 /*Inak***********************************************************************/
 void Ksan::updateINaK()
@@ -330,7 +350,7 @@ void Ksan::updateINaK()
   double kmkp=1.4;
   double ena = (RGAS*TEMP/FDAY)*log(naO/naI);
 
-  inak = inakmax*(pow(kO,1.2)/(pow(kmkp,1.2)+pow(kO,1.2)))*(pow(naI,1.3)/(pow(kmnap,1.3)+pow(naI,1.3)))/(1.0+exp(-(vOld-ena+120.0)/30.0));
+  inak = INaKfactor*inakmax*(pow(kO,1.2)/(pow(kmkp,1.2)+pow(kO,1.2)))*(pow(naI,1.3)/(pow(kmnap,1.3)+pow(naI,1.3)))/(1.0+exp(-(vOld-ena+120.0)/30.0));
 }
 /****iNaCa*******************************************************************/
 
@@ -367,7 +387,7 @@ void Ksan::updateiNaCa()
   x3=k43*k14*(k23+k21)+k12*k23*(k43+k41);
   x4=k34*k23*(k14+k12)+k21*k14*(k34+k32);
 
-  inaca = kNaCa*(k21*x2-k12*x1)/(x1+x2+x3+x4);   
+  inaca = iNaCafactor*kNaCa*(k21*x2-k12*x1)/(x1+x2+x3+x4);   
 }
 
 void Ksan:: updateConc()

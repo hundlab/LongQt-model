@@ -121,6 +121,27 @@ class Ksan : public Cell
    
    double TotCap;
    struct GateVariable Gate;
+
+   double Istfactor;
+   double Ibnafactor;
+   double Ibcafactor;
+   double Ibkfactor;
+   double IK1factor;
+   double ICaTfactor;
+   double IKrfactor;
+   double IKsfactor;
+   double ICaL12factor;
+   double ICaL13factor;
+   double INafactorxr;
+   double INafactorxs;
+   double Iffactor;
+   double Itofactor;
+   double Isusfactor;
+   double INaKfactor;
+   double iNaCafactor;
+
+
+
 };
 
 #endif

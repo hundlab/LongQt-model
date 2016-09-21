@@ -153,6 +153,45 @@ struct GateVariable {
 	double F_juncCaL;
 	double F_slCaL;
 
+
+	double Icajuncfactor;
+	double Icaslfactor;
+	double Icakfactor;
+	double Icanajuncfactor;
+	double Icanaslfactor;
+	double Icabslfactor;
+	double Icabjuncfactor;
+	double Ipcaslfactor;
+	double Ipcajuncfactor;
+	double Itofactor;
+	double Iksslfactor;
+	double Iksjuncfactor;
+	double Ikrfactor;
+	double Ik1factor;
+	double Ikurfactor;
+	double Ipkslfactor;
+	double Ipkjuncfactor;
+	double Inacaslfactor;
+	double Inacajuncfactor;
+	double Inakslfactor;
+	double Inakjuncfactor;
+	double Inabslfactor;
+	double Inabjuncfactor;
+	double Inaslfactor;
+	double Inajuncfactor;
+	double Jsrcarelfactor;
+	double Jsrleakfactor;
+	double Jsercafactor;
+	double Iclcaslfactor;
+	double Iclcajuncfactor;
+	double Iclbkfactor;
+
+
+
+
+
+
+
  //###Concentration updating functions ######
     void updateConc();
 	virtual void updatecaI();
@@ -183,5 +222,7 @@ struct GateVariable {
     int externalStim(double stimval);
     virtual void makemap();
     struct GateVariable Gate;
+
+
 };
 #endif

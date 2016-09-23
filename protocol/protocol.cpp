@@ -88,6 +88,7 @@ Protocol::Protocol()
     GetSetRef toInsert;
     pars["tMax"] = toInsert.Initialize("double",[this] () {return std::to_string(tMax);},[this] (const string& value) {tMax = std::stod(value);});
     pars["numtrials"]= toInsert.Initialize("int", [this] () {return std::to_string(numtrials);}, [this] (const string& value) {numtrials = std::stoi(value);});
+    pars["writeint"]= toInsert.Initialize("int", [this] () {return std::to_string(writeint);}, [this] (const string& value) {writeint = std::stoi(value);});
     pars["writetime"]= toInsert.Initialize("double", [this] () {return std::to_string(writetime);}, [this] (const string& value) {writetime = std::stod(value);});
     pars["meastime"]= toInsert.Initialize("double", [this] () {return std::to_string(meastime);}, [this] (const string& value) {meastime = std::stod(value);});
     pars["writeCellState"]= toInsert.Initialize("bool", [this] () {return to_string(writeCellState);}, [this] (const string& value) {writeCellState = stob(value);});

@@ -149,9 +149,6 @@ class HRD09Control : public Cell
     struct RateConst Rate;
     struct GateVariable Gate;
 
-    private:
-    void Initialize();
-
     double Inafactor;
     double Inalfactor;
     double Inakfactor;
@@ -174,8 +171,8 @@ class HRD09Control : public Cell
     double Iupfactor;
     double Ileakfactor;
 
-
-
+    private:
+    void Initialize();
 
 };
 

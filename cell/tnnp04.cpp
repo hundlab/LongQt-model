@@ -497,4 +497,19 @@ void TNNP04Control::makemap()
   vars["Gate.m"]=&Gate.m;
   vars["Gate.h"]=&Gate.h;
   vars["Gate.j"]=&Gate.j;
+
+  pars["iRelFactor"]=&iRelfactor;
+  pars["ileakFactor"]=&ileakfactor;
+  pars["IcalFactor"]=&Icalfactor;
+  pars["IcabFactor"]=&Icabfactor;
+  pars["IpcaFactor"]=&Ipcafactor;
+  pars["ItoFactor"]=&Itofactor;
+  pars["IksFactor"]=&Iksfactor;
+  pars["IkrFactor"]=&Ikrfactor;
+  pars["Ik1Factor"]=&Ik1factor;
+  pars["IpkFactor"]=&Ipkfactor;
+  pars["InacaFactor"]=&Inacafactor;
+  pars["InakFactor"]=&Inakfactor;
+  pars["InabFactor"]=&Inabfactor;
+  pars["InaFactor"]=&Inafactor;
 };

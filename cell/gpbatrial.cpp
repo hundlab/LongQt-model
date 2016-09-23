@@ -768,4 +768,36 @@ void GpbAtrial::makemap()
   vars["iCabjunc"]=&iCabjunc;
   vars["iCabsl"]=&iCabsl;
   vars["iCab"]=&iCab;
+
+  pars["IcajuncFactor"]=&Icajuncfactor;
+  pars["IcaslFactor"]=&Icaslfactor;
+  pars["IcakFactor"]=&Icakfactor;
+  pars["IcanajuncFactor"]=&Icanajuncfactor;
+  pars["IcanaslFactor"]=&Icanaslfactor;
+  pars["IcabslFactor"]=&Icabslfactor;
+  pars["IcabjuncFactor"]=&Icabjuncfactor;
+  pars["IpcaslFactor"]=&Ipcaslfactor;
+  pars["IpcajuncFactor"]=&Ipcajuncfactor;
+  pars["ItoFactor"]=&Itofactor;
+  pars["IksslFactor"]=&Iksslfactor;
+  pars["IksjuncFactor"]=&Iksjuncfactor;
+  pars["IkrFactor"]=&Ikrfactor;
+  pars["Ik1Factor"]=&Ik1factor;
+  pars["IkurFactor"]=&Ikurfactor;
+  pars["IpkslFactor"]=&Ipkslfactor;
+  pars["IpkjuncFactor"]=&Ipkjuncfactor;
+  pars["InacaslFactor"]=&Inacaslfactor;
+  pars["InacajuncFactor"]=&Inacajuncfactor;
+  pars["InakslFactor"]=&Inakslfactor;
+  pars["InakjuncFactor"]=&Inakjuncfactor;
+  pars["InabslFactor"]=&Inabslfactor;
+  pars["InabjuncFactor"]=&Inabjuncfactor;
+  pars["InaslFactor"]=&Inaslfactor;
+  pars["InajuncFactor"]=&Inajuncfactor;
+  pars["JsrcarelFactor "]=&Jsrcarelfactor;
+  pars["JsrleakFactor"]=&Jsrleakfactor;
+  pars["JsercaFactor"]=&Jsercafactor;
+  pars["IclcaslFactor"]=&Iclcaslfactor;
+  pars["IclcajuncFactor"]=&Iclcajuncfactor;
+  pars["IclbkFactor"]=&Iclbkfactor;
 }

@@ -849,5 +849,25 @@ void HRD09Control::makemap()
   vars["iKt"]=&iKt; //not initialized
   vars["iClt"]=&iClt; //not initialized
 
+  pars["InaFactor"] = &Inafactor;
+  pars["InakFactor"] = &Inakfactor;
+  pars["InalFactor"] = &Inalfactor;
+  pars["InacaFactorss"] = &Inacafactorss;
+  pars["InacaFactorbulk"] = &Inacafactorbulk;
+  pars["IcabFactor"] = &Icabfactor;
+  pars["IclbFactor"] = &Iclbfactor;
+  pars["InaclFactor"] = &Inaclfactor;
+  pars["IlcaFactor"] = &Ilcafactor;
+  pars["IpcaFactor"] = &Ipcafactor;
+  pars["IksFactor"] = &Iksfactor;
+  pars["IkrFactor"] = &Ikrfactor;
+  pars["IkclFactor"] = &Ikclfactor;
+  pars["Ik1Factor"] = &Ik1factor;
+  pars["IkpFactor"] = &Ikpfactor;
+  pars["ItoFactor"] = &Itofactor;
+  pars["Ito2Factor"] = &Ito2factor;
+  pars["IrelFactor"] = &Irelfactor;
+  pars["ItrFactor"] = &Itrfactor;
+  pars["IupFactor"] = &Iupfactor;
+  pars["IleakFactor"] = &Ileakfactor;
 }
-

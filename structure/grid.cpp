@@ -19,6 +19,9 @@ Grid::Grid(const Grid& other) {
 Grid::~Grid(){}
 
 void Grid::addRow(int pos) {
+    if(pos < 0) {
+        pos = fiber.size();
+    }
     fiber.insert(fiber.begin() +pos, Fiber(static_cast<int>(fibery.size())));
     {unsigned int i = 0;
     for(auto it = fibery.begin(); it != fibery.end()&&i<fiber[pos].nodes.size(); it++,i++) {
@@ -27,12 +30,15 @@ void Grid::addRow(int pos) {
     }
     }
 }
-void Grid::addRows(unsigned int num) {
+void Grid::addRows(unsigned int num, int position) {
     for(unsigned int i = 0; i < num; i++) {
-        this->addRow(0);
+        this->addRow(position);
     }
 }
 void Grid::addColumn(int pos) {
+    if(pos < 0) {
+        pos = fibery.size();
+    }
     fibery.insert(fibery.begin() +pos, Fiber(static_cast<int>(fiber.size())));
     {unsigned int i = 0;
     for(auto it = fiber.begin(); it != fiber.end()&&i<fibery[pos].nodes.size(); it++,i++) {
@@ -41,19 +47,35 @@ void Grid::addColumn(int pos) {
     }
     }
 }
-void Grid::addColumns(unsigned int num) {
+void Grid::addColumns(unsigned int num, int position) {
     for(unsigned int i = 0; i < num; i++) {
-        this->addColumn(0);
+        this->addColumn(position);
+    }
+}
+void Grid::removeRows(unsigned int num, int position) {
+    for(unsigned int i = 0; i < num; i++) {
+        this->removeRow(position);
     }
 }
 void Grid::removeRow(int pos) {
+    if(pos < 0) {
+        pos = fiber.size()-1;
+    }
     fiber.erase(fiber.begin()+pos);
     for(auto it = fibery.begin(); it!=fibery.end() ; it++) {
         it->nodes.erase(it->nodes.begin() +pos);
         it->B.erase(it->B.begin() +pos);
     }
 }
+void Grid::removeColumns(unsigned int num, int position) {
+    for(unsigned int i = 0; i < num; i++) {
+        this->removeColumn(position);
+    }
+}
 void Grid::removeColumn(int pos) {
+    if(pos < 0) {
+        pos = fibery.size()-1;
+    }
     fibery.erase(fibery.begin()+pos);
     for(auto it = fiber.begin(); it!=fiber.end() ; it++) {
         it->nodes.erase(it->nodes.begin() +pos);

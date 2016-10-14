@@ -128,7 +128,10 @@ bool Cell::readCellState(ifstream& ifile) {
                 linestream >> name >> val;
                 try {
                     *vars.at(name) = std::stod(val);
-                } catch(out_of_range&) {}
+                } catch(out_of_range&) {
+									cout << "Reading in of " << name <<" failed\n";
+									cout.flush();
+								}
                 getline(ifile,temp);
             }
         }
@@ -138,8 +141,11 @@ bool Cell::readCellState(ifstream& ifile) {
                 stringstream linestream(temp);
                 linestream >> name >> val;
                 try {
-                    *vars.at(name) = std::stod(val);
-                } catch(out_of_range&) {}
+                    *pars.at(name) = std::stod(val);
+                } catch(out_of_range&) {
+									cout << "Reading in of " << name <<" failed\n";
+									cout.flush();
+								}
                 getline(ifile,temp);
             }
         }

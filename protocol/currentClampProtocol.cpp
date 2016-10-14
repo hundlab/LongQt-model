@@ -85,6 +85,7 @@ temp.clear();
         if(readCellState) {
             sprintf(writefile,(cellStateDir + "/" + cellStateFile).c_str(),trial);
             cell->readCellState(writefile);
+			this->stimt = cell->t;
         }
  
         //###############################################################

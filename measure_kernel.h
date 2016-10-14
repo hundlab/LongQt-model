@@ -28,7 +28,7 @@ using namespace std;
 class MeasureKernel
 {
 public:
-    MeasureKernel(string varname = "");
+    MeasureKernel(string varname = "", double percrepol = 50);
     MeasureKernel(const MeasureKernel& toCopy);
     MeasureKernel( MeasureKernel&& toCopy);
     ~MeasureKernel();
@@ -43,6 +43,8 @@ public:
     set<string> getVariables();
     map<string,double> getVariablesMap();
 
+    void setPercrepol(double val);
+    double getPercrepol();
 protected:   
     map<string, double*> varmap; // map for refing properties that can be measured.
 
@@ -52,9 +54,7 @@ protected:
     double told;
     double mint;    //time of min value.
     double maxt;    //time of max value.
-    double dur50time1;
-    double dur75time1;
-    double dur90time1;
+    double durtime1;
     double derivold; //dv/dt from prev. time step
     double derivt;   // time of max deriv.
     double derivt1;  // time of prev. cycle max deriv.
@@ -69,21 +69,16 @@ protected:
     double maxderiv2;
     double maxderiv2nd;
     double cl;
-    double dur50;   //duration
-    double dur75;
-    double dur90;
+    double dur;   //duration
     double percrepol;   //specify percent repolarization
-    double repol50;           // repol var val for duration measure.
-    double repol75;
+    double repol;           // repol var val for duration measure.
     bool minflag;
     bool maxflag;
-    bool dur50flag;    //1 while measuring duration.
-    bool dur75flag;
-    bool dur90flag;
+    bool durflag;    //1 while measuring duration.
     bool ampflag;
     bool ddrflag;
     bool returnflag;
-    
+
     void copy(const MeasureKernel& toCopy);    
     void mkmap();
 };

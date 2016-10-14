@@ -204,7 +204,6 @@ bool MeasureKernel::measure(double time, double var)
     return (returnflag);
 };
 
-
 void MeasureKernel::reset()
 {
     peak=-100.0;
@@ -220,6 +219,7 @@ void MeasureKernel::reset()
 
 void MeasureKernel::mkmap() {
     varmap["peak"]=&peak;
+    varmap["amp"]=&amp;
     varmap["cl"]=&cl;
     varmap["ddr"]=&ddr;
     varmap["maxderiv"]=&maxderiv;

@@ -26,6 +26,7 @@ class gridProtocol : public CurrentClamp {
     set<pair<int,int>>& getStimNodes();
     virtual bool writepars(string file);
     virtual int readpars(string file);
+//    virtual bool addMeasure(Measure toInsert);
 
   private:
     map<string, CellInitializer> baseCellMap;

@@ -417,7 +417,8 @@ bool Protocol::writeMVarsFile(string file) {
 }
 
 bool Protocol::addMeasure(Measure toInsert) {
-    if(cell->vars.find(toInsert.varname) != cell->vars.end()) {
+    set<string> vars = cell->getVariables();
+    if(vars.find(toInsert.varname) != vars.end()) {
         return measures.insert(pair<string,Measure>(toInsert.varname, toInsert)).second;
     }
     return false;

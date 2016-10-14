@@ -217,3 +217,5 @@ set<pair<int,int>> gridProtocol::stringToSet(string nodesList) {
 
     return toReturn;
 }
+
+//bool gridProtocol::addMeasure(Measure toInsert)

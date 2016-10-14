@@ -73,6 +73,21 @@ set<string> temp;
 temp.insert(pnames.begin(),pnames.end());
 cell->setConstantSelection(temp);
 temp.clear();
+{ int i = 0;
+for(auto& it : grid->fiber) {
+    int j = 0;
+    for(auto& iv : it.nodes) {
+        pair<int,int> p(i,j);
+        for(auto& meas : measures) {
+        if(iv->cell->vars.find(meas.first) != cell->vars.end()) {
+            realMeasures[p].insert(pair<string,Measure>(meas.first,meas.second)).second;
+        }
+        j++;
+    }
+    i++;
+    }
+}
+}
 
 //should not be here
 
@@ -89,10 +104,12 @@ temp.clear();
         //###############################################################
         int pCount = 0;
         //open i/o streams
-        for(map<string,Measure>::iterator it = measures.begin(); it != measures.end(); it++) {
-            sprintf(writefile,propertyoutfile.c_str(),trial,it->second.varname.c_str());
-            sprintf(writefile, (datadir + "/" + "cell_%%i_%%i_" + string(writefile)).c_str());
-            it->second.setOutputfile(writefile);
+        for(auto& it : realMeasures) {
+            for(auto& iv : it.second) {
+                sprintf(writefile,propertyoutfile.c_str(),trial,iv.first.c_str());
+                sprintf(writefile, (datadir + "/" + "cell_%i_%i_" + string(writefile)).c_str(),  it.first.second, it.first.first, iv.first.c_str());
+                iv.second.setOutputfile(writefile);
+            }
         }
 
         sprintf(writefile,dvarsoutfile.c_str(),trial);
@@ -112,8 +129,8 @@ temp.clear();
 
             //##### Output select variables to file  ####################
             if(int(measflag)==1&&cell->t>meastime){
-                for (auto it : measures) {
-                    for(auto iv : dataNodes) {
+                for(auto& iv : dataNodes) {
+                    for (auto& it : realMeasures[iv]) {
                         it.second.measure(grid->findNode(iv)->cell->t,*grid->findNode(iv)->cell->vars[it.second.varname]);
                         if(int(writeflag)==1) {
                             it.second.write(true, !(int(doneflag)&&(time<tMax)));
@@ -128,13 +145,15 @@ temp.clear();
         }
     
       // Output final (ss) property values for each trial
-      for (map<string,Measure>::iterator it = measures.begin(); it != measures.end(); it++){
-        sprintf(writefile,finalpropertyoutfile.c_str(),trial,it->second.varname.c_str());
-        sprintf(writefile, (datadir + "/" + "cell_%%i_%%i_" + string(writefile)).c_str());
-        it->second.setOutputfile(writefile);
-        it->second.write(false, true);
-        it->second.reset();
-      } 
+        for(auto& it : realMeasures) {
+            for(auto& iv : it.second) {
+                sprintf(writefile,finalpropertyoutfile.c_str(),trial,it->second.varname.c_str());
+                sprintf(writefile, (datadir + "/" + "cell_%i_%i_" + string(writefile)).c_str(),it.first.second, it.first.first,);
+                it->second.setOutputfile(writefile);
+                it->second.write(false, true);
+                it->second.reset();
+            }
+        }
       
       // Output parameter values for each trial
       sprintf(writefile,finaldvarsoutfile.c_str(),trial);
@@ -153,6 +172,7 @@ temp.clear();
 
       return true; 
 }
+
 map<string, CellInitializer>& gridProtocol::getCellMap() {
     return baseCellMap;
 }

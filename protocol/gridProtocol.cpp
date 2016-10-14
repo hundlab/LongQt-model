@@ -147,11 +147,11 @@ for(auto& it : grid->fiber) {
       // Output final (ss) property values for each trial
         for(auto& it : realMeasures) {
             for(auto& iv : it.second) {
-                sprintf(writefile,finalpropertyoutfile.c_str(),trial,it->second.varname.c_str());
-                sprintf(writefile, (datadir + "/" + "cell_%i_%i_" + string(writefile)).c_str(),it.first.second, it.first.first,);
-                it->second.setOutputfile(writefile);
-                it->second.write(false, true);
-                it->second.reset();
+                sprintf(writefile,finalpropertyoutfile.c_str(),trial,iv.second.varname.c_str());
+                sprintf(writefile, (datadir + "/" + "cell_%i_%i_" + string(writefile)).c_str(),it.first.second, it.first.first);
+                iv.second.setOutputfile(writefile);
+                iv.second.write(false, true);
+                iv.second.reset();
             }
         }
       

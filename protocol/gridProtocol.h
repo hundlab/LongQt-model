@@ -35,5 +35,6 @@ class gridProtocol : public CurrentClamp {
     string setToString(set<pair<int,int>>& nodes);
     set<pair<int,int>> stringToSet(string nodesList);
     Grid* grid;
+    map<pair<int,int>,map<string,Measure>> realMeasures;
 };
 #endif

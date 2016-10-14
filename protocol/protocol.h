@@ -96,11 +96,11 @@ class Protocol
     map<string, GetSetRef> pars;
 
     const map<string,Measure>& Measures = cref(measures);
-    bool addMeasure(Measure toInsert);
-    void removeMeasure(string measureName);
-    bool setMeasures(map<string,Measure> newMeasures);
-    bool addToMeasreSelection(string measureName, string property);
-    void removeFromMeasureSelection(string measureName, string property);
+    virtual bool addMeasure(Measure toInsert);
+    virtual void removeMeasure(string measureName);
+    virtual bool setMeasures(map<string,Measure> newMeasures);
+    virtual bool addToMeasreSelection(string measureName, string property);
+    virtual void removeFromMeasureSelection(string measureName, string property);
 
     map<string, CellInitializer> cellMap;
 

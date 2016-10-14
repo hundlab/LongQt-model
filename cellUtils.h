@@ -36,8 +36,8 @@ class cellUtils {
 //        cellMap[Br04().type] = [] () {return (Cell*) new Br04;};
 //        cellMap[Ksan().type] = [] () {return (Cell*) new Ksan;};
 //        cellMap[Courtemanche98().type] = [] () {return (Cell*) new Courtemanche98;};
-//        cellMap[GpbAtrialWT().type] = [] () {return (Cell*) new GpbAtrialWT;};
-//        cellMap[GpbAtrialSE().type] = [] () {return (Cell*) new GpbAtrialSE;};
+        cellMap[GpbAtrialWT().type] = [] () {return (Cell*) new GpbAtrialWT;};
+        cellMap[GpbAtrialSE().type] = [] () {return (Cell*) new GpbAtrialSE;};
 
 
 

@@ -7,6 +7,7 @@
 #ifndef GPBATRIALWT_H
 #define GPBATRIALWT_H
 
+
 //####################################
 // subclass of Cell
 //####################################
@@ -17,7 +18,7 @@ class GpbAtrialWT: public Cell
     GpbAtrialWT();
     GpbAtrialWT(GpbAtrialWT& toCopy);
     virtual ~GpbAtrialWT();
-    
+
     void Initialize();
     GpbAtrialWT* clone();
 
@@ -37,24 +38,23 @@ struct GateVariable {
    double yf;
    double f_cabj;
    double f_cabsl;
-   double d;	
-   double f;	
+   double d;
+   double f;
    double ml;
    double hl;
-};	
+};
 
 
    struct RateConst {  //Rate constants for ion channel gates.
-	double aml;
-	double bml;
+    double aml;
+    double bml;
    };
-
 
 
     double Vsl;
     double Vjunc;
     double Vsr;
-	
+
 //###### Concentrations #########
     double naO;
     double kO;
@@ -80,151 +80,181 @@ struct GateVariable {
     double iNasl;
     double iNa;
     double iNabjunc;
-	double iNabsl;
-	double iNab;
-	double iNaKjunc;
-	double iNaKsl;
-	double iNak;
-	double iKr;
-	double iKs; 
-	double iKsjunc;
-	double iKssl;
-	double iKpjunc;
-	double iKpsl;
-	double iKp;
-	double iTos;
-	double iTof;
-	double iTo;
-	double iK1;
-	double iKur;
-	double iClcajunc;
-	double iClcasl;
-	double iClca;
-	double iClbk;
-	double iCajunc;
-	double iCasl;
-	double iCa;
-	double iCak;
-	double iCanajunc;
-	double iCanasl;
-	double iCana;
-	double iCaL;
-	double iCatotjunc;
-	double iCatotsl;
-	double iNcxjunc;
-	double iNcxsl;
-	double iNaca;
-	double ipCajunc;
-	double ipCasl;
-	double ipCa;
-	double iCabjunc;
-	double iCabsl;
-	double iCab;
-	double iNatotjunc;
-	double iNatotsl;
-	double iClt;
-	double iNal;
-	double fiNalP;
+    double iNabsl;
+    double iNab;
+    double iNaKjunc;
+    double iNaKsl;
+    double iNak;
+    double iKr;
+    double iKs;
+    double iKsjunc;
+    double iKssl;
+    double iKpjunc;
+    double iKpsl;
+    double iKp;
+    double iTos;
+    double iTof;
+    double iTo;
+    double iK1;
+    double iKur;
+    double iClcajunc;
+    double iClcasl;
+    double iClca;
+    double iClbk;
+    double iCajunc;
+    double iCasl;
+    double iCa;
+    double iCak;
+    double iCanajunc;
+    double iCanasl;
+    double iCana;
+    double iCaL;
+    double iCatotjunc;
+    double iCatotsl;
+    double iNcxjunc;
+    double iNcxsl;
+    double iNaca;
+    double ipCajunc;
+    double ipCasl;
+    double ipCa;
+    double iCabjunc;
+    double iCabsl;
+    double iCab;
+    double iNatotjunc;
+    double iNatotsl;
+    double iClt;
+    double iNal;
+    double fiNalP;
 
-      	double  caM;
- 	double  fBlock ;
-	double	fBound ;
-	double	fI ;
-	double	fOx ;
-	double	fOxP;
-	double	fPhos;
+        double  caM;
+    double  fBlock ;
+    double	fBound ;
+    double	fI ;
+    double	fOx ;
+    double	fOxP;
+    double	fPhos;
 
 
 
 
 //##### Buffers ########
-	//Sodium Buffers
-	double Nabj; 
-	double Nabsl; 
-	
-	//Calcium Buffers
-	double TnCl;
-	double TnChc;
-	double TnChm;
-	double CaM;
-	double Myoc;
-	double Myom;
-	double SRB;
-	
-	//junctional and SL Ca buffers
-	double SLLj;
-	double SLLsl;
-	double SLHj;
-	double SLHsl;
-	
+    //Sodium Buffers
+    double Nabj;
+    double Nabsl;
 
-	double fiNalNP;
+    //Calcium Buffers
+    double TnCl;
+    double TnChc;
+    double TnChm;
+    double CaM;
+    double Myoc;
+    double Myom;
+    double SRB;
 
-	//SR Ca buffer
-	double Csqnb;
-	double dCsqnb;
+    //junctional and SL Ca buffers
+    double SLLj;
+    double SLLsl;
+    double SLHj;
+    double SLHsl;
 
-//##### Fluxes ########    
-	double Jsrcarel;
-	double Jserca;
-	double Jsrleak;
-	double J_cabcyto;
-	double J_Cabjunc; 
-	double J_Cabsl;
+
+    double fiNalNP;
+
+    //SR Ca buffer
+    double Csqnb;
+    double dCsqnb;
+
+//##### Fluxes ########
+    double Jsrcarel;
+    double Jserca;
+    double Jsrleak;
+    double J_cabcyto;
+    double J_Cabjunc;
+    double J_Cabsl;
 
 //##### Fractional Currents ########
 
-	double Fjunc;
-	double Fsl;
-	double F_juncCaL;
-	double F_slCaL;
+    double Fjunc;
+    double Fsl;
+    double F_juncCaL;
+    double F_slCaL;
 
 
 //RYR testing
-	double koCa;  
-	double kiCa; 
-	double kim; 
-	double kom; 
-	double ks; 
-	double kmf; 
-	double kmr; 
-	double ksrleak;
+    double koCa;
+    double kiCa;
+    double kim;
+    double kom;
+    double ks;
+    double kmf;
+    double kmr;
+    double ksrleak;
 
-
+    double Icajuncfactor;
+    double Icaslfactor;
+    double Icakfactor;
+    double Icanajuncfactor;
+    double Icanaslfactor;
+    double Icabslfactor;
+    double Icabjuncfactor;
+    double Ipcaslfactor;
+    double Ipcajuncfactor;
+    double Itofactor;
+    double Iksslfactor;
+    double Iksjuncfactor;
+    double Ikrfactor;
+    double Ik1factor;
+    double Ikurfactor;
+    double Ipkslfactor;
+    double Ipkjuncfactor;
+    double Inacaslfactor;
+    double Inacajuncfactor;
+    double Inakslfactor;
+    double Inakjuncfactor;
+    double Inabslfactor;
+    double Inabjuncfactor;
+    double Inaslfactor;
+    double Inajuncfactor;
+    double Jsrcarelfactor;
+    double Jsrleakfactor;
+    double Jsercafactor;
+    double Iclcaslfactor;
+    double Iclcajuncfactor;
+    double Iclbkfactor;
+    double INalfactor;
 
  //###Concentration updating functions ######
-	virtual void updatecaI();
-	virtual void updatenaI();
+    virtual void updatecaI();
+    virtual void updatenaI();
  //####Current updating functions #######
-	/*virtual void updateSRcurrents();*/
-	virtual void updateIcal();
-	virtual void updateIcab();
-	virtual void updateIpca();
-	virtual void updateIto();
-	virtual void updateIks();
-	virtual void updateIkr();
-	virtual void updateIk1();
-	virtual void updateIkur();
-	virtual void updateIpk();
-	virtual void updateInaca();
-	virtual void updateInak();
-	virtual void updateInab();
-	virtual void updateIna();
-	virtual void updateCamk();
+    /*virtual void updateSRcurrents();*/
+    virtual void updateIcal();
+    virtual void updateIcab();
+    virtual void updateIpca();
+    virtual void updateIto();
+    virtual void updateIks();
+    virtual void updateIkr();
+    virtual void updateIk1();
+    virtual void updateIkur();
+    virtual void updateIpk();
+    virtual void updateInaca();
+    virtual void updateInak();
+    virtual void updateInab();
+    virtual void updateIna();
+    virtual void updateCamk();
 //	virtual void updateSRFluxnew();
-	virtual void updatecytobuff(); //cytosolic Ca buffers
-	virtual void updateSRFlux();
-	virtual void updateJSLbuff(); //junctional and SL Ca buffers
-	virtual void updateSRbuff(); //SR Ca buffer	 
-	virtual void updateIclca();
-	virtual void updateIclbk();
-	virtual void updateCurr();
-	virtual void updateConc();
-
-	virtual void updateInal();
-        virtual int externalStim(double stimval);
+    virtual void updatecytobuff(); //cytosolic Ca buffers
+    virtual void updateSRFlux();
+    virtual void updateJSLbuff(); //junctional and SL Ca buffers
+    virtual void updateSRbuff(); //SR Ca buffer
+    virtual void updateIclca();
+    virtual void updateIclbk();
+    virtual void updateCurr();
+    virtual void updateConc();
+    virtual void updateInal();
+    virtual int externalStim(double stimval);
     virtual void makemap();
-    struct GateVariable gate;
+    struct GateVariable Gate;
     struct RateConst Rate;
 };
 #endif

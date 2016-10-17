@@ -45,7 +45,7 @@ public:
         return *this;
     };
     
-    bool write(bool useFlags = true, bool reset = true);
+    bool write();
     bool setOutputfile(string filename);
 
     const set<string>& Selection = cref(selection);

@@ -58,19 +58,11 @@ void Measure::removeFromSelection(string to_remove) {
     selection.erase(selection.find(to_remove));
 }
 
-bool Measure::write(bool useFlags, bool reset) {
+bool Measure::write() {
     bool toReturn = false;
 
-    if(useFlags&&!returnflag) {
-        return toReturn;
-    }
-
     toReturn = IOBase::write(this->selection, this->varmap, &ofile);
-
-    if(reset&&toReturn) {
-        this->reset();
-    }
-    return toReturn;
+	return toReturn;
 }
 
 void Measure::closeFiles() {

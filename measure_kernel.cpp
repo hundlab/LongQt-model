@@ -195,7 +195,7 @@ void MeasureKernel::setPercrepol(double val) {
     this->percrepol = val;
 }
 
-double MeasureKernel::getPercrepol() {
+double MeasureKernel::getPercrepol() const {
     return this->percrepol;
 }
 

@@ -403,6 +403,11 @@ bool Protocol::writeMVarsFile(string file) {
         return ret;
     }
 
+	if(measures.size() > 0) {
+		out << "percrepol\t";
+		out << measures.begin()->second.getPercrepol();
+		out << "\n";
+	}
     for(auto im = measures.begin(); im != measures.end(); im++) {
         out << im->second.varname << " \t";
         set<string> selection = im->second.Selection;
@@ -468,6 +473,7 @@ bool Protocol::readMvarsFile(string filename)
     ifstream ifile;
     string line, name;
     set<string> possible_vars = cell->getVariables();
+	double percrepol = 50;
     
     
     ifile.open(filename);
@@ -475,12 +481,17 @@ bool Protocol::readMvarsFile(string filename)
         cout << "Error opening " << filename << endl;
         return false;
     }
-    
+
     while(!ifile.eof()) {
         getline(ifile,line);
         stringstream linestream(line);
-        Measure temp;
-        linestream >> temp.varname;
+		string varname;
+        linestream >> varname;
+		if(varname == "percrepol") {
+			linestream >> percrepol;
+			continue;
+		}
+        Measure temp(varname,percrepol);
         while(!linestream.eof()) {
            linestream >> name;
            temp.addToMeasureSelection(name);

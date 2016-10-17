@@ -131,10 +131,12 @@ for(auto& it : grid->fiber) {
             if(int(measflag)==1&&cell->t>meastime){
                 for(auto& iv : dataNodes) {
                     for (auto& it : realMeasures[iv]) {
-                        it.second.measure(grid->findNode(iv)->cell->t,*grid->findNode(iv)->cell->vars[it.second.varname]);
-                        if(int(writeflag)==1) {
-                            it.second.write(true, !(int(doneflag)&&(time<tMax)));
-                        }
+						if(it.second.measure(grid->findNode(iv)->cell->t,*grid->findNode(iv)->cell->vars[it.second.varname])&&(int(writeflag)==1)) {
+                        	it.second.write();
+							if(int(doneflag)&&(time<tMax)) {
+								it.second.reset();
+							}
+                	    }
                     }
                 }
             }
@@ -150,7 +152,7 @@ for(auto& it : grid->fiber) {
                 sprintf(writefile,finalpropertyoutfile.c_str(),trial,iv.second.varname.c_str());
                 sprintf(writefile, (datadir + "/" + "cell_%i_%i_" + string(writefile)).c_str(),it.first.second, it.first.first);
                 iv.second.setOutputfile(writefile);
-                iv.second.write(false, true);
+                iv.second.write();
                 iv.second.reset();
             }
         }

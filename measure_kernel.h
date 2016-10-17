@@ -44,7 +44,7 @@ public:
     map<string,double> getVariablesMap();
 
     void setPercrepol(double val);
-    double getPercrepol();
+    double getPercrepol() const;
 protected:   
     map<string, double*> varmap; // map for refing properties that can be measured.
 

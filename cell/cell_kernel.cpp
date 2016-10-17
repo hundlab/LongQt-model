@@ -169,7 +169,7 @@ double CellKernel::tstep(double stimt)
   {
     dt=dtmax;
   }
-dt=dtmax;
+
   return t;
 };
 

@@ -114,9 +114,11 @@ temp.clear();
             //##### Output select variables to file  ####################
             if(int(measflag)==1&&cell->t>meastime){
                 for (map<string,Measure>::iterator it = measures.begin(); it!=measures.end(); it++) {
-                    it->second.measure(cell->t,*cell->vars[it->second.varname]);
-                    if(int(writeflag)==1) {
-                        it->second.write(true, !(int(doneflag)&&(time<tMax)));
+                    if(it->second.measure(cell->t,*cell->vars[it->second.varname])&&(int(writeflag)==1)) {
+                        it->second.write();
+						if(int(doneflag)&&(time<tMax)) {
+							it->second.reset();
+						}
                     }
                 }
             }
@@ -132,7 +134,7 @@ temp.clear();
       for (map<string,Measure>::iterator it = measures.begin(); it != measures.end(); it++){
           sprintf(writefile,(datadir + "/" + finalpropertyoutfile).c_str(), trial, it->second.varname.c_str());
           it->second.setOutputfile(writefile);
-          it->second.write(false, true);
+          it->second.write();
           it->second.reset();
       } 
       

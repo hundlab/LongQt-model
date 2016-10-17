@@ -131,7 +131,7 @@ bool Cell::readCellState(ifstream& ifile) {
                 } catch(out_of_range&) {
 									cout << "Reading in of " << name <<" failed\n";
 									cout.flush();
-								}
+                } catch(invalid_argument&) {}
                 getline(ifile,temp);
             }
         }
@@ -145,7 +145,7 @@ bool Cell::readCellState(ifstream& ifile) {
                 } catch(out_of_range&) {
 									cout << "Reading in of " << name <<" failed\n";
 									cout.flush();
-								}
+                } catch(invalid_argument&) {}
                 getline(ifile,temp);
             }
         }

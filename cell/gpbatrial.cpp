@@ -794,7 +794,7 @@ void GpbAtrial::makemap()
   pars["InabjuncFactor"]=&Inabjuncfactor;
   pars["InaslFactor"]=&Inaslfactor;
   pars["InajuncFactor"]=&Inajuncfactor;
-  pars["JsrcarelFactor "]=&Jsrcarelfactor;
+  pars["JsrcarelFactor"]=&Jsrcarelfactor;
   pars["JsrleakFactor"]=&Jsrleakfactor;
   pars["JsercaFactor"]=&Jsercafactor;
   pars["IclcaslFactor"]=&Iclcaslfactor;

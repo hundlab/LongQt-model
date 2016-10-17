@@ -223,19 +223,18 @@ void GpbAtrialSE::updateInal()
 	double ms,tml,hlinf,thl;
 	double camfact;
 	double KMCAM=0.3;  
-	double deltag = 0.0095;
 		
 	camfact=1/(1+pow((KMCAM/caM),4.0));
 
 	ENa=(RGAS*TEMP/FDAY)*log(naO/naI);
 	
-	Rate.aml=.32*(vOld+47.13)/(1-exp(-.1*(vOld+47.13)));  
-	Rate.bml=.08*exp(-vOld/11.0);				 
+    double aml=.32*(vOld+47.13)/(1-exp(-.1*(vOld+47.13)));
+    double bml=.08*exp(-vOld/11.0);
 	
 	hlinf = 1/(1+exp((vOld+91)/6.1));  
 
-	ms=Rate.aml/(Rate.aml+Rate.bml);	
-	tml=1/(Rate.aml+Rate.bml);
+    ms=aml/(aml+bml);
+    tml=1/(aml+bml);
     Gate.ml=ms-(ms-Gate.ml)*exp(-dt/tml);
 	
 	thl=600;
@@ -819,6 +818,8 @@ void GpbAtrialSE::makemap()
   vars["Gate.f"]=&Gate.f;
   vars["Gate.f_cabj"]=&Gate.f_cabj;
   vars["Gate.f_cabsl"]=&Gate.f_cabsl;
+  vars["Gate.ml"]=&Gate.ml;
+  vars["Gate.hl"]=&Gate.hl;
 
   vars["iTos"]=&iTos;
   vars["iTof"]=&iTof;
@@ -892,7 +893,7 @@ void GpbAtrialSE::makemap()
   pars["InabjuncFactor"]=&Inabjuncfactor;
   pars["InaslFactor"]=&Inaslfactor;
   pars["InajuncFactor"]=&Inajuncfactor;
-  pars["JsrcarelFactor "]=&Jsrcarelfactor;
+  pars["JsrcarelFactor"]=&Jsrcarelfactor;
   pars["JsrleakFactor"]=&Jsrleakfactor;
   pars["JsercaFactor"]=&Jsercafactor;
   pars["IclcaslFactor"]=&Iclcaslfactor;

@@ -95,8 +95,10 @@ for(auto& it : grid->fiber) {
         doneflag=1;     // reset doneflag
 
         if(readCellState) {
-            sprintf(writefile,(cellStateDir + "/" + cellStateFile).c_str(),trial);
+            sprintf(writefile,cellStateFile.c_str());
             cell->readCellState(writefile);
+			this->stimt = cell->t;
+			this->tMax += this->cell->t;
         }
  
         //###############################################################
@@ -167,7 +169,7 @@ for(auto& it : grid->fiber) {
       }
       cell->closeFiles();
       if(writeCellState) {
-          sprintf(writefile,(datadir + "/" + cellStateFile).c_str(),trial);
+          sprintf(writefile,(datadir + "/" + simvarfile).c_str(),trial);
           cell->writeCellState(writefile);
       }
 
@@ -190,8 +192,8 @@ bool gridProtocol::writepars(string file) {
     return toReturn;
 }
 int gridProtocol::readpars(string file) {
-    bool toReturn = (bool)CurrentClamp::readpars(file);
-    toReturn &= ((gridCell*)this->cell)->readGridfile(file);
+    bool toReturn = ((gridCell*)this->cell)->readGridfile(file);
+    toReturn &= (bool)CurrentClamp::readpars(file);
     return (int)toReturn;
 }
 string gridProtocol::setToString(set<pair<int,int>>& nodes) {

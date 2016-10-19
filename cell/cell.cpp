@@ -92,11 +92,11 @@ bool Cell::writeCellState(ofstream& ofile) {
         ofile << val.first << "\t" << *val.second << "\n";
     }
     ofile << "##END VARS\n";
-    ofile << "##BEGIN PARS\n";
+    ofile << "##BEGIN PVARS\n";
     for(auto val : pars) {
         ofile << val.first << "\t" << *val.second << "\n";
     }
-    ofile << "##END PARS\n";
+    ofile << "##END PVARS\n";
     return true;
 
 }
@@ -135,9 +135,9 @@ bool Cell::readCellState(ifstream& ifile) {
                 getline(ifile,temp);
             }
         }
-        if(temp == "##BEGIN PARS"&&!Npars) {
+        if(temp == "##BEGIN PVARS"&&!Npars) {
             Npars = true;
-            while(!ifile.eof() && temp != "##END PARS") {
+            while(!ifile.eof() && temp != "##END PVARS") {
                 stringstream linestream(temp);
                 linestream >> name >> val;
                 try {

@@ -75,8 +75,14 @@ temp.clear();
 
         time = cell->t = 0.0;      // reset time
         if(readCellState) {
-            sprintf(writefile,(cellStateDir + "/" + cellStateFile).c_str(),trial);
+            sprintf(writefile,cellStateFile.c_str());
             cell->readCellState(writefile);
+			this->tMax += this->cell->t;
+			this->t1 += this->cell->t;
+			this->t2 += this->cell->t;
+			this->t3 += this->cell->t;
+			this->t4 += this->cell->t;
+			this->t5 += this->cell->t;
         }
 
         doneflag=1;     // reset doneflag
@@ -144,7 +150,7 @@ temp.clear();
       }
       cell->closeFiles();
       if(writeCellState) {
-          sprintf(writefile,(datadir + "/" + cellStateFile).c_str(),trial);
+          sprintf(writefile,(datadir + "/" + simvarfile).c_str(),trial);
           cell->writeCellState(writefile);
       }
 

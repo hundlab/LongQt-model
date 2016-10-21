@@ -800,4 +800,21 @@ void GpbAtrial::makemap()
   pars["IclcaslFactor"]=&Iclcaslfactor;
   pars["IclcajuncFactor"]=&Iclcajuncfactor;
   pars["IclbkFactor"]=&Iclbkfactor;
-}
+		//add potenttially needed values to pars"]=&
+	pars["Ryrr"]=&Ryrr;
+	pars["Ryro"]=&Ryro;
+	pars["Ryri"]=&Ryri;
+	pars["RI"]=&RI;
+	pars["Nabj"]=&Nabj;
+	pars["Nabsl"]=&Nabsl;
+	pars["TnCl"]=&TnCl;
+	pars["TnChc"]=&TnChc;
+	pars["TnChm"]=&TnChm;
+	pars["Myoc"]=&Myoc;
+	pars["Myom"]=&Myom;
+	pars["SRB"]=&SRB;
+	pars["SLLj"]=&SLLj;
+	pars["SLLsl"]=&SLLsl;
+	pars["SLHj"]=&SLHj;
+	pars["SLHsl"]=&SLHsl;
+	}

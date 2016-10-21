@@ -61,6 +61,10 @@ CellKernel::CellKernel()
     pars["AGeo"]=&AGeo;
     pars["ACap"]=&ACap;
     
+		//add potenttially needed values to pars
+		pars["vNew"]=&vNew;
+		pars["dVdtmax"]=&dVdtmax;
+
 };
 
 //#####################################################

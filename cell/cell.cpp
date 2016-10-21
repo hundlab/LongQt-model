@@ -123,6 +123,7 @@ bool Cell::readCellState(ifstream& ifile) {
         getline(ifile,temp);
         if(temp == "##BEGIN VARS"&&!Nvars) {
             Nvars = true;
+            getline(ifile,temp);
             while(!ifile.eof() && temp != "##END VARS") {
                 stringstream linestream(temp);
                 linestream >> name >> val;
@@ -131,12 +132,13 @@ bool Cell::readCellState(ifstream& ifile) {
                 } catch(out_of_range&) {
 									cout << "Reading in of " << name <<" failed\n";
 									cout.flush();
-								}
+                } catch(invalid_argument) {}
                 getline(ifile,temp);
             }
         }
         if(temp == "##BEGIN PVARS"&&!Npars) {
             Npars = true;
+            getline(ifile,temp);
             while(!ifile.eof() && temp != "##END PVARS") {
                 stringstream linestream(temp);
                 linestream >> name >> val;
@@ -145,7 +147,7 @@ bool Cell::readCellState(ifstream& ifile) {
                 } catch(out_of_range&) {
 									cout << "Reading in of " << name <<" failed\n";
 									cout.flush();
-								}
+                } catch(invalid_argument) {}
                 getline(ifile,temp);
             }
         }

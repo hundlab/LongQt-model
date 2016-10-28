@@ -48,7 +48,7 @@ class Protocol
     virtual int assign_cell_pars(vector<string> pnames, vector< vector<string> > pvals, int trialnum);
     virtual int runSim();
     virtual bool runTrial();
-    virtual int readpars(string file);
+    virtual int readpars(string file, set<string> varnames = {});
     virtual int parsemixedmap(map<string,double*> varmap, string file, vector<string>* cnames, vector<vector<string>>* twoDrnames);
     virtual int readpvars();
     virtual bool writepars(string file); //write the contence of pars to a file

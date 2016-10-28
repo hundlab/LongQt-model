@@ -303,8 +303,12 @@ bool Protocol::runTrial() { return true;}
 // Format of file should be "variable name" tab "value"
 //#############################################################
 
-int Protocol::readpars(string file)
+int Protocol::readpars(string file, set<string> varnames)
 {
+	bool useVarnames = false;
+	if(varnames.size() > 0) {
+		useVarnames = true;
+	}
     ifstream ifile;
     
     string name;
@@ -332,6 +336,9 @@ int Protocol::readpars(string file)
         line >> name;
         getline(line,value);
         try {
+			if(useVarnames&&varnames.find(name)==varnames.end()) {
+				throw std::out_of_range(name+" not in varnames");
+			}
             pars.at(name).set(trim(value));
         } catch (const std::out_of_range&) {}
         getline(ifile,temp);

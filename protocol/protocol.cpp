@@ -58,7 +58,7 @@ Protocol::Protocol()
     writeflag = 1;      // 1 to write data to file during sim
     dvarfile = "dvars.txt";  // File with SV to write.
     writetime = 0;      // time to start writing.
-    writeint = 10;     // interval for writing.
+    writeint = 20;     // interval for writing.
     
     pvarfile = "pvars.txt"; // File to specify cell params
     simvarfile = "simvars.txt";  // File to specify sim params

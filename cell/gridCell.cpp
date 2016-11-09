@@ -16,7 +16,7 @@ gridCell::gridCell() {
     this->Initialize();
 }
 void gridCell::Initialize() {
-     dx = 0.01;
+    dx = 0.01;
     dy = 0.01;
     np = 1;
     type = "gridCell";

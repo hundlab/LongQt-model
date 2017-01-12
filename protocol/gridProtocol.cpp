@@ -6,6 +6,7 @@
 
 #include "gridProtocol.h"
 #include "gridCell.h"
+#include <QFile>
 
 gridProtocol::gridProtocol()  : CurrentClamp(){
 	gridCell* temp = new gridCell();
@@ -177,14 +178,35 @@ set<pair<int,int>>& gridProtocol::getDataNodes() {
 	return dataNodes;
 }
 bool gridProtocol::writepars(string file) {
-	bool toReturn = ((gridCell*)this->cell)->writeGridfile(file);
-	toReturn &= CurrentClamp::writepars(file);
+	QFile ofile(file.c_str());
+	string name;
+
+	bool exists = ofile.exists();
+	if(!ofile.open(QIODevice::Text|QIODevice::Append)){
+		cout << "Error opening " << file << endl;
+		return 1;
+	}
+	QXmlStreamWriter xml(&ofile);
+	xml.setAutoFormatting(true);
+	xml.writeStartDocument();
+	xml.writeStartElement("file");
+
+	bool toReturn = ((gridCell*)this->cell)->writeGridfile(xml);
+	toReturn &= CurrentClamp::writepars(xml);
+	xml.writeEndElement();
+
 	return toReturn;
 }
-int gridProtocol::readpars(string file) {
+int gridProtocol::readpars(string file, set<string> varnames) {
+	QFile ifile(file.c_str());
+	if(!ifile.open(QIODevice::ReadOnly|QIODevice::Text)){
+		cout << "Error opening " << file << endl;
+		return false;
+	}
+	QXmlStreamReader xml(&ifile);
 	this->grid->reset();
-	bool toReturn = ((gridCell*)this->cell)->readGridfile(file);
-	toReturn &= (bool)CurrentClamp::readpars(file);
+	bool toReturn = ((gridCell*)this->cell)->readGridfile(xml);
+	toReturn &= (bool)CurrentClamp::readpars(xml);
 	return (int)toReturn;
 }
 string gridProtocol::setToString(set<pair<int,int>>& nodes) {

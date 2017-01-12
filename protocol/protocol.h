@@ -16,6 +16,8 @@
 #include <string>
 #include <list>
 #include <unordered_map>
+#include <QXmlStreamWriter>
+#include <QXmlStreamReader>
 
 #include "measure.h"
 #include "cellUtils.h"
@@ -48,10 +50,12 @@ class Protocol
     virtual int assign_cell_pars(vector<string> pnames, vector< vector<string> > pvals, int trialnum);
     virtual int runSim();
     virtual bool runTrial();
+    virtual int readpars(QXmlStreamReader& xml, set<string> varnames = {});
     virtual int readpars(string file, set<string> varnames = {});
     virtual int parsemixedmap(map<string,double*> varmap, string file, vector<string>* cnames, vector<vector<string>>* twoDrnames);
     virtual int readpvars();
     virtual bool writepars(string file); //write the contence of pars to a file
+    virtual bool writepars(QXmlStreamWriter& xml); //write the contence of pars to a file
     virtual bool writedvars(string file); //write varmap keys to a file
     virtual bool readdvars(string file);
     virtual bool write2Dmap(vector<string> vnames, vector< vector<string> > twoDmnames, string file);

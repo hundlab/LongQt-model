@@ -534,7 +534,7 @@ bool Protocol::writepars(string file)
 	string name;
 
 	bool exists = ofile.exists();
-	if(!ofile.open(QIODevice::Append|QIODevice::Text)){
+	if(!ofile.open(QIODevice::WriteOnly|QIODevice::Truncate|QIODevice::Text)){
 		cout << "Error opening " << file << endl;
 		return 1;
 	}

@@ -234,13 +234,19 @@ bool gridCell::writeGridfile(QXmlStreamWriter& xml) {
 	xml.writeAttribute("dx", QString::number(dx));
 	xml.writeAttribute("dy", QString::number(dy));
 
-	for(auto it : grid.fiber) {
+	for(auto& it : grid.fiber) {
 		xml.writeStartElement("row");
 		xml.writeAttribute("pos",QString::number(j));
-		for(auto iv : it.nodes) {
+		for(auto& iv : it.nodes) {
 			xml.writeStartElement("node");
 			xml.writeAttribute("pos",QString::number(i));
 			xml.writeTextElement("type",iv->cell->type);
+			xml.writeStartElement("conductance");
+			xml.writeTextElement("left", QString::number(it.B[i]));
+			xml.writeTextElement("right", QString::number(it.B[i+1]));
+			xml.writeTextElement("top", QString::number(grid.fibery[i].B[j]));
+			xml.writeTextElement("bottom", QString::number(grid.fibery[i].B[j+1]));
+			xml.writeEndElement();
 			xml.writeEndElement();
 			i++;
 		}
@@ -280,6 +286,24 @@ bool gridCell::readGridfile(QXmlStreamReader& xml) {
 	double dx, dy;
 	int np;
 	set<cellInfo*> cells;
+	map<QString,funciton<bool(QXmlStreamReader& xml)>> handlers; 
+	handlers["type"] = [info,cells] (QXmlStreamReader& xml) {
+		string cell_type;
+		xml.readNextStartElement();
+		try {
+			cell_type = xml.readElementText().toStdString();
+			info->cell = cellMap.at(cell_type)();
+		} catch(const std::out_of_range& e) {
+			success = false;
+			info->cell = new Cell();
+		}
+		cells.insert(info);
+	}
+	handlers["conductance"] = [info,cells,x,y] (QXmlStreamReader& xml) {
+		xml.readNextStartElement();
+		xml.readNextStartElement();
+
+	}
 	if(!readNext(xml,"grid")) return false;
 	grid.addRows(xml.attributes().value("rows").toInt());
 	grid.addColumns(xml.attributes().value("columns").toInt());
@@ -298,16 +322,7 @@ bool gridCell::readGridfile(QXmlStreamReader& xml) {
 			info->np = np;
 			info->Y = y;
 			info->X = x;
-			string cell_type;
-			try {
-				xml.readNextStartElement();
-				cell_type = xml.readElementText().toStdString();
-				info->cell = cellMap.at(cell_type)();
-			} catch(const std::out_of_range& e) {
-				success = false;
-				info->cell = new Cell();
-			}
-			cells.insert(info);
+			
 			xml.skipCurrentElement();
 		}
 	}

@@ -182,7 +182,7 @@ bool gridProtocol::writepars(string file) {
 	string name;
 
 	bool exists = ofile.exists();
-	if(!ofile.open(QIODevice::Text|QIODevice::Append)){
+	if(!ofile.open(QIODevice::WriteOnly|QIODevice::Text|QIODevice::Truncate)){
 		cout << "Error opening " << file << endl;
 		return 1;
 	}

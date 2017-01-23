@@ -137,7 +137,7 @@ bool MeasureKernel::measure(double time, double var)
         ddrflag=true;
     }
     
-    if(minflag&&var>peak){          // Track value and time of peak
+    if(minflag&&abs(var)>peak){          // Track value and time of peak
         peak=var;
         maxt=time;
     }

@@ -40,6 +40,9 @@ class gridCell: public Cell {
     virtual bool writeGridfile(QXmlStreamWriter& xml);
     virtual bool writeGridfile(string fileName ="");
     virtual bool readGridfile(QXmlStreamReader& xml);
+	bool handleNode(QXmlStreamReader& xml, set<cellInfo*>& cells, cellInfo* info);
+	bool handleRow(QXmlStreamReader& xml, set<cellInfo*>& cells, cellInfo* info);
+	bool handleGrid(QXmlStreamReader& xml);
     virtual bool readGridfile(string filename);
     virtual bool setOutputfileConstants(string filename);
     virtual bool setOuputfileVariables(string filename);

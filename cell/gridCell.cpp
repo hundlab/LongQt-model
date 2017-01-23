@@ -8,6 +8,7 @@
 #include <iostream>
 #include <sstream>
 #include <set>
+#include <functional>
 #include <QXmlStreamWriter>
 #include <QXmlStreamReader>
 #include <QFile>
@@ -279,54 +280,98 @@ bool gridCell::writeGridfile(string fileName) {
 	return success;
 }
 bool gridCell::readGridfile(QXmlStreamReader& xml) {
+	while(!xml.atEnd() && xml.name() != "file") {
+		xml.readNext();
+	}
+	xml.readNext();
+	while(!xml.atEnd() && xml.name() != "grid") {
+		xml.readNext();
+	}
+	return this->handleGrid(xml);
+}
+bool gridCell::handleGrid(QXmlStreamReader& xml) {
+	if(xml.atEnd()) return false;
 	bool success = true;
+	set<cellInfo*> cells;
+
+	grid.addRows(xml.attributes().value("rows").toInt());
+	grid.addColumns(xml.attributes().value("columns").toInt());
+	this->np =  xml.attributes().value("np").toDouble();
+	this->dx =  xml.attributes().value("dx").toDouble();
+	this->dy =  xml.attributes().value("dy").toDouble();
+
+	cellInfo* info = new cellInfo;
+	info->dx = dx;
+	info->dy = dy;
+	info->np = np;
+
+	while(xml.readNextStartElement() && xml.name()=="row"){
+		success = this->handleRow(xml, cells, info);
+	}
+
+	grid.setCellTypes(cells);
+	return success;
+}
+bool gridCell::handleRow(QXmlStreamReader& xml, set<cellInfo*>& cells, cellInfo* info) {
+	if(xml.atEnd()) return false;
+	bool success = true;
+	info->X = xml.attributes().value("pos").toInt();
+	while(xml.readNextStartElement() && xml.name() == "node") {
+		success &= this->handleNode(xml, cells, info);
+	}
+	return success;
+}
+bool gridCell::handleNode(QXmlStreamReader& xml, set<cellInfo*>& cells, cellInfo* info) {
+	if(xml.atEnd()) return false;
 	auto cellMap = cellUtils().cellMap;
 	cellMap[Cell().type] = [] () {return (Cell*) new Cell;};
-	cellInfo* info;
-	double dx, dy;
-	int np;
-	set<cellInfo*> cells;
-	map<QString,funciton<bool(QXmlStreamReader& xml)>> handlers; 
-	handlers["type"] = [info,cells] (QXmlStreamReader& xml) {
+	map<QString,function<bool(QXmlStreamReader& xml)>> handlers; 
+	handlers["type"] = [&info,cellMap] (QXmlStreamReader& xml) {
+		bool success = true;
 		string cell_type;
-		xml.readNextStartElement();
 		try {
-			cell_type = xml.readElementText().toStdString();
+			xml.readNext();
+			cell_type = xml.text().toString().toStdString();
 			info->cell = cellMap.at(cell_type)();
-		} catch(const std::out_of_range& e) {
+		} catch(const std::out_of_range&) {
 			success = false;
 			info->cell = new Cell();
 		}
-		cells.insert(info);
-	}
-	handlers["conductance"] = [info,cells,x,y] (QXmlStreamReader& xml) {
-		xml.readNextStartElement();
-		xml.readNextStartElement();
-
-	}
-	if(!readNext(xml,"grid")) return false;
-	grid.addRows(xml.attributes().value("rows").toInt());
-	grid.addColumns(xml.attributes().value("columns").toInt());
-	np =  xml.attributes().value("np").toInt();
-    dx =  xml.attributes().value("dx").toDouble();
-    dy =  xml.attributes().value("dy").toDouble();
-
-	while(!xml.atEnd() && xml.readNextStartElement() && xml.name()=="row"){
-		int y = xml.attributes().value("pos").toInt();
-			;
-		while(!xml.atEnd() && xml.readNextStartElement() && xml.name() == "node") {
-			int x = xml.attributes().value("pos").toInt();
-			info = new cellInfo;
-			info->dx = dx;
-			info->dy = dy;
-			info->np = np;
-			info->Y = y;
-			info->X = x;
-			
-			xml.skipCurrentElement();
+		xml.skipCurrentElement();
+		return success;
+	};
+	handlers["conductance"] = [&info,this] (QXmlStreamReader& xml) {
+		while(xml.readNextStartElement()) {
+			if(xml.name() == "top") {
+				xml.readNext();
+				info->c_top = xml.text().toDouble();
+				xml.skipCurrentElement();
+			} else if(xml.name() == "bottom") {
+				xml.readNext();
+				info->c_bottom = xml.text().toDouble();
+				xml.skipCurrentElement();
+			} else if(xml.name() == "right") {
+				xml.readNext();
+				info->c_right = xml.text().toDouble();
+				xml.skipCurrentElement();
+			} else if(xml.name() == "left") {
+				xml.readNext();
+				info->c_left = xml.text().toDouble();
+				xml.skipCurrentElement();
+			}
 		}
+		return true;
+	};
+
+	bool success = true;
+	info = new cellInfo(*info);
+	info->Y = xml.attributes().value("pos").toInt();
+	while(xml.readNextStartElement()) {
+		try {
+			success &= handlers.at(xml.name().toString())(xml);
+		} catch(const std::out_of_range&) {}
 	}
-	grid.setCellTypes(cells);
+	cells.insert(info);
 	return success;
 }
 bool gridCell::readGridfile(string filename) {

@@ -9,6 +9,7 @@
 
 #include <set>
 #include <string>
+#include <cmath>
 
 #include "fiber.h"
 
@@ -19,6 +20,10 @@ struct cellInfo {
     double dy = 0.01;
     int np = 1;
     Cell* cell = 0;
+	double c_top = NAN;
+	double c_bottom = NAN;
+	double c_left = NAN;
+	double c_right = NAN;
 };
 
 class Grid {

@@ -107,6 +107,18 @@ void Grid::setCellTypes(const cellInfo& singleCell) {
         if(singleCell.cell->type == string("Cell")) {
             fiber.at(singleCell.X).B.at(singleCell.Y) = fibery.at(singleCell.Y).B.at(singleCell.X) = 0.0;
         }
+		if(!isnan(singleCell.c_top)) {
+			fibery.at(singleCell.Y).B.at(singleCell.X) = singleCell.c_top; 
+		}
+		if(!isnan(singleCell.c_bottom)) {
+			fibery.at(singleCell.Y).B.at(singleCell.X+1) = singleCell.c_bottom;
+		}
+		if(!isnan(singleCell.c_left)) {
+			fiber.at(singleCell.X).B.at(singleCell.Y) = singleCell.c_left;
+		}
+		if(!isnan(singleCell.c_right)) {
+			fiber.at(singleCell.X).B.at(singleCell.Y+1) = singleCell.c_right;
+		}
         if(singleCell.X == 0 ||static_cast<unsigned int>(singleCell.X) == fiber.size()) {
             fibery.at(singleCell.Y).B.at(singleCell.X) = 0.0;
         }

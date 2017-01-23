@@ -177,9 +177,10 @@ set<pair<int,int>>& gridProtocol::getStimNodes() {
 set<pair<int,int>>& gridProtocol::getDataNodes() {
 	return dataNodes;
 }
-bool gridProtocol::writepars(string file) {
+bool gridProtocol::writepars(string file, int type) {
 	QFile ofile(file.c_str());
 	string name;
+	bool toReturn;
 
 	bool exists = ofile.exists();
 	if(!ofile.open(QIODevice::WriteOnly|QIODevice::Text|QIODevice::Truncate)){
@@ -191,8 +192,12 @@ bool gridProtocol::writepars(string file) {
 	xml.writeStartDocument();
 	xml.writeStartElement("file");
 
-	bool toReturn = ((gridCell*)this->cell)->writeGridfile(xml);
-	toReturn &= CurrentClamp::writepars(xml);
+	if(type == 0 || type == 2) {
+		toReturn = ((gridCell*)this->cell)->writeGridfile(xml);
+	}
+	if(type == 0 || type == 1) {
+		toReturn &= CurrentClamp::writepars(xml);
+	}
 	xml.writeEndElement();
 
 	return toReturn;

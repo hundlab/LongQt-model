@@ -17,6 +17,8 @@ voltageClamp::voltageClamp()  : Protocol(){
     pars["t4"] = toInsert.Initialize("double",[this] () {return std::to_string(t4);},[this] (const string& value) {t4 = std::stod(value);});
     pars["t5"] = toInsert.Initialize("double",[this] () {return std::to_string(t5);},[this] (const string& value) {t5 = std::stod(value);});
 
+	type = "Voltage Clamp Protocol";
+
 }
 //overriden deep copy funtion
 voltageClamp* voltageClamp::clone(){

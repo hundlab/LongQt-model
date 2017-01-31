@@ -8,7 +8,7 @@
 #include "gridCell.h"
 #include <QFile>
 
-gridProtocol::gridProtocol()  : CurrentClamp(){
+gridProtocol::gridProtocol() : CurrentClamp(){
 	gridCell* temp = new gridCell();
 	cell = temp;
 	grid = temp->getGrid();
@@ -23,6 +23,7 @@ gridProtocol::gridProtocol()  : CurrentClamp(){
 	pars.erase("numtrials");
 	pars["paceflag"].set("true");
 	pars.erase("paceflag");
+	type = "Grid Protocol";
 }
 //overriden deep copy funtion
 gridProtocol* gridProtocol::clone(){
@@ -241,3 +242,12 @@ set<pair<int,int>> gridProtocol::stringToSet(string nodesList) {
 }
 
 //bool gridProtocol::addMeasure(Measure toInsert)
+void gridProtocol::setIonChanParams() {
+	Cell* cell = 0;
+	for(auto& pvar : this->new_pvars) {
+		for(auto& oneCell : pvar.second.cells) {
+			cell = this->grid->findNode(oneCell.first)->cell;
+			*cell->pars.at(pvar.first) = oneCell.second;
+		}
+	}
+}

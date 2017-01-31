@@ -75,6 +75,7 @@ class Protocol
     Cell* cell;        // pointer to cell class
     double vM;         // membrane potential, mV
     double time;       // time, ms
+	const char* type = "protocol";
     //##### Declare class params ##############
     double meastime,writetime;
     double writeint;

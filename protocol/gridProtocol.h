@@ -14,6 +14,24 @@
 
 class gridProtocol : public CurrentClamp {
   public:
+	enum Distribution {
+		none = 0,
+		normal = 1,
+		lognormal = 2
+	};
+	struct IonChanParam {
+		Distribution dist;
+		double val[2]; 
+		/*what these values are depends on dist
+		 *  for none: val[0] = starting value, val[1] = increment amount
+		 *  for normal & lognormal: val[0] = mean, val[1] = standard deviation
+		 */
+	};
+	struct MIonChanParam : IonChanParam {
+		map<pair<int,int>,double> cells; //map from x,y pos -> value
+	};
+
+  public:
     gridProtocol();
     gridProtocol(const gridProtocol& toCopy);
     gridProtocol* clone();
@@ -26,6 +44,8 @@ class gridProtocol : public CurrentClamp {
     set<pair<int,int>>& getStimNodes();
     virtual bool writepars(string file, int type = 0);
     virtual int readpars(string file, set<string> varnames = {});
+	virtual void setIonChanParams();
+	map<string,MIonChanParam> new_pvars;
 //    virtual bool addMeasure(Measure toInsert);
 
   private:

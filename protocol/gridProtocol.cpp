@@ -178,7 +178,7 @@ set<pair<int,int>>& gridProtocol::getStimNodes() {
 set<pair<int,int>>& gridProtocol::getDataNodes() {
 	return dataNodes;
 }
-bool gridProtocol::writepars(string file, int type) {
+bool gridProtocol::writepars(string file) {
 	QFile ofile(file.c_str());
 	string name;
 	bool toReturn;
@@ -193,12 +193,9 @@ bool gridProtocol::writepars(string file, int type) {
 	xml.writeStartDocument();
 	xml.writeStartElement("file");
 
-	if(type == 0 || type == 2) {
-		toReturn = ((gridCell*)this->cell)->writeGridfile(xml);
-	}
-	if(type == 0 || type == 1) {
-		toReturn &= CurrentClamp::writepars(xml);
-	}
+	toReturn = ((gridCell*)this->cell)->writeGridfile(xml);
+	toReturn &= CurrentClamp::writepars(xml);
+	this->writePvars(xml);
 	xml.writeEndElement();
 
 	return toReturn;
@@ -213,6 +210,7 @@ int gridProtocol::readpars(string file, set<string> varnames) {
 	this->grid->reset();
 	bool toReturn = ((gridCell*)this->cell)->readGridfile(xml);
 	toReturn &= (bool)CurrentClamp::readpars(xml);
+	this->readPvars(xml);
 	return (int)toReturn;
 }
 string gridProtocol::setToString(set<pair<int,int>>& nodes) {
@@ -250,4 +248,86 @@ void gridProtocol::setIonChanParams() {
 			*cell->pars.at(pvar.first) = oneCell.second;
 		}
 	}
+}
+
+void gridProtocol::writePvars(QXmlStreamWriter& xml) {
+	xml.writeStartElement("pvars");
+	for(auto& pvar : this->new_pvars) {
+		xml.writeStartElement("pvar");
+		xml.writeAttribute("name", pvar.first.c_str());
+		xml.writeTextElement("distribution_type", QString::number(pvar.second.dist));
+		xml.writeTextElement("value0", QString::number(pvar.second.val[0]));
+		xml.writeTextElement("value1", QString::number(pvar.second.val[1]));
+		xml.writeStartElement("cells");
+		for(auto& cell : pvar.second.cells) {
+			xml.writeStartElement("cell");
+			xml.writeAttribute("x", QString::number(cell.first.first));
+			xml.writeAttribute("y", QString::number(cell.first.second));
+			xml.writeCharacters(QString::number(cell.second));
+			xml.writeEndElement();
+		}
+		xml.writeEndElement();
+		xml.writeEndElement();
+	}
+	xml.writeEndElement();
+}
+
+void gridProtocol::readPvars(QXmlStreamReader& xml) {
+	//	while(!xml.atEnd() && xml.name() != "file") {
+	//		xml.readNext();
+	//	}
+	//	xml.readNext();
+	while(!xml.atEnd() && xml.name() != "pvars") {
+		xml.readNext();
+	}
+	this->handlePvars(xml);
+}
+
+void gridProtocol::handlePvars(QXmlStreamReader& xml) {
+	if(xml.atEnd()) return;
+	while(xml.readNextStartElement() && xml.name()=="pvar"){
+		this->handlePvar(xml);
+	}
+	xml.skipCurrentElement();
+}
+
+void gridProtocol::handlePvar(QXmlStreamReader& xml) {
+	if(xml.atEnd()) return;
+	pair<string,MIonChanParam> pvar;
+	pvar.first = xml.attributes().value("name").toString().toStdString();
+	while(xml.readNextStartElement()) {
+		if(xml.name()=="distribution_type") {
+			xml.readNext();
+			pvar.second.dist = static_cast<Distribution>(xml.text().toInt());
+			xml.skipCurrentElement();
+		} else if(xml.name()=="value0") {
+			xml.readNext();
+			pvar.second.val[0] = xml.text().toDouble();
+			xml.skipCurrentElement();
+		} else if(xml.name()=="value1") {
+			xml.readNext();
+			pvar.second.val[1] = xml.text().toDouble();
+			xml.skipCurrentElement();
+		} else if(xml.name()=="cells") {
+			while(xml.readNextStartElement() && xml.name()=="cell"){
+				pair<pair<int,int>,double> p = this->handleCell(xml);
+				pvar.second.cells[p.first] = p.second;
+			}
+		}
+		else {
+			xml.skipCurrentElement();
+		}
+	}
+	this->new_pvars[pvar.first] = pvar.second;
+}
+
+pair<pair<int,int>,double> gridProtocol::handleCell(QXmlStreamReader& xml) {
+	pair<pair<int,int>,double> c;
+	if(xml.atEnd()) return c;
+	c.first.first = xml.attributes().value("x").toInt();
+	c.first.second = xml.attributes().value("y").toInt();
+	xml.readNext();
+	c.second = xml.text().toDouble();
+	xml.skipCurrentElement();
+	return c;
 }

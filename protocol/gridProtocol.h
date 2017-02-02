@@ -42,9 +42,15 @@ class gridProtocol : public CurrentClamp {
     map<string, CellInitializer>& getCellMap();
     set<pair<int,int>>& getDataNodes();
     set<pair<int,int>>& getStimNodes();
-    virtual bool writepars(string file, int type = 0);
+    virtual bool writepars(string file);
     virtual int readpars(string file, set<string> varnames = {});
 	virtual void setIonChanParams();
+	virtual void writePvars(QXmlStreamWriter& xml);
+	virtual void readPvars(QXmlStreamReader& xml);
+	void handlePvars(QXmlStreamReader& xml);
+	void handlePvar(QXmlStreamReader& xml);
+	pair<pair<int,int>,double> handleCell(QXmlStreamReader& xml);
+
 	map<string,MIonChanParam> new_pvars;
 //    virtual bool addMeasure(Measure toInsert);
 

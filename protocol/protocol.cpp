@@ -106,7 +106,7 @@ Protocol::Protocol()
 	pars["cellStateFile"]= toInsert.Initialize("file", [this] () {return cellStateFile;}, [this] (const string& value) {cellStateFile = value;});
 	pars["celltype"]= toInsert.Initialize("cell", [this] () {return cell->type;}, [this] (const string& value) {this->setCell(value);}); 
 
-	cellMap = cellUtils().cellMap;
+	cellMap = CellUtils().cellMap;
 	this->setCell(HRD09Control().type);
 };
 

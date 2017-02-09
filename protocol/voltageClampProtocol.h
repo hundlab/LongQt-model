@@ -13,17 +13,17 @@
 
 #include "protocol.h"
 
-class voltageClamp : public Protocol {
+class VoltageClamp : public Protocol {
   public:
-    voltageClamp();
-    voltageClamp(const voltageClamp& toCopy);
-    voltageClamp* clone();
-    voltageClamp& operator=(const voltageClamp& toCopy);
+    VoltageClamp();
+    VoltageClamp(const VoltageClamp& toCopy);
+    VoltageClamp* clone();
+    VoltageClamp& operator=(const VoltageClamp& toCopy);
 
     bool runTrial() override;
   private:
     int clamp();
-    void CCcopy(const voltageClamp& toCopy);
+    void CCcopy(const VoltageClamp& toCopy);
 
     double v1, v2, v3, v4, v5;
     double t1, t2, t3, t4, t5;

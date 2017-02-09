@@ -12,7 +12,7 @@
 #include "node.h"
 #include "grid.h"
 
-class gridProtocol : public CurrentClamp {
+class GridProtocol : public CurrentClamp {
   public:
 	enum Distribution {
 		none = 0,
@@ -32,10 +32,10 @@ class gridProtocol : public CurrentClamp {
 	};
 
   public:
-    gridProtocol();
-    gridProtocol(const gridProtocol& toCopy);
-    gridProtocol* clone();
-    gridProtocol& operator=(const gridProtocol& toCopy);
+    GridProtocol();
+    GridProtocol(const GridProtocol& toCopy);
+    GridProtocol* clone();
+    GridProtocol& operator=(const GridProtocol& toCopy);
 
     bool runTrial() override;
     int stim();
@@ -56,7 +56,7 @@ class gridProtocol : public CurrentClamp {
 
   private:
     map<string, CellInitializer> baseCellMap;
-    void CCcopy(const gridProtocol& toCopy);
+    void CCcopy(const GridProtocol& toCopy);
     set<pair<int,int>> dataNodes;
     set<pair<int,int>> stimNodes;
     string setToString(set<pair<int,int>>& nodes);

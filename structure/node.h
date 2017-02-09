@@ -1,3 +1,6 @@
+/*
+ * A container for cells that also keeps some of the information about the cells
+ */
 #ifndef NODE_H
 #define NODE_H
 

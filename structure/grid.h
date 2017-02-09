@@ -13,7 +13,7 @@
 
 #include "fiber.h"
 
-struct cellInfo {
+struct CellInfo {
     int X = -1;
     int Y = -1;
     double dx = 0.01;
@@ -40,8 +40,8 @@ class Grid {
     virtual void removeRows(unsigned int num, int position = 0);
     virtual void removeColumn(int pos);
     virtual void removeColumns(unsigned int num, int position = 0);
-    virtual void setCellTypes(set<cellInfo*>& cells); 
-    virtual void setCellTypes(const cellInfo& singleCell);
+    virtual void setCellTypes(set<CellInfo*>& cells);
+    virtual void setCellTypes(const CellInfo& singleCell);
     virtual int rowCount();
     virtual int columnCount();
     virtual void addBuffer();

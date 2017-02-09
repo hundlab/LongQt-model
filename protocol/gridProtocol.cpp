@@ -8,14 +8,14 @@
 #include "gridCell.h"
 #include <QFile>
 
-gridProtocol::gridProtocol() : CurrentClamp(){
-	gridCell* temp = new gridCell();
+GridProtocol::GridProtocol() : CurrentClamp(){
+	GridCell* temp = new GridCell();
 	cell = temp;
 	grid = temp->getGrid();
 	baseCellMap = cellMap;
 	baseCellMap["Inexcitable Cell"] = [] () {return new Cell;};
 	cellMap.clear();
-	cellMap["gridCell"] = [] () {return (Cell*) new gridCell;};
+	cellMap["gridCell"] = [] () {return (Cell*) new GridCell;};
 	GetSetRef toInsert;
 	pars["gridFile"]= toInsert.Initialize("file", [temp] () {return temp->gridfile();}, [temp] (const string& value) {temp->setGridfile(value);});
 	pars["measNodes"]= toInsert.Initialize("set", [this] () {return setToString(dataNodes);}, [this] (const string& value) {dataNodes = stringToSet(value);});
@@ -26,19 +26,19 @@ gridProtocol::gridProtocol() : CurrentClamp(){
 	type = "Grid Protocol";
 }
 //overriden deep copy funtion
-gridProtocol* gridProtocol::clone(){
-	return new gridProtocol(*this);
+GridProtocol* GridProtocol::clone(){
+	return new GridProtocol(*this);
 };
-gridProtocol::gridProtocol(const gridProtocol& toCopy) : CurrentClamp(toCopy){
+GridProtocol::GridProtocol(const GridProtocol& toCopy) : CurrentClamp(toCopy){
 	this->CCcopy(toCopy);
 }
-void gridProtocol::CCcopy(const gridProtocol& toCopy) {
+void GridProtocol::CCcopy(const GridProtocol& toCopy) {
 	this->dataNodes = toCopy.dataNodes;
 	this->stimNodes = toCopy.stimNodes;
-	this->grid = ((gridCell*)this->cell)->getGrid();
+	this->grid = ((GridCell*)this->cell)->getGrid();
 }
 // External stimulus.
-int gridProtocol::stim()
+int GridProtocol::stim()
 {
 	for(auto it : stimNodes) {
 		Cell* cell = grid->findNode(it)->cell;
@@ -66,10 +66,10 @@ int gridProtocol::stim()
 	return 1;
 };
 
-bool gridProtocol::runTrial() {
+bool GridProtocol::runTrial() {
 	char writefile[150];     // Buffer for storing filenames
 
-	((gridCell*)cell)->addBuffer();
+	((GridCell*)cell)->addBuffer();
 	//to be moved to a better location
 	set<string> temp;
 	temp.insert(pnames.begin(),pnames.end());
@@ -169,16 +169,16 @@ bool gridProtocol::runTrial() {
 	return true; 
 }
 
-map<string, CellInitializer>& gridProtocol::getCellMap() {
+map<string, CellInitializer>& GridProtocol::getCellMap() {
 	return baseCellMap;
 }
-set<pair<int,int>>& gridProtocol::getStimNodes() {
+set<pair<int,int>>& GridProtocol::getStimNodes() {
 	return stimNodes;
 }
-set<pair<int,int>>& gridProtocol::getDataNodes() {
+set<pair<int,int>>& GridProtocol::getDataNodes() {
 	return dataNodes;
 }
-bool gridProtocol::writepars(string file) {
+bool GridProtocol::writepars(string file) {
 	QFile ofile(file.c_str());
 	string name;
 	bool toReturn;
@@ -193,14 +193,14 @@ bool gridProtocol::writepars(string file) {
 	xml.writeStartDocument();
 	xml.writeStartElement("file");
 
-	toReturn = ((gridCell*)this->cell)->writeGridfile(xml);
+	toReturn = ((GridCell*)this->cell)->writeGridfile(xml);
 	toReturn &= CurrentClamp::writepars(xml);
 	this->writePvars(xml);
 	xml.writeEndElement();
 
 	return toReturn;
 }
-int gridProtocol::readpars(string file, set<string> varnames) {
+int GridProtocol::readpars(string file, set<string> varnames) {
 	QFile ifile(file.c_str());
 	if(!ifile.open(QIODevice::ReadOnly|QIODevice::Text)){
 		cout << "Error opening " << file << endl;
@@ -208,19 +208,19 @@ int gridProtocol::readpars(string file, set<string> varnames) {
 	}
 	QXmlStreamReader xml(&ifile);
 	this->grid->reset();
-	bool toReturn = ((gridCell*)this->cell)->readGridfile(xml);
+	bool toReturn = ((GridCell*)this->cell)->readGridfile(xml);
 	toReturn &= (bool)CurrentClamp::readpars(xml);
 	this->readPvars(xml);
 	return (int)toReturn;
 }
-string gridProtocol::setToString(set<pair<int,int>>& nodes) {
+string GridProtocol::setToString(set<pair<int,int>>& nodes) {
 	stringstream toReturn;
 	for(auto node : nodes) {
 		toReturn << node.first << " " << node.second << "\t";
 	}
 	return toReturn.str();
 }
-set<pair<int,int>> gridProtocol::stringToSet(string nodesList) {
+set<pair<int,int>> GridProtocol::stringToSet(string nodesList) {
 	set<pair<int,int>> toReturn;
 	stringstream stream(nodesList);
 	while(!stream.eof()) {
@@ -240,7 +240,7 @@ set<pair<int,int>> gridProtocol::stringToSet(string nodesList) {
 }
 
 //bool gridProtocol::addMeasure(Measure toInsert)
-void gridProtocol::setIonChanParams() {
+void GridProtocol::setIonChanParams() {
 	Cell* cell = 0;
 	for(auto& pvar : this->new_pvars) {
 		for(auto& oneCell : pvar.second.cells) {
@@ -250,7 +250,7 @@ void gridProtocol::setIonChanParams() {
 	}
 }
 
-void gridProtocol::writePvars(QXmlStreamWriter& xml) {
+void GridProtocol::writePvars(QXmlStreamWriter& xml) {
 	xml.writeStartElement("pvars");
 	for(auto& pvar : this->new_pvars) {
 		xml.writeStartElement("pvar");
@@ -272,7 +272,7 @@ void gridProtocol::writePvars(QXmlStreamWriter& xml) {
 	xml.writeEndElement();
 }
 
-void gridProtocol::readPvars(QXmlStreamReader& xml) {
+void GridProtocol::readPvars(QXmlStreamReader& xml) {
 	//	while(!xml.atEnd() && xml.name() != "file") {
 	//		xml.readNext();
 	//	}
@@ -283,7 +283,7 @@ void gridProtocol::readPvars(QXmlStreamReader& xml) {
 	this->handlePvars(xml);
 }
 
-void gridProtocol::handlePvars(QXmlStreamReader& xml) {
+void GridProtocol::handlePvars(QXmlStreamReader& xml) {
 	if(xml.atEnd()) return;
 	while(xml.readNextStartElement() && xml.name()=="pvar"){
 		this->handlePvar(xml);
@@ -291,7 +291,7 @@ void gridProtocol::handlePvars(QXmlStreamReader& xml) {
 	xml.skipCurrentElement();
 }
 
-void gridProtocol::handlePvar(QXmlStreamReader& xml) {
+void GridProtocol::handlePvar(QXmlStreamReader& xml) {
 	if(xml.atEnd()) return;
 	pair<string,MIonChanParam> pvar;
 	pvar.first = xml.attributes().value("name").toString().toStdString();
@@ -321,7 +321,7 @@ void gridProtocol::handlePvar(QXmlStreamReader& xml) {
 	this->new_pvars[pvar.first] = pvar.second;
 }
 
-pair<pair<int,int>,double> gridProtocol::handleCell(QXmlStreamReader& xml) {
+pair<pair<int,int>,double> GridProtocol::handleCell(QXmlStreamReader& xml) {
 	pair<pair<int,int>,double> c;
 	if(xml.atEnd()) return c;
 	c.first.first = xml.attributes().value("x").toInt();

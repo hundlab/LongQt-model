@@ -1,6 +1,6 @@
 #include "voltageClampProtocol.h"
 
-voltageClamp::voltageClamp()  : Protocol(){
+VoltageClamp::VoltageClamp()  : Protocol(){
     v1 = v2 = v3 = v4 = v5 = 0;
     t1 = t2 = t3 = t4 = t5 = 0;
     pars.erase("numtrials");
@@ -21,21 +21,21 @@ voltageClamp::voltageClamp()  : Protocol(){
 
 }
 //overriden deep copy funtion
-voltageClamp* voltageClamp::clone(){
-    return new voltageClamp(*this);
+VoltageClamp* VoltageClamp::clone(){
+    return new VoltageClamp(*this);
 };
 
-voltageClamp::voltageClamp(const voltageClamp& toCopy) : Protocol(toCopy){
+VoltageClamp::VoltageClamp(const VoltageClamp& toCopy) : Protocol(toCopy){
     this->CCcopy(toCopy);
 }
 
-voltageClamp& voltageClamp::operator=(const voltageClamp& toCopy) {
+VoltageClamp& VoltageClamp::operator=(const VoltageClamp& toCopy) {
     this->copy(toCopy);
     this->CCcopy(toCopy);
     return *this;
 }
 
-void voltageClamp::CCcopy(const voltageClamp& toCopy) {
+void VoltageClamp::CCcopy(const VoltageClamp& toCopy) {
     v1 = toCopy.v1;
     v2= toCopy.v2;
     v3 = toCopy.v3;
@@ -49,7 +49,7 @@ void voltageClamp::CCcopy(const voltageClamp& toCopy) {
 }
 
 // External stimulus.
-int voltageClamp::clamp()
+int VoltageClamp::clamp()
 {
     if(cell->t >= t5 && t5 != 0) {
         vM = cell->vOld = v5;
@@ -65,7 +65,7 @@ int voltageClamp::clamp()
     return 1;
 };
 
-bool voltageClamp::runTrial() {
+bool VoltageClamp::runTrial() {
         char writefile[150];     // Buffer for storing filenames
 //to be moved to a better location
 set<string> temp;

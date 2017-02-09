@@ -1,3 +1,6 @@
+/*
+ * Fiber is a 1D line of cells stored with other information in Nodes
+ */
 #ifndef FIBER_H
 #define FIBER_H
 

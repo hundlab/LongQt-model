@@ -1,3 +1,7 @@
+/*
+ * general purpose functions used by mostly by protocols 
+ * This is the place to add a new cell type
+ */
 #ifndef CELLUTILS_H
 #define CELLUTILS_H
 
@@ -52,11 +56,11 @@ inline bool readUpLevel(QXmlStreamReader& xml) {
 	}
 	return false;
 }
-class cellUtils {
+class CellUtils {
 	public:
 		map<string, CellInitializer> cellMap;
 		map<string, list<pair<string,string>>> protocolCellDefaults;
-		cellUtils() {
+        CellUtils() {
 			cellMap[ControlSa().type] = [] () {return (Cell*) new ControlSa;};
 			cellMap[GpbAtrial().type] = [] () {return (Cell*) new GpbAtrial;};
 			cellMap[HRD09Control().type] = [] () {return (Cell*) new HRD09Control;};
@@ -76,7 +80,7 @@ class cellUtils {
 			protocolCellDefaults[ControlSa().type] = {{"paceflag","true"},{"stimval","-60"},{"stimdur","1"},{"tMax","500000"},{"writetime","495000"},{"bcl","1000"},{"numstims","500"}};
 			protocolCellDefaults[HRD09Control().type] = {{"paceflag","true"},{"stimval","-80"},{"stimdur","0.5"},{"tMax","500000"},{"writetime","495000"},{"bcl","1000"},{"numstims","500"}};
 			protocolCellDefaults[GpbAtrial().type] = {{"paceflag","true"},{"stimval","-12.5"},{"stimdur","5"},{"tMax","500000"},{"writetime","495000"},{"bcl","1000"},{"numstims","500"}};
-			protocolCellDefaults[gridCell().type] = {{"paceflag","true"},{"stimval","-12.5"},{"stimdur","5"},{"tMax","500000"},{"writetime","495000"},{"bcl","1000"},{"numstims","500"}};
+            protocolCellDefaults[GridCell().type] = {{"paceflag","true"},{"stimval","-12.5"},{"stimdur","5"},{"tMax","500000"},{"writetime","495000"},{"bcl","1000"},{"numstims","500"}};
 			protocolCellDefaults[HRD09BorderZone().type] = {{"paceflag","true"},{"stimval","-80"},{"stimdur","0.5"},{"tMax","500000"},{"writetime","495000"},{"bcl","1000"},{"numstims","500"}};
 			protocolCellDefaults[TNNP04Control().type] = {{"paceflag","true"},{"stimval","-60"},{"stimdur","1"},{"tMax","500000"},{"writetime","495000"},{"bcl","1000"},{"numstims","500"}};
 

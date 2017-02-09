@@ -88,12 +88,12 @@ void Grid::removeColumn(int pos) {
         it->B.erase(it->B.begin() +pos);
     }
 }
-void Grid::setCellTypes(set<cellInfo*>& cells) {
+void Grid::setCellTypes(set<CellInfo*>& cells) {
     for(auto it : cells) {
         setCellTypes(*it);
     }
 }
-void Grid::setCellTypes(const cellInfo& singleCell) {
+void Grid::setCellTypes(const CellInfo& singleCell) {
     try {
         Node* n = fiber.at(singleCell.X).nodes.at(singleCell.Y);
         n->cell = singleCell.cell;

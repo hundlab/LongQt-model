@@ -17,10 +17,10 @@
 #include "gridCell.h"
 #include "cellUtils.h"
 
-gridCell::gridCell() {
+GridCell::GridCell() {
 	this->Initialize();
 }
-void gridCell::Initialize() {
+void GridCell::Initialize() {
 	dx = 0.01;
 	dy = 0.01;
 	np = 1;
@@ -29,22 +29,22 @@ void gridCell::Initialize() {
 	tcount = 0;
 	makeMap();
 }
-gridCell::gridCell(gridCell& toCopy) : Cell(toCopy) {
+GridCell::GridCell(GridCell& toCopy) : Cell(toCopy) {
 	this->Initialize(); 
 	this->gridfileName = toCopy.gridfileName;
 	this->grid = Grid(toCopy.grid);
 }
-gridCell* gridCell::clone() {
-	return new gridCell(*this);
+GridCell* GridCell::clone() {
+	return new GridCell(*this);
 }
-gridCell::~gridCell() {}
-Grid* gridCell::getGrid() {
+GridCell::~GridCell() {}
+Grid* GridCell::getGrid() {
 	return &grid;
 }
-void gridCell::addBuffer() {
+void GridCell::addBuffer() {
 	grid.addBuffer();
 }
-bool gridCell::setOutputfileConstants(string filename) {
+bool GridCell::setOutputfileConstants(string filename) {
 	int i = 0;
 	bool toReturn = true;
 	for(auto it = grid.fiber.begin(); it != grid.fiber.end(); it++, i++) {
@@ -56,7 +56,7 @@ bool gridCell::setOutputfileConstants(string filename) {
 	}
 	return toReturn;
 }
-bool gridCell::setOuputfileVariables(string filename) {
+bool GridCell::setOuputfileVariables(string filename) {
 	int i = 0;
 	bool toReturn = true;
 	for(auto it = grid.fiber.begin(); it != grid.fiber.end(); it++, i++) {
@@ -68,7 +68,7 @@ bool gridCell::setOuputfileVariables(string filename) {
 	}
 	return toReturn;
 }
-set<string> gridCell::getVariables() {
+set<string> GridCell::getVariables() {
 	set<string> toReturn = Cell::getVariables();
 	for(auto it = grid.fiber.begin(); it != grid.fiber.end(); it++) {
 		for(auto iv = it->nodes.begin(); iv != it->nodes.end(); iv++) {
@@ -78,7 +78,7 @@ set<string> gridCell::getVariables() {
 	}
 	return toReturn;
 }
-set<string> gridCell::getConstants() {
+set<string> GridCell::getConstants() {
 	set<string> toReturn = Cell::getConstants();
 	for(auto it = grid.fiber.begin(); it != grid.fiber.end(); it++) {
 		for(auto iv = it->nodes.begin(); iv != it->nodes.end(); iv++) {
@@ -89,7 +89,7 @@ set<string> gridCell::getConstants() {
 	return toReturn;
 }
 
-bool gridCell::setConstantSelection(set<string> new_selection) {
+bool GridCell::setConstantSelection(set<string> new_selection) {
 	bool toReturn = true;
 	parsSelection = new_selection;
 	for(auto it = grid.fiber.begin(); it != grid.fiber.end(); it++) {
@@ -99,7 +99,7 @@ bool gridCell::setConstantSelection(set<string> new_selection) {
 	}
 	return toReturn;
 }
-bool gridCell::setVariableSelection(set<string> new_selection) {
+bool GridCell::setVariableSelection(set<string> new_selection) {
 	bool toReturn = true;
 	varsSelection = new_selection;
 	for(auto it = grid.fiber.begin(); it != grid.fiber.end(); it++) {
@@ -109,28 +109,28 @@ bool gridCell::setVariableSelection(set<string> new_selection) {
 	}
 	return toReturn;
 }
-void gridCell::writeConstants() {
+void GridCell::writeConstants() {
 	for(auto it : grid.fiber) {
 		for(auto iv : it.nodes) {
 			iv->cell->writeConstants();
 		}
 	}
 }
-void gridCell::writeVariables() {
+void GridCell::writeVariables() {
 	for(auto it : grid.fiber) {
 		for(auto iv : it.nodes) {
 			iv->cell->writeVariables();
 		}
 	}
 }
-void gridCell::closeFiles() {
+void GridCell::closeFiles() {
 	for(auto it : grid.fiber) {
 		for(auto iv : it.nodes) {
 			iv->cell->closeFiles();
 		}
 	}   
 }
-double gridCell::updateV() {
+double GridCell::updateV() {
 	int i,j;
 	int xLen = static_cast<int>(grid.fibery.size());
 	int yLen = static_cast<int>(grid.fiber.size());
@@ -162,21 +162,21 @@ double gridCell::updateV() {
 	}
 	return 0.0;
 }
-void gridCell::updateConc() {
+void GridCell::updateConc() {
 	for(auto it = grid.fiber.begin(); it != grid.fiber.end(); it++) {
 		for(auto iv = it->nodes.begin(); iv != it->nodes.end(); iv++) {
 			(*iv)->cell->updateConc();
 		}
 	}
 }
-void gridCell::updateCurr() {
+void GridCell::updateCurr() {
 	for(auto it = grid.fiber.begin(); it != grid.fiber.end(); it++) {
 		for(auto iv = it->nodes.begin(); iv != it->nodes.end(); iv++) {
 			(*iv)->cell->updateCurr();
 		}
 	}
 }
-int gridCell::externalStim(double stimval) {
+int GridCell::externalStim(double stimval) {
 	for(auto it = grid.fiber.begin(); it != grid.fiber.end(); it++) {
 		for(auto iv = it->nodes.begin(); iv != it->nodes.end(); iv++) {
 			(*iv)->cell->externalStim(stimval);
@@ -184,7 +184,7 @@ int gridCell::externalStim(double stimval) {
 	}
 	return 1;
 }
-double gridCell::tstep(double stimt)
+double GridCell::tstep(double stimt)
 {
 	unsigned int i,j;
 	int vmflag=0;
@@ -214,18 +214,18 @@ double gridCell::tstep(double stimt)
 
 	return t;
 }
-void gridCell::makeMap() {//only aply to cells added after the change?
+void GridCell::makeMap() {//only aply to cells added after the change?
 	pars["dx"] = &dx;
 	pars["dy"] = &dy;
 	pars["np"] = &np;
 }
-void gridCell::setGridfile(string name) {
+void GridCell::setGridfile(string name) {
 	gridfileName = name;
 }
-string gridCell::gridfile() {
+string GridCell::gridfile() {
 	return gridfileName;
 }
-bool gridCell::writeGridfile(QXmlStreamWriter& xml) {
+bool GridCell::writeGridfile(QXmlStreamWriter& xml) {
 	int i = 0;
 	int j = 0;
 	xml.writeStartElement("grid");
@@ -259,7 +259,7 @@ bool gridCell::writeGridfile(QXmlStreamWriter& xml) {
 	xml.writeEndElement();
 	return true;    
 }
-bool gridCell::writeGridfile(string fileName) {
+bool GridCell::writeGridfile(string fileName) {
 	if(fileName == "") {
 		fileName = this->gridfileName;
 	}
@@ -279,7 +279,7 @@ bool gridCell::writeGridfile(string fileName) {
 	xml.writeEndElement();
 	return success;
 }
-bool gridCell::readGridfile(QXmlStreamReader& xml) {
+bool GridCell::readGridfile(QXmlStreamReader& xml) {
 	while(!xml.atEnd() && xml.name() != "file") {
 		xml.readNext();
 	}
@@ -289,10 +289,10 @@ bool gridCell::readGridfile(QXmlStreamReader& xml) {
 	}
 	return this->handleGrid(xml);
 }
-bool gridCell::handleGrid(QXmlStreamReader& xml) {
+bool GridCell::handleGrid(QXmlStreamReader& xml) {
 	if(xml.atEnd()) return false;
 	bool success = true;
-	set<cellInfo*> cells;
+	set<CellInfo*> cells;
 
 	grid.addRows(xml.attributes().value("rows").toInt());
 	grid.addColumns(xml.attributes().value("columns").toInt());
@@ -300,7 +300,7 @@ bool gridCell::handleGrid(QXmlStreamReader& xml) {
 	this->dx =  xml.attributes().value("dx").toDouble();
 	this->dy =  xml.attributes().value("dy").toDouble();
 
-	cellInfo* info = new cellInfo;
+	CellInfo* info = new CellInfo;
 	info->dx = dx;
 	info->dy = dy;
 	info->np = np;
@@ -312,7 +312,7 @@ bool gridCell::handleGrid(QXmlStreamReader& xml) {
 	grid.setCellTypes(cells);
 	return success;
 }
-bool gridCell::handleRow(QXmlStreamReader& xml, set<cellInfo*>& cells, cellInfo* info) {
+bool GridCell::handleRow(QXmlStreamReader& xml, set<CellInfo*>& cells, CellInfo* info) {
 	if(xml.atEnd()) return false;
 	bool success = true;
 	info->X = xml.attributes().value("pos").toInt();
@@ -321,9 +321,9 @@ bool gridCell::handleRow(QXmlStreamReader& xml, set<cellInfo*>& cells, cellInfo*
 	}
 	return success;
 }
-bool gridCell::handleNode(QXmlStreamReader& xml, set<cellInfo*>& cells, cellInfo* info) {
+bool GridCell::handleNode(QXmlStreamReader& xml, set<CellInfo*>& cells, CellInfo* info) {
 	if(xml.atEnd()) return false;
-	auto cellMap = cellUtils().cellMap;
+	auto cellMap = CellUtils().cellMap;
 	cellMap[Cell().type] = [] () {return (Cell*) new Cell;};
 	map<QString,function<bool(QXmlStreamReader& xml)>> handlers; 
 	handlers["type"] = [&info,cellMap] (QXmlStreamReader& xml) {
@@ -364,7 +364,7 @@ bool gridCell::handleNode(QXmlStreamReader& xml, set<cellInfo*>& cells, cellInfo
 	};
 
 	bool success = true;
-	info = new cellInfo(*info);
+	info = new CellInfo(*info);
 	info->Y = xml.attributes().value("pos").toInt();
 	while(xml.readNextStartElement()) {
 		try {
@@ -374,7 +374,7 @@ bool gridCell::handleNode(QXmlStreamReader& xml, set<cellInfo*>& cells, cellInfo
 	cells.insert(info);
 	return success;
 }
-bool gridCell::readGridfile(string filename) {
+bool GridCell::readGridfile(string filename) {
 	QFile ifile(filename.c_str());
 	if(!ifile.open(QIODevice::ReadOnly|QIODevice::Text)){
 		cout << "Error opening " << filename << endl;
@@ -383,7 +383,7 @@ bool gridCell::readGridfile(string filename) {
 	QXmlStreamReader xml(&ifile);
 	return this->readGridfile(xml);
 }
-bool gridCell:: readCellState(string filename) {
+bool GridCell:: readCellState(string filename) {
 	ifstream ifile;
 	ifile.open(filename);
 	if(!ifile.good()) {
@@ -400,7 +400,7 @@ bool gridCell:: readCellState(string filename) {
 	ifile.close();
 	return succes;
 }
-bool gridCell::writeCellState(string filename) {
+bool GridCell::writeCellState(string filename) {
 	ofstream ofile;
 	ofile.open(filename,ios_base::app);
 	if(!ofile.good()) {

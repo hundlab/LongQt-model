@@ -544,9 +544,9 @@ bool Protocol::writepars(string file)
 		xml.writeStartDocument();
 	}
 	bool success = this->writepars(xml);
-	ofile.close();
 	xml.writeEndDocument();
-	return success;
+    ofile.close();
+    return success;
 };
 //############################################################
 //Wirte the keys from varmap to a file

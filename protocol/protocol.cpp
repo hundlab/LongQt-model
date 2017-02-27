@@ -23,21 +23,7 @@
 #define strncasecmp _strnicmp
 #endif
 
-//helper functions
-string trim(string str)
-{
-	string toFind = " \t\n\v\f\r";
-	str.erase(0, str.find_first_not_of(toFind));
-	str.erase(str.find_last_not_of(toFind)+1);
-	return str;
-}
-string Protocol::to_string(const bool& b) {
-	return b ? "true" : "false";
-}
 
-bool Protocol::stob(const string& s) {
-	return (strcasecmp("true",trim(s).c_str()) == 0);
-}
 
 //######################################################
 // Default Constructor 
@@ -95,8 +81,8 @@ Protocol::Protocol()
 	pars["writeint"]= toInsert.Initialize("int", [this] () {return std::to_string(writeint);}, [this] (const string& value) {writeint = std::stoi(value);});
 	pars["writetime"]= toInsert.Initialize("double", [this] () {return std::to_string(writetime);}, [this] (const string& value) {writetime = std::stod(value);});
 	pars["meastime"]= toInsert.Initialize("double", [this] () {return std::to_string(meastime);}, [this] (const string& value) {meastime = std::stod(value);});
-	pars["writeCellState"]= toInsert.Initialize("bool", [this] () {return to_string(writeCellState);}, [this] (const string& value) {writeCellState = stob(value);});
-	pars["readCellState"]= toInsert.Initialize("bool", [this] () {return to_string(readCellState);}, [this] (const string& value) {readCellState = stob(value);});
+    pars["writeCellState"]= toInsert.Initialize("bool", [this] () {return CellUtils::to_string(writeCellState);}, [this] (const string& value) {writeCellState = CellUtils::stob(value);});
+    pars["readCellState"]= toInsert.Initialize("bool", [this] () {return CellUtils::to_string(readCellState);}, [this] (const string& value) {readCellState = CellUtils::stob(value);});
 	pars["datadir"]= toInsert.Initialize("directory", [this] () {return datadir;}, [this] (const string& value) {datadir = value;});
 	//    pars["cellStateDir"]= toInsert.Initialize("directory", [this] () {return cellStateDir;}, [this] (const string& value) {cellStateDir = value;});
 	pars["pvarfile"]= toInsert.Initialize("file", [this] () {return pvarfile;}, [this] (const string& value) {pvarfile = value;});
@@ -106,7 +92,7 @@ Protocol::Protocol()
 	pars["cellStateFile"]= toInsert.Initialize("file", [this] () {return cellStateFile;}, [this] (const string& value) {cellStateFile = value;});
 	pars["celltype"]= toInsert.Initialize("cell", [this] () {return cell->type;}, [this] (const string& value) {this->setCell(value);}); 
 
-	cellMap = CellUtils().cellMap;
+    cellMap = CellUtils::cellMap;
 	this->setCell(HRD09Control().type);
 };
 
@@ -312,7 +298,7 @@ int Protocol::readpars(QXmlStreamReader& xml, set<string> varnames) {
 	if(varnames.size() > 0) {
 		useVarnames = true;
 	}
-	if(!readNext(xml, "pars")) return 1;
+    if(!CellUtils::readNext(xml, "pars")) return 1;
 	while(!xml.atEnd() && xml.readNextStartElement()){
 		name = xml.attributes().value("name").toString().toStdString();
 		try {

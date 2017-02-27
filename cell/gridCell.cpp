@@ -323,7 +323,7 @@ bool GridCell::handleRow(QXmlStreamReader& xml, set<CellInfo*>& cells, CellInfo*
 }
 bool GridCell::handleNode(QXmlStreamReader& xml, set<CellInfo*>& cells, CellInfo* info) {
 	if(xml.atEnd()) return false;
-	auto cellMap = CellUtils().cellMap;
+    auto cellMap = CellUtils::cellMap;
 	cellMap[Cell().type] = [] () {return (Cell*) new Cell;};
 	map<QString,function<bool(QXmlStreamReader& xml)>> handlers; 
 	handlers["type"] = [&info,cellMap] (QXmlStreamReader& xml) {

@@ -169,7 +169,7 @@ bool GridProtocol::runTrial() {
 	return true; 
 }
 
-map<string, CellInitializer>& GridProtocol::getCellMap() {
+map<string, CellUtils::CellInitializer>& GridProtocol::getCellMap() {
 	return baseCellMap;
 }
 set<pair<int,int>>& GridProtocol::getStimNodes() {

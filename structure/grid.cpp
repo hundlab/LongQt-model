@@ -135,8 +135,6 @@ int Grid::rowCount() {
 int Grid::columnCount() {
     return static_cast<int>(fibery.size());
 }
-void Grid::addBuffer() {
-}
 pair<int,int> Grid::findNode(const Node* node) {
     pair<int,int> p(-1,-1);
     int i,j;

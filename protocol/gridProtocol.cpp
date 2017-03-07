@@ -24,6 +24,10 @@ GridProtocol::GridProtocol() : CurrentClamp(){
 	pars["paceflag"].set("true");
 	pars.erase("paceflag");
 	type = "Grid Protocol";
+	stimval2 = stimval;
+	stimdur2 = stimdur;
+	bcl2 = bcl;
+	stimt2 = stimt;
 }
 //overriden deep copy funtion
 GridProtocol* GridProtocol::clone(){
@@ -69,7 +73,6 @@ int GridProtocol::stim()
 bool GridProtocol::runTrial() {
 	char writefile[150];     // Buffer for storing filenames
 
-	((GridCell*)cell)->addBuffer();
 	//to be moved to a better location
 	set<string> temp;
 	temp.insert(pnames.begin(),pnames.end());
@@ -114,8 +117,12 @@ bool GridProtocol::runTrial() {
 
 	while(int(doneflag)&&(time<tMax)){
 
+
 		time = cell->tstep(stimt);    // Update time
 		cell->updateCurr();    // Update membrane currents
+		if(stim2 && stimt2 > cell->t) {
+			this->swapStims();
+		}
 		if(int(paceflag)==1) {  // Apply stimulus
 			stim();
 		}
@@ -164,6 +171,9 @@ bool GridProtocol::runTrial() {
 	if(writeCellState) {
 		sprintf(writefile,(datadir + "/" + simvarfile).c_str(),trial);
 		cell->writeCellState(writefile);
+	}
+	if(stim2 && stimt2 > cell->t) {
+		this->swapStims();
 	}
 
 	return true; 
@@ -330,4 +340,55 @@ pair<pair<int,int>,double> GridProtocol::handleCell(QXmlStreamReader& xml) {
 	c.second = xml.text().toDouble();
 	xml.skipCurrentElement();
 	return c;
+}
+
+void GridProtocol::swapStims() {
+	double temp;
+	temp = stimval;
+	stimval = stimval2;
+	stimval2 = temp;
+
+	temp = stimdur;
+	stimdur = stimdur2;
+	stimdur2 = temp;
+
+	temp = bcl;
+	bcl = bcl2;
+	bcl2 = temp;
+
+	temp = stimt;
+	stimt = stimt2;
+	stimt2 = temp;
+
+	set<pair<int,int>> temp2 = stimNodes;
+	stimNodes = stimNodes2;
+	stimNodes2 = temp2;
+}
+
+void GridProtocol::toggleStim2() {
+	stim2 = !stim2;
+	if(stim2) {
+		GetSetRef toInsert;
+		pars["stim2"] = toInsert.Initialize("double", 
+				[this] () {return std::to_string(this->stim2);}, 
+				[this] (const string& value) {this->stim2 = stod(value);});
+		pars["bcl2"] = toInsert.Initialize("double", 
+				[this] () {return std::to_string(this->stim2);}, 
+				[this] (const string& value) {this->stim2 = stod(value);});
+		pars["stimdur2"] = toInsert.Initialize("double", 
+				[this] () {return std::to_string(this->stim2);}, 
+                [this] (const string& value) {this->stim2 = stod(value);});
+		pars["stimval2"] = toInsert.Initialize("double", 
+				[this] () {return std::to_string(this->stim2);}, 
+				[this] (const string& value) {this->stim2 = stod(value);});
+		pars["stimNodes2"]= toInsert.Initialize("set", 
+				[this] () {return setToString(stimNodes2);}, 
+				[this] (const string& value) {stimNodes2 = stringToSet(value);});
+	} else {
+		pars.erase("stim2");
+		pars.erase("bcl2");
+		pars.erase("stimdur2");
+		pars.erase("stimval2");
+		pars.erase("stimNodes2");
+	}
 }

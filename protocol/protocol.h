@@ -103,7 +103,9 @@ class Protocol
 
 	default_random_engine generator;
 
-	string readfile,savefile,dvarfile,pvarfile, measfile, simvarfile, propertyoutfile, dvarsoutfile, finalpropertyoutfile, finaldvarsoutfile, cellStateFile;
+	string readfile,savefile,dvarfile,pvarfile, measfile, simvarfile, 
+		   propertyoutfile, dvarsoutfile, finalpropertyoutfile, 
+		   finaldvarsoutfile, cellStateFile;
 
 	string datadir;
 	string cellStateDir;

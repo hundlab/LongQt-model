@@ -44,7 +44,6 @@ class Grid {
     virtual void setCellTypes(const CellInfo& singleCell);
     virtual int rowCount();
     virtual int columnCount();
-    virtual void addBuffer();
     virtual pair<int,int> findNode(const Node* node);
     virtual Node* findNode(const pair<int,int>& p);
 	virtual void reset();

@@ -41,14 +41,19 @@ class GridProtocol : public CurrentClamp {
 		map<string,MIonChanParam> new_pvars;
 		//    virtual bool addMeasure(Measure toInsert);
 
+		void toggleStim2();
 	private:
         map<string, CellUtils::CellInitializer> baseCellMap;
 		void CCcopy(const GridProtocol& toCopy);
 		set<pair<int,int>> dataNodes;
 		set<pair<int,int>> stimNodes;
+		set<pair<int,int>> stimNodes2;
+		double stimval2, stimdur2, bcl2, stimt2;
+		bool stim2 = false;
 		string setToString(set<pair<int,int>>& nodes);
 		set<pair<int,int>> stringToSet(string nodesList);
 		Grid* grid;
 		map<pair<int,int>,map<string,Measure>> realMeasures;
+		void swapStims();
 };
 #endif

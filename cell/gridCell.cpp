@@ -41,9 +41,6 @@ GridCell::~GridCell() {}
 Grid* GridCell::getGrid() {
 	return &grid;
 }
-void GridCell::addBuffer() {
-	grid.addBuffer();
-}
 bool GridCell::setOutputfileConstants(string filename) {
 	int i = 0;
 	bool toReturn = true;
@@ -124,8 +121,8 @@ void GridCell::writeVariables() {
 	}
 }
 void GridCell::closeFiles() {
-	for(auto it : grid.fiber) {
-		for(auto iv : it.nodes) {
+	for(auto& it : grid.fiber) {
+		for(auto& iv : it.nodes) {
 			iv->cell->closeFiles();
 		}
 	}   

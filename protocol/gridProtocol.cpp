@@ -6,6 +6,8 @@
 
 #include "gridProtocol.h"
 #include "gridCell.h"
+#include "cellUtils.h"
+
 #include <QFile>
 
 GridProtocol::GridProtocol() : CurrentClamp(){
@@ -17,9 +19,18 @@ GridProtocol::GridProtocol() : CurrentClamp(){
 	cellMap.clear();
 	cellMap["gridCell"] = [] () {return (Cell*) new GridCell;};
 	GetSetRef toInsert;
-	pars["gridFile"]= toInsert.Initialize("file", [temp] () {return temp->gridfile();}, [temp] (const string& value) {temp->setGridfile(value);});
-	pars["measNodes"]= toInsert.Initialize("set", [this] () {return setToString(dataNodes);}, [this] (const string& value) {dataNodes = stringToSet(value);});
-	pars["stimNodes"]= toInsert.Initialize("set", [this] () {return setToString(stimNodes);}, [this] (const string& value) {stimNodes = stringToSet(value);});
+	pars["gridFile"]= toInsert.Initialize("file", 
+			[temp] () {return temp->gridfile();}, 
+			[temp] (const string& value) {temp->setGridfile(value);});
+	pars["measNodes"]= toInsert.Initialize("set", 
+			[this] () {return setToString(dataNodes);}, 
+			[this] (const string& value) {dataNodes = stringToSet(value);});
+	pars["stimNodes"]= toInsert.Initialize("set", 
+			[this] () {return setToString(stimNodes);}, 
+			[this] (const string& value) {stimNodes = stringToSet(value);});
+	pars["secondStim"]= toInsert.Initialize("bool", 
+			[this] () {return CellUtils::to_string(this->stim2);},
+			[this] (const string& value) {this->setStim2(CellUtils::stob(value));});
 	pars.erase("numtrials");
 	pars["paceflag"].set("true");
 	pars.erase("paceflag");
@@ -365,7 +376,10 @@ void GridProtocol::swapStims() {
 	stimNodes2 = temp2;
 }
 
-void GridProtocol::toggleStim2() {
+void GridProtocol::setStim2(bool enable) {
+	if(enable == stim2) {
+		return;
+	}
 	stim2 = !stim2;
 	if(stim2) {
 		GetSetRef toInsert;

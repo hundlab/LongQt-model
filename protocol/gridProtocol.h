@@ -41,7 +41,7 @@ class GridProtocol : public CurrentClamp {
 		map<string,MIonChanParam> new_pvars;
 		//    virtual bool addMeasure(Measure toInsert);
 
-		void toggleStim2();
+		void setStim2(bool enable);
 	private:
         map<string, CellUtils::CellInitializer> baseCellMap;
 		void CCcopy(const GridProtocol& toCopy);

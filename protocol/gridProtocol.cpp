@@ -45,6 +45,7 @@ GridProtocol* GridProtocol::clone(){
 	return new GridProtocol(*this);
 };
 GridProtocol::GridProtocol(const GridProtocol& toCopy) : CurrentClamp(toCopy){
+	this->new_pvars = toCopy.new_pvars;
 	this->CCcopy(toCopy);
 }
 void GridProtocol::CCcopy(const GridProtocol& toCopy) {
@@ -83,6 +84,8 @@ int GridProtocol::stim()
 
 bool GridProtocol::runTrial() {
 	char writefile[150];     // Buffer for storing filenames
+
+	this->setIonChanParams();
 
 	//to be moved to a better location
 	set<string> temp;
@@ -265,7 +268,7 @@ void GridProtocol::setIonChanParams() {
 	Cell* cell = 0;
 	for(auto& pvar : this->new_pvars) {
 		for(auto& oneCell : pvar.second.cells) {
-			cell = this->grid->findNode(oneCell.first)->cell;
+			cell = this->grid->findNode({oneCell.first.second,oneCell.first.first})->cell;
 			*cell->pars.at(pvar.first) = oneCell.second;
 		}
 	}

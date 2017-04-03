@@ -10,18 +10,16 @@ struct Node {
     Node() {};
 	Node(const Node& other);
 	~Node() {};
-
-	void setCondConst(int X, double dx, double perc = 1);
 //	void updateV(double dt);
     Cell* cell = new Cell();
     double rd = 1.5; // gap junctional disk resistance.
-	double condConst = 0;
+    double Rmyo = 150; //Myoplasmic resistivity.
+
 //## default value cannot be deterimined by constructor
     double dIax = 0;
-	int np = 1; //number of cells in each node
-	//can't change atm
-//    double x = 0;
-//    double y = 0;
+    double x = 0;
+    double y = 0;
+
     double d1 = 0; //off-diagonal for tridag solver
     double d2 = 0; //diagonal elements for tridag solver
     double d3 = 0; //off-diagonal for tridag solver

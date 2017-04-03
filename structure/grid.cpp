@@ -97,19 +97,16 @@ void Grid::setCellTypes(const CellInfo& singleCell) {
     try {
         Node* n = fiber.at(singleCell.X).nodes.at(singleCell.Y);
         n->cell = singleCell.cell;
-		n->np = singleCell.np;
-//        n->x = singleCell.X*singleCell.dx;
-//        n->y = singleCell.Y*singleCell.dy;
-		if(isnan(singleCell.c_top) ||
-				isnan(singleCell.c_bottom) ||
-				isnan(singleCell.c_right)||
-				isnan(singleCell.c_left)) {
-			n->setCondConst(singleCell.X, singleCell.dx);
-			this->updateB(singleCell.X, singleCell.Y, top);
-			this->updateB(singleCell.X, singleCell.Y, bottom);
-			this->updateB(singleCell.X, singleCell.Y, left);
-			this->updateB(singleCell.X, singleCell.Y, right);
-		}
+        n->x = singleCell.X*singleCell.dx;
+        n->y = singleCell.Y*singleCell.dy;
+        if((singleCell.np==1)||((singleCell.X%singleCell.np)==0)) {
+            fiber.at(singleCell.X).B.at(singleCell.Y) = fibery.at(singleCell.Y).B.at(singleCell.X) = 1000*n->cell->cellRadius/(2*n->cell->Rcg*(n->Rmyo*singleCell.dx+n->rd)*n->cell->Cm*singleCell.dx);
+        } else {
+            fiber.at(singleCell.X).B.at(singleCell.Y) = fibery.at(singleCell.Y).B.at(singleCell.X) = 1001*n->cell->cellRadius/(2*n->cell->Rcg*n->Rmyo*n->cell->Cm*singleCell.dx*singleCell.dx);
+        }
+        if(singleCell.cell->type == string("Cell")) {
+            fiber.at(singleCell.X).B.at(singleCell.Y) = fibery.at(singleCell.Y).B.at(singleCell.X) = 0.0;
+        }
 		if(!isnan(singleCell.c_top)) {
 			fibery.at(singleCell.Y).B.at(singleCell.X) = singleCell.c_top; 
 		}
@@ -122,14 +119,12 @@ void Grid::setCellTypes(const CellInfo& singleCell) {
 		if(!isnan(singleCell.c_right)) {
 			fiber.at(singleCell.X).B.at(singleCell.Y+1) = singleCell.c_right;
 		}
-        if(singleCell.X == 0 ||
-				static_cast<unsigned int>(singleCell.X) == fiber.size()) {
+        if(singleCell.X == 0 ||static_cast<unsigned int>(singleCell.X) == fiber.size()) {
             fibery.at(singleCell.Y).B.at(singleCell.X) = 0.0;
         }
-		if(static_cast<unsigned int>(singleCell.Y) == fibery.size() ||
-				singleCell.Y == 0) {
-			fiber.at(singleCell.X).B.at(singleCell.Y) = 0.0;
-		}
+        if(static_cast<unsigned int>(singleCell.Y) == fibery.size() || singleCell.Y == 0) {
+            fiber.at(singleCell.X).B.at(singleCell.Y) = 0.0;
+        }
     } catch(const std::out_of_range& oor) {
         throw new std::out_of_range(string(oor.what())+string(": new cell was not in range of grid"));
     }
@@ -168,38 +163,4 @@ Node* Grid::findNode(const pair<int,int>& p) {
 void Grid::reset() {
 	this->fiber.clear();
 	this->fibery.clear();
-}
-
-void Grid::updateB(int x, int y, Side s) {
-	double cond = findNode({x,y})->condConst;
-	double condOther;
-	double xo = x;
-	double yo = y;
-	double bpx = x;
-	double bpy = y;
-	Node* n = NULL;
-	switch(s) {
-	case top:
-		yo = y-1;
-		bpy = y;
-		break;
-	case bottom:
-		yo = y+1;
-		bpy = yo;
-		break;
-	case right:
-		xo = x+1;
-		bpx = xo;
-		break;
-	case left:
-		xo = x-1;
-		bpx = x;
-		break;
-	}
-	n = findNode({xo,yo});
-	if(n == NULL) {
-		return;
-	}
-	condOther = n->condConst;
-	fiber.at(bpx).B.at(bpy) = fibery.at(bpy).B.at(bpx) = (cond+condOther)/2;
 }

@@ -63,7 +63,6 @@ class CellKernel
     double cellRadius, cellLength;
     double dVdt;
     double dVdtmax;
-    double Rmyo = 150; //Myoplasmic resistivity.
     
     double dtmin,dtmed,dtmax,dvcut;
     double apTime;

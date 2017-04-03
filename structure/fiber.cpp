@@ -20,23 +20,14 @@ void Fiber::updateVm(double& dt) {
     int nn = static_cast<int>(nodes.size());
     if(nn <= 1) { return;}
 
-	diffuseTop(0);
-    nodes[0]->r = (B[1]*dt-2)*nodes[0]->cell->vOld-B[1]
-		*dt*nodes[1]->cell->vOld+dt/nodes[0]->cell->Cm
-		*(nodes[0]->cell->iTotold+nodes[0]->cell->iTot);
     for(i=0;i<nn;i++){
         nodes[i]->d1 = B[i]*dt;
         nodes[i]->d2 = -(B[i]*dt+B[i+1]*dt+2);
         nodes[i]->d3 = B[i+1]*dt;
-        if(i>0&&i<(nn-1)) {
-			diffuse(i);
-            nodes[i]->r = -B[i]*dt*nodes[i-1]->cell->vOld+(B[i]*dt+B[i+1]*dt-2)
-				*nodes[i]->cell->vOld-B[i+1]*dt*nodes[i+1]->cell->vOld+
-				dt/nodes[i]->cell->Cm*
-				(nodes[i]->cell->iTotold+nodes[i]->cell->iTot);
-		}
+        if(i>0&&i<(nn-1))
+            nodes[i]->r = -B[i]*dt*nodes[i-1]->cell->vOld+(B[i]*dt+B[i+1]*dt-2)*nodes[i]->cell->vOld-B[i+1]*dt*nodes[i+1]->cell->vOld+dt/nodes[i]->cell->Cm*(nodes[i]->cell->iTotold+nodes[i]->cell->iTot);
     }
-	diffuseBottom(nn);
+    nodes[0]->r = (B[1]*dt-2)*nodes[0]->cell->vOld-B[1]*dt*nodes[1]->cell->vOld+dt/nodes[0]->cell->Cm*(nodes[0]->cell->iTotold+nodes[0]->cell->iTot);
     nodes[nn-1]->r = -B[nn-1]*dt*nodes[nn-2]->cell->vOld+(B[nn-1]*dt-2)*nodes[nn-1]->cell->vOld+dt/nodes[nn-1]->cell->Cm*(nodes[nn-1]->cell->iTotold+nodes[nn-1]->cell->iTot);
 
     tridag(nodes);
@@ -49,19 +40,6 @@ void Fiber::updateVm(double& dt) {
         nodes[i]->cell->iKt=nodes[i]->cell->iKt+nodes[i]->dIax;
         nodes[i]->cell->setV(nodes[i]->vNew);
    }
-}
-void Fiber::diffuseBottom(int node) {
-	nodes[node]->cell->iTot-=
-		B[node]*(nodes[node-1]->cell->vOld-nodes[node]->cell->vOld);
-}
-void Fiber::diffuseTop(int node) {
-	nodes[node]->cell->iTot-=
-		-B[node+1]*(nodes[node]->cell->vOld-nodes[node+1]->cell->vOld);
-}
-void Fiber::diffuse(int node) {
-	nodes[node]->cell->iTot-=
-		B[node]*(nodes[node-1]->cell->vOld-nodes[node]->cell->vOld)
-		-B[node+1]*(nodes[node]->cell->vOld-nodes[node+1]->cell->vOld);
 }
 /*
 //#############################################################

@@ -12,9 +12,6 @@ class Fiber {
     ~Fiber();
     
     virtual void updateVm(double& dt);
-	virtual inline void diffuse(int node);
-	virtual inline void diffuseBottom(int node);
-	virtual inline void diffuseTop(int node);
 
     vector<Node*> nodes;
     vector<double> B; //coefficients for tridag solver.

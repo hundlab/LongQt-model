@@ -2,9 +2,10 @@
 
 Node::Node(const Node& other) {
 	rd = other.rd;
+	Rmyo = other.Rmyo;
 	dIax = other.dIax;
-//	x = other.x;
-//	y = other.y;
+	x = other.x;
+	y = other.y;
 	d1 = other.d1;
 	d2 = other.d2;
 	d3 = other.d3;
@@ -12,18 +13,6 @@ Node::Node(const Node& other) {
 	vNew = other.vNew;
 	nodeType = other.nodeType;
 	cell = other.cell->clone();
-}
-
-void Node::setCondConst(int X, double dx, double perc) {
-     if(cell->type == string("Cell")) {
-		condConst = 0.0;
-		return;
-	}
-	if((np==1)||((X%np)==0)) {
-		condConst = 1000*cell->cellRadius/(2*cell->Rcg*(cell->Rmyo*dx+rd*perc)*cell->Cm*dx);
-	} else {
-		condConst = 1001*cell->cellRadius/(2*cell->Rcg*cell->Rmyo*cell->Cm*dx*dx);
-	}
 }
 /*
 void Node::updateV(double dt) {

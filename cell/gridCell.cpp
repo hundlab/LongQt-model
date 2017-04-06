@@ -133,27 +133,10 @@ double GridCell::updateV() {
 	int yLen = static_cast<int>(grid.fiber.size());
 	if((tcount%2==0)){
 		for(i=0;i<yLen;i++){
-			for(j=0;j<xLen&&yLen>1;j++){
-				if(i>0&&i<(yLen-1))
-					grid.fiber[i].nodes[j]->cell->iTot-=grid.fibery[j].B[i]*(grid.fiber[i-1].nodes[j]->cell->vOld-grid.fiber[i].nodes[j]->cell->vOld)-grid.fibery[j].B[i+1]*(grid.fiber[i].nodes[j]->cell->vOld-grid.fiber[i+1].nodes[j]->cell->vOld);
-				else if(i==0)
-					grid.fiber[i].nodes[j]->cell->iTot-=-grid.fibery[j].B[i+1]*(grid.fiber[i].nodes[j]->cell->vOld-grid.fiber[i+1].nodes[j]->cell->vOld);
-				else if(i==yLen-1)
-					grid.fiber[i].nodes[j]->cell->iTot-=grid.fibery[j].B[i]*(grid.fiber[i-1].nodes[j]->cell->vOld-grid.fiber[i].nodes[j]->cell->vOld);
-			}
 			grid.fiber[i].updateVm(dt);
 		}
-	}
-	else{
+	} else {
 		for(i=0;i<xLen;i++){
-			for(j=0;j<yLen&&xLen>1;j++){
-				if(i>0&&i<(xLen-1))
-					grid.fibery[i].nodes[j]->cell->iTot-=grid.fiber[j].B[i]*(grid.fibery[i-1].nodes[j]->cell->vOld-grid.fibery[i].nodes[j]->cell->vOld)-grid.fiber[j].B[i+1]*(grid.fibery[i].nodes[j]->cell->vOld-grid.fibery[i+1].nodes[j]->cell->vOld);
-				else if(i==0)
-					grid.fibery[i].nodes[j]->cell->iTot-=-grid.fiber[j].B[i+1]*(grid.fibery[i].nodes[j]->cell->vOld-grid.fibery[i+1].nodes[j]->cell->vOld);
-				else if(i==xLen-1)
-					grid.fibery[i].nodes[j]->cell->iTot-=grid.fiber[j].B[i]*(grid.fibery[i-1].nodes[j]->cell->vOld-grid.fibery[i].nodes[j]->cell->vOld);
-			}
 			grid.fibery[i].updateVm(dt);
 		}
 	}

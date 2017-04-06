@@ -28,10 +28,18 @@ struct CellInfo {
 
 class Grid {
   public:
+	enum Side {
+		top = 0,
+		right = 1,
+		bottom = 2,
+		left = 3
+	};
+
     Grid();
     Grid(const Grid& other);
     ~Grid();
 
+//	inline virtual edge(int x, int y, Side s);
     virtual void addRow(int pos); //create new row at 0 <= pos < len of empty cells
     virtual void addRows(unsigned int num, int position = 0);
     virtual void addColumn(int pos); //same but for culumns
@@ -47,6 +55,7 @@ class Grid {
     virtual pair<int,int> findNode(const Node* node);
     virtual Node* findNode(const pair<int,int>& p);
 	virtual void reset();
+	virtual void updateB(int x, int y, Side s);
 
     vector<Fiber> fiber;
     vector<Fiber> fibery; 

@@ -14,15 +14,30 @@ Node::Node(const Node& other) {
 	cell = other.cell->clone();
 }
 
-void Node::setCondConst(int X, double dx, double perc) {
-     if(cell->type == string("Cell")) {
-		condConst = 0.0;
+/*double Node::calPerc(int X, double dx, double val) {
+	if(val == 0) {
+		return 0;
+	}
+	if((np==1)||((X%np)==0)) {
+		return ((1000*cell->cellRadius)/(val*2*cell->Rcg*cell->Cm*dx)-cell->Rmyo*dx)/rd;
+	} else {
+		return 1;
+	}
+}*/
+
+void Node::setCondConst(int X, double dx, CellUtils::Side s, bool perc, double val) {
+	if(cell->type == string("Cell")) {
+		condConst[s] = 0.0;
+		return;
+	}
+	if(!perc) {
+		condConst[s] = val;
 		return;
 	}
 	if((np==1)||((X%np)==0)) {
-		condConst = 1000*cell->cellRadius/(2*cell->Rcg*(cell->Rmyo*dx+rd*perc)*cell->Cm*dx);
+		condConst[s] = 1000*cell->cellRadius/(2*cell->Rcg*(cell->Rmyo*dx+rd*val)*cell->Cm*dx);
 	} else {
-		condConst = 1001*cell->cellRadius/(2*cell->Rcg*cell->Rmyo*cell->Cm*dx*dx);
+		condConst[s] = 1001*cell->cellRadius/(2*cell->Rcg*cell->Rmyo*cell->Cm*dx*dx);
 	}
 }
 /*

@@ -324,19 +324,19 @@ bool GridCell::handleNode(QXmlStreamReader& xml, set<CellInfo*>& cells, CellInfo
 		while(xml.readNextStartElement()) {
 			if(xml.name() == "top") {
 				xml.readNext();
-				info->c_top = xml.text().toDouble();
+				info->c[CellUtils::top] = xml.text().toDouble();
 				xml.skipCurrentElement();
 			} else if(xml.name() == "bottom") {
 				xml.readNext();
-				info->c_bottom = xml.text().toDouble();
+				info->c[CellUtils::bottom] = xml.text().toDouble();
 				xml.skipCurrentElement();
 			} else if(xml.name() == "right") {
 				xml.readNext();
-				info->c_right = xml.text().toDouble();
+				info->c[CellUtils::right] = xml.text().toDouble();
 				xml.skipCurrentElement();
 			} else if(xml.name() == "left") {
 				xml.readNext();
-				info->c_left = xml.text().toDouble();
+				info->c[CellUtils::left] = xml.text().toDouble();
 				xml.skipCurrentElement();
 			}
 		}

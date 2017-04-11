@@ -5,17 +5,18 @@
 #define NODE_H
 
 #include "cell.h"
+#include "side.h"
 
 struct Node {
     Node() {};
 	Node(const Node& other);
 	~Node() {};
 
-	void setCondConst(int X, double dx, double perc = 1);
+	void setCondConst(int X, double dx, CellUtils::Side s, bool perc = true, double val = 1);
 //	void updateV(double dt);
     Cell* cell = new Cell();
     double rd = 1.5; // gap junctional disk resistance.
-	double condConst = 0;
+	double condConst[4] = {0,0,0,0};
 //## default value cannot be deterimined by constructor
     double dIax = 0;
 	int np = 1; //number of cells in each node

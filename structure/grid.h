@@ -12,34 +12,29 @@
 #include <cmath>
 
 #include "fiber.h"
+#include "side.h"
 
 struct CellInfo {
+	//necessary
     int X = -1;
     int Y = -1;
     double dx = 0.01;
     double dy = 0.01;
     int np = 1;
+	//if cell == NULL then cell will not be changed
     Cell* cell = 0;
-	double c_top = NAN;
-	double c_bottom = NAN;
-	double c_left = NAN;
-	double c_right = NAN;
+	double c[4] = {NAN,NAN,NAN,NAN};
+	bool c_perc = false;
 };
 
 class Grid {
   public:
-	enum Side {
-		top = 0,
-		right = 1,
-		bottom = 2,
-		left = 3
-	};
 
     Grid();
     Grid(const Grid& other);
     ~Grid();
 
-//	inline virtual edge(int x, int y, Side s);
+//	inline virtual edge(int x, int y, CellUtils::Side s);
     virtual void addRow(int pos); //create new row at 0 <= pos < len of empty cells
     virtual void addRows(unsigned int num, int position = 0);
     virtual void addColumn(int pos); //same but for culumns
@@ -55,7 +50,7 @@ class Grid {
     virtual pair<int,int> findNode(const Node* node);
     virtual Node* findNode(const pair<int,int>& p);
 	virtual void reset();
-	virtual void updateB(int x, int y, Side s);
+	virtual void updateB(CellInfo node, CellUtils::Side s);
 
     vector<Fiber> fiber;
     vector<Fiber> fibery; 

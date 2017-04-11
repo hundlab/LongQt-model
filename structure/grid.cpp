@@ -95,40 +95,35 @@ void Grid::setCellTypes(set<CellInfo*>& cells) {
 }
 void Grid::setCellTypes(const CellInfo& singleCell) {
     try {
-        Node* n = fiber.at(singleCell.X).nodes.at(singleCell.Y);
-        n->cell = singleCell.cell;
+        Node* n = this->findNode({singleCell.X,singleCell.Y});
+		if(singleCell.cell) {
+	        n->cell = singleCell.cell;
+		}
 		n->np = singleCell.np;
 //        n->x = singleCell.X*singleCell.dx;
 //        n->y = singleCell.Y*singleCell.dy;
-		if(isnan(singleCell.c_top) ||
-				isnan(singleCell.c_bottom) ||
-				isnan(singleCell.c_right)||
-				isnan(singleCell.c_left)) {
-			n->setCondConst(singleCell.X, singleCell.dx);
-			this->updateB(singleCell.X, singleCell.Y, top);
-			this->updateB(singleCell.X, singleCell.Y, bottom);
-			this->updateB(singleCell.X, singleCell.Y, left);
-			this->updateB(singleCell.X, singleCell.Y, right);
+
+		bool update = !(isnan(singleCell.c[0])&&isnan(singleCell.c[1])
+				&&isnan(singleCell.c[2])&&isnan(singleCell.c[3]));
+		if(!(update&&isnan(singleCell.c[CellUtils::top]))) {
+			this->updateB(singleCell, CellUtils::top);
 		}
-		if(!isnan(singleCell.c_top)) {
-			fibery.at(singleCell.Y).B.at(singleCell.X) = singleCell.c_top; 
+		if(!(update&&isnan(singleCell.c[CellUtils::bottom]))) {
+			this->updateB(singleCell, CellUtils::bottom);
 		}
-		if(!isnan(singleCell.c_bottom)) {
-			fibery.at(singleCell.Y).B.at(singleCell.X+1) = singleCell.c_bottom;
+		if(!(update&&isnan(singleCell.c[CellUtils::left]))) {
+			this->updateB(singleCell, CellUtils::left);
 		}
-		if(!isnan(singleCell.c_left)) {
-			fiber.at(singleCell.X).B.at(singleCell.Y) = singleCell.c_left;
-		}
-		if(!isnan(singleCell.c_right)) {
-			fiber.at(singleCell.X).B.at(singleCell.Y+1) = singleCell.c_right;
+		if(!(update&&isnan(singleCell.c[CellUtils::right]))) {
+			this->updateB(singleCell, CellUtils::right);
 		}
         if(singleCell.X == 0 ||
 				static_cast<unsigned int>(singleCell.X) == fiber.size()) {
-            fibery.at(singleCell.Y).B.at(singleCell.X) = 0.0;
+//            fibery.at(singleCell.Y).B.at(singleCell.X) = 0.0;
         }
 		if(static_cast<unsigned int>(singleCell.Y) == fibery.size() ||
 				singleCell.Y == 0) {
-			fiber.at(singleCell.X).B.at(singleCell.Y) = 0.0;
+//			fiber.at(singleCell.X).B.at(singleCell.Y) = 0.0;
 		}
     } catch(const std::out_of_range& oor) {
         throw new std::out_of_range(string(oor.what())+string(": new cell was not in range of grid"));
@@ -170,36 +165,62 @@ void Grid::reset() {
 	this->fibery.clear();
 }
 
-void Grid::updateB(int x, int y, Side s) {
-	double cond = findNode({x,y})->condConst;
+void Grid::updateB(CellInfo node, CellUtils::Side s) {
+	int x = node.X;
+	int y = node.Y;
+	Node* nc = findNode({x,y});
 	double condOther;
 	double xo = x;
 	double yo = y;
 	double bpx = x;
 	double bpy = y;
+	bool lr = true;
 	Node* n = NULL;
+	CellUtils::Side so;
+
+	if(!isnan(node.c[s]))
+		nc->setCondConst(x, node.dx, s, node.c_perc, node.c[s]);
+	else
+		nc->setCondConst(x, node.dx, s);
+
+	double cond = nc->condConst[s];
+
 	switch(s) {
-	case top:
-		yo = y-1;
-		bpy = y;
-		break;
-	case bottom:
-		yo = y+1;
-		bpy = yo;
-		break;
-	case right:
-		xo = x+1;
-		bpx = xo;
-		break;
-	case left:
+	case CellUtils::top:
 		xo = x-1;
-		bpx = x;
+		lr = false;
+		so = CellUtils::bottom;
+		break;
+	case CellUtils::bottom:
+		xo = x+1;
+		bpx = x+1;
+		lr = false;
+		so = CellUtils::top;
+		break;
+	case CellUtils::right:
+		yo = y+1;
+		bpy = y+1;
+		so = CellUtils::left;
+		break;
+	case CellUtils::left:
+		yo = y-1;
+		so = CellUtils::right;
 		break;
 	}
 	n = findNode({xo,yo});
 	if(n == NULL) {
 		return;
 	}
-	condOther = n->condConst;
-	fiber.at(bpx).B.at(bpy) = fibery.at(bpy).B.at(bpx) = (cond+condOther)/2;
+	if(!isnan(node.c[s]))
+		n->setCondConst(xo, node.dx, so, node.c_perc, node.c[s]);
+	condOther = n->condConst[so];
+	try {
+		if(lr) {
+			fiber.at(bpx).B.at(bpy) = (cond+condOther)/2;
+		} else {
+			fibery.at(bpy).B.at(bpx) = (cond+condOther)/2;
+		}
+	} catch(const std::out_of_range& oor) {
+        throw new std::out_of_range(string(oor.what())+string(": new cell was not in range of grid"));
+    }
 }

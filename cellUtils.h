@@ -25,6 +25,8 @@
 #include <string>
 #include <QXmlStreamReader>
 
+#include "side.h" //more CellUtils broken up to avoid cyclic deps
+
 namespace CellUtils {
 	typedef Cell* (*CellInitializer)(void);
 
@@ -62,6 +64,8 @@ namespace CellUtils {
 			{"stimdur","1"},{"tMax","500000"},{"writetime","495000"},{"bcl","1000"},
 			{"numstims","500"}}}
 	};
+
+
 
 	inline bool readNext(QXmlStreamReader& xml, QString name) {
 		if(xml.name() == name && xml.tokenType() == QXmlStreamReader::StartElement) {

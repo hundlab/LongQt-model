@@ -44,8 +44,8 @@ $$PWD/cell/gpbatrialSE.h\
 $$PWD/cell/atrial.h\
 $$PWD/cell/br04.h\
 $$PWD/iobase.h\
-$$pwd/cellutils.h\
-$$pwd/side.h\
+$$PWD/cellutils.h\
+$$PWD/side.h\
 $$PWD/structure/grid.h\
 $$PWD/structure/node.h\
 $$PWD/structure/fiber.h\

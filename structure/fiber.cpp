@@ -36,7 +36,7 @@ void Fiber::updateVm(double& dt) {
 				(nodes[i]->cell->iTotold+nodes[i]->cell->iTot);
 		}
     }
-	diffuseBottom(nn);
+	diffuseBottom(nn-1);
     nodes[nn-1]->r = -B[nn-1]*dt*nodes[nn-2]->cell->vOld+(B[nn-1]*dt-2)*nodes[nn-1]->cell->vOld+dt/nodes[nn-1]->cell->Cm*(nodes[nn-1]->cell->iTotold+nodes[nn-1]->cell->iTot);
 
     tridag(nodes);

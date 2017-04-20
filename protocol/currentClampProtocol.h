@@ -21,6 +21,7 @@ class CurrentClamp : public Protocol {
     CurrentClamp& operator=(const CurrentClamp& toCopy);
 
     bool runTrial() override;
+	void readInCellState(bool read) override;
   protected:
     double bcl,stimval,stimdur,stimt;
     int numstims;   //variables for pacing.

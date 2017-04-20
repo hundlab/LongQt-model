@@ -105,12 +105,7 @@ bool GridProtocol::runTrial() {
 	time = cell->t = 0.0;      // reset time
 	doneflag=1;     // reset doneflag
 
-	if(readCellState) {
-		sprintf(writefile,cellStateFile.c_str());
-		cell->readCellState(writefile);
-		this->stimt = cell->t;
-		this->tMax += this->cell->t;
-	}
+	this->readInCellState(this->readCellState);
 
 	//###############################################################
 	// Every time step, currents, concentrations, and Vm are calculated.
@@ -182,10 +177,7 @@ bool GridProtocol::runTrial() {
 		it->second.closeFiles();
 	}
 	cell->closeFiles();
-	if(writeCellState) {
-		sprintf(writefile,(datadir + "/" + simvarfile).c_str(),trial);
-		cell->writeCellState(writefile);
-	}
+	this->writeOutCellState(this->writeCellState);
 	if(stim2 && stimt2 > cell->t) {
 		this->swapStims();
 	}

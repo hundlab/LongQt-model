@@ -8,7 +8,10 @@
 //####################################################
 
 #include "cell.h"
+#include "cellUtils.h"
 #include <sstream>
+#include <QFile>
+#include <QDebug>
 
 bool Cell::setOuputfileVariables(string filename) {
     return setOutputfile(filename, this->varsSelection, &varsofile);
@@ -71,86 +74,97 @@ void Cell::closeFiles() {
     IOBase::closeFile(&parsofile);
     IOBase::closeFile(&varsofile);
 }
-bool Cell::writeCellState(string filename) {
-    ofstream ofile;
-    ofile.open(filename,ios_base::app);
-    if(!ofile.good()) {
-        cout << "Error Opening " << filename << endl;
-        return false;
-    }
-    bool ret = this->writeCellState(ofile);
-    ofile.close();
-    return ret;
-}
-bool Cell::writeCellState(ofstream& ofile) {
-    if(!ofile.good()) {
-        cout << "Error Opening File for writing cell state" << endl;
-        return false;
-    }
-    ofile << "##BEGIN VARS\n";
-    for(auto val : vars) {
-        ofile << val.first << "\t" << *val.second << "\n";
-    }
-    ofile << "##END VARS\n";
-    ofile << "##BEGIN PVARS\n";
-    for(auto val : pars) {
-        ofile << val.first << "\t" << *val.second << "\n";
-    }
-    ofile << "##END PVARS\n";
-    return true;
+bool Cell::writeCellState(string file) {
+	QFile ofile(file.c_str());
+	string name;
 
+	if(!ofile.open(QIODevice::WriteOnly|QIODevice::Text)){
+		cout << "Error opening " << file << endl;
+		return 1;
+	}
+	QXmlStreamWriter xml(&ofile);
+	xml.setAutoFormatting(true);
+	xml.writeStartDocument();
+	bool success = this->writeCellState(xml);
+	xml.writeEndDocument();
+    ofile.close();
+    return success;
 }
-bool Cell::readCellState(string filename) {
-    ifstream ifile;
-    ifile.open(filename);
-    if(!ifile.good()) {
-        cout << "Error Opening " << filename << "\n";
-        return false;
-    }
-    bool ret = this->readCellState(ifile);
-    ifile.close();
-    return ret;
-}
-bool Cell::readCellState(ifstream& ifile) {
-    if(!ifile.good()) {
-        cout << "Error Opening File For Reading Cell State" << "\n";
-        return false;
-    }
-    string temp, name, val;
-    bool Nvars = false;
-    bool Npars = false;
-    while(!ifile.eof()&&!(Nvars&&Npars)) {
-        getline(ifile,temp);
-        if(temp == "##BEGIN VARS"&&!Nvars) {
-            Nvars = true;
-            getline(ifile,temp);
-            while(!ifile.eof() && temp != "##END VARS") {
-                stringstream linestream(temp);
-                linestream >> name >> val;
-                try {
-                    *vars.at(name) = std::stod(val);
-                } catch(out_of_range&) {
-									cout << "Reading in of " << name <<" failed\n";
-									cout.flush();
-                } catch(invalid_argument) {}
-                getline(ifile,temp);
-            }
-        }
-        if(temp == "##BEGIN PVARS"&&!Npars) {
-            Npars = true;
-            getline(ifile,temp);
-            while(!ifile.eof() && temp != "##END PVARS") {
-                stringstream linestream(temp);
-                linestream >> name >> val;
-                try {
-                    *pars.at(name) = std::stod(val);
-                } catch(out_of_range&) {
-									cout << "Reading in of " << name <<" failed\n";
-									cout.flush();
-                } catch(invalid_argument) {}
-                getline(ifile,temp);
-            }
-        }
-    }
+bool Cell::writeCellState(QXmlStreamWriter& xml) {
+	xml.writeStartElement("cell");
+	xml.writeAttribute("type", this->type);
+
+	xml.writeStartElement("pars");
+	for(auto& par : this->pars){
+		xml.writeStartElement("par");
+		xml.writeAttribute("name",par.first.c_str());
+		xml.writeCharacters(QString::number(*par.second));
+		xml.writeEndElement();
+	}
+	xml.writeEndElement();
+
+	xml.writeStartElement("vars");
+	for(auto& var : this->vars){
+		xml.writeStartElement("var");
+		xml.writeAttribute("name",var.first.c_str());
+		xml.writeCharacters(QString::number(*var.second));
+		xml.writeEndElement();
+	}
+	xml.writeEndElement();
+
+	xml.writeEndElement();
     return true;
+}
+bool Cell::readCellState(string file) {
+	QFile ifile(file.c_str());
+
+	if(!ifile.open(QIODevice::ReadOnly)){
+		cout << "Error opening " << file << endl;
+		return false;
+	}
+	QXmlStreamReader xml(&ifile);
+	this->readCellState(xml);
+	ifile.close();
+	return true;
+}
+bool Cell::readCellState(QXmlStreamReader& xml) {
+	string name = "";
+	if(!CellUtils::readNext(xml, "cell")) return false;
+	QString type = xml.attributes().value("type").toString();
+	if(type != this->type) {
+		qCritical("Error: cell state file is for %s but cell is of type %s"
+				,type.toStdString().c_str(),this->type);
+		qCritical("Aborting read cell state");
+	}
+	if(!CellUtils::readNext(xml, "pars")) return false;
+	while(!xml.atEnd() && xml.readNextStartElement()){
+		name = xml.attributes().value("name").toString().toStdString();
+		xml.readNext();
+		bool ok = true;
+		double val = xml.text().toDouble(&ok);
+		if(ok) {
+			try {
+				*(this->pars.at(name)) = val;
+			} catch (const std::out_of_range&) {
+				qWarning("Warning: %s not in cell pars",name.c_str());	
+			}
+		}
+		xml.readNext();
+	}
+	if(!CellUtils::readNext(xml, "vars")) return false;
+	while(!xml.atEnd() && xml.readNextStartElement()){
+		name = xml.attributes().value("name").toString().toStdString();
+		xml.readNext();
+		bool ok = true;
+		double val = xml.text().toDouble(&ok);
+		if(ok) {
+			try {
+				*(this->vars.at(name)) = val;
+			} catch (const std::out_of_range&) {
+				qWarning("Warning: %s not in cell vars",name.c_str());	
+			}
+		}
+		xml.readNext();
+	}
+	return true;
 }

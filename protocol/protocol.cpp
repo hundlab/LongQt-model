@@ -51,13 +51,13 @@ Protocol::Protocol()
 	writeint = 20;     // interval for writing.
 
 	pvarfile = "pvars.txt"; // File to specify cell params
-	simvarfile = "simvars.txt";  // File to specify sim params
+	simvarfile = "simvars.xml";  // File to specify sim params
 
 	propertyoutfile = "dt%d_%s.dat";
 	dvarsoutfile = "dt%d_dvars.dat";
 	finalpropertyoutfile = "dss%d_%s.dat";
 	finaldvarsoutfile = "dss%d_pvars.dat";
-	cellStateFile = "simvars.txt";//"dss%d_state.dat";
+	cellStateFile = "cellstate";//"dss%d_state.dat";
 
 
 	measflag = 1;       // 1 to track SV props during sim
@@ -84,7 +84,7 @@ Protocol::Protocol()
     pars["writeCellState"]= toInsert.Initialize("bool", [this] () {return CellUtils::to_string(writeCellState);}, [this] (const string& value) {writeCellState = CellUtils::stob(value);});
     pars["readCellState"]= toInsert.Initialize("bool", [this] () {return CellUtils::to_string(readCellState);}, [this] (const string& value) {readCellState = CellUtils::stob(value);});
 	pars["datadir"]= toInsert.Initialize("directory", [this] () {return datadir;}, [this] (const string& value) {datadir = value;});
-	//    pars["cellStateDir"]= toInsert.Initialize("directory", [this] () {return cellStateDir;}, [this] (const string& value) {cellStateDir = value;});
+	pars["cellStateDir"]= toInsert.Initialize("directory", [this] () {return cellStateDir;}, [this] (const string& value) {cellStateDir = value;});
 	pars["pvarfile"]= toInsert.Initialize("file", [this] () {return pvarfile;}, [this] (const string& value) {pvarfile = value;});
 	pars["dvarfile"]= toInsert.Initialize("file", [this] () {return dvarfile;}, [this] (const string& value) {dvarfile = value;});
 	pars["measfile"]= toInsert.Initialize("file", [this] () {return measfile;}, [this] (const string& value) {measfile = value;});
@@ -611,4 +611,17 @@ list<string> Protocol::cellOptions() {
 		options.push_back(it->first);
 	}
 	return options;
+}
+
+void Protocol::readInCellState(bool read) {
+	if(read) {
+		cell->readCellState(cellStateDir+"/"+cellStateFile+std::to_string(trial)+".xml");
+		this->tMax += this->cell->t;
+	}
+}
+
+void Protocol::writeOutCellState(bool write) {
+	if(write) {
+		cell->writeCellState(datadir+"/"+cellStateFile+std::to_string(trial)+".xml");
+	}
 }

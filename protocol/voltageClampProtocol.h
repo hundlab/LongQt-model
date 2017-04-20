@@ -21,6 +21,7 @@ class VoltageClamp : public Protocol {
     VoltageClamp& operator=(const VoltageClamp& toCopy);
 
     bool runTrial() override;
+	void readInCellState(bool read) override;
   private:
     int clamp();
     void CCcopy(const VoltageClamp& toCopy);

@@ -76,17 +76,7 @@ temp.clear();
 //should not be here
 
         time = cell->t = 0.0;      // reset time
-        if(readCellState) {
-            sprintf(writefile,cellStateFile.c_str());
-            cell->readCellState(writefile);
-			this->tMax += this->cell->t;
-			this->t1 += this->cell->t;
-			this->t2 += this->cell->t;
-			this->t3 += this->cell->t;
-			this->t4 += this->cell->t;
-			this->t5 += this->cell->t;
-        }
-
+		this->readInCellState(this->readCellState);
         doneflag=1;     // reset doneflag
   
 //        if (int(readflag)==1)
@@ -150,11 +140,18 @@ temp.clear();
           it->second.closeFiles();
       }
       cell->closeFiles();
-      if(writeCellState) {
-          sprintf(writefile,(datadir + "/" + simvarfile).c_str(),trial);
-          cell->writeCellState(writefile);
-      }
-
+	  this->writeOutCellState(this->writeCellState);
 
       return true; 
+}
+void VoltageClamp::readInCellState(bool read) {
+	if(read) {
+		cell->readCellState(cellStateDir+"/"+cellStateFile+".xml");
+		this->tMax += this->cell->t;
+		this->t1 += this->cell->t;
+		this->t2 += this->cell->t;
+		this->t3 += this->cell->t;
+		this->t4 += this->cell->t;
+		this->t5 += this->cell->t;
+	}
 }

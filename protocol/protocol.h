@@ -80,6 +80,8 @@ class Protocol
 	virtual bool readMvarsFile(string filename);
 	virtual bool setCell(const string& type, bool reset = false);
 	virtual list<string> cellOptions();
+	virtual void readInCellState(bool read);
+	virtual void writeOutCellState(bool write);
 
 	//#### Declare Static helper functions #####
 	static string to_string(const bool& b);

@@ -363,36 +363,59 @@ bool GridCell::readGridfile(string filename) {
 	QXmlStreamReader xml(&ifile);
 	return this->readGridfile(xml);
 }
-bool GridCell:: readCellState(string filename) {
-	ifstream ifile;
-	ifile.open(filename);
-	if(!ifile.good()) {
-		cout << "Error Opening " << filename << "\n";
+bool GridCell:: readCellState(string file) {
+	QFile ifile(file.c_str());
+
+	if(!ifile.open(QIODevice::ReadOnly)){
+		cout << "Error opening " << file << endl;
 		return false;
 	}
-	bool succes = true;
-	succes &= Cell::readCellState(ifile);
-	for(auto fiber : grid.fiber) {
-		for(auto node : fiber.nodes) {
-			succes &= node->cell->readCellState(ifile);
+	QXmlStreamReader xml(&ifile);
+	if(!CellUtils::readNext(xml, "grid")) return false;
+	while(!xml.atEnd() && xml.readNextStartElement()){
+		int row = xml.attributes().value("row").toInt();
+		int col = xml.attributes().value("col").toInt();
+		Node* n = this->grid.findNode({row,col});
+		if(n == NULL) {
+			qWarning("Warning: (%i,%i) not a cell in grid",col,row);	
+			xml.skipCurrentElement();
+			continue;
 		}
+		n->cell->readCellState(xml);
+		xml.readNext();
 	}
 	ifile.close();
-	return succes;
+	return true;
 }
-bool GridCell::writeCellState(string filename) {
-	ofstream ofile;
-	ofile.open(filename,ios_base::app);
-	if(!ofile.good()) {
-		cout << "Error Opening " << filename << "\n";
+bool GridCell::writeCellState(string file) {
+	QFile ofile(file.c_str());
+	string name;
+
+	if(!ofile.open(QIODevice::WriteOnly|QIODevice::Text)){
+		cout << "Error opening " << file << endl;
 		return false;
 	}
-	bool succes = true;
-	succes &= Cell::writeCellState(ofile);
-	for(auto fiber : grid.fiber) {
-		for(auto node : fiber.nodes) {
-			succes &= node->cell->writeCellState(ofile);
+	QXmlStreamWriter xml(&ofile);
+	xml.setAutoFormatting(true);
+	xml.writeStartDocument();
+	xml.writeStartElement("grid");
+	bool success = true;
+	int row = 0;
+	int col = 0;
+	for(auto& fiber : grid.fiber) {
+		row++;
+		for(auto& node : fiber.nodes) {
+			col++;
+			xml.writeStartElement("pos");
+			xml.writeAttribute("row",QString::number(row));
+			xml.writeAttribute("col",QString::number(col));
+	 		success &= node->cell->writeCellState(xml);
+			xml.writeEndElement();
 		}
+		col = 0;
 	}
-	return succes;
+	xml.writeEndElement();
+	xml.writeEndDocument();
+  ofile.close();
+  return success;
 }

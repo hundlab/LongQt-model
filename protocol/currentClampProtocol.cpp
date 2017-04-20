@@ -83,13 +83,8 @@ temp.clear();
 
         time = cell->t = 0.0;      // reset time
         doneflag=1;     // reset doneflag
-        if(readCellState) {
-            sprintf(writefile,cellStateFile.c_str());
-            cell->readCellState(writefile);
-			this->stimt = cell->t;
-			this->tMax += this->cell->t;
-        }
- 
+		this->readInCellState(this->readCellState);
+
         //###############################################################
         // Every time step, currents, concentrations, and Vm are calculated.
         //###############################################################
@@ -147,10 +142,15 @@ temp.clear();
           it->second.closeFiles();
       }
       cell->closeFiles();
-      if(writeCellState) {
-          sprintf(writefile,(datadir + "/" + simvarfile).c_str(),trial);
-          cell->writeCellState(writefile);
-      }
+	  this->writeOutCellState(this->writeCellState);
 
       return true; 
+}
+
+void CurrentClamp::readInCellState(bool read) {
+	if(read) {
+		cell->readCellState(cellStateDir+"/"+cellStateFile+std::to_string(trial)+".xml");
+		this->stimt = cell->t;
+		this->tMax += this->cell->t;
+	}
 }

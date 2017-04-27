@@ -33,12 +33,12 @@ class FR : public Cell {
 const double l = 0.01;       // Length of the cell (cm)
 const double a = 0.0011;     // Radius of the cell (cm)
 const double pi = 3.141592;  // Pi
-double cellLength;       // Length of the cell (cm)
-double cellRadius;     // Radius of the cell (cm)
-double Vcell;   // Cell volume (uL)
-double AGeo;    // Geometric membrane area (cm^2)
-double ACap;    // Capacitive membrane area (cm^2)
-double Vmyo;    // Myoplasm volume (uL)
+//double cellLength;       // Length of the cell (cm)
+//double cellRadius;     // Radius of the cell (cm)
+//double Vcell;   // Cell volume (uL)
+//double AGeo;    // Geometric membrane area (cm^2)
+//double ACap;    // Capacitive membrane area (cm^2)
+//double Vmyo;    // Myoplasm volume (uL)
 double vmito;   // Mitochondria volume (uL)
 double vsr;     // SR volume (uL)
 double Vnsr;    // NSR volume (uL)
@@ -46,44 +46,23 @@ double Vjsr;    // JSR volume (uL)
 double vcleft;  // Cleft volume (uL)
 
 /* Voltage */
-double vOld;       // Membrane voltage (mV)
-double vNew;    // New Voltage (mV)
-double dVdt;    // Change in Voltage / Change in Time (mV/ms)
+//double vOld;       // Membrane voltage (mV)
+//double vNew;    // New Voltage (mV)
+//double dVdt;    // Change in Voltage / Change in Time (mV/ms)
 //double dvdtnew; // New dv/dt (mV/ms)
 double boolien; // Boolien condition to test for dvdtmax
 
 
 /* Time Step */
-double dt;      // Time step (ms)                   B B
-double t;       // Time (ms)
+//double dt;      // Time step (ms)                   B B
+//double t;       // Time (ms)
 double udt;     // Universal Time Step
 int utsc;       // Universal Time Step Counter
-//int nxstep;     // Interval Between Calculating Ion Currents
-//int steps;      // Number of Steps
-//int increment;  // Loop Control Variable
 
-/* Action Potential Duration and Max. Info */
-//double Vmax[beats];           // Max. Voltage (mV)
-//double dVdtmax[beats];        // Max. dv/dt (mV/ms)
-//double apTime[beats];            // Action Potential Duration
-//double toneapd[beats];        // Time of dv/dt Max.
-//double ttwoapd[beats];        // Time of 90% Repolarization
-//double rmbp[beats];           // Resting Membrane Potential
-//double nair[beats];           // Intracellular Na At Rest
-//double cair[beats];           // Intracellular Ca At Rest
-//double caimax[beats];	      // Peak Intracellular Ca
 int i;                        // Stimulus Counter
 
 /* Total Current and Stimulus */
 double stimval;       // Constant Stimulus (uA/cm^2)
-//double stimt;    // Time Stimulus is Applied (ms)
-//double stimtime; // Time period during which stimulus is applied (ms)
-double iTot;       // Total current (uA/cm^2)
-
-/* Terms for Solution of Conductance and Reversal Potential */
-double RGAS;      // Universal Gas Constant (J/kmol*K)
-double FDAY;  // Faraday's Constant (C/mol)
-double TEMP;    // Temperature (K)
 
 /* Ion Valences */
 double zna;  // Na valence
@@ -111,11 +90,11 @@ double csqn;   // Calsequestrin Buffered Ca Concentration (mM)
 double taudiff; // Diffusion Constant for Ion Movement from Bulk Medium to Cleft Space
 
 /* Myoplasmic Na Ion Concentration Changes */
-double iNat;  // Total Na Ion Flow (uA/uF)
+//double iNat;  // Total Na Ion Flow (uA/uF)
 double dnai;    // Change in Intracellular Na Concentration (mM)
 
 /* Myoplasmic K Ion Concentration Changes */
-double iKt; // Total K Ion Flow (uA/uF)
+//double iKt; // Total K Ion Flow (uA/uF)
 double dki;   // Change in Intracellular K Concentration (mM)
 
 /* NSR Ca Ion Concentration Changes */
@@ -158,7 +137,7 @@ double tautr;  // Time constant of Ca transfer from NSR to JSR (ms)
 
 /* Myoplasmic Ca Ion Concentration Changes */
     //not included
-double iCat;  // Total Ca Ion Flow (uA/uF)
+//double iCat;  // Total Ca Ion Flow (uA/uF)
 double dcai;    // Change in myoplasmic Ca concentration (mM)
 double catotal; // Total myoplasmic Ca concentration (mM)
 double bmyo;    // b Variable for analytical computation of [Ca] in myoplasm (mM)
@@ -293,6 +272,7 @@ double bydv;      // Ito beta-y rate constant
 double tauydv;	  // Time constant of y gate
 double yssdv;     // Steady-state value of y gate
 
+
 /* Sodium-Calcium Exchanger V-S */
 double inaca;               // NaCa exchanger current (uA/uF)
 double c1;   // Scaling factor for inaca (uA/uF)
@@ -346,6 +326,8 @@ double isusFactor;  // Sustained 4-AP sensitive K+ current
 double inakFactor;          // Na-K pump
 double inacaFactor; // Na-Ca exchanger
 //double ihFactor;		 // Total funny current
+
+
 
 double irelFactor;
 double iupFactor;

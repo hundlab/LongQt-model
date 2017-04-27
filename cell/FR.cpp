@@ -24,19 +24,7 @@ FR::FR(FR& toCopy) : Cell(toCopy){
 }
 
 void FR::Initialize(){
-    dt=dtmin = 0.005;
-    dtmed = 0.05;
-    dtmax = 0.05;
-    dvcut = 1.0;
     apTime = 0.0;
-
-    dVdt=dVdtmax=0.0;
-    t=0.0;
-    vOld = vNew = -58.600291137693;
-
-    nao = 140;
-    cao = 2.0;
-    ko = 5.4;
     type = "Faber Rudy Model";
 
     
@@ -63,37 +51,20 @@ void FR::Initialize(){
     zk = 1;   // K valence
     zca = 2;  // Ca valence
 
-    gacai = 1;
-    gacao = 1;
-    icalFactor = 1;
-    icattFactor = 1;
-    ikrFactor = 1;
-    iksFactor = 1;
-    itoFactor = 1;
-    isusFactor = 1;
-    ikiFactor = 1;
-    //ikachFactor = 1;
-    istFactor = 1;
-    inabFactor = 1;
-    inakFactor = 1;
-    inacaFactor = 1;
-    //ihFactor = 1;
-    iupFactor = 1;
-    irelFactor = 1;
-
-
-
     /* Ion Concentrations */
     taudiff = 1000; // Diffusion Constant for Ion Movement from Bulk Medium to Cleft Space
     
     /* Beginning Ion Concentrations */
     nai = 9;       // Initial Intracellular Na (mM)
+    //nai = 12.236437;
     nao = 140;      // Initial Extracellular Na (mM)
     nabm = 140;     // Initial Bulk Medium Na (mM)
     ki = 141.2;       // Initial Intracellular K (mM)
+    //ki = 136.89149;
     ko = 4.5;       // Initial Extracellular K (mM)
     kbm = 4.5;      // Initial Bulk Medium K (mM)
     cai = 0.00006;  // Initial Intracellular Ca (mM)
+    //cai = 0.000079;
     cao = 1.8;      // Initial Extracellular Ca (mM)
     cabm = 1.8;     // Initial Bulk Medium Ca (mM)
 
@@ -124,7 +95,10 @@ void FR::Initialize(){
 //    dt = udt;
     utsc = 50;
     dcaiont = 0;
+    caiontold = iCat;
+    dcaiont = dcaiontnew;
     i=-1;
+
 
     /* NSR Ca Ion Concentration Changes */
     kmup = 0.00092;    // Half-saturation concentration of iup (mM)
@@ -134,6 +108,8 @@ void FR::Initialize(){
     /* JSR Ca Ion Concentration Changes */
     tauon = 2;         // Time constant of activation of Ca release from JSR (ms)
     tauoff = 2;        // Time constant of deactivation of Ca release from JSR (ms)
+    //tauon = 0.5;
+    //tauoff = 0.5;
     csqnth = 8.75;     // Threshold for release of Ca from CSQN due to JSR overload (mM)
     gmaxrel = 150;     // Max. rate constant of Ca release from JSR due to overload (ms^-1)
     csqnbar = 10;      // Max. [Ca] buffered in CSQN (mM)
@@ -195,6 +171,34 @@ void FR::Initialize(){
     ibarpca = 1.15; // Max. Ca current through sarcolemmal Ca pump (uA/uF)
     kmpca = 0.0005; // Half-saturation concentration of sarcolemmal Ca pump (mM)
 
+    iNat = iKt = iCat = 0.0;
+    iup = ileak = itr = 0.0;
+    ina = 0.0;
+    ilca = ilcana = ilcak = icat = 0.0;
+    ikr = iks = iki = ikp = ikna = ikatp = 0.0;
+    ito = inaca = inak = insna = insk = 0.0;
+    ipca = icab = inab = 0.0;
+
+    gacai = 1;
+    gacao = 1;
+    icalFactor = 1;
+    icattFactor = 1;
+    ikrFactor = 1;
+    iksFactor = 1;
+    itoFactor = 1;
+    isusFactor = 1;
+    ikiFactor = 1;
+    //ikachFactor = 1;
+    istFactor = 1;
+    inabFactor = 1;
+    inakFactor = 1;
+    inacaFactor = 1;
+    //ihFactor = 1;
+    iupFactor = 1;
+    irelFactor = 1;
+
+
+
     makemap();
 
 
@@ -237,11 +241,23 @@ void FR::comp_ina ()
         bh = 1/(0.13*(1+exp((vOld+10.66)/-11.1)));
         aj = 0;
         bj = (0.3*exp(-0.0000002535*vOld))/(1+exp(-0.1*(vOld+32)));}
-    
+
     h = ah/(ah+bh)-((ah/(ah+bh))-h)*exp(-dt/(1/(ah+bh)));
     j = aj/(aj+bj)-((aj/(aj+bj))-j)*exp(-dt/(1/(aj+bj)));
     m = am/(am+bm)-((am/(am+bm))-m)*exp(-dt/(1/(am+bm)));
-    
+    /*
+    mtau = 1/(am+bm);
+    htau = 1/(ah+bh);
+    jtau = 1/(aj+bj);
+
+    mss = am*mtau;
+    hss = ah*htau;
+    jss = aj*jtau;
+
+    m = mss-(mss-m)*exp(-dt/mtau);
+    h = hss-(hss-h)*exp(-dt/htau);
+    j = jss-(jss-j)*exp(-dt/jtau);
+    */
     
     ina = gna*m*m*m*h*j*(vOld-ena);
 }
@@ -250,23 +266,23 @@ void FR::comp_ical ()
 {
     dss = 1/(1+exp(-(vOld+10)/6.24));
     taud = dss*(1-exp(-(vOld+10)/6.24))/(0.035*(vOld+10));
-    
+
     fss = (1/(1+exp((vOld+32)/8)))+(0.6/(1+exp((50-vOld)/20)));
     tauf = 1/(0.0197*exp(-pow(0.0337*(vOld+10),2))+0.02);
-    
+
     d = dss-(dss-d)*exp(-dt/taud);
     f = fss-(fss-f)*exp(-dt/tauf);
-    
+
     ibarca = pca*zca*zca*((vOld*FDAY*FDAY)/(RGAS*TEMP))*((gacai*cai*exp((zca*vOld*FDAY)/(RGAS*TEMP))-gacao*cao)/(exp((zca*vOld*FDAY)/(RGAS*TEMP))-1));
     ibarna = pna*zna*zna*((vOld*FDAY*FDAY)/(RGAS*TEMP))*((ganai*nai*exp((zna*vOld*FDAY)/(RGAS*TEMP))-ganao*nao)/(exp((zna*vOld*FDAY)/(RGAS*TEMP))-1));
     ibark = pk*zk*zk*((vOld*FDAY*FDAY)/(RGAS*TEMP))*((gaki*ki*exp((zk*vOld*FDAY)/(RGAS*TEMP))-gako*ko)/(exp((zk*vOld*FDAY)/(RGAS*TEMP))-1));
-    
+
     fca = 1/(1+cai/kmca);
-    
-    ilca = icalFactor*d*f*fca*ibarca;
+
+    ilca = d*f*fca*ibarca;
     ilcana = d*f*fca*ibarna;
     ilcak = d*f*fca*ibark;
-    
+
     ilcatot = ilca+ilcana+ilcak;
 }
 
@@ -311,15 +327,15 @@ void FR::comp_iks ()
 {
     gks = iksFactor*0.433*(1+0.6/(1+pow((0.000038/cai),1.4)));
     eks = ((RGAS*TEMP)/FDAY)*log((ko+prnak*nao)/(ki+prnak*nai));
-    
+
     xs1ss = 1/(1+exp(-(vOld-1.5)/16.7));
     xs2ss = xs1ss;
     tauxs1 = 1/(0.0000719*(vOld+30)/(1-exp(-0.148*(vOld+30)))+0.000131*(vOld+30)/(exp(0.0687*(vOld+30))-1));
     tauxs2 = 4*tauxs1;
-    
+
     xs1 = xs1ss-(xs1ss-xs1)*exp(-dt/tauxs1);
     xs2 = xs2ss-(xs2ss-xs2)*exp(-dt/tauxs2);
-    
+
     iks = gks*xs1*xs2*(vOld-eks);
 }
 
@@ -541,17 +557,16 @@ void FR::conc_cai ()
     dcai = -dt*(((iCat*ACap)/(Vmyo*zca*FDAY))+((iup-ileak)*Vnsr/Vmyo)-(irelcicr*Vjsr/Vmyo)-(ireljsrol*Vjsr/Vmyo));
     trpn = trpnbar*(cai/(cai+kmtrpn));
     cmdn = cmdnbar*(cai/(cai+kmcmdn));
-    
+
     catotal = trpn+cmdn+dcai+cai;
     bmyo = cmdnbar+trpnbar-catotal+kmtrpn+kmcmdn;
     cmyo = (kmcmdn*kmtrpn)-(catotal*(kmtrpn+kmcmdn))+(trpnbar*kmcmdn)+(cmdnbar*kmtrpn);
     dmyo = -kmtrpn*kmcmdn*catotal;
-    
+
     gpig = sqrt(bmyo*bmyo-3*cmyo);
-    
+
     cai = (2*gpig/3)*cos(acos((9*bmyo*cmyo-2*bmyo*bmyo*bmyo-27*dmyo)/(2*pow((bmyo*bmyo-3*cmyo),1.5)))/3)-(bmyo/3);
 }
-
 void FR::conc_cleft()
 {
     dnao = dt*((nabm-nao)/taudiff+iNat*ACap/(vcleft*FDAY));
@@ -586,8 +601,9 @@ void FR::updateCurr()
     std::cout << //inaca << "," << inak << "," << inab << "," << insna << "," << insk << "," << ipca << "," << icab << std::endl;
                  //ikp << "," << ikna << "," << ikatp << "," << ito << std::endl;
                  //ina << "," << ilcatot << "," << icat << "," << ikr << "," << iks << "," << iki << std::endl;
-
-                 iCat << "," << iKt << "," << iNat << "," << iTot << "," << vOld << std::endl;
+                cao<< "," << cai << "," << dcai << std::endl;
+                 //dt << "," << iup << "," << ileak << std::endl;
+                 //iCat << "," << iKt << "," << iNat << "," << iTot << "," << vOld << std::endl;
                  //insna << "," << insk << "," << ilca <<"," << ilcana << "," << ilcak << "," << cai << "," << iCat << std::endl;
 }
 

@@ -363,7 +363,7 @@ bool GridCell::readGridfile(string filename) {
 	QXmlStreamReader xml(&ifile);
 	return this->readGridfile(xml);
 }
-bool GridCell:: readCellState(string file) {
+bool GridCell::readCellState(string file) {
 	QFile ifile(file.c_str());
 
 	if(!ifile.open(QIODevice::ReadOnly)){
@@ -372,6 +372,7 @@ bool GridCell:: readCellState(string file) {
 	}
 	QXmlStreamReader xml(&ifile);
 	if(!CellUtils::readNext(xml, "grid")) return false;
+	Cell::readCellState(xml);
 	while(!xml.atEnd() && xml.readNextStartElement()){
 		int row = xml.attributes().value("row").toInt();
 		int col = xml.attributes().value("col").toInt();
@@ -400,18 +401,19 @@ bool GridCell::writeCellState(string file) {
 	xml.writeStartDocument();
 	xml.writeStartElement("grid");
 	bool success = true;
+	success &= Cell::writeCellState(xml);
 	int row = 0;
 	int col = 0;
 	for(auto& fiber : grid.fiber) {
-		row++;
 		for(auto& node : fiber.nodes) {
-			col++;
 			xml.writeStartElement("pos");
 			xml.writeAttribute("row",QString::number(row));
 			xml.writeAttribute("col",QString::number(col));
 	 		success &= node->cell->writeCellState(xml);
 			xml.writeEndElement();
+			col++;
 		}
+		row++;
 		col = 0;
 	}
 	xml.writeEndElement();

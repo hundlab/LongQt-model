@@ -17,6 +17,7 @@ $$PWD/cell/gpbatrialWT.cpp\
 $$PWD/cell/gpbatrialSE.cpp\
 $$PWD/cell/atrial.cpp\
 $$PWD/cell/br04.cpp\
+$$PWD/cell/OHaraRudy.cpp\
 $$PWD/iobase.cpp\
 $$PWD/structure/fiber.cpp\
 $$PWD/structure/node.cpp\
@@ -43,6 +44,7 @@ $$PWD/cell/gpbatrialWT.h\
 $$PWD/cell/gpbatrialSE.h\
 $$PWD/cell/atrial.h\
 $$PWD/cell/br04.h\
+$$PWD/cell/OHaraRudy.h\
 $$PWD/iobase.h\
 $$PWD/cellutils.h\
 $$PWD/side.h\

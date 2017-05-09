@@ -18,6 +18,7 @@
 #include "gpbatrialSE.h"
 #include "atrial.h"
 #include "br04.h"
+#include "OHaraRudy.h"
 
 #include <map>
 #include <list>
@@ -35,7 +36,8 @@ namespace CellUtils {
 		{ GpbAtrial().type, [] () {return (Cell*) new GpbAtrial;}},
 		{ HRD09Control().type, [] () {return (Cell*) new HRD09Control;}},
 		{ HRD09BorderZone().type, [] () {return (Cell*) new HRD09BorderZone;}},
-		{ TNNP04Control().type, [] () {return (Cell*) new TNNP04Control;}}
+		{ TNNP04Control().type, [] () {return (Cell*) new TNNP04Control;}},
+		{ OHaraRudy().type, [] () {return (Cell*) new OHaraRudy;}}
 
 		/*		{ GpbVent().type, [] () {return (Cell*) new GpbVent;}},
 				{ Br04().type, [] () {return (Cell*) new Br04;}},
@@ -62,6 +64,9 @@ namespace CellUtils {
 			{"bcl","1000"},{"numstims","500"}}},
 		{ TNNP04Control().type, {{"paceflag","true"},{"stimval","-60"},
 			{"stimdur","1"},{"tMax","500000"},{"writetime","495000"},{"bcl","1000"},
+			{"numstims","500"}}},
+		{ OHaraRudy().type, {{"paceflag","true"},{"stimval","-80"},
+			{"stimdur","0.5"},{"tMax","500000"},{"writetime","495000"},{"bcl","1000"},
 			{"numstims","500"}}}
 	};
 

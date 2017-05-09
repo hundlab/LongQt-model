@@ -184,7 +184,6 @@ ControlSa::ControlSa(const ControlSa& toCopy ) : Cell(toCopy)
     dtmed = toCopy.dtmed;
     dtmax = toCopy.dtmax;
     dvcut = toCopy.dvcut;
-    type = "ControlSa";
     apTime = toCopy.apTime;
      
     naO = toCopy.naO;

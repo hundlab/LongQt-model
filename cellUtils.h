@@ -18,7 +18,9 @@
 #include "gpbatrialSE.h"
 #include "atrial.h"
 #include "br04.h"
-#include "OHaraRudy.h"
+#include "OHaraRudyEndo.h"
+#include "OHaraRudyEpi.h"
+#include "OHaraRudyM.h"
 
 #include <map>
 #include <list>
@@ -37,7 +39,9 @@ namespace CellUtils {
 		{ HRD09Control().type, [] () {return (Cell*) new HRD09Control;}},
 		{ HRD09BorderZone().type, [] () {return (Cell*) new HRD09BorderZone;}},
 		{ TNNP04Control().type, [] () {return (Cell*) new TNNP04Control;}},
-		{ OHaraRudy().type, [] () {return (Cell*) new OHaraRudy;}}
+		{ OHaraRudyEndo().type, [] () {return (Cell*) new OHaraRudyEndo;}},
+		{ OHaraRudyEpi().type, [] () {return (Cell*) new OHaraRudyEpi;}},
+		{ OHaraRudyM().type, [] () {return (Cell*) new OHaraRudyM;}}
 
 		/*		{ GpbVent().type, [] () {return (Cell*) new GpbVent;}},
 				{ Br04().type, [] () {return (Cell*) new Br04;}},
@@ -65,9 +69,16 @@ namespace CellUtils {
 		{ TNNP04Control().type, {{"paceflag","true"},{"stimval","-60"},
 			{"stimdur","1"},{"tMax","500000"},{"writetime","495000"},{"bcl","1000"},
 			{"numstims","500"}}},
-		{ OHaraRudy().type, {{"paceflag","true"},{"stimval","-80"},
+		{ OHaraRudyEndo().type, {{"paceflag","true"},{"stimval","-80"},
+			{"stimdur","0.5"},{"tMax","500000"},{"writetime","495000"},{"bcl","1000"},
+			{"numstims","500"}}},
+		{ OHaraRudyEpi().type, {{"paceflag","true"},{"stimval","-80"},
+			{"stimdur","0.5"},{"tMax","500000"},{"writetime","495000"},{"bcl","1000"},
+			{"numstims","500"}}},
+		{ OHaraRudyM().type, {{"paceflag","true"},{"stimval","-80"},
 			{"stimdur","0.5"},{"tMax","500000"},{"writetime","495000"},{"bcl","1000"},
 			{"numstims","500"}}}
+
 	};
 
 

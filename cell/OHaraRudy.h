@@ -55,6 +55,12 @@
 class OHaraRudy : public Cell
 {
 	public:
+		enum cellType {
+			endo = 0,
+			epi = 1,
+			M = 2,
+		};
+
 		OHaraRudy();
 		OHaraRudy(OHaraRudy& toCopy);
 		~OHaraRudy();
@@ -144,7 +150,7 @@ class OHaraRudy : public Cell
 		double KmCaMK=0.15;
 
 		//cell type
-		const int celltype=0;  //endo = 0, epi = 1, M = 2
+		cellType celltype=endo;  //endo = 0, epi = 1, M = 2
 
 		//introduce varaibles for reversal potentials, currents, fluxes, and CaMK
 		double ena,ek,eks;

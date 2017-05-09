@@ -106,7 +106,7 @@ void OHaraRudy::updateINa() {
 	double thLp=3.0*thL;
 	hLp=hLssp-(hLssp-hLp)*exp(-dt/thLp);
 	double GNaL=0.0075;
-	if (celltype==1)
+	if (celltype==epi)
 	{
 		GNaL*=0.6;
 	}
@@ -121,7 +121,7 @@ void OHaraRudy::updateIto() {
 	a=ass-(ass-a)*exp(-dt/ta);
 	double iss=1.0/(1.0+exp((vOld+43.94)/5.711));
 	double delta_epi;
-	if (celltype==1)
+	if (celltype==epi)
 	{
 		delta_epi=1.0-(0.95/(1.0+exp((vOld+70.0)/5.0)));
 	}
@@ -148,11 +148,11 @@ void OHaraRudy::updateIto() {
 	iSp=iss-(iss-iSp)*exp(-dt/tiSp);
 	double ip=AiF*iFp+AiS*iSp;
 	double Gto=0.02;
-	if (celltype==1)
+	if (celltype==epi)
 	{
 		Gto*=4.0;
 	}
-	if (celltype==2)
+	if (celltype==M)
 	{
 		Gto*=4.0;
 	}
@@ -200,11 +200,11 @@ void OHaraRudy::updateICa() {
 	double PhiCaNa=1.0*vffrt*(0.75*nass*exp(1.0*vfrt)-0.75*naO)/(exp(1.0*vfrt)-1.0);
 	double PhiCaK=1.0*vffrt*(0.75*kss*exp(1.0*vfrt)-0.75*kO)/(exp(1.0*vfrt)-1.0);
 	double PCa=0.0001;
-	if (celltype==1)
+	if (celltype==epi)
 	{
 		PCa*=1.2;
 	}
-	if (celltype==2)
+	if (celltype==M)
 	{
 		PCa*=2.5;
 	}
@@ -231,11 +231,11 @@ void OHaraRudy::updateIkr() {
 	double xr=Axrf*xrf+Axrs*xrs;
 	double rkr=1.0/(1.0+exp((vOld+55.0)/75.0))*1.0/(1.0+exp((vOld-10.0)/30.0));
 	double GKr=0.046;
-	if (celltype==1)
+	if (celltype==epi)
 	{
 		GKr*=1.3;
 	}
-	if (celltype==2)
+	if (celltype==M)
 	{
 		GKr*=0.8;
 	}
@@ -251,7 +251,7 @@ void OHaraRudy::updateIKs() {
 	xs2=xs2ss-(xs2ss-xs2)*exp(-dt/txs2);
 	double KsCa=1.0+0.6/(1.0+pow(3.8e-5/cai,1.4));
 	double GKs=0.0034;
-	if (celltype==1)
+	if (celltype==epi)
 	{
 		GKs*=1.4;
 	}
@@ -264,11 +264,11 @@ void OHaraRudy::updateIK1() {
 	xk1=xk1ss-(xk1ss-xk1)*exp(-dt/txk1);
 	double rk1=1.0/(1.0+exp((vOld+105.8-2.6*kO)/9.493));
 	double GK1=0.1908;
-	if (celltype==1)
+	if (celltype==epi)
 	{
 		GK1*=1.2;
 	}
-	if (celltype==2)
+	if (celltype==M)
 	{
 		GK1*=1.3;
 	}
@@ -328,11 +328,11 @@ void OHaraRudy::updateINaCa() {
 	double JncxNa=3.0*(E4*k7-E1*k8)+E3*k4pp-E2*k3pp;
 	double JncxCa=E2*k2-E1*k1;
 	double Gncx=0.0008;
-	if (celltype==1)
+	if (celltype==epi)
 	{
 		Gncx*=1.1;
 	}
-	if (celltype==2)
+	if (celltype==M)
 	{
 		Gncx*=1.4;
 	}
@@ -424,11 +424,11 @@ void OHaraRudy::updateINaK() {
 	double JnakNa=3.0*(E1*a3-E2*b3);
 	double JnakK=2.0*(E4*b1-E3*a1);
 	double Pnak=30;
-	if (celltype==1)
+	if (celltype==epi)
 	{
 		Pnak*=0.9;
 	}
-	if (celltype==2)
+	if (celltype==M)
 	{
 		Pnak*=0.7;
 	}
@@ -442,7 +442,7 @@ void OHaraRudy::updateIpCa()
 
 	double xkb=1.0/(1.0+exp(-(vOld-14.48)/18.34));
 	double GKb=0.003;
-	if (celltype==1)
+	if (celltype==epi)
 	{
 		GKb*=0.6;
 	}
@@ -464,7 +464,7 @@ void OHaraRudy::updateJrel() {
 	double bt=4.75;
 	double a_rel=0.5*bt;
 	double Jrel_inf=a_rel*(-ICaL)/(1.0+pow(1.5/cajsr,8.0));
-	if (celltype==2)
+	if (celltype==M)
 	{
 		Jrel_inf*=1.7;
 	}
@@ -477,7 +477,7 @@ void OHaraRudy::updateJrel() {
 	double btp=1.25*bt;
 	double a_relp=0.5*btp;
 	double Jrel_infp=a_relp*(-ICaL)/(1.0+pow(1.5/cajsr,8.0));
-	if (celltype==2)
+	if (celltype==M)
 	{
 		Jrel_infp*=1.7;
 	}
@@ -494,7 +494,7 @@ void OHaraRudy::updateJrel() {
 void OHaraRudy::updatenaI() {
 	double Jupnp=0.004375*cai/(cai+0.00092);
 	double Jupp=2.75*0.004375*cai/(cai+0.00092-0.00017);
-	if (celltype==1)
+	if (celltype==epi)
 	{
 		Jupnp*=1.3;
 		Jupp*=1.3;
@@ -519,7 +519,7 @@ void OHaraRudy::updatekI() {
 
 void OHaraRudy::updatecajsr() {
 	double Bcai;
-	if (celltype==1)
+	if (celltype==epi)
 	{
 		Bcai=1.0/(1.0+1.3*cmdnmax*kmcmdn/pow(kmcmdn+cai,2.0)+trpnmax*kmtrpn/pow(kmtrpn+cai,2.0));
 	}

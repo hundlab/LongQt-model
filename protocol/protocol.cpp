@@ -254,7 +254,7 @@ bool Protocol::write2Dmap(vector<string> vnames, vector< vector<string> > twoDmn
 	ofstream out;
 	out.open(file);
 	if(!out.is_open()){
-		cout << "Error opening " << file << endl;
+        qCritical() << "Error opening " << file.c_str();
 		return false;
 	}
 
@@ -307,7 +307,9 @@ int Protocol::readpars(QXmlStreamReader& xml, set<string> varnames) {
 			}
 			xml.readNext();
 			pars.at(name).set(xml.text().toString().toStdString());
-		} catch (const std::out_of_range&) {}
+        } catch (const std::out_of_range&) {
+            qWarning("Protocol: %s not in pars", name.c_str());
+        }
 		xml.readNext();
 	}
 	return 0;
@@ -319,7 +321,7 @@ int Protocol::readpars(string file, set<string> varnames)
 	map<string, double*>::iterator p;
 
 	if(!ifile.open(QIODevice::ReadOnly)){
-		cout << "Error opening " << file << endl;
+        qCritical() << "Error opening " << file.c_str();
 		return 1;
 	}
 	QXmlStreamReader xml(&ifile);
@@ -343,7 +345,7 @@ int Protocol::parsemixedmap(map<string,double*> varmap, string file, vector<stri
 
 	ifile.open(file);
 	if(!ifile.is_open()){
-		cout << "Error opening " << file << endl;
+        qCritical() << "Error opening " << file.c_str();
 		return 1;
 	}
 
@@ -384,7 +386,7 @@ bool Protocol::writeMVarsFile(string file) {
 
 	out.open(file);
 	if(!out.good()){
-		cout << "Error opening " << file << endl;
+        qCritical() << "Error opening " << file.c_str();
 		return ret;
 	}
 
@@ -463,7 +465,7 @@ bool Protocol::readMvarsFile(string filename)
 
 	ifile.open(filename);
 	if(!ifile.good()){
-		cout << "Error opening " << filename << endl;
+        qCritical() << "Error opening " << filename.c_str();
 		return false;
 	}
 
@@ -521,7 +523,7 @@ bool Protocol::writepars(string file)
 
 	bool exists = ofile.exists();
 	if(!ofile.open(QIODevice::WriteOnly|QIODevice::Truncate|QIODevice::Text)){
-		cout << "Error opening " << file << endl;
+        qCritical() << "Error opening " << file.c_str();
 		return 1;
 	}
 	QXmlStreamWriter xml(&ofile);
@@ -546,7 +548,7 @@ bool Protocol::writedvars(string file)
 	if(!ofile.is_open())
 		ofile.open(file, ios_base::trunc);
 	if(!ofile.is_open()){
-		cout << "Error opening " << file << endl;
+        qCritical() << "Error opening " << file.c_str();
 		return false;
 	}
 
@@ -568,7 +570,7 @@ bool Protocol::readdvars(string file) {
 		ifile.open(file);
 	}
 	if(!ifile.good()){
-		cout << "Error opening " << file << endl;
+        qCritical() << "Error opening " << file.c_str();
 		return false;
 	}
 
@@ -601,6 +603,7 @@ bool Protocol::setCell(const string& type, bool reset) {
 		pnames.clear();
 		return true;
 	} catch(const std::out_of_range&) {
+        qWarning("Protocol: %s is not a valid cell type",type.c_str());
 		return false;
 	}
 }

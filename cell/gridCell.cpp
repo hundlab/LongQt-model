@@ -246,7 +246,7 @@ bool GridCell::writeGridfile(string fileName) {
 	QFile ofile(fileName.c_str());
 
 	if(!ofile.open(QIODevice::Append)){
-		cout << "Error opening " << fileName << endl;
+        qCritical() << "Error opening " << fileName.c_str();
 		return false;
 	}
 
@@ -315,6 +315,7 @@ bool GridCell::handleNode(QXmlStreamReader& xml, set<CellInfo*>& cells, CellInfo
 			info->cell = cellMap.at(cell_type)();
 		} catch(const std::out_of_range&) {
 			success = false;
+            qWarning("%s not a valid cell type", cell_type.c_str());
 			info->cell = new Cell();
 		}
 		xml.skipCurrentElement();
@@ -349,7 +350,9 @@ bool GridCell::handleNode(QXmlStreamReader& xml, set<CellInfo*>& cells, CellInfo
 	while(xml.readNextStartElement()) {
 		try {
 			success &= handlers.at(xml.name().toString())(xml);
-		} catch(const std::out_of_range&) {}
+        } catch(const std::out_of_range&) {
+            qWarning("%s xml type %s not recognized", xml.name().toString());
+        }
 	}
 	cells.insert(info);
 	return success;
@@ -357,7 +360,7 @@ bool GridCell::handleNode(QXmlStreamReader& xml, set<CellInfo*>& cells, CellInfo
 bool GridCell::readGridfile(string filename) {
 	QFile ifile(filename.c_str());
 	if(!ifile.open(QIODevice::ReadOnly|QIODevice::Text)){
-		cout << "Error opening " << filename << endl;
+        qCritical() << "Error opening " << filename.c_str();
 		return false;
 	}
 	QXmlStreamReader xml(&ifile);
@@ -367,7 +370,7 @@ bool GridCell::readCellState(string file) {
 	QFile ifile(file.c_str());
 
 	if(!ifile.open(QIODevice::ReadOnly)){
-		cout << "Error opening " << file << endl;
+        qCritical() << "Error opening " << file.c_str();
 		return false;
 	}
 	QXmlStreamReader xml(&ifile);
@@ -393,7 +396,7 @@ bool GridCell::writeCellState(string file) {
 	string name;
 
 	if(!ofile.open(QIODevice::WriteOnly|QIODevice::Text)){
-		cout << "Error opening " << file << endl;
+        qCritical() << "Error opening " << file.c_str();
 		return false;
 	}
 	QXmlStreamWriter xml(&ofile);

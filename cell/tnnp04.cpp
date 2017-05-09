@@ -8,6 +8,8 @@
 
 #include "tnnp04.h"
 
+#include <QDebug>
+
 //######################################################
 // Constructor
 //######################################################
@@ -381,7 +383,7 @@ void TNNP04Control::updateSRcurrents(){
 	  if(sponRelflag==0){
 	    sponRelflag = 1;
 	    tRel = 0.0;	
-	    cout << "Spontaneous release at t = " << t << endl;
+        qInfo() << "Spontaneous release at t = " << t << endl;
 	  }
 	  Gate.g = 1;
 	}

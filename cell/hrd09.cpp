@@ -9,6 +9,8 @@
 
 #include "hrd09.h"
 
+#include <QDebug>
+
 //######################################################
 // Constructor for control canine epicardial
 // ventricular model.
@@ -548,7 +550,7 @@ void HRD09Control::updateIrel()
 	  if(sponRelflag==0){
 	    tRel=0.0;
 	    sponRelflag=1;
-	    cout << "Spontaneous release at t = " << t << endl;
+        qInfo() << "Spontaneous release at t = " << t << endl;
 	    ryRopen = irelinf = 6.0;
 	  }
 	  tRel=tRel+dt;

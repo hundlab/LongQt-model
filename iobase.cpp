@@ -7,6 +7,7 @@
 // Email thomas.hund@osumc.edu
 //#################################################
 
+#include <QDebug>
 
 #include "iobase.h"
 bool IOBase::setOutputfile(string filename, set<string> set, ofstream* ofile) {
@@ -22,7 +23,7 @@ bool IOBase::setOutputfile(string filename, set<string> set, ofstream* ofile) {
     ofile->precision(10);
     ofile->open(filename,ios_base::app);
     if(!ofile->good()) {
-        cout << "Error Opening " << filename << endl;
+        qCritical() << "Error Opening " << filename.c_str();
         return false;
     } else if(!exists) {
         for(it = set.begin(); it != set.end(); it++) {

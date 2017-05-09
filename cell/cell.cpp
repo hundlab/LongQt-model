@@ -79,7 +79,7 @@ bool Cell::writeCellState(string file) {
 	string name;
 
 	if(!ofile.open(QIODevice::WriteOnly|QIODevice::Text)){
-		cout << "Error opening " << file << endl;
+        qCritical() << "Error opening " << file.c_str();
 		return 1;
 	}
 	QXmlStreamWriter xml(&ofile);
@@ -119,7 +119,7 @@ bool Cell::readCellState(string file) {
 	QFile ifile(file.c_str());
 
 	if(!ifile.open(QIODevice::ReadOnly)){
-		cout << "Error opening " << file << endl;
+        qCritical() << "Error opening " << file.c_str();
 		return false;
 	}
 	QXmlStreamReader xml(&ifile);

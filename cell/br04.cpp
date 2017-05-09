@@ -8,6 +8,8 @@
 
 #include "br04.h"
 
+#include <QDebug>
+
 //######################################################
 // Constructor for control canine epicardial
 // ventricular model.
@@ -499,7 +501,7 @@ void Br04::updateCaFlux() {
           if(sponRelflag==0){
             sponRelflag = 1;
             tRel = 0.0;
-            cout << "Spontaneous release at t = " << t << endl;
+            qInfo() << "Spontaneous release at t = " << t;
           }
           PO1 = 0.6;
           PRyr = 1.0;

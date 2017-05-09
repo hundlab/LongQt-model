@@ -8,6 +8,8 @@
 
 #include "cell_kernel.h"
 
+#include <QDebug>
+
 //######################################################
 // Constructor for parent cell class - the basis for 
 // any excitable cell model.  
@@ -201,6 +203,7 @@ bool CellKernel::setVar(string name, double val) {
     try {
         *vars.at(name) = val;
     } catch(out_of_range&) {
+        qDebug("%s not in cell vars", name.c_str());
         return false;
     }
     return true;
@@ -212,6 +215,7 @@ bool CellKernel::setPar(string name, double val) {
     try {
         *pars.at(name) = val;
     } catch(out_of_range&) {
+        qDebug("%s not in cell pars", name.c_str());
         return false;
     }
     return true;
@@ -236,12 +240,16 @@ void CellKernel::copyVarPar(const CellKernel& toCopy) {
     for(auto it : vars) {
         try {
             *it.second = *toCopy.vars.at(it.first);
-        } catch(const std::out_of_range&) {}
+        } catch(const std::out_of_range&) {
+            qDebug("%s not in cell vars", it.first.c_str());
+        }
     }
     for(auto it : pars) {
         try {
             *it.second = *toCopy.pars.at(it.first);
-        } catch(const std::out_of_range&) {}
+        } catch(const std::out_of_range&) {
+            qDebug("%s not in cell pars", it.first.c_str());
+        }
 
     }
 }

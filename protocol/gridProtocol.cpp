@@ -9,6 +9,7 @@
 #include "cellUtils.h"
 
 #include <QFile>
+#include <QDebug>
 
 GridProtocol::GridProtocol() : CurrentClamp(){
 	GridCell* temp = new GridCell();
@@ -201,7 +202,7 @@ bool GridProtocol::writepars(string file) {
 
 	bool exists = ofile.exists();
 	if(!ofile.open(QIODevice::WriteOnly|QIODevice::Text|QIODevice::Truncate)){
-		cout << "Error opening " << file << endl;
+        qCritical() << "Error opening " << file.c_str();
 		return 1;
 	}
 	QXmlStreamWriter xml(&ofile);
@@ -219,7 +220,7 @@ bool GridProtocol::writepars(string file) {
 int GridProtocol::readpars(string file, set<string> varnames) {
 	QFile ifile(file.c_str());
 	if(!ifile.open(QIODevice::ReadOnly|QIODevice::Text)){
-		cout << "Error opening " << file << endl;
+        qCritical() << "Error opening " << file.c_str();
 		return false;
 	}
 	QXmlStreamReader xml(&ifile);

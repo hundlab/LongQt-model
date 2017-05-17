@@ -38,9 +38,9 @@ FR::FR(FR& toCopy) : Cell(toCopy){
 
 void FR::Initialize(){
     apTime = 0.0;
-    type = "Mammalian Ventricular (Faber-Rudy 2007)";
+    type = "Mammalian Ventricular (Faber-Rudy 2000)";
 
-	dt=dtmin=dtmed=dtmax=0.002;
+	dt=dtmin=0.002;
 	vOld = vNew =  -90.0;
     
     /* Cell Geometry */

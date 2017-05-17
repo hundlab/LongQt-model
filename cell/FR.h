@@ -28,7 +28,7 @@ class FR : public Cell {
 
     //##### Declare class variables ##############
     
-
+double iKtStim;
 /* Cell Geometry */
 const double l = 0.01;       // Length of the cell (cm)
 const double a = 0.0011;     // Radius of the cell (cm)
@@ -56,13 +56,8 @@ double boolien; // Boolien condition to test for dvdtmax
 /* Time Step */
 //double dt;      // Time step (ms)                   B B
 //double t;       // Time (ms)
-double udt;     // Universal Time Step
-int utsc;       // Universal Time Step Counter
 
 int i;                        // Stimulus Counter
-
-/* Total Current and Stimulus */
-double stimval;       // Constant Stimulus (uA/cm^2)
 
 /* Ion Valences */
 double zna;  // Na valence

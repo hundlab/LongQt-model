@@ -51,7 +51,7 @@ class cellUtils {
         protocolCellDefaults[gridCell().type] = {{"paceflag","true"},{"stimval","-12.5"},{"stimdur","5"},{"tMax","500000"},{"writetime","495000"},{"bcl","1000"},{"numstims","500"}};
         protocolCellDefaults[HRD09BorderZone().type] = {{"paceflag","true"},{"stimval","-80"},{"stimdur","0.5"},{"tMax","500000"},{"writetime","495000"},{"bcl","1000"},{"numstims","500"}};
         protocolCellDefaults[TNNP04Control().type] = {{"paceflag","true"},{"stimval","-60"},{"stimdur","1"},{"tMax","500000"},{"writetime","495000"},{"bcl","1000"},{"numstims","500"}};
-        protocolCellDefaults[FR().type] = {{"paceflag","true"},{"stimval","-80"},{"stimdur","10"},{"tMax","500000"},{"writetime","495000"},{"bcl","1000"},{"numstims","500"}};
+        protocolCellDefaults[FR().type] = {{"paceflag","true"},{"stimval","-80"},{"stimdur","0.5"},{"tMax","1000"},{"writetime","0"},{"bcl","300"},{"numstims","20"}};
 
  
    }

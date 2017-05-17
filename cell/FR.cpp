@@ -1,7 +1,20 @@
-//
-//  main.cpp
-//  /* The Luo-Rudy Dynamic (LRd) Model of the Mammalian Ventricular Myocyte */
+/* The Luo-Rudy Dynamic (LRd) Model of the Mammalian Ventricular Myocyte */
 /* Gregory Faber */
+/* This code requires a C++ compiler */
+/* Detailed list of equations and model description are provided in */
+
+/*  Circ Res 1991;68:1501-1526      */ 
+/*  Circ Res 1994;74:1071-1096      */
+/*  Circ Res 1994;74:1097-1113      */
+/*  Circ Res 1995;77:140-152        */
+/*  Biophys J 1995;68:949-964       */
+/*  Cardiovasc Res 1997;35:256-272  */
+/*  Circulation 1999;99:2466-2474   */
+/*  Cardiovas Res 1999;42:530-542   */
+/*  Nature 1999;400:566-569         */
+/*  Circulation 2000;101:1192-1198  */
+/*  Biophy J 2000;78:2392-2404      */
+
 //
 //  Created by Shana Bee on 2/17/17.
 //  Copyright © 2017 Shana Bee. All rights reserved.
@@ -25,8 +38,10 @@ FR::FR(FR& toCopy) : Cell(toCopy){
 
 void FR::Initialize(){
     apTime = 0.0;
-    type = "Faber Rudy Model";
+    type = "Mammalian Ventricular (Faber-Rudy 2007)";
 
+	dt=dtmin=dtmed=dtmax=0.002;
+	vOld = vNew =  -90.0;
     
     /* Cell Geometry */
     cellLength = 0.01;       // Length of the cell (cm)
@@ -93,12 +108,30 @@ void FR::Initialize(){
     csqn = 6.97978;
     boolien = 1;
 //    dt = udt;
-    utsc = 50;
+//    utsc = 50;
     dcaiont = 0;
     caiontold = iCat;
     dcaiont = dcaiontnew;
     i=-1;
 
+	/*Factors*/
+    gacai = 1;
+    gacao = 1;
+    icalFactor = 1;
+    icattFactor = 1;
+    ikrFactor = 1;
+    iksFactor = 1;
+    itoFactor = 1;
+    isusFactor = 1;
+    ikiFactor = 1;
+    //ikachFactor = 1;
+    istFactor = 1;
+    inabFactor = 1;
+    inakFactor = 1;
+    inacaFactor = 1;
+    //ihFactor = 1;
+    iupFactor = 1;
+    irelFactor = 1;
 
     /* NSR Ca Ion Concentration Changes */
     kmup = 0.00092;    // Half-saturation concentration of iup (mM)
@@ -179,23 +212,6 @@ void FR::Initialize(){
     ito = inaca = inak = insna = insk = 0.0;
     ipca = icab = inab = 0.0;
 
-    gacai = 1;
-    gacao = 1;
-    icalFactor = 1;
-    icattFactor = 1;
-    ikrFactor = 1;
-    iksFactor = 1;
-    itoFactor = 1;
-    isusFactor = 1;
-    ikiFactor = 1;
-    //ikachFactor = 1;
-    istFactor = 1;
-    inabFactor = 1;
-    inakFactor = 1;
-    inacaFactor = 1;
-    //ihFactor = 1;
-    iupFactor = 1;
-    irelFactor = 1;
 
 
 
@@ -598,13 +614,13 @@ void FR::updateCurr()
     comp_inab();   // Calculates Na Background Current
 
     comp_it();     // Calculates Total Current
-    std::cout << //inaca << "," << inak << "," << inab << "," << insna << "," << insk << "," << ipca << "," << icab << std::endl;
+/*    std::cout << //inaca << "," << inak << "," << inab << "," << insna << "," << insk << "," << ipca << "," << icab << std::endl;
                  //ikp << "," << ikna << "," << ikatp << "," << ito << std::endl;
                  //ina << "," << ilcatot << "," << icat << "," << ikr << "," << iks << "," << iki << std::endl;
                 cao<< "," << cai << "," << dcai << std::endl;
                  //dt << "," << iup << "," << ileak << std::endl;
                  //iCat << "," << iKt << "," << iNat << "," << iTot << "," << vOld << std::endl;
-                 //insna << "," << insk << "," << ilca <<"," << ilcana << "," << ilcak << "," << cai << "," << iCat << std::endl;
+                 //insna << "," << insk << "," << ilca <<"," << ilcana << "," << ilcak << "," << cai << "," << iCat << std::endl;*/
 }
 
 void FR::updateConc()
@@ -623,9 +639,12 @@ void FR::updateConc()
 
 
 
-
+// Constant Stimulus (uA/cm^2)
 int FR::externalStim(double stimval){
+	iKt = iKt + stimval;
+	//iKt was only changed for conc_ki
     iTot = iTot + stimval;
+	boolien = 0;
     return 1;
 }
 

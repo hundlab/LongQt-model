@@ -98,6 +98,8 @@ void GpbAtrialSE::Initialize() {
     Gate.f = 1.00;
     Gate.f_cabj = .02421991;
     Gate.f_cabsl = .01452605;
+    Gate.hl = 0;
+    Gate.ml = 0;
 	
 //####### RyR channel fractions
 	Ryrr = 0.8884332;
@@ -107,7 +109,7 @@ void GpbAtrialSE::Initialize() {
 
 	iTos = iTof = iTo = 0.0;
 	iKsjunc = iKssl=iKs=iKr=iKur=iKpjunc = iKpsl = iKp = iK1 = 0.0;
-	iNajunc = iNasl = iNabjunc = iNabsl = iNab = iNa = 0.0;
+    iNajunc = iNasl = iNabjunc = iNabsl = iNab = iNa = iNal = 0.0;
 	iCajunc = iCasl = iCa = 0.0;
 	iCaL = iCab = ipCa = 0.0;
 	iCak = iCanajunc = iCanasl = iCana = 0.0;
@@ -162,6 +164,7 @@ void GpbAtrialSE::Initialize() {
     Iclbkfactor=1;
     INalfactor=1;
 
+    RyRP = 0;
     this->makemap();
 
 }
@@ -221,10 +224,6 @@ void GpbAtrialSE::updateInal()
 {
 	double ENa;
 	double ms,tml,hlinf,thl;
-	double camfact;
-	double KMCAM=0.3;  
-		
-	camfact=1/(1+pow((KMCAM/caM),4.0));
 
 	ENa=(RGAS*TEMP/FDAY)*log(naO/naI);
 	
@@ -244,7 +243,7 @@ void GpbAtrialSE::updateInal()
 
 	//WT
 	//double iNalNP=(0.0065*8)*gate.ml*gate.ml*gate.ml*gate.hl*(vOld-ENa); 
-	//double iNalP = (0.0065*57)*gate.ml*gate.ml*gate.ml*gate.hl*(vOld-ENa); 
+	//double iNalP = 3.2*(0.0065*8)*gate.ml*gate.ml*gate.ml*gate.hl*(vOld-ENa); 
 	//double dfiNalP = (caM/(caM + .15) - fiNalP)/100*dt;
 	//fiNalP = fiNalP + dfiNalP;
 	//fiNalNP = 1- fiNalP;
@@ -258,7 +257,7 @@ void GpbAtrialSE::updateInal()
 
 
 	//SE	
-    double iNalP = 3.2*(0.0065*5)*Gate.ml*Gate.ml*Gate.ml*Gate.hl*(vOld-ENa);
+    double iNalP = 3.2*(0.0065*8)*Gate.ml*Gate.ml*Gate.ml*Gate.hl*(vOld-ENa);
 	iNal = iNalP;	
 };
 
@@ -300,8 +299,41 @@ void GpbAtrialSE::updateSRFlux(){
     double hillSRcaP = 1.787;
     double VmaxSRcaP = 0.0053114;
 
+    double RyRtot = .3826;
+    double RyRrat = RyRP/RyRtot;
+    double kb2815 = .00035;
+    double kckryr = .0004;
+    double kmckryr = .012;
+    double PP1 = .0956;
+    double PP2A = .0956;
+    double kpp1ryr = .00107;
+    double kmpp1ryr = .009;
+    double kmpp2ryr = .047;
+    double kpp2ryr = .000481;
+    double kioapp1 = .00078;
+    double kioapp2 = .000037;
+    double OA = 0;
+    double OApp1 = 1/(1+ pow((OA/kioapp1),3));
+    double OApp2 = 1/(1+ pow((OA/kioapp2),3));
+    double RyRN = RyRtot - RyRP;
+    double Rxnbasal = kb2815*RyRN;
+    double Rxnckryr = (2.4*kckryr*CaM*RyRN)/(kmckryr+RyRN);
+//  double Rxnckryr = 0; //S2814A
+//  double Rxnckryr = (some number); //S2814D
+
+    double Rxnpp1ryr = kpp1ryr*PP1*RyRP*OApp1/(kmpp1ryr+RyRP);
+    double Rxnpp2ryr = kpp2ryr*PP2A*RyRP*OApp2/(kmpp2ryr+RyRP);
+    double kleak = (1/3)+(10/3)*RyRrat;
+    double koRyRCKII = (20/3)*RyRrat-(1/3);
+    double PKArat = 0.5;
+    double koRyRPKA = 1.025*PKArat+0.975;
+    double koRyR = koRyRCKII+koRyRPKA-1;
+
+
+
+
     kCasr = maxsr -((maxsr-minsr)/(1.0+pow((ec50SR/caSr),2.5)));
-    kOsrca = koCa/kCasr;
+    kOsrca = koRyR*koCa/kCasr;
     kIsrca = kiCa*kCasr;
 
 
@@ -320,7 +352,9 @@ void GpbAtrialSE::updateSRFlux(){
     beta = 1.0+pow((caI/kmf),hillSRcaP)+pow((caSr/kmr),hillSRcaP);
     Jserca = Jsercafactor*VmaxSRcaP*(alpha/beta);
 
-    Jsrleak =Jsrleakfactor*0.000005348*(caSr-cajI);
+    Jsrleak =kleak*Jsrleakfactor*0.000005348*(caSr-cajI);
+
+    dRyRP = dt*(Rxnbasal+Rxnckryr-Rxnpp1ryr- Rxnpp2ryr);
 
 
 }

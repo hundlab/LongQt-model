@@ -45,8 +45,10 @@ public:
 
     void setPercrepol(double val);
     double getPercrepol() const;
+	void restoreLast();
 protected:   
     map<string, double*> varmap; // map for refing properties that can be measured.
+	map<string, double> lastMap;
 
     double* var;
     double varold;

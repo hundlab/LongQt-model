@@ -61,6 +61,9 @@ void Grid::removeRow(int pos) {
     if(pos < 0) {
         pos = fiber.size()-1;
     }
+	if(pos < 0 || pos >= fiber.size()) {
+		return;
+	}
     fiber.erase(fiber.begin()+pos);
     for(auto it = fibery.begin(); it!=fibery.end() ; it++) {
         it->nodes.erase(it->nodes.begin() +pos);
@@ -76,6 +79,9 @@ void Grid::removeColumn(int pos) {
     if(pos < 0) {
         pos = fibery.size()-1;
     }
+	if(pos < 0 || pos >= fibery.size()) {
+		return;
+	}
     fibery.erase(fibery.begin()+pos);
     for(auto it = fiber.begin(); it!=fiber.end() ; it++) {
         it->nodes.erase(it->nodes.begin() +pos);
@@ -96,7 +102,7 @@ void Grid::setCellTypes(const cellInfo& singleCell) {
         if((singleCell.np==1)||((singleCell.X%singleCell.np)==0)) {
             fiber.at(singleCell.X).B.at(singleCell.Y) = fibery.at(singleCell.Y).B.at(singleCell.X) = 1000*n->cell->cellRadius/(2*n->cell->Rcg*(n->Rmyo*singleCell.dx+n->rd)*n->cell->Cm*singleCell.dx);
         } else {
-            fiber.at(singleCell.X).B.at(singleCell.Y) = fibery.at(singleCell.Y).B.at(singleCell.X) = 1000*n->cell->cellRadius/(2*n->cell->Rcg*n->Rmyo*n->cell->Cm*singleCell.dx*singleCell.dx);
+            fiber.at(singleCell.X).B.at(singleCell.Y) = fibery.at(singleCell.Y).B.at(singleCell.X) = 1001*n->cell->cellRadius/(2*n->cell->Rcg*n->Rmyo*n->cell->Cm*singleCell.dx*singleCell.dx);
         }
         if(singleCell.cell->type == string("Cell")) {
             fiber.at(singleCell.X).B.at(singleCell.Y) = fibery.at(singleCell.Y).B.at(singleCell.X) = 0.0;
@@ -108,8 +114,7 @@ void Grid::setCellTypes(const cellInfo& singleCell) {
             fiber.at(singleCell.X).B.at(singleCell.Y) = 0.0;
         }
     } catch(const std::out_of_range& oor) {
-        cerr << oor.what() << ": " << "new cell was not in range of grid" << endl;
-        return;
+        throw new std::out_of_range(string(oor.what())+string(": new cell was not in range of grid"));
     }
 }
 int Grid::rowCount() {
@@ -143,4 +148,9 @@ Node* Grid::findNode(const pair<int,int>& p) {
     } catch(const std::out_of_range&) {
         return NULL;
     }
+}
+
+void Grid::reset() {
+	this->fiber.clear();
+	this->fibery.clear();
 }

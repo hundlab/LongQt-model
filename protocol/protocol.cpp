@@ -58,7 +58,7 @@ Protocol::Protocol()
     writeflag = 1;      // 1 to write data to file during sim
     dvarfile = "dvars.txt";  // File with SV to write.
     writetime = 0;      // time to start writing.
-    writeint = 10;     // interval for writing.
+    writeint = 20;     // interval for writing.
     
     pvarfile = "pvars.txt"; // File to specify cell params
     simvarfile = "simvars.txt";  // File to specify sim params
@@ -67,7 +67,7 @@ Protocol::Protocol()
     dvarsoutfile = "dt%d_dvars.dat";
     finalpropertyoutfile = "dss%d_%s.dat";
     finaldvarsoutfile = "dss%d_pvars.dat";
-    cellStateFile = "dss%d_state.dat";
+    cellStateFile = "simvars.txt";//"dss%d_state.dat";
 
 
     measflag = 1;       // 1 to track SV props during sim
@@ -94,12 +94,12 @@ Protocol::Protocol()
     pars["writeCellState"]= toInsert.Initialize("bool", [this] () {return to_string(writeCellState);}, [this] (const string& value) {writeCellState = stob(value);});
     pars["readCellState"]= toInsert.Initialize("bool", [this] () {return to_string(readCellState);}, [this] (const string& value) {readCellState = stob(value);});
     pars["datadir"]= toInsert.Initialize("directory", [this] () {return datadir;}, [this] (const string& value) {datadir = value;});
-    pars["cellStateDir"]= toInsert.Initialize("directory", [this] () {return cellStateDir;}, [this] (const string& value) {cellStateDir = value;});
+//    pars["cellStateDir"]= toInsert.Initialize("directory", [this] () {return cellStateDir;}, [this] (const string& value) {cellStateDir = value;});
     pars["pvarfile"]= toInsert.Initialize("file", [this] () {return pvarfile;}, [this] (const string& value) {pvarfile = value;});
     pars["dvarfile"]= toInsert.Initialize("file", [this] () {return dvarfile;}, [this] (const string& value) {dvarfile = value;});
     pars["measfile"]= toInsert.Initialize("file", [this] () {return measfile;}, [this] (const string& value) {measfile = value;});
     pars["simvarfile"]= toInsert.Initialize("file", [this] () {return simvarfile;}, [this] (const string& value) {simvarfile = value;});
-//    pars["cellStateFile"]= toInsert.Initialize("file", [this] () {return cellStateFile;}, [this] (const string& value) {cellStateFile = value;});
+    pars["cellStateFile"]= toInsert.Initialize("file", [this] () {return cellStateFile;}, [this] (const string& value) {cellStateFile = value;});
     pars["celltype"]= toInsert.Initialize("cell", [this] () {return cell->type;}, [this] (const string& value) {this->setCell(value);}); 
 
     cellMap = cellUtils().cellMap;
@@ -303,8 +303,12 @@ bool Protocol::runTrial() { return true;}
 // Format of file should be "variable name" tab "value"
 //#############################################################
 
-int Protocol::readpars(string file)
+int Protocol::readpars(string file, set<string> varnames)
 {
+	bool useVarnames = false;
+	if(varnames.size() > 0) {
+		useVarnames = true;
+	}
     ifstream ifile;
     
     string name;
@@ -332,6 +336,9 @@ int Protocol::readpars(string file)
         line >> name;
         getline(line,value);
         try {
+			if(useVarnames&&varnames.find(name)==varnames.end()) {
+				throw std::out_of_range(name+" not in varnames");
+			}
             pars.at(name).set(trim(value));
         } catch (const std::out_of_range&) {}
         getline(ifile,temp);

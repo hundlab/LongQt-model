@@ -137,7 +137,7 @@ bool MeasureKernel::measure(double time, double var)
         ddrflag=true;
     }
     
-    if(minflag&&var>peak){          // Track value and time of peak
+    if(minflag&&abs(var)>peak){          // Track value and time of peak
         peak=var;
         maxt=time;
     }
@@ -181,6 +181,9 @@ bool MeasureKernel::measure(double time, double var)
 
 void MeasureKernel::reset()
 {
+	for(auto var: this->varmap) {
+		this->lastMap[var.first] = *var.second;
+	}
     peak=-100.0;
     min=100.0;
     maxderiv=0.0;
@@ -197,6 +200,12 @@ void MeasureKernel::setPercrepol(double val) {
 
 double MeasureKernel::getPercrepol() const {
     return this->percrepol;
+}
+
+void MeasureKernel::restoreLast() {
+	for(auto var: lastMap) {
+		*this->varmap[var.first] = var.second;
+	}
 }
 
 void MeasureKernel::mkmap() {

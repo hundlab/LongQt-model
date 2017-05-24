@@ -83,9 +83,10 @@ temp.clear();
         time = cell->t = 0.0;      // reset time
         doneflag=1;     // reset doneflag
         if(readCellState) {
-            sprintf(writefile,(cellStateDir + "/" + cellStateFile).c_str(),trial);
+            sprintf(writefile,cellStateFile.c_str());
             cell->readCellState(writefile);
 			this->stimt = cell->t;
+			this->tMax += this->cell->t;
         }
  
         //###############################################################
@@ -116,9 +117,7 @@ temp.clear();
                 for (map<string,Measure>::iterator it = measures.begin(); it!=measures.end(); it++) {
                     if(it->second.measure(cell->t,*cell->vars[it->second.varname])&&(int(writeflag)==1)) {
                         it->second.write();
-						if(int(doneflag)&&(time<tMax)) {
-							it->second.reset();
-						}
+												it->second.reset();
                     }
                 }
             }
@@ -134,6 +133,7 @@ temp.clear();
       for (map<string,Measure>::iterator it = measures.begin(); it != measures.end(); it++){
           sprintf(writefile,(datadir + "/" + finalpropertyoutfile).c_str(), trial, it->second.varname.c_str());
           it->second.setOutputfile(writefile);
+					it->second.restoreLast();
           it->second.write();
           it->second.reset();
       } 
@@ -147,7 +147,7 @@ temp.clear();
       }
       cell->closeFiles();
       if(writeCellState) {
-          sprintf(writefile,(datadir + "/" + cellStateFile).c_str(),trial);
+          sprintf(writefile,(datadir + "/" + simvarfile).c_str(),trial);
           cell->writeCellState(writefile);
       }
 

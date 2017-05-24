@@ -13,12 +13,12 @@
 #include "fiber.h"
 
 struct cellInfo {
-    int X;
-    int Y;
-    double dx;
-    double dy;
-    int np;
-    Cell* cell;
+    int X = -1;
+    int Y = -1;
+    double dx = 0.01;
+    double dy = 0.01;
+    int np = 1;
+    Cell* cell = 0;
 };
 
 class Grid {
@@ -42,6 +42,7 @@ class Grid {
     virtual void addBuffer();
     virtual pair<int,int> findNode(const Node* node);
     virtual Node* findNode(const pair<int,int>& p);
+	virtual void reset();
 
     vector<Fiber> fiber;
     vector<Fiber> fibery; 

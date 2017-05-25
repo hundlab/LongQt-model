@@ -15,6 +15,7 @@ $$PWD/cell/gpbhuman.cpp\
 $$PWD/cell/ksan.cpp\
 $$PWD/cell/gpbatrialWT.cpp\
 $$PWD/cell/gpbatrialSE.cpp\
+$$PWD/cell/gpbatrialonal17.cc\
 $$PWD/cell/atrial.cpp\
 $$PWD/cell/br04.cpp\
 $$PWD/iobase.cpp\
@@ -24,6 +25,7 @@ $$PWD/protocol/gridProtocol.cpp\
 $$PWD/protocol/protocol.cpp\
 $$PWD/protocol/currentClampProtocol.cpp\
 $$PWD/protocol/voltageClampProtocol.cpp
+
 
 HEADERS  += $$PWD/measure_kernel.h\
 $$PWD/measure.h\
@@ -40,6 +42,7 @@ $$PWD/cell/gpbhuman.h\
 $$PWD/cell/ksan.h\
 $$PWD/cell/gpbatrialWT.h\
 $$PWD/cell/gpbatrialSE.h\
+$$PWD/cell/gpbatrialonal17.h\
 $$PWD/cell/atrial.h\
 $$PWD/cell/br04.h\
 $$PWD/iobase.h\

@@ -5,7 +5,7 @@
 #define NODE_H
 
 #include "cell.h"
-#include "side.h"
+#include "cellutils.h"
 
 struct Node {
     Node() {};

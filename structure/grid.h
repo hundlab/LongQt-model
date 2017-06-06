@@ -12,7 +12,7 @@
 #include <cmath>
 
 #include "fiber.h"
-#include "side.h"
+#include "cellutils.h"
 
 struct CellInfo {
 	//necessary

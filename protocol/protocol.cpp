@@ -11,6 +11,7 @@
 
 #include "protocol.h"
 #include "hrd09.h"
+#include "cellutils.h"
 #include <QXmlStreamWriter>
 #include <QXmlStreamReader>
 #include <QFile>

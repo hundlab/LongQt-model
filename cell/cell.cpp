@@ -8,7 +8,7 @@
 //####################################################
 
 #include "cell.h"
-#include "cellUtils.h"
+#include "cellutils.h"
 #include <sstream>
 #include <QFile>
 #include <QDebug>

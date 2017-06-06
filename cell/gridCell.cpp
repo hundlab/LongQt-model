@@ -15,7 +15,7 @@
 #include <QDebug>
 
 #include "gridCell.h"
-#include "cellUtils.h"
+#include "cellutils.h"
 
 GridCell::GridCell() {
 	this->Initialize();

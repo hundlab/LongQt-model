@@ -1,4 +1,5 @@
 #include "currentClampProtocol.h"
+#include "cellutils.h"
 
 CurrentClamp::CurrentClamp()  : Protocol(){
     stimdur = 1.0;  // stim duration, ms
@@ -17,7 +18,7 @@ CurrentClamp::CurrentClamp()  : Protocol(){
     pars["bcl"] = toInsert.Initialize("double", [this] () {return std::to_string(bcl);}, [this] (const string& value) {bcl = std::stod(value);});
     pars["numstims"]= toInsert.Initialize("int", [this] () {return std::to_string(numstims);}, [this] (const string& value) {numstims = std::stoi(value);});
     pars["paceflag"]= toInsert.Initialize("bool", [this] () {return CellUtils::to_string(paceflag);}, [this] (const string& value) {paceflag = CellUtils::stob(value);});
-		type = "Current Clamp Protocol";
+	type = "Current Clamp Protocol";
 }
 //overriden deep copy funtion
 CurrentClamp* CurrentClamp::clone(){

@@ -20,7 +20,7 @@
 #include <QXmlStreamReader>
 
 #include "measure.h"
-#include "cellUtils.h"
+#include "cellutils.h"
 
 using namespace std;
 

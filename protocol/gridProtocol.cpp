@@ -6,7 +6,7 @@
 
 #include "gridProtocol.h"
 #include "gridCell.h"
-#include "cellUtils.h"
+#include "cellutils.h"
 
 #include <QFile>
 #include <QDebug>

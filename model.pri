@@ -27,6 +27,7 @@ $$PWD/structure/node.cpp\
 $$PWD/structure/grid.cpp\
 $$PWD/protocol/gridProtocol.cpp\
 $$PWD/protocol/protocol.cpp\
+$$PWD/cellutils.cpp\
 $$PWD/protocol/currentClampProtocol.cpp\
 $$PWD/protocol/voltageClampProtocol.cpp
 
@@ -53,7 +54,6 @@ $$PWD/cell/OHaraRudyEpi.h\
 $$PWD/cell/OHaraRudyM.h\
 $$PWD/iobase.h\
 $$PWD/cellutils.h\
-$$PWD/side.h\
 $$PWD/structure/grid.h\
 $$PWD/structure/node.h\
 $$PWD/structure/fiber.h\

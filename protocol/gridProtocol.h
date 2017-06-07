@@ -1,7 +1,6 @@
 // 5/10/2016
 //################################################
-//protocol for a grid off cells
-//class declarations
+//protocol for a grid off cells class declarations
 //################################################
 
 #ifndef GRIDPROTOCOL_H

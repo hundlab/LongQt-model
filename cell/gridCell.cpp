@@ -128,7 +128,7 @@ void GridCell::closeFiles() {
 	}   
 }
 double GridCell::updateV() {
-	int i,j;
+	int i;
 	int xLen = static_cast<int>(grid.fibery.size());
 	int yLen = static_cast<int>(grid.fiber.size());
 	if((tcount%2==0)){
@@ -351,7 +351,7 @@ bool GridCell::handleNode(QXmlStreamReader& xml, set<CellInfo*>& cells, CellInfo
 		try {
 			success &= handlers.at(xml.name().toString())(xml);
         } catch(const std::out_of_range&) {
-            qWarning("%s xml type %s not recognized", xml.name().toString());
+            qWarning("GridCell: xml type %s not recognized",qUtf8Printable(xml.name().toString()));
         }
 	}
 	cells.insert(info);

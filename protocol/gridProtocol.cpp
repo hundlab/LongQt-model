@@ -200,7 +200,6 @@ bool GridProtocol::writepars(string file) {
 	string name;
 	bool toReturn;
 
-	bool exists = ofile.exists();
 	if(!ofile.open(QIODevice::WriteOnly|QIODevice::Text|QIODevice::Truncate)){
         qCritical() << "Error opening " << file.c_str();
 		return 1;

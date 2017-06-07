@@ -61,7 +61,7 @@ void Grid::removeRow(int pos) {
     if(pos < 0) {
         pos = fiber.size()-1;
     }
-	if(pos < 0 || pos >= fiber.size()) {
+	if(pos < 0 || (unsigned int)pos >= fiber.size()) {
 		return;
 	}
     fiber.erase(fiber.begin()+pos);
@@ -79,7 +79,7 @@ void Grid::removeColumn(int pos) {
     if(pos < 0) {
         pos = fibery.size()-1;
     }
-	if(pos < 0 || pos >= fibery.size()) {
+	if(pos < 0 || (unsigned int)pos >= fibery.size()) {
 		return;
 	}
     fibery.erase(fibery.begin()+pos);

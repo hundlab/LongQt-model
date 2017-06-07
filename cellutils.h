@@ -25,8 +25,9 @@ namespace CellUtils {
 
 	/*
 	 * cell map this is how new instances of cells are created
-	 * if you are adding a new cell to longqt add it here
-	 * and also add it to the protocolCellDefualts map below
+	 * if you are adding a new cell to longqt add it to 
+	 * cellutils.cpp and add it to protocolCellDefualts map
+	 * declaration found below definition found in cellutils.cpp
 	 */
 	extern const map<string, CellInitializer> cellMap;
 
@@ -121,6 +122,5 @@ namespace CellUtils {
 	inline bool stob(const string& s) {
 		return (strcasecmp("true",trim(s).c_str()) == 0);
 	}
-
 }
 #endif

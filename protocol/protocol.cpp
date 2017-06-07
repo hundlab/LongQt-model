@@ -319,8 +319,6 @@ int Protocol::readpars(string file, set<string> varnames)
 {
 	QFile ifile(file.c_str());
 
-	map<string, double*>::iterator p;
-
 	if(!ifile.open(QIODevice::ReadOnly)){
         qCritical() << "Error opening " << file.c_str();
 		return 1;
@@ -381,32 +379,22 @@ int Protocol::parsemixedmap(map<string,double*> varmap, string file, vector<stri
 //############################################################
 // write a mvars file for the measures list
 //############################################################
-bool Protocol::writeMVarsFile(string file) {
-	ofstream out;
-	bool ret = false;
-
-	out.open(file);
-	if(!out.good()){
-        qCritical() << "Error opening " << file.c_str();
-		return ret;
-	}
-
+bool Protocol::writeMVarsFile(QXmlStreamWriter& xml) {
+	xml.writeStartElement("mvars");
 	if(measures.size() > 0) {
-		out << "percrepol\t";
-		out << measures.begin()->second.getPercrepol();
-		out << "\n";
+		xml.writeTextElement("percrepol",QString::number(measures.begin()->second.getPercrepol()));
 	}
-	for(auto im = measures.begin(); im != measures.end(); im++) {
-		out << im->second.varname << " \t";
-		set<string> selection = im->second.Selection;
-		for(set<string>::iterator it = selection.begin(); it != selection.end(); it++){
-			out << *it << " \t";
+	for(auto it = measures.begin(); it != measures.end(); it++){
+		xml.writeStartElement("mvar");
+		xml.writeAttribute("name",it->second.varname.c_str());
+		set<string> selection = it->second.Selection;
+		for(set<string>::iterator im = selection.begin(); im != selection.end(); im++){
+			xml.writeTextElement("property",im->c_str());
 		}
-		out << endl;
+		xml.writeEndElement();
 	}
-	out.close();
-	ret = true;
-	return ret;
+	xml.writeEndElement();
+	return 0;
 }
 
 bool Protocol::addMeasure(Measure toInsert) {
@@ -456,40 +444,29 @@ void Protocol::removeFromMeasureSelection(string measureName, string property) {
 //where varname is the first word on the line
 //and all sequential words are properties to measure (the selection)
 //#############################################################
-bool Protocol::readMvarsFile(string filename)
+bool Protocol::readMvarsFile(QXmlStreamReader& xml)
 {
-	ifstream ifile;
-	string line, name;
 	set<string> possible_vars = cell->getVariables();
-	double percrepol = 50;
-
-
-	ifile.open(filename);
-	if(!ifile.good()){
-        qCritical() << "Error opening " << filename.c_str();
-		return false;
-	}
-
-	while(!ifile.eof()) {
-		getline(ifile,line);
-		stringstream linestream(line);
-		string varname;
-		linestream >> varname;
-		if(varname == "percrepol") {
-			linestream >> percrepol;
-			continue;
-		}
+	
+    if(!CellUtils::readNext(xml, "mvars")) return false;
+	xml.readNextStartElement();
+	xml.readNext();
+	double percrepol = xml.text().toDouble();
+	xml.readNext();
+	while(!xml.atEnd() && xml.readNextStartElement()){
+		string varname = xml.attributes().value("name").toString().toStdString();
 		Measure temp(varname,percrepol);
-		while(!linestream.eof()) {
-			linestream >> name;
-			temp.addToMeasureSelection(name);
+		while(!xml.atEnd() && xml.readNextStartElement()){
+			xml.readNext();
+			string propName = xml.text().toString().toStdString();
+			temp.addToMeasureSelection(propName);
+			xml.readNext();
 		}
 		if(possible_vars.find(temp.varname) != possible_vars.end()) {
 			measures.insert(pair<string,Measure>(temp.varname,temp));
 		}
+		xml.readNext();
 	}
-
-	ifile.close();
 	return true;
 };
 
@@ -537,53 +514,6 @@ bool Protocol::writepars(string file)
     ofile.close();
     return success;
 };
-//############################################################
-//Wirte the keys from varmap to a file
-//############################################################
-bool Protocol::writedvars(string file)
-{
-	set<string> selection = cell->getVariableSelection();
-	ofstream ofile;
-	string name;
-
-	if(!ofile.is_open())
-		ofile.open(file, ios_base::trunc);
-	if(!ofile.is_open()){
-        qCritical() << "Error opening " << file.c_str();
-		return false;
-	}
-
-	for(auto it = selection.begin(); it != selection.end(); it++){
-		ofile << *it << endl;
-	}
-
-	ofile.close();
-	return true;
-
-}
-bool Protocol::readdvars(string file) {
-	bool toReturn = true;
-	ifstream ifile;
-	string name;
-	set<string> selection;
-
-	if(!ifile.is_open()) {
-		ifile.open(file);
-	}
-	if(!ifile.good()){
-        qCritical() << "Error opening " << file.c_str();
-		return false;
-	}
-
-	while(!ifile.eof()) {
-		ifile >> name;
-		if(!selection.insert(name).second) {
-			toReturn = false;
-		}
-	}
-	cell->setVariableSelection(selection);
-	return toReturn;
-}
 void Protocol::setTrial(unsigned int current_trial) {
 	trial = current_trial;
 	assign_cell_pars(pnames,pvals,trial);   // Assign cell pars

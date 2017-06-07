@@ -71,13 +71,11 @@ class Protocol
 	virtual int readpvars();
 	virtual bool writepars(string file); //write the contence of pars to a file
 	virtual bool writepars(QXmlStreamWriter& xml); //write the contence of pars to a file
-	virtual bool writedvars(string file); //write varmap keys to a file
-	virtual bool readdvars(string file);
 	virtual bool write2Dmap(vector<string> vnames, vector< vector<string> > twoDmnames, string file);
 	virtual void setTrial(unsigned int current_trial);
 	virtual unsigned int getTrial();
-	virtual bool writeMVarsFile(string file);
-	virtual bool readMvarsFile(string filename);
+	virtual bool writeMVarsFile(QXmlStreamWriter& xml);
+	virtual bool readMvarsFile(QXmlStreamReader& xml);
 	virtual bool setCell(const string& type, bool reset = false);
 	virtual list<string> cellOptions();
 	virtual void readInCellState(bool read);

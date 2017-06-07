@@ -23,6 +23,13 @@
 
 #include "protocol.h"
 
+#include <QFile>
+#include <QDebug>
+/*
+ * cell map this is how new instances of cells are created
+ * if you are adding a new cell to longqt add it here
+ * and also add it to the protocolCellDefualts map below
+ */
 const map<string, CellUtils::CellInitializer> CellUtils::cellMap = {
 	{ ControlSa().type, [] () {return (Cell*) new ControlSa; }},
 	{ GpbAtrial().type, [] () {return (Cell*) new GpbAtrial;}},
@@ -41,6 +48,11 @@ const map<string, CellUtils::CellInitializer> CellUtils::cellMap = {
 			{ GpbAtrialSE().type, [] () {return (Cell*) new GpbAtrialSE;}}*/
 };
 
+/*
+ * this map is used to setup default simulations in longqt add your new cell to 
+ * this map to give it a meaningful default simulation. We typically pace to 
+ * study-state ~500,000 ms and output values for the last 5,000 ms
+ */
 map<string, list<pair<string,string>>> CellUtils::protocolCellDefaults = {
 	{ ControlSa().type, {{"paceflag","true"},{"stimval","-60"},{"stimdur","1"},
 		{"tMax","500000"},{"writetime","495000"},{"bcl","1000"},
@@ -71,6 +83,10 @@ map<string, list<pair<string,string>>> CellUtils::protocolCellDefaults = {
 		{"numstims","500"}}}
 };
 
+/*
+ * map of known protocols used to create new instances of protocols in
+ * longqt
+ */
 const map<string, CellUtils::ProtocolInitializer> CellUtils::protoMap = {
 	{CurrentClamp().type, [] () {return (Protocol*) new CurrentClamp;}},
 	{VoltageClamp().type, [] () {return (Protocol*) new VoltageClamp;}},

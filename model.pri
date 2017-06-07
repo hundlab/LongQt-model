@@ -28,6 +28,7 @@ $$PWD/structure/grid.cpp\
 $$PWD/protocol/gridProtocol.cpp\
 $$PWD/protocol/protocol.cpp\
 $$PWD/cellutils.cpp\
+$$PWD/settingsIO.cpp\
 $$PWD/protocol/currentClampProtocol.cpp\
 $$PWD/protocol/voltageClampProtocol.cpp
 
@@ -59,5 +60,6 @@ $$PWD/structure/node.h\
 $$PWD/structure/fiber.h\
 $$PWD/protocol/voltageClampProtocol.h\
 $$PWD/protocol/currentClampProtocol.h\
+$$PWD/settingsIO.h\
 $$PWD/protocol/protocol.h\
 $$PWD/protocol/gridProtocol.h

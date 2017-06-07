@@ -210,11 +210,16 @@ bool GridProtocol::writepars(string file) {
 	xml.writeStartDocument();
 	xml.writeStartElement("file");
 
+	toReturn = this->writepars(xml);
+	xml.writeEndElement();
+
+	return toReturn;
+}
+bool GridProtocol::writepars(QXmlStreamWriter& xml) {
+	bool toReturn;
 	toReturn = ((GridCell*)this->cell)->writeGridfile(xml);
 	toReturn &= CurrentClamp::writepars(xml);
 	this->writePvars(xml);
-	xml.writeEndElement();
-
 	return toReturn;
 }
 int GridProtocol::readpars(string file, set<string> varnames) {
@@ -224,11 +229,15 @@ int GridProtocol::readpars(string file, set<string> varnames) {
 		return false;
 	}
 	QXmlStreamReader xml(&ifile);
+	bool toReturn = this->readpars(xml);
+	return (int)toReturn;
+}
+int GridProtocol::readpars(QXmlStreamReader& xml, set<string> varnames) {
 	this->grid->reset();
 	bool toReturn = ((GridCell*)this->cell)->readGridfile(xml);
 	toReturn &= (bool)CurrentClamp::readpars(xml);
 	this->readPvars(xml);
-	return (int)toReturn;
+	return toReturn;
 }
 string GridProtocol::setToString(set<pair<int,int>>& nodes) {
 	stringstream toReturn;

@@ -46,7 +46,7 @@ GridProtocol* GridProtocol::clone(){
 	return new GridProtocol(*this);
 };
 GridProtocol::GridProtocol(const GridProtocol& toCopy) : CurrentClamp(toCopy){
-	this->new_pvars = toCopy.new_pvars;
+	this->pvars = toCopy.pvars;
 	this->CCcopy(toCopy);
 }
 void GridProtocol::CCcopy(const GridProtocol& toCopy) {
@@ -195,25 +195,6 @@ set<pair<int,int>>& GridProtocol::getStimNodes() {
 set<pair<int,int>>& GridProtocol::getDataNodes() {
 	return dataNodes;
 }
-bool GridProtocol::writepars(string file) {
-	QFile ofile(file.c_str());
-	string name;
-	bool toReturn;
-
-	if(!ofile.open(QIODevice::WriteOnly|QIODevice::Text|QIODevice::Truncate)){
-        qCritical() << "Error opening " << file.c_str();
-		return 1;
-	}
-	QXmlStreamWriter xml(&ofile);
-	xml.setAutoFormatting(true);
-	xml.writeStartDocument();
-	xml.writeStartElement("file");
-
-	toReturn = this->writepars(xml);
-	xml.writeEndElement();
-
-	return toReturn;
-}
 bool GridProtocol::writepars(QXmlStreamWriter& xml) {
 	bool toReturn;
 	toReturn = ((GridCell*)this->cell)->writeGridfile(xml);
@@ -267,7 +248,7 @@ set<pair<int,int>> GridProtocol::stringToSet(string nodesList) {
 //bool gridProtocol::addMeasure(Measure toInsert)
 void GridProtocol::setIonChanParams() {
 	Cell* cell = 0;
-	for(auto& pvar : this->new_pvars) {
+	for(auto& pvar : this->pvars) {
 		for(auto& oneCell : pvar.second.cells) {
 			cell = this->grid->findNode({oneCell.first.second,oneCell.first.first})->cell;
 			*cell->pars.at(pvar.first) = oneCell.second;
@@ -277,7 +258,7 @@ void GridProtocol::setIonChanParams() {
 
 void GridProtocol::writePvars(QXmlStreamWriter& xml) {
 	xml.writeStartElement("pvars");
-	for(auto& pvar : this->new_pvars) {
+	for(auto& pvar : this->pvars) {
 		xml.writeStartElement("pvar");
 		xml.writeAttribute("name", pvar.first.c_str());
 		xml.writeTextElement("distribution_type", QString::number(pvar.second.dist));
@@ -343,7 +324,7 @@ void GridProtocol::handlePvar(QXmlStreamReader& xml) {
 			xml.skipCurrentElement();
 		}
 	}
-	this->new_pvars[pvar.first] = pvar.second;
+	this->pvars[pvar.first] = pvar.second;
 }
 
 pair<pair<int,int>,double> GridProtocol::handleCell(QXmlStreamReader& xml) {

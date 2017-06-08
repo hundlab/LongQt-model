@@ -12,8 +12,13 @@
 #define CurrentClampProtocol_H
 
 #include "protocol.h"
+#include <list>
 
 class CurrentClamp : public Protocol {
+  public:
+	struct TIonChanParam : IonChanParam {
+		list<double> trials; //index -> value
+	};
   public:
     CurrentClamp();
     CurrentClamp(const CurrentClamp& toCopy);
@@ -22,6 +27,10 @@ class CurrentClamp : public Protocol {
 
     bool runTrial() override;
 	void readInCellState(bool read) override;
+
+	virtual void setIonChanParams();
+	virtual void calcIonChanParams();
+	map<string,TIonChanParam> pvars;
   protected:
     double bcl,stimval,stimdur,stimt;
     int numstims;   //variables for pacing.

@@ -494,26 +494,6 @@ bool Protocol::writepars(QXmlStreamWriter& xml) {
 	xml.writeEndElement();
 	return 0;
 }
-bool Protocol::writepars(string file)
-{
-	QFile ofile(file.c_str());
-	string name;
-
-	bool exists = ofile.exists();
-	if(!ofile.open(QIODevice::WriteOnly|QIODevice::Truncate|QIODevice::Text)){
-        qCritical() << "Error opening " << file.c_str();
-		return 1;
-	}
-	QXmlStreamWriter xml(&ofile);
-	xml.setAutoFormatting(true);
-	if(!exists) {
-		xml.writeStartDocument();
-	}
-	bool success = this->writepars(xml);
-	xml.writeEndDocument();
-    ofile.close();
-    return success;
-};
 void Protocol::setTrial(unsigned int current_trial) {
 	trial = current_trial;
 	assign_cell_pars(pnames,pvals,trial);   // Assign cell pars
@@ -559,3 +539,6 @@ void Protocol::writeOutCellState(bool write) {
 		cell->writeCellState(datadir+"/"+cellStateFile+std::to_string(trial)+".xml");
 	}
 }
+
+void Protocol::setIonChanParams() {}
+void Protocol::calcIonChanParams() {}

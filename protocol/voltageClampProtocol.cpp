@@ -155,3 +155,89 @@ void VoltageClamp::readInCellState(bool read) {
 		this->t5 += this->cell->t;
 	}
 }
+void VoltageClamp::setIonChanParams() {
+	for(auto& pvar : this->pvars) {
+		*cell->pars.at(pvar.first) = pvar.second.paramVal;
+	}
+}
+void VoltageClamp:calcIonChanParams() {
+	for(auto& pvar : this->pvars) {
+		double val = 0;
+		switch(pvar.second.dist) {
+			case Distribution::none:
+				val = pvar.second.val[0];
+				break;
+			case Distribution::normal:
+				{
+					normal_distribution<double> distribution(pvar.second.val[0]
+							,pvar.second.val[1]);
+					val = distribution(this->generator);
+					break;
+				}
+			case Distribution::lognormal:
+				{
+					lognormal_distribution<double> logdistribution(
+							pvar.second.val[0], pvar.second.val[1]);
+					val = logdistribution(this->generator);
+					break;
+				}
+		}
+		pvar.second.paramVal = val;
+	}
+}
+void VoltageClamp::writePvars(QXmlStreamWriter& xml) {
+	xml.writeStartElement("pvars");
+	for(auto& pvar : this->pvars) {
+		xml.writeStartElement("pvar");
+		xml.writeAttribute("name", pvar.first.c_str());
+		xml.writeTextElement("distribution_type", QString::number(pvar.second.dist));
+		xml.writeTextElement("value0", QString::number(pvar.second.val[0]));
+		xml.writeTextElement("value1", QString::number(pvar.second.val[1]));
+		xml.writeTextElement("cell",QString::number(pvar.second.paramVal));
+		xml.writeEndElement();
+	}
+	xml.writeEndElement();
+}
+
+void VoltageClamp::readPvars(QXmlStreamReader& xml) {
+	while(!xml.atEnd() && xml.name() != "pvars") {
+		xml.readNext();
+	}
+	this->handlePvars(xml);
+}
+
+void VoltageClamp::handlePvars(QXmlStreamReader& xml) {
+	if(xml.atEnd()) return;
+	while(xml.readNextStartElement() && xml.name()=="pvar"){
+		this->handlePvar(xml);
+	}
+	xml.skipCurrentElement();
+}
+
+void VoltageClamp::handlePvar(QXmlStreamReader& xml) {
+	if(xml.atEnd()) return;
+	pair<string,SIonChanParam> pvar;
+	pvar.first = xml.attributes().value("name").toString().toStdString();
+	while(xml.readNextStartElement()) {
+		if(xml.name()=="distribution_type") {
+			xml.readNext();
+			pvar.second.dist = static_cast<Distribution>(xml.text().toInt());
+			xml.skipCurrentElement();
+		} else if(xml.name()=="value0") {
+			xml.readNext();
+			pvar.second.val[0] = xml.text().toDouble();
+			xml.skipCurrentElement();
+		} else if(xml.name()=="value1") {
+			xml.readNext();
+			pvar.second.val[1] = xml.text().toDouble();
+			xml.skipCurrentElement();
+		} else if(xml.name()=="cell") {
+			xml.readNext();
+			pvar.second.paramVal = xml.text().toDouble();
+		}
+		else {
+			xml.skipCurrentElement();
+		}
+	}
+	this->pvars[pvar.first] = pvar.second;
+}

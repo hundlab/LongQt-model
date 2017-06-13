@@ -53,8 +53,8 @@ const map<string, CellUtils::CellInitializer> CellUtils::cellMap = {
  * this map to give it a meaningful default simulation. We typically pace to 
  * study-state ~500,000 ms and output values for the last 5,000 ms
  */
-map<string, list<pair<string,string>>> CellUtils::protocolCellDefaults = {
-	{ ControlSa().type, {{"paceflag","true"},{"stimval","-60"},{"stimdur","1"},
+const map<string, list<pair<string,string>>> CellUtils::protocolCellDefaults = {
+	{ ControlSa().type, {{"paceflag","false"},{"stimval","-60"},{"stimdur","1"},
 		{"tMax","500000"},{"writetime","495000"},{"bcl","1000"},
 		{"numstims","500"}}},
 	{ HRD09Control().type, {{"paceflag","true"},{"stimval","-80"},
@@ -82,6 +82,21 @@ map<string, list<pair<string,string>>> CellUtils::protocolCellDefaults = {
 		{"stimdur","0.5"},{"tMax","500000"},{"writetime","495000"},{"bcl","1000"},
 		{"numstims","500"}}}
 };
+
+void CellUtils::set_default_vals(Protocol* proto) {
+	const string& name = proto->cell->type;
+	try {
+		const auto& vals = CellUtils::protocolCellDefaults.at(name);
+	for(auto& val :vals) {
+		try {
+			proto->pars.at(val.first).set(val.second);
+		} catch(bad_function_call) {
+		} catch(out_of_range) {
+			qDebug("CellUtils: default %s not in proto pars", val.first.c_str());
+		};
+	}
+	} catch(out_of_range) {}
+}
 
 /*
  * map of known protocols used to create new instances of protocols in

@@ -36,8 +36,7 @@ namespace CellUtils {
 	 * this map to give it a meaningful default simulation. We typically pace to 
 	 * study-state ~500,000 ms and output values for the last 5,000 ms
 	 */
-	extern map<string, list<pair<string,string>>> protocolCellDefaults;
-
+	extern const map<string, list<pair<string,string>>> protocolCellDefaults;
 
 	//declare the ProtocolIntializer type
 	typedef Protocol* (*ProtocolInitializer) (void);
@@ -57,6 +56,8 @@ namespace CellUtils {
 		bottom = 2,
 		left = 3
 	};
+
+	void set_default_vals(Protocol* proto);
 
 	/*reads in until the next StartElement with name name
 	 *returns:

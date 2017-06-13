@@ -13,32 +13,21 @@
 
 class GridProtocol : public CurrentClamp {
 	public:
-		struct MIonChanParam : IonChanParam {
-			map<pair<int,int>,double> cells; //map from x,y pos -> value
-		};
-
 	public:
 		GridProtocol();
 		GridProtocol(const GridProtocol& toCopy);
 		GridProtocol* clone();
 		GridProtocol& operator=(const GridProtocol& toCopy);
 
-		bool runTrial() override;
+		virtual void setupTrial() override;
+		virtual bool runTrial() override;
 		int stim();
         map<string, CellUtils::CellInitializer>& getCellMap();
 		set<pair<int,int>>& getDataNodes();
 		set<pair<int,int>>& getStimNodes();
 		virtual bool writepars(QXmlStreamWriter& xml);
-		virtual int readpars(string file, set<string> varnames = {});
-		virtual int readpars(QXmlStreamReader& xml, set<string> varnames = {});
-		virtual void setIonChanParams();
-		virtual void writePvars(QXmlStreamWriter& xml);
-		virtual void readPvars(QXmlStreamReader& xml);
-		void handlePvars(QXmlStreamReader& xml);
-		void handlePvar(QXmlStreamReader& xml);
-		pair<pair<int,int>,double> handleCell(QXmlStreamReader& xml);
-
-		map<string,MIonChanParam> pvars;
+		virtual int readpars(string file);
+		virtual int readpars(QXmlStreamReader& xml);
 		//    virtual bool addMeasure(Measure toInsert);
 
 		void setStim2(bool enable);

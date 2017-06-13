@@ -7,6 +7,7 @@
 #include "gridProtocol.h"
 #include "gridCell.h"
 #include "cellutils.h"
+#include "pvarsgrid.h"
 
 #include <QFile>
 #include <QDebug>
@@ -15,6 +16,7 @@ GridProtocol::GridProtocol() : CurrentClamp(){
 	GridCell* temp = new GridCell();
 	cell = temp;
 	grid = temp->getGrid();
+	this->pvars = new PvarsGrid(grid);
 	baseCellMap = cellMap;
 	baseCellMap["Inexcitable Cell"] = [] () {return new Cell;};
 	cellMap.clear();
@@ -40,13 +42,14 @@ GridProtocol::GridProtocol() : CurrentClamp(){
 	stimdur2 = stimdur;
 	bcl2 = bcl;
 	stimt2 = stimt;
+
+	CellUtils::set_default_vals(this);
 }
 //overriden deep copy funtion
 GridProtocol* GridProtocol::clone(){
 	return new GridProtocol(*this);
 };
 GridProtocol::GridProtocol(const GridProtocol& toCopy) : CurrentClamp(toCopy){
-	this->pvars = toCopy.pvars;
 	this->CCcopy(toCopy);
 }
 void GridProtocol::CCcopy(const GridProtocol& toCopy) {
@@ -83,14 +86,11 @@ int GridProtocol::stim()
 	return 1;
 };
 
-bool GridProtocol::runTrial() {
-	char writefile[150];     // Buffer for storing filenames
-
-	this->setIonChanParams();
-
-	//to be moved to a better location
+void GridProtocol::setupTrial() {
 	set<string> temp;
-	temp.insert(pnames.begin(),pnames.end());
+	for(auto& pvar: *pvars) {
+		temp.insert(pvar.first);
+	}
 	cell->setConstantSelection(temp);
 	temp.clear();
 	for(auto& node: this->dataNodes) {
@@ -100,14 +100,19 @@ bool GridProtocol::runTrial() {
 			}
 		}
 	}
-
-	//should not be here
-
 	time = cell->t = 0.0;      // reset time
-	doneflag=1;     // reset doneflag
 
 	this->readInCellState(this->readCellState);
 
+	this->pvars->setIonChanParams();
+	doneflag=1;     // reset doneflag
+}
+
+bool GridProtocol::runTrial() {
+	char writefile[150];     // Buffer for storing filenames
+
+	this->setupTrial();
+	
 	//###############################################################
 	// Every time step, currents, concentrations, and Vm are calculated.
 	//###############################################################
@@ -199,10 +204,9 @@ bool GridProtocol::writepars(QXmlStreamWriter& xml) {
 	bool toReturn;
 	toReturn = ((GridCell*)this->cell)->writeGridfile(xml);
 	toReturn &= CurrentClamp::writepars(xml);
-	this->writePvars(xml);
 	return toReturn;
 }
-int GridProtocol::readpars(string file, set<string> varnames) {
+int GridProtocol::readpars(string file) {
 	QFile ifile(file.c_str());
 	if(!ifile.open(QIODevice::ReadOnly|QIODevice::Text)){
         qCritical() << "Error opening " << file.c_str();
@@ -212,11 +216,10 @@ int GridProtocol::readpars(string file, set<string> varnames) {
 	bool toReturn = this->readpars(xml);
 	return (int)toReturn;
 }
-int GridProtocol::readpars(QXmlStreamReader& xml, set<string> varnames) {
+int GridProtocol::readpars(QXmlStreamReader& xml) {
 	this->grid->reset();
 	bool toReturn = ((GridCell*)this->cell)->readGridfile(xml);
 	toReturn &= (bool)CurrentClamp::readpars(xml);
-	this->readPvars(xml);
 	return toReturn;
 }
 string GridProtocol::setToString(set<pair<int,int>>& nodes) {
@@ -246,98 +249,6 @@ set<pair<int,int>> GridProtocol::stringToSet(string nodesList) {
 }
 
 //bool gridProtocol::addMeasure(Measure toInsert)
-void GridProtocol::setIonChanParams() {
-	Cell* cell = 0;
-	for(auto& pvar : this->pvars) {
-		for(auto& oneCell : pvar.second.cells) {
-			cell = this->grid->findNode({oneCell.first.second,oneCell.first.first})->cell;
-			*cell->pars.at(pvar.first) = oneCell.second;
-		}
-	}
-}
-
-void GridProtocol::writePvars(QXmlStreamWriter& xml) {
-	xml.writeStartElement("pvars");
-	for(auto& pvar : this->pvars) {
-		xml.writeStartElement("pvar");
-		xml.writeAttribute("name", pvar.first.c_str());
-		xml.writeTextElement("distribution_type", QString::number(pvar.second.dist));
-		xml.writeTextElement("value0", QString::number(pvar.second.val[0]));
-		xml.writeTextElement("value1", QString::number(pvar.second.val[1]));
-		xml.writeStartElement("cells");
-		for(auto& cell : pvar.second.cells) {
-			xml.writeStartElement("cell");
-			xml.writeAttribute("x", QString::number(cell.first.first));
-			xml.writeAttribute("y", QString::number(cell.first.second));
-			xml.writeCharacters(QString::number(cell.second));
-			xml.writeEndElement();
-		}
-		xml.writeEndElement();
-		xml.writeEndElement();
-	}
-	xml.writeEndElement();
-}
-
-void GridProtocol::readPvars(QXmlStreamReader& xml) {
-	//	while(!xml.atEnd() && xml.name() != "file") {
-	//		xml.readNext();
-	//	}
-	//	xml.readNext();
-	while(!xml.atEnd() && xml.name() != "pvars") {
-		xml.readNext();
-	}
-	this->handlePvars(xml);
-}
-
-void GridProtocol::handlePvars(QXmlStreamReader& xml) {
-	if(xml.atEnd()) return;
-	while(xml.readNextStartElement() && xml.name()=="pvar"){
-		this->handlePvar(xml);
-	}
-	xml.skipCurrentElement();
-}
-
-void GridProtocol::handlePvar(QXmlStreamReader& xml) {
-	if(xml.atEnd()) return;
-	pair<string,MIonChanParam> pvar;
-	pvar.first = xml.attributes().value("name").toString().toStdString();
-	while(xml.readNextStartElement()) {
-		if(xml.name()=="distribution_type") {
-			xml.readNext();
-			pvar.second.dist = static_cast<Distribution>(xml.text().toInt());
-			xml.skipCurrentElement();
-		} else if(xml.name()=="value0") {
-			xml.readNext();
-			pvar.second.val[0] = xml.text().toDouble();
-			xml.skipCurrentElement();
-		} else if(xml.name()=="value1") {
-			xml.readNext();
-			pvar.second.val[1] = xml.text().toDouble();
-			xml.skipCurrentElement();
-		} else if(xml.name()=="cells") {
-			while(xml.readNextStartElement() && xml.name()=="cell"){
-				pair<pair<int,int>,double> p = this->handleCell(xml);
-				pvar.second.cells[p.first] = p.second;
-			}
-		}
-		else {
-			xml.skipCurrentElement();
-		}
-	}
-	this->pvars[pvar.first] = pvar.second;
-}
-
-pair<pair<int,int>,double> GridProtocol::handleCell(QXmlStreamReader& xml) {
-	pair<pair<int,int>,double> c;
-	if(xml.atEnd()) return c;
-	c.first.first = xml.attributes().value("x").toInt();
-	c.first.second = xml.attributes().value("y").toInt();
-	xml.readNext();
-	c.second = xml.text().toDouble();
-	xml.skipCurrentElement();
-	return c;
-}
-
 void GridProtocol::swapStims() {
 	double temp;
 	temp = stimval;

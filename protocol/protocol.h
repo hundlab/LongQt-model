@@ -11,7 +11,6 @@
 #define PROTO
 
 #include <sstream>
-#include <random>
 #include <exception>
 #include <string>
 #include <list>
@@ -21,6 +20,7 @@
 
 #include "measure.h"
 #include "cellutils.h"
+#include "cellpvars.h"
 
 using namespace std;
 
@@ -39,36 +39,20 @@ struct GetSetRef {
 class Protocol
 {
 	public:
-	enum Distribution {
-		none = 0,
-		normal = 1,
-		lognormal = 2
-	};
-
-	struct IonChanParam {
-		Distribution dist;
-		double val[2]; 
-		/*  what these values are depends on dist
-		 *  for none: val[0] = starting value, val[1] = increment amount
-		 *  for normal & lognormal: val[0] = mean, val[1] = standard deviation
-		 */
-	};
 	Protocol();
 	Protocol(const Protocol& toCopy);
 	Protocol(Protocol&& toCopy);
 	Protocol& operator=(const Protocol& toCopy);
-	virtual Protocol* clone();
+	virtual Protocol* clone() = 0;
 	~Protocol();
 
 	//##### Declare class functions ##############
 	virtual int runSim();
-	virtual bool runTrial();
+	virtual bool runTrial() = 0;
+	virtual void setupTrial();
 	virtual int readpars(QXmlStreamReader& xml, set<string> varnames = {});
 	virtual int readpars(string file, set<string> varnames = {});
-	virtual int parsemixedmap(map<string,double*> varmap, string file, vector<string>* cnames, vector<vector<string>>* twoDrnames);
-	virtual int readpvars();
-	virtual bool writepars(QXmlStreamWriter& xml); //write the contence of pars to a file
-	virtual bool write2Dmap(vector<string> vnames, vector< vector<string> > twoDmnames, string file);
+	virtual bool writepars(QXmlStreamWriter& xml); //write the contents of pars to a file
 	virtual void setTrial(unsigned int current_trial);
 	virtual unsigned int getTrial();
 	virtual bool writeMVarsFile(QXmlStreamWriter& xml);
@@ -77,24 +61,6 @@ class Protocol
 	virtual list<string> cellOptions();
 	virtual void readInCellState(bool read);
 	virtual void writeOutCellState(bool write);
-
-	//#### Ion channel params #########
-	virtual void setIonChanParams();
-	virtual void calcIonChanParams();
-	virtual int assign_cell_pars(vector<string> pnames, vector< vector<string> > pvals, int trialnum);
-	virtual void writePvars(QXmlStreamWriter& xml);
-	virtual void readPvars(QXmlStreamReader& xml);
-
-	default_random_engine generator;
-	map<string,IonChanParam> pvars;
-
-	vector<string> pnames;              // stores cell param names
-	vector< vector<string> > pvals;     // stores cell param vals
-
-	//#### Declare Static helper functions #####
-	static string to_string(const bool& b);
-	static bool stob(const string& s);
-
 
 	//##### Declare class variables ##############
 	Cell* cell;        // pointer to cell class
@@ -118,7 +84,7 @@ class Protocol
 	string datadir;
 	string cellStateDir;
 
-
+	CellPvars* pvars = 0;
 
 	//##### Declare maps for vars/params ##############
 	map<string, GetSetRef> pars;

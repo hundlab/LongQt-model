@@ -15,22 +15,17 @@
 
 class VoltageClamp : public Protocol {
   public:
-	struct SIonChanParam : IonChanParam {
-		double paramVal; // value for that cell
-	};
-  public:
     VoltageClamp();
     VoltageClamp(const VoltageClamp& toCopy);
     VoltageClamp* clone();
     VoltageClamp& operator=(const VoltageClamp& toCopy);
 
-    bool runTrial() override;
+	virtual void setupTrial() override;
+    virtual bool runTrial() override;
 	void readInCellState(bool read) override;
-	map<string,SIonChanParam> pvars;
-	void calcIonChanParams();
-	void setIonChanParams();
+
   private:
-    int clamp();
+	int clamp();
     void CCcopy(const VoltageClamp& toCopy);
 
     double v1, v2, v3, v4, v5;

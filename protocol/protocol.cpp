@@ -120,13 +120,12 @@ Protocol& Protocol::operator=(const Protocol& toCopy) {
 	return *this;
 };
 
-Protocol* Protocol::clone() {//public copy function
+/*Protocol* Protocol::clone() {//public copy function
 	return new Protocol(*this);
-};
+};*/
 
 
 void Protocol::copy(const Protocol& toCopy) {
-	unsigned int i = 0;
 	std::map<string, double*>::iterator it;
 
 	//##### Assign default parameters ##################
@@ -172,105 +171,13 @@ void Protocol::copy(const Protocol& toCopy) {
 	// make map of params
 	pars = toCopy.pars;
 
-	pnames = vector<string>(toCopy.pnames);
-	for(i = 0; i < toCopy.pvals.size(); i++) {
-		pvals.push_back(vector<string>(toCopy.pvals.at(i)));
-	}
 	//###### Duplicate cells, measures outputs and maps######
 	cell = toCopy.cell->clone();
 
 	measures = toCopy.measures;
 
+	pvars = toCopy.pvars->clone();
 }
-
-//############################################################
-// Assign parameter values based on pnames and 2D vector pvals
-//############################################################
-
-int Protocol::assign_cell_pars(vector<string> pnames, vector< vector<string> > pvals, int trialnum)
-{
-	unsigned int j;
-	double logmean = 0.0;
-	double logstdev = 0.2;
-	double mean = 1.0;
-	double stdev = 0.2;
-	double increment;
-
-	lognormal_distribution<double> logdistribution(logmean,logstdev);
-	normal_distribution<double> distribution(mean,stdev);
-
-	for (j=0; j<pnames.size(); j++) {
-		if (pvals[j][0] == "random" ) {  // if first arg is "random" = choose rand val
-			if(pvals[j].size()>1){
-				if (pvals[j][1] == "lognormal"){
-					if (pvals[j].size()>3) {
-						logmean = atof(pvals[j][2].c_str());
-						logstdev = atof(pvals[j][3].c_str());
-						lognormal_distribution<double> logdistribution(logmean,logstdev);
-						*cell->pars[pnames[j]] = logdistribution(generator) ;
-					}
-					else
-						*cell->pars[pnames[j]] = logdistribution(generator) ;
-				}
-				else
-					*cell->pars[pnames[j]] = distribution(generator) ;
-			}
-			else
-				*cell->pars[pnames[j]] = distribution(generator) ;
-		}
-
-		else if (pvals[j][0] == "iter"){  // if first arg is "iter" = iterate
-			if (pvals[j].size()>2) {     // if 3 args, 2nd arg is initial val, 3rd arg is inc
-				if (trialnum>0){
-					increment = atof(pvals[j][2].c_str());
-					*cell->pars[pnames[j]] = *cell->pars[pnames[j]] + increment;
-				}
-				else
-					*cell->pars[pnames[j]] = atof(pvals[j][1].c_str());
-			}
-			else if (pvals[j].size()>1){  // if only two args, 2nd arg is inc
-				if (trialnum>0){
-					increment = atof(pvals[j][1].c_str());
-					*cell->pars[pnames[j]] = *cell->pars[pnames[j]] + increment;
-				}
-			}
-			else {
-				if (trialnum>0){     // if only one arg, set incr to vary param over range
-					increment = *cell->pars[pnames[j]]/(numtrials-trialnum);
-					*cell->pars[pnames[j]] = *cell->pars[pnames[j]] + increment;
-				}
-			}
-		}
-
-		else                  // if first arg is just a number
-			*cell->pars[pnames[j]]=atof(pvals[j][0].c_str());
-	}
-
-	return 1;
-};
-
-bool Protocol::write2Dmap(vector<string> vnames, vector< vector<string> > twoDmnames, string file) {
-	bool ret = true;
-	unsigned int i,j;
-	ofstream out;
-	out.open(file);
-	if(!out.is_open()){
-        qCritical() << "Error opening " << file.c_str();
-		return false;
-	}
-
-	for(i = 0; i < vnames.size(); i++) {
-		out << vnames[i] << "\t";
-		for(j = 0; j < twoDmnames[i].size(); j++){
-			out << twoDmnames[i][j] << "\t";
-		}
-		out << endl;
-	}
-
-	return ret;
-}
-
-
 //############################################################
 // Run the cell simulation
 //############################################################
@@ -287,7 +194,7 @@ int Protocol::runSim() {
 	return return_val;
 };
 
-bool Protocol::runTrial() { return true;}
+void Protocol::setupTrial() {};
 
 //#############################################################
 // Read values of variables in varmap from file.
@@ -329,53 +236,6 @@ int Protocol::readpars(string file, set<string> varnames)
 	ifile.close();
 	return 0;
 };
-
-//#############################################################
-// Create vectors based on mixed list in file.  First row element is checked in varmap
-// and gets stored in vector, rest of row used to create row in 2D vector.
-// Writes paramiter names into cnames and paramiter values into twoDrnames.
-//#############################################################
-int Protocol::parsemixedmap(map<string,double*> varmap, string file, vector<string>* cnames, vector<vector<string>>* twoDrnames)
-{
-	ifstream ifile;
-	string line, name;
-
-	vector<string> rnames;
-
-	ifile.open(file);
-	if(!ifile.is_open()){
-        qCritical() << "Error opening " << file.c_str();
-		return 1;
-	}
-
-	int counter = 0;
-
-	while(!ifile.eof()){
-		getline(ifile,line);
-		stringstream linestream(line);
-		linestream >> name;
-		if(varmap.count(name)>0){
-			(*cnames).push_back(name);
-
-			while (!linestream.eof()) {
-				linestream >> name;
-				rnames.push_back(name);
-			}
-			if (rnames.size()>0)
-				(*twoDrnames).push_back(rnames);
-			else
-				(*cnames).pop_back();
-
-			rnames.clear();
-		}
-		counter++;
-
-	}
-	ifile.close();
-
-	return 0;
-};
-
 //############################################################
 // write a mvars file for the measures list
 //############################################################
@@ -447,16 +307,20 @@ void Protocol::removeFromMeasureSelection(string measureName, string property) {
 bool Protocol::readMvarsFile(QXmlStreamReader& xml)
 {
 	set<string> possible_vars = cell->getVariables();
+	double percrepol = 50;
 	
     if(!CellUtils::readNext(xml, "mvars")) return false;
-	xml.readNextStartElement();
-	xml.readNext();
-	double percrepol = xml.text().toDouble();
-	xml.readNext();
-	while(!xml.atEnd() && xml.readNextStartElement()){
+	if(xml.readNextStartElement()) {
+		xml.readNext();
+		percrepol = xml.text().toDouble();
+		xml.skipCurrentElement();
+	} else {
+		return true;
+	}
+	while(!xml.atEnd() && xml.readNextStartElement() && xml.name()=="mvar"){
 		string varname = xml.attributes().value("name").toString().toStdString();
 		Measure temp(varname,percrepol);
-		while(!xml.atEnd() && xml.readNextStartElement()){
+		while(!xml.atEnd() && xml.readNextStartElement() && xml.name()=="property"){
 			xml.readNext();
 			string propName = xml.text().toString().toStdString();
 			temp.addToMeasureSelection(propName);
@@ -465,7 +329,7 @@ bool Protocol::readMvarsFile(QXmlStreamReader& xml)
 		if(possible_vars.find(temp.varname) != possible_vars.end()) {
 			measures.insert(pair<string,Measure>(temp.varname,temp));
 		}
-		xml.readNext();
+		xml.skipCurrentElement();
 	}
 	return true;
 };
@@ -473,12 +337,12 @@ bool Protocol::readMvarsFile(QXmlStreamReader& xml)
 //#############################################################
 // Set params for reading/saving model params.
 //#############################################################
-int Protocol::readpvars(){
+/*int Protocol::readpvars(){
 
 	int ret = 0;
 	ret = parsemixedmap(cell->pars, pvarfile ,&pnames, &pvals);
 	return ret;
-};
+};*/
 
 //############################################################
 // Write the contents of varmap to a file
@@ -496,7 +360,7 @@ bool Protocol::writepars(QXmlStreamWriter& xml) {
 }
 void Protocol::setTrial(unsigned int current_trial) {
 	trial = current_trial;
-	assign_cell_pars(pnames,pvals,trial);   // Assign cell pars
+//	assign_cell_pars(pnames,pvals,trial);   // Assign cell pars
 }
 
 unsigned int Protocol::getTrial() {
@@ -510,8 +374,8 @@ bool Protocol::setCell(const string& type, bool reset) {
 	try {
 		cell = (cellMap.at(type))();
 		measures.clear();
-		pvals.clear();
-		pnames.clear();
+		if(pvars)
+			pvars->clear();
 		return true;
 	} catch(const std::out_of_range&) {
         qWarning("Protocol: %s is not a valid cell type",type.c_str());
@@ -539,6 +403,3 @@ void Protocol::writeOutCellState(bool write) {
 		cell->writeCellState(datadir+"/"+cellStateFile+std::to_string(trial)+".xml");
 	}
 }
-
-void Protocol::setIonChanParams() {}
-void Protocol::calcIonChanParams() {}

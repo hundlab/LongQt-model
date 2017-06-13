@@ -1,5 +1,6 @@
 #include "currentClampProtocol.h"
 #include "cellutils.h"
+#include "pvarscurrentclamp.h"
 
 CurrentClamp::CurrentClamp()  : Protocol(){
     stimdur = 1.0;  // stim duration, ms
@@ -18,7 +19,14 @@ CurrentClamp::CurrentClamp()  : Protocol(){
     pars["bcl"] = toInsert.Initialize("double", [this] () {return std::to_string(bcl);}, [this] (const string& value) {bcl = std::stod(value);});
     pars["numstims"]= toInsert.Initialize("int", [this] () {return std::to_string(numstims);}, [this] (const string& value) {numstims = std::stoi(value);});
     pars["paceflag"]= toInsert.Initialize("bool", [this] () {return CellUtils::to_string(paceflag);}, [this] (const string& value) {paceflag = CellUtils::stob(value);});
+	pars["numtrials"]= toInsert.Initialize("int", [this] () {return std::to_string(numtrials);},
+			[this] (const string& value) {
+				numtrials = std::stoi(value);
+				this->pvars->calcIonChanParams();});
 	type = "Current Clamp Protocol";
+	this->pvars = new PvarsCurrentClamp(this);
+
+	CellUtils::set_default_vals(this);
 }
 //overriden deep copy funtion
 CurrentClamp* CurrentClamp::clone(){
@@ -71,20 +79,23 @@ int CurrentClamp::stim()
     return 1;
 };
 
+void CurrentClamp::setupTrial() {
+	set<string> temp;
+	for(auto& pvar: *pvars) {
+		temp.insert(pvar.first);
+	}
+	cell->setConstantSelection(temp);
+	temp.clear();
+
+    time = cell->t = 0.0;      // reset time
+	this->readInCellState(this->readCellState);
+	this->pvars->setIonChanParams();
+    doneflag=1;     // reset doneflag
+}
+
 bool CurrentClamp::runTrial() {
         char writefile[150];     // Buffer for storing filenames
-
-//to be moved to a better location
-set<string> temp;
-temp.insert(pnames.begin(),pnames.end());
-cell->setConstantSelection(temp);
-temp.clear();
-
-//should not be here
-
-        time = cell->t = 0.0;      // reset time
-        doneflag=1;     // reset doneflag
-		this->readInCellState(this->readCellState);
+		this->setupTrial();
 
         //###############################################################
         // Every time step, currents, concentrations, and Vm are calculated.
@@ -156,114 +167,4 @@ void CurrentClamp::readInCellState(bool read) {
 	}
 }
 
-void CurrentClamp::setIonChanParams() {
-	for(auto& pvar : this->pvars) {
-		*cell->pars.at(pvar.first) = pvar.second.trials[trial];
-	}
-}
-void CurrentClamp:calcIonChanParams() {
-	for(auto& pvar : this->pvars) {
-		for(int i = 0; i < numTrials; i++) {
-			double val = 0;
-			switch(pvar.second.dist) {
-				case Distribution::none:
-					val = pvar.second.val[0]+pvar.second.val[1]*i;
-					break;
-				case Distribution::normal:
-					{
-						normal_distribution<double> distribution(pvar.second.val[0]
-								,pvar.second.val[1]);
-						val = distribution(this->generator);
-						break;
-					}
-				case Distribution::lognormal:
-					{
-						lognormal_distribution<double> logdistribution(
-								pvar.second.val[0], pvar.second.val[1]);
-						val = logdistribution(this->generator);
-						break;
-					}
-			}
-			pvar.second.trials.push_back(val);
-		}
-	}
-}
-void CurrentClamp::writePvars(QXmlStreamWriter& xml) {
-	xml.writeStartElement("pvars");
-	for(auto& pvar : this->pvars) {
-		xml.writeStartElement("pvar");
-		xml.writeAttribute("name", pvar.first.c_str());
-		xml.writeTextElement("distribution_type", QString::number(pvar.second.dist));
-		xml.writeTextElement("value0", QString::number(pvar.second.val[0]));
-		xml.writeTextElement("value1", QString::number(pvar.second.val[1]));
-		xml.writeStartElement("trials");
-		for(auto& trial : pvar.second.trials) {
-			xml.writeStartElement("trail");
-			xml.writeAttribute("number", QString::number(trial));
-			xml.writeCharacters(QString::number(cell.second));
-			xml.writeEndElement();
-		}
-		xml.writeEndElement();
-		xml.writeEndElement();
-	}
-	xml.writeEndElement();
-}
 
-void CurrentClamp::readPvars(QXmlStreamReader& xml) {
-	while(!xml.atEnd() && xml.name() != "pvars") {
-		xml.readNext();
-	}
-	this->handlePvars(xml);
-}
-
-void CurrentClamp::handlePvars(QXmlStreamReader& xml) {
-	if(xml.atEnd()) return;
-	while(xml.readNextStartElement() && xml.name()=="pvar"){
-		this->handlePvar(xml);
-	}
-	xml.skipCurrentElement();
-}
-
-void CurrentClamp::handlePvar(QXmlStreamReader& xml) {
-	if(xml.atEnd()) return;
-	pair<string,TIonChanParam> pvar;
-	pvar.first = xml.attributes().value("name").toString().toStdString();
-	while(xml.readNextStartElement()) {
-		if(xml.name()=="distribution_type") {
-			xml.readNext();
-			pvar.second.dist = static_cast<Distribution>(xml.text().toInt());
-			xml.skipCurrentElement();
-		} else if(xml.name()=="value0") {
-			xml.readNext();
-			pvar.second.val[0] = xml.text().toDouble();
-			xml.skipCurrentElement();
-		} else if(xml.name()=="value1") {
-			xml.readNext();
-			pvar.second.val[1] = xml.text().toDouble();
-			xml.skipCurrentElement();
-		} else if(xml.name()=="trials") {
-			while(xml.readNextStartElement() && xml.name()=="trial"){
-				pair<int,double> p = this->handleCell(xml);
-				if(pvar.second.trials.size() == p.first) {
-					pvar.second.trails.push_back(p.second);
-				} else {
-					qWarning("CurrentClamp: Trials in xml are not in order");
-				}
-			}
-		}
-		else {
-			xml.skipCurrentElement();
-		}
-	}
-	this->pvars[pvar.first] = pvar.second;
-}
-
-pair<int,double> CurrentClamp::handleCell(QXmlStreamReader& xml) {
-	pair<int,double> c;
-	if(xml.atEnd()) return c;
-	c.first = xml.attributes().value("number").toInt();
-	xml.readNext();
-	c.second = xml.text().toDouble();
-	xml.skipCurrentElement();
-	return c;
-}

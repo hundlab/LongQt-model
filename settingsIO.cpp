@@ -3,6 +3,15 @@
 #include <QFile>
 #include <QDebug>
 
+SettingsIO* SettingsIO::__instance = 0;
+
+SettingsIO* SettingsIO::getInstance() {
+	if(!__instance) {
+		__instance = new SettingsIO();
+	}
+	return __instance;
+}
+
 void SettingsIO::writeSettings(Protocol* proto, QString filename) {
 	QFile ofile(filename);
 	string name;
@@ -20,6 +29,7 @@ void SettingsIO::writeSettings(Protocol* proto, QString filename) {
 	proto->writepars(xml);
 	proto->writeMVarsFile(xml);
 	this->writedvars(proto, xml);
+	proto->pvars->writePvars(xml);
 
 	xml.writeEndElement();
 
@@ -77,6 +87,7 @@ void SettingsIO::readSettings(Protocol* proto, QString filename) {
 	//    proto->datadir = working_dir.absolutePath().toStdString();
 		proto->readMvarsFile(xml);
 		this->readdvars(proto, xml);
+		proto->pvars->readPvars(xml);
 	} catch (const std::invalid_argument&) {
 		return;
 	}
@@ -101,6 +112,7 @@ void SettingsIO::readdvars(Protocol* proto, QXmlStreamReader& xml) {
 	while(!xml.atEnd() && xml.readNextStartElement()){
 		xml.readNext();
 		selection.insert(xml.text().toString().toStdString());
+		xml.readNext();
 	}
 	if(!proto->cell->setVariableSelection(selection)) {
 		qWarning("SettingsIO: Some dvars were not vars in cell");

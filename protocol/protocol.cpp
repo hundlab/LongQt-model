@@ -96,14 +96,6 @@ Protocol::Protocol()
     cellMap = CellUtils::cellMap;
 	this->setCell(HRD09Control().type);
 };
-
-
-
-//######################################################
-// Destructor for parent cell class.
-//#####################################################
-Protocol::~Protocol(){};
-
 //######################################################
 // Deep Copy Constructor 
 //######################################################
@@ -200,19 +192,13 @@ void Protocol::setupTrial() {};
 // Read values of variables in varmap from file.
 // Format of file should be "variable name" tab "value"
 //#############################################################
-int Protocol::readpars(QXmlStreamReader& xml, set<string> varnames) {
+int Protocol::readpars(QXmlStreamReader& xml) {
 	bool useVarnames = false;
 	string name = "";
-	if(varnames.size() > 0) {
-		useVarnames = true;
-	}
     if(!CellUtils::readNext(xml, "pars")) return 1;
 	while(!xml.atEnd() && xml.readNextStartElement()){
 		name = xml.attributes().value("name").toString().toStdString();
 		try {
-			if(useVarnames&&varnames.find(name)==varnames.end()) {
-				throw std::out_of_range(name+" not in varnames");
-			}
 			xml.readNext();
 			pars.at(name).set(xml.text().toString().toStdString());
         } catch (const std::out_of_range&) {
@@ -222,20 +208,6 @@ int Protocol::readpars(QXmlStreamReader& xml, set<string> varnames) {
 	}
 	return 0;
 }
-int Protocol::readpars(string file, set<string> varnames)
-{
-	QFile ifile(file.c_str());
-
-	if(!ifile.open(QIODevice::ReadOnly)){
-        qCritical() << "Error opening " << file.c_str();
-		return 1;
-	}
-	QXmlStreamReader xml(&ifile);
-	//		xml.readNext();
-	this->readpars(xml, varnames);
-	ifile.close();
-	return 0;
-};
 //############################################################
 // write a mvars file for the measures list
 //############################################################

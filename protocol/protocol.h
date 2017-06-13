@@ -44,14 +44,13 @@ class Protocol
 	Protocol(Protocol&& toCopy);
 	Protocol& operator=(const Protocol& toCopy);
 	virtual Protocol* clone() = 0;
-	~Protocol();
+	virtual ~Protocol() = default;
 
 	//##### Declare class functions ##############
 	virtual int runSim();
 	virtual bool runTrial() = 0;
 	virtual void setupTrial();
-	virtual int readpars(QXmlStreamReader& xml, set<string> varnames = {});
-	virtual int readpars(string file, set<string> varnames = {});
+	virtual int readpars(QXmlStreamReader& xml);
 	virtual bool writepars(QXmlStreamWriter& xml); //write the contents of pars to a file
 	virtual void setTrial(unsigned int current_trial);
 	virtual unsigned int getTrial();

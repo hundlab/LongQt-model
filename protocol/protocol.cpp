@@ -86,9 +86,9 @@ Protocol::Protocol()
     pars["readCellState"]= toInsert.Initialize("bool", [this] () {return CellUtils::to_string(readCellState);}, [this] (const string& value) {readCellState = CellUtils::stob(value);});
 	pars["datadir"]= toInsert.Initialize("directory", [this] () {return datadir;}, [this] (const string& value) {datadir = value;});
 	pars["cellStateDir"]= toInsert.Initialize("directory", [this] () {return cellStateDir;}, [this] (const string& value) {cellStateDir = value;});
-	pars["pvarfile"]= toInsert.Initialize("file", [this] () {return pvarfile;}, [this] (const string& value) {pvarfile = value;});
-	pars["dvarfile"]= toInsert.Initialize("file", [this] () {return dvarfile;}, [this] (const string& value) {dvarfile = value;});
-	pars["measfile"]= toInsert.Initialize("file", [this] () {return measfile;}, [this] (const string& value) {measfile = value;});
+//	pars["pvarfile"]= toInsert.Initialize("file", [this] () {return pvarfile;}, [this] (const string& value) {pvarfile = value;});
+//	pars["dvarfile"]= toInsert.Initialize("file", [this] () {return dvarfile;}, [this] (const string& value) {dvarfile = value;});
+//	pars["measfile"]= toInsert.Initialize("file", [this] () {return measfile;}, [this] (const string& value) {measfile = value;});
 	pars["simvarfile"]= toInsert.Initialize("file", [this] () {return simvarfile;}, [this] (const string& value) {simvarfile = value;});
 	pars["cellStateFile"]= toInsert.Initialize("file", [this] () {return cellStateFile;}, [this] (const string& value) {cellStateFile = value;});
 	pars["celltype"]= toInsert.Initialize("cell", [this] () {return cell->type;}, [this] (const string& value) {this->setCell(value);}); 

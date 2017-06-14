@@ -54,8 +54,6 @@ class Protocol
 	virtual bool writepars(QXmlStreamWriter& xml); //write the contents of pars to a file
 	virtual void setTrial(unsigned int current_trial);
 	virtual unsigned int getTrial();
-	virtual bool writeMVarsFile(QXmlStreamWriter& xml);
-	virtual bool readMvarsFile(QXmlStreamReader& xml);
 	virtual bool setCell(const string& type, bool reset = false);
 	virtual list<string> cellOptions();
 	virtual void readInCellState(bool read);
@@ -87,6 +85,9 @@ class Protocol
 
 	//##### Declare maps for vars/params ##############
 	map<string, GetSetRef> pars;
+
+	virtual bool writeMVarsFile(QXmlStreamWriter& xml);
+	virtual bool readMvarsFile(QXmlStreamReader& xml);
 
 	const map<string,Measure>& Measures = cref(measures);
 	virtual bool addMeasure(Measure toInsert);

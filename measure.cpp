@@ -9,63 +9,225 @@
 //#################################################
 
 #include "measure.h"
+#include <cmath>
 
 //#############################################################
 // Measure class constructor and destructor
 //#############################################################
 
-bool Measure::setOutputfile(string filename) {
-    return IOBase::setOutputfile(filename, this->selection, &ofile);
-}
+Measure::Measure(set<string> selected, double percrepol):
+    __percrepol(percrepol),
+    __selection(selected)
+{};
+/*{
+//    peak=-100.0;
+//    min=100.0;
+//   vartakeoff=-100.0;
+//    repol = -25.0;
+//   amp = 70.0;
+//    maxderiv=0.0;
+//   maxderiv2nd=0.0;
+//  cl=0.0;
+// told = -10000.0;
+//    mint = 0.0;
+//    maxt = 0.0;
+//    varold = 100.0;
+//   derivold = 0.0;
+//    minflag = false;
+//    maxflag = false;
+//   // ampflag = false;
+//    ddrflag = false;
+//    derivt2 = 0.0;
+//    derivt1 = 0.0;
+//   derivt = 0.0;
+//    deriv2ndt = 0.0;
+durflag = false;
+this->percrepol = percrepol;
+returnflag = 0;
 
-bool Measure::setSelection(set<string> new_selection) {
-    bool toReturn = true;
-    set<string>::iterator set_it;
-    map<string,double*>::iterator map_it;
-    
-    selection.clear();
+this->varname = varname;
+this->mkmap();    
 
-    for(set_it = new_selection.begin(); set_it != new_selection.end(); set_it++) {
-        map_it = varmap.find(*set_it);
-        if(map_it != varmap.end()) {
-            selection.insert(*set_it);
-        } else {
-            toReturn = false;
-        }
+};
+
+Measure::Measure(const Measure& toCopy) {
+this->copy(toCopy);
+};
+
+Measure::Measure( Measure&& toCopy) {
+this->copy(toCopy); 
+};
+
+Measure& Measure::operator=(const Measure& toCopy) {
+this->copy(toCopy);
+return *this->;
+};*/
+
+set<string> Measure::variables() {
+    set<string> toReturn;
+    for(auto& var: varmap) {
+        toReturn.insert(var.first);
     }
- 
-    if(!ofile.good()) {
-        return toReturn;
-    }
-    ofile.seekp(0);
-    for(set<string>::iterator it = selection.begin(); it != selection.end(); it++) {
-        ofile << *it << "\t";
-    }
-    ofile << endl;
-    
     return toReturn;
 }
 
-bool Measure::addToMeasureSelection(string new_select) {
-    if(varmap.find(new_select) != varmap.end()) {
-        return selection.insert(new_select).second;
-    } else {
-        return false;
+map<string,double> Measure::variablesMap() {
+    map<string,double> toReturn;
+    for(auto& var: varmap) {
+        toReturn.insert(std::pair<string,double>(var.first, *var.second));
+    }
+    return toReturn;
+}
+/*
+   void Measure::copy(const Measure& toCopy) {
+   peak= toCopy.peak;
+   min= toCopy.min;
+   vartakeoff= toCopy.vartakeoff;
+   repol = toCopy.repol;
+   amp = toCopy.amp;
+   maxderiv= toCopy.maxderiv;
+   maxderiv2nd= toCopy.maxderiv2nd;
+   cl= toCopy.cl;
+   told = toCopy.told;
+   mint = toCopy.mint;
+   maxt = toCopy.maxt;
+   varold = toCopy.varold;
+   derivold = toCopy.derivold;
+   minflag = toCopy.minflag;
+   maxflag = toCopy.maxflag;
+   ampflag = toCopy.ampflag;
+   ddrflag = toCopy.ddrflag;
+   derivt2 = toCopy.derivt2;
+   derivt1 = toCopy.derivt1;
+   derivt = toCopy.derivt;
+   deriv2ndt = toCopy.deriv2ndt;
+   durflag = toCopy.durflag;
+   percrepol = toCopy.percrepol;
+   returnflag = toCopy.returnflag;
+   dur = toCopy.dur;
+   varname = toCopy.varname;
+   };*/
+
+//################################################################
+// Function to track properties (e.g. peak, min, duration) of
+// specified state variable and return status flag to calling fxn.
+//################################################################
+bool Measure::measure(double time, double var)
+{
+    double deriv,deriv2nd;
+
+    returnflag = false;  //default for return...set to 1 when props ready for output
+
+    deriv=(var-varold)/(time-told);
+    deriv2nd=(deriv-derivold)/(time-told);
+
+    if(deriv>maxderiv){             // Track value and time of max 1st deriv
+        maxderiv=deriv;
+        derivt=time;
+    }
+
+    if(deriv2nd>.02&&var>(0.01*abs(min)+min)&&!ddrflag){   // Track 2nd deriv for SAN ddr
+        vartakeoff=var;
+        deriv2ndt=time;
+        ddr=(vartakeoff-min)/(time-mint);
+        ddrflag=true;
+    }
+
+    if(minflag&&abs(var)>peak){          // Track value and time of peak
+        peak=var;
+        maxt=time;
+    }
+    else if((peak-min)>0.3*abs(min))    // Assumes true max is more than 30% greater than the min.
+        maxflag=true;
+
+    if(var<min){                        // Track value and time of min
+        min=var;
+        mint=time;
+    }
+    else
+        minflag=true;
+
+    if(var>repol&&!durflag){          // t1 for dur calculation = first time var crosses repol.
+        durtime1=time;            // will depend on __percrepol - default is 50 but can be changed.
+        durflag=true;
+    }
+
+    if(maxflag&&minflag&&!ampflag){
+        amp=peak-min;
+        ampflag = true;
+        cl=derivt-derivt1;
+        derivt2=derivt1;
+        derivt1=derivt;
+        repol = (1-__percrepol*0.01)*amp+min;
+    }
+
+    if(durflag&&var<repol){
+        dur=time-durtime1;
+        durflag=false;
+        returnflag = true;  // lets calling fxn know that it is time to output and reset.
+    }
+
+    told=time;
+    varold=var;
+    derivold=deriv;
+
+    return (returnflag);
+};
+
+
+void Measure::reset()
+{
+    /*	for(auto var: this->varmap) {
+        this->lastMap[var.first] = *var.second;
+        }*/
+    peak=-100.0;
+    min=100.0;
+    maxderiv=0.0;
+    maxderiv2nd=0.0;
+    told = 0.0;
+    minflag = 0;
+    maxflag = 0;
+    ampflag = 0;
+    ddrflag = 0;
+};
+void Measure::percrepol(double val) {
+    this->__percrepol = val;
+}
+
+double Measure::percrepol() const {
+    return this->__percrepol;
+}
+
+string Measure::getNameString(string name) {
+    string nameStr = "";
+    for(auto& sel: this->__selection) {
+        nameStr += name+"/"+sel+"\t";
+    }
+    return nameStr;
+}
+string Measure::getValueString() {
+    string valStr = "";
+    for(auto& sel: this->__selection) {
+        valStr += to_string(*this->varmap.at(sel));
+    }
+    return valStr;
+}
+/*
+   void Measure::restoreLast() {
+   for(auto var: lastMap) {
+ *this->varmap[var.first] = var.second;
+ }
+ }*/
+
+
+set<string> Measure::selection() {
+    return this->__selection;
+}
+void Measure::selection(set<string> new_selection) {
+    this->__selection.clear();
+    for(auto& select: new_selection) {
+        if(varmap.count(select) == 1) {
+            __selection.insert(select);
+        }
     }
 }
-
-void Measure::removeFromSelection(string to_remove) {
-    selection.erase(selection.find(to_remove));
-}
-
-bool Measure::write() {
-    bool toReturn = false;
-
-    toReturn = IOBase::write(this->selection, this->varmap, &ofile);
-	return toReturn;
-}
-
-void Measure::closeFiles() {
-    IOBase::closeFile(&ofile);
-}
-

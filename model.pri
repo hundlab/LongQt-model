@@ -1,7 +1,8 @@
 INCLUDEPATH += $$PWD $$PWD/cell $$PWD/structure $$PWD/protocol
 
 SOURCES += $$PWD/measure.cpp\
-$$PWD/measure_kernel.cpp\
+$$PWD/measuremanager.cpp\
+$$PWD/gridmeasuremanager.cpp\
 $$PWD/cell/gpbatrialRyr.cpp\
 $$PWD/cell/hrd09_bz.cpp\
 $$PWD/cell/cell.cpp\
@@ -36,7 +37,8 @@ $$PWD/pvarsvoltageclamp.cpp\
 $$PWD/protocol/currentClampProtocol.cpp\
 $$PWD/protocol/voltageClampProtocol.cpp
 
-HEADERS  += $$PWD/measure_kernel.h\
+HEADERS  += $$PWD/measuremanager.h\
+$$PWD/gridmeasuremanager.h\
 $$PWD/measure.h\
 $$PWD/tridag.h\
 $$PWD/cell/gpbatrial.h\

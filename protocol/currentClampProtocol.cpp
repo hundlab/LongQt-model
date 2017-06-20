@@ -19,14 +19,14 @@ CurrentClamp::CurrentClamp()  : Protocol(){
     pars["bcl"] = toInsert.Initialize("double", [this] () {return std::to_string(bcl);}, [this] (const string& value) {bcl = std::stod(value);});
     pars["numstims"]= toInsert.Initialize("int", [this] () {return std::to_string(numstims);}, [this] (const string& value) {numstims = std::stoi(value);});
     pars["paceflag"]= toInsert.Initialize("bool", [this] () {return CellUtils::to_string(paceflag);}, [this] (const string& value) {paceflag = CellUtils::stob(value);});
-	pars["numtrials"]= toInsert.Initialize("int", [this] () {return std::to_string(numtrials);},
-			[this] (const string& value) {
-				numtrials = std::stoi(value);
-				this->pvars->calcIonChanParams();});
-	type = "Current Clamp Protocol";
-	this->pvars = new PvarsCurrentClamp(this);
+    pars["numtrials"]= toInsert.Initialize("int", [this] () {return std::to_string(numtrials);},
+            [this] (const string& value) {
+                numtrials = std::stoi(value);
+                this->pvars->calcIonChanParams();});
+    type = "Current Clamp Protocol";
+    this->pvars = new PvarsCurrentClamp(this);
 
-	CellUtils::set_default_vals(this);
+    CellUtils::set_default_vals(this);
 }
 //overriden deep copy funtion
 CurrentClamp* CurrentClamp::clone(){
@@ -56,16 +56,16 @@ void CurrentClamp::CCcopy(const CurrentClamp& toCopy) {
 // External stimulus.
 int CurrentClamp::stim()
 {
-  if(cell->t>=stimt&&cell->t<(stimt+stimdur)){
-      if(stimflag==0){
-          stimcounter++;
-          stimflag=1;
-          if(stimcounter>int(numstims)){
-              doneflag = 0;
-              return 0;
-          }
-      }
-      cell->externalStim(stimval);
+    if(cell->t>=stimt&&cell->t<(stimt+stimdur)){
+        if(stimflag==0){
+            stimcounter++;
+            stimflag=1;
+            if(stimcounter>int(numstims)){
+                doneflag = 0;
+                return 0;
+            }
+        }
+        cell->externalStim(stimval);
     }
     else if(stimflag==1){     //trailing edge of stimulus
         stimt=stimt+bcl;
@@ -80,91 +80,71 @@ int CurrentClamp::stim()
 };
 
 void CurrentClamp::setupTrial() {
-	set<string> temp;
-	for(auto& pvar: *pvars) {
-		temp.insert(pvar.first);
-	}
-	cell->setConstantSelection(temp);
-	temp.clear();
-
+    set<string> temp;
+    for(auto& pvar: *pvars) {
+        temp.insert(pvar.first);
+    }
+    cell->setConstantSelection(temp);
+    temp.clear();
     time = cell->t = 0.0;      // reset time
-	this->readInCellState(this->readCellState);
-	this->pvars->setIonChanParams();
+    this->readInCellState(this->readCellState);
+    this->pvars->setIonChanParams();
     doneflag=1;     // reset doneflag
+    cell->setOuputfileVariables(
+        CellUtils::strprintf((datadir+"/"+dvarsoutfile).c_str(),trial));
+    this->measureMgr->setupMeasures(
+        CellUtils::strprintf((datadir+"/"+propertyoutfile).c_str(),trial));
 }
 
 bool CurrentClamp::runTrial() {
-        char writefile[150];     // Buffer for storing filenames
-		this->setupTrial();
+    this->setupTrial();
 
-        //###############################################################
-        // Every time step, currents, concentrations, and Vm are calculated.
-        //###############################################################
-        int pCount = 0;
-        //open i/o streams
-        for(map<string,Measure>::iterator it = measures.begin(); it != measures.end(); it++) {
-            sprintf(writefile,(datadir + "/" + propertyoutfile).c_str(),trial,it->second.varname.c_str());
-            it->second.setOutputfile(writefile);
+    //###############################################################
+    // Every time step, currents, concentrations, and Vm are calculated.
+    //###############################################################
+    int pCount = 0;
+
+    while(int(doneflag)&&(time<tMax)){
+        time = cell->tstep(stimt);    // Update time
+        cell->updateCurr();    // Update membrane currents
+        if(int(paceflag)==1)  // Apply stimulus
+            stim();
+
+        cell->updateConc();   // Update ion concentrations
+        vM=cell->updateV();     // Update transmembrane potential
+
+        //##### Output select variables to file  ####################
+        if(int(measflag)==1&&cell->t>meastime){
+            this->measureMgr->measure(time);
+       }
+        if (int(writeflag)==1&&time>writetime&&pCount%int(writeint)==0) {
+            cell->writeVariables();
         }
+        cell->setV(vM); //Overwrite vOld with new value
+        pCount++;
+    }
 
-        sprintf(writefile,(datadir + "/" + dvarsoutfile).c_str(),trial);
-        cell->setOuputfileVariables(writefile);
+    // Output final (ss) property values for each trial
+    this->measureMgr->writeLast(CellUtils::strprintf(
+        (datadir+"/"+finalpropertyoutfile).c_str(),trial));
 
-        while(int(doneflag)&&(time<tMax)){
-            
-            time = cell->tstep(stimt);    // Update time
-            cell->updateCurr();    // Update membrane currents
-            if(int(paceflag)==1)  // Apply stimulus
-                stim();
+    // Output parameter values for each trial
+    cell->setOutputfileConstants(CellUtils::strprintf(
+        (datadir+"/"+finaldvarsoutfile).c_str(),trial));
+    cell->writeConstants();
+    this->measureMgr->close();
+    cell->closeFiles();
+    this->writeOutCellState(this->writeCellState);
 
-            cell->updateConc();   // Update ion concentrations
-            vM=cell->updateV();     // Update transmembrane potential
-
-            //##### Output select variables to file  ####################
-            if(int(measflag)==1&&cell->t>meastime){
-                for (map<string,Measure>::iterator it = measures.begin(); it!=measures.end(); it++) {
-                    if(it->second.measure(cell->t,*cell->vars[it->second.varname])&&(int(writeflag)==1)) {
-                        it->second.write();
-												it->second.reset();
-                    }
-                }
-            }
-            if (int(writeflag)==1&&time>writetime&&pCount%int(writeint)==0) {
-                cell->writeVariables();
-//                douts[mvnames.size()+(trial+1)*(mvnames.size()+1)].writevals(datamap,writefile,'a');
-            }
-            cell->setV(vM); //Overwrite vOld with new value
-            pCount++;
-        }
-    
-      // Output final (ss) property values for each trial
-      for (map<string,Measure>::iterator it = measures.begin(); it != measures.end(); it++){
-          sprintf(writefile,(datadir + "/" + finalpropertyoutfile).c_str(), trial, it->second.varname.c_str());
-          it->second.setOutputfile(writefile);
-					it->second.restoreLast();
-          it->second.write();
-          it->second.reset();
-      } 
-      
-      // Output parameter values for each trial
-      sprintf(writefile,(datadir + "/" + finaldvarsoutfile).c_str(), trial);
-      cell->setOutputfileConstants(writefile);
-      cell->writeConstants();
-      for(map<string,Measure>::iterator it = measures.begin(); it != measures.end(); it++) {
-          it->second.closeFiles();
-      }
-      cell->closeFiles();
-	  this->writeOutCellState(this->writeCellState);
-
-      return true; 
+    return true;
 }
 
 void CurrentClamp::readInCellState(bool read) {
-	if(read) {
-		cell->readCellState(cellStateDir+"/"+cellStateFile+std::to_string(trial)+".xml");
-		this->stimt = cell->t;
-		this->tMax += this->cell->t;
-	}
+    if(read) {
+        cell->readCellState(cellStateDir+"/"+cellStateFile+std::to_string(trial)+".xml");
+        this->stimt = cell->t;
+        this->tMax += this->cell->t;
+    }
 }
 
 

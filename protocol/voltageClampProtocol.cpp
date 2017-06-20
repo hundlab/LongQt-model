@@ -18,10 +18,10 @@ VoltageClamp::VoltageClamp()  : Protocol(){
     pars["t4"] = toInsert.Initialize("double",[this] () {return std::to_string(t4);},[this] (const string& value) {t4 = std::stod(value);});
     pars["t5"] = toInsert.Initialize("double",[this] () {return std::to_string(t5);},[this] (const string& value) {t5 = std::stod(value);});
 
-	type = "Voltage Clamp Protocol";
-	this->pvars = new PvarsVoltageClamp(this);
+    type = "Voltage Clamp Protocol";
+    this->pvars = new PvarsVoltageClamp(this);
 
-	CellUtils::set_default_vals(this);
+    CellUtils::set_default_vals(this);
 }
 //overriden deep copy funtion
 VoltageClamp* VoltageClamp::clone(){
@@ -69,97 +69,79 @@ int VoltageClamp::clamp()
 };
 
 void VoltageClamp::setupTrial() {
-	set<string> temp;
-	for(auto& pvar: *pvars) {
-		temp.insert(pvar.first);
-	}
-	cell->setConstantSelection(temp);
-	temp.clear();
+    set<string> temp;
+    for(auto& pvar: *pvars) {
+        temp.insert(pvar.first);
+    }
+    cell->setConstantSelection(temp);
+    temp.clear();
 
     time = cell->t = 0.0;      // reset time
-	this->readInCellState(this->readCellState);
-	this->pvars->setIonChanParams();
+    this->readInCellState(this->readCellState);
+    this->pvars->setIonChanParams();
     doneflag=1;     // reset doneflag
+
+    this->measureMgr->setupMeasures(
+        CellUtils::strprintf((datadir+"/"+propertyoutfile).c_str(),trial));
+    cell->setOuputfileVariables(
+        CellUtils::strprintf((datadir+"/"+dvarsoutfile).c_str(),trial));
 }
 
 bool VoltageClamp::runTrial() {
-        char writefile[150];     // Buffer for storing filenames
-		this->setupTrial();
-  
-//        if (int(readflag)==1)
-//            readvals(cell->vars, readfile);  // Init SVs before each trial.
-        
-        //###############################################################
-        // Every time step, currents, concentrations, and Vm are calculated.
-        //###############################################################
-        int pCount = 0;
-        //open i/o streams
-        for(map<string,Measure>::iterator it = measures.begin(); it != measures.end(); it++) {
-            sprintf(writefile,(datadir + "/" + propertyoutfile).c_str(),trial,it->second.varname.c_str());
-            it->second.setOutputfile(writefile);
+    this->setupTrial();
+    //        if (int(readflag)==1)
+    //            readvals(cell->vars, readfile);  // Init SVs before each trial.
+    //###############################################################
+    // Every time step, currents, concentrations, and Vm are calculated.
+    //###############################################################
+    int pCount = 0;
+
+    while(int(doneflag)&&(time<tMax)){
+
+        //what should stimt be made to be??
+        time = cell->tstep(0.0);    // Update time
+        cell->updateCurr();    // Update membrane currents
+
+        cell->updateConc();   // Update ion concentrations
+        vM=cell->updateV();     // Update transmembrane potential
+
+        clamp();
+
+        //##### Output select variables to file  ####################
+        if(int(measflag)==1&&cell->t>meastime){
+            this->measureMgr->measure(time);
         }
-
-        sprintf(writefile,(datadir + "/" + dvarsoutfile).c_str(),trial);
-        cell->setOuputfileVariables(writefile);
-
-        while(int(doneflag)&&(time<tMax)){
-
-//what should stimt be made to be??            
-            time = cell->tstep(0.0);    // Update time
-            cell->updateCurr();    // Update membrane currents
-
-            cell->updateConc();   // Update ion concentrations
-            vM=cell->updateV();     // Update transmembrane potential
-
-            clamp();
-
-            //##### Output select variables to file  ####################
-            if(int(measflag)==1&&cell->t>meastime){
-                for (map<string,Measure>::iterator it = measures.begin(); it!=measures.end(); it++) {
-                    if(it->second.measure(cell->t,*cell->vars[it->second.varname])&&(int(writeflag)==1)) {
-                        it->second.write();
-						it->second.reset();
-                    }
-                }
-            }
-            if (int(writeflag)==1&&time>writetime&&pCount%int(writeint)==0) {
-                cell->writeVariables();
-//                douts[mvnames.size()+(trial+1)*(mvnames.size()+1)].writevals(datamap,writefile,'a');
-            }
-            cell->setV(vM); //Overwrite vOld with new value
-            pCount++;
+        if (int(writeflag)==1&&time>writetime&&pCount%int(writeint)==0) {
+            cell->writeVariables();
+            //                douts[mvnames.size()+(trial+1)*(mvnames.size()+1)].writevals(datamap,writefile,'a');
         }
-    
-      // Output final (ss) property values for each trial
-      for (map<string,Measure>::iterator it = measures.begin(); it != measures.end(); it++){
-          sprintf(writefile,(datadir + "/" + finalpropertyoutfile).c_str(), trial, it->second.varname.c_str());
-          it->second.setOutputfile(writefile);
-		  it->second.restoreLast();
-          it->second.write();
-          it->second.reset();
-      } 
-      
-      // Output parameter values for each trial
-      sprintf(writefile,(datadir + "/" + finaldvarsoutfile).c_str(), trial);
-      cell->setOutputfileConstants(writefile);
-      cell->writeConstants();
-      for(map<string,Measure>::iterator it = measures.begin(); it != measures.end(); it++) {
-          it->second.closeFiles();
-      }
-      cell->closeFiles();
-	  this->writeOutCellState(this->writeCellState);
+        cell->setV(vM); //Overwrite vOld with new value
+        pCount++;
+    }
 
-      return true; 
+    // Output final (ss) property values for each trial
+    this->measureMgr->writeLast(CellUtils::strprintf(
+        (datadir+"/"+finalpropertyoutfile).c_str(),trial));
+
+    // Output parameter values for each trial
+    cell->setOutputfileConstants(CellUtils::strprintf(
+        (datadir+"/"+finaldvarsoutfile).c_str(),trial));
+    cell->writeConstants();
+    this->measureMgr->close();
+    cell->closeFiles();
+    this->writeOutCellState(this->writeCellState);
+
+    return true;
 }
 void VoltageClamp::readInCellState(bool read) {
-	if(read) {
-		cell->readCellState(cellStateDir+"/"+cellStateFile+".xml");
-		this->tMax += this->cell->t;
-		this->t1 += this->cell->t;
-		this->t2 += this->cell->t;
-		this->t3 += this->cell->t;
-		this->t4 += this->cell->t;
-		this->t5 += this->cell->t;
-	}
+    if(read) {
+        cell->readCellState(cellStateDir+"/"+cellStateFile+".xml");
+        this->tMax += this->cell->t;
+        this->t1 += this->cell->t;
+        this->t2 += this->cell->t;
+        this->t3 += this->cell->t;
+        this->t4 += this->cell->t;
+        this->t5 += this->cell->t;
+    }
 }
 

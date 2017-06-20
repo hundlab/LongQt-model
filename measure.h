@@ -11,51 +11,81 @@
 #ifndef MEASURE_H
 #define MEASURE_H
 
-#include <functional> 
+#include <string>
+#include <map>
+#include <set>
+#include <limits>
 
-#include "measure_kernel.h"
-#include "iobase.h"
+using namespace std;
 
+class Measure
+{
+    public:
+        Measure(set<string> selected = {}, double percrepol = 50);
+        Measure(const Measure& toCopy) = default;
+        Measure(Measure&& toCopy) = default;
+        ~Measure() = default;
 
-class Measure : public MeasureKernel, public IOBase {
-public:
-    Measure(string varname = "", double percrepol = 50) : MeasureKernel(varname, percrepol) {
-//        selection.insert("peak");
-//        selection.insert("min");
-//        selection.insert("maxderiv");
-//        selection.insert("dur");
-    };
+        //		Measure& operator=(const Measure& toCopy);
 
-    Measure(const Measure& toCopy) : MeasureKernel(toCopy) {
-        selection = toCopy.selection;
-    };
-    Measure( Measure&& toCopy) : MeasureKernel( toCopy) {
-        selection = toCopy.selection;
-    };
+        bool measure(double time,double var);  //measures props related to var; returns 1 when ready for output.
+        void reset();   //resets params to init vals
 
-    ~Measure() {
-        if(ofile.is_open()) {
-            ofile.close();
-        }
-    };
+        //		string varname;
 
-    Measure& operator=(const Measure& toCopy) {
-        this->copy(toCopy);
-        this->selection = toCopy.selection;
-        return *this;
-    };
-    
-    bool write();
-    bool setOutputfile(string filename);
+        set<string> variables();
+        map<string,double> variablesMap();
 
-    const set<string>& Selection = cref(selection);
-    bool setSelection(set<string> new_selection);
-    bool addToMeasureSelection(string new_select);
-    void removeFromSelection(string to_remove);
-    void closeFiles();
-private:
-    set<string> selection; // map for refing properties that will be output.
-    ofstream ofile;
+        void percrepol(double val);
+        double percrepol() const;
+
+        set<string> selection();
+        void selection(set<string> new_selection);
+        //		void restoreLast();
+        string getNameString(string name);
+        string getValueString();
+    protected:
+        const map<string, double* const> varmap = // map for refing properties that can be measured.
+        {{"cl",&cl},{"peak",&peak},{"min",&min},{"amp",&amp},{"ddr",&ddr},
+            {"maxderiv",&maxderiv},{"dur",&dur},{"durtime1",&durtime1},
+            {"vartakeoff",&vartakeoff},{"mint",&mint},{"derivt",&derivt},
+            {"deriv2ndt",&deriv2ndt}};
+
+        //		map<string, double> lastMap;
+
+        double varold = 100;
+        double vartakeoff=-100; //var value at point of max deflection.
+        double told = std::numeric_limits<double>::min();
+        double mint = std::numeric_limits<double>::min();    //time of min value.
+        double maxt = std::numeric_limits<double>::min();    //time of max value.
+        double durtime1;
+        double derivold = 0; //dv/dt from prev. time step
+        double derivt = 0;   // time of max deriv.
+        double derivt1 = 0;  // time of prev. cycle max deriv.
+        double derivt2 = 0;
+        double deriv2ndt = 0;  // time of max 2nd deriv.
+        double peak = std::numeric_limits<double>::min();      // max var value
+        double min = std::numeric_limits<double>::max();       // min var value
+        double amp = 70;
+        double ddr;      //diastolic depol. rate
+        double maxderiv = 0;
+        //		double maxderiv1;
+        //		double maxderiv2;
+        double maxderiv2nd = 0;
+        double cl = 0;
+        double dur;   //duration
+        double __percrepol = 50;   //specify percent repolarization
+        double repol = -25;           // repol var val for duration measure.
+        bool minflag = false;
+        bool maxflag = false;
+        bool durflag = false;    //1 while measuring duration.
+        bool ampflag = false;
+        bool ddrflag = false;
+        bool returnflag = false;
+
+    private:
+        set<string> __selection; // map for refing properties that will be output.
+        //		void copy(const Measure& toCopy);
 };
 
 #endif

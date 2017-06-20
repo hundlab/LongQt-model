@@ -22,11 +22,11 @@ class Measure
 {
     public:
         Measure(set<string> selected = {}, double percrepol = 50);
-        Measure(const Measure& toCopy) = default;
-        Measure(Measure&& toCopy) = default;
+        Measure(const Measure& toCopy);
+        Measure(Measure&& toCopy);
         ~Measure() = default;
 
-        //		Measure& operator=(const Measure& toCopy);
+        Measure& operator=(const Measure& toCopy) = delete;
 
         bool measure(double time,double var);  //measures props related to var; returns 1 when ready for output.
         void reset();   //resets params to init vals
@@ -85,7 +85,7 @@ class Measure
 
     private:
         set<string> __selection; // map for refing properties that will be output.
-        //		void copy(const Measure& toCopy);
+        void copy(const Measure& toCopy);
 };
 
 #endif

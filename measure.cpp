@@ -19,46 +19,16 @@ Measure::Measure(set<string> selected, double percrepol):
     __percrepol(percrepol),
     __selection(selected)
 {};
-/*{
-//    peak=-100.0;
-//    min=100.0;
-//   vartakeoff=-100.0;
-//    repol = -25.0;
-//   amp = 70.0;
-//    maxderiv=0.0;
-//   maxderiv2nd=0.0;
-//  cl=0.0;
-// told = -10000.0;
-//    mint = 0.0;
-//    maxt = 0.0;
-//    varold = 100.0;
-//   derivold = 0.0;
-//    minflag = false;
-//    maxflag = false;
-//   // ampflag = false;
-//    ddrflag = false;
-//    derivt2 = 0.0;
-//    derivt1 = 0.0;
-//   derivt = 0.0;
-//    deriv2ndt = 0.0;
-durflag = false;
-this->percrepol = percrepol;
-returnflag = 0;
-
-this->varname = varname;
-this->mkmap();    
-
-};
 
 Measure::Measure(const Measure& toCopy) {
-this->copy(toCopy);
+    this->copy(toCopy);
 };
 
 Measure::Measure( Measure&& toCopy) {
-this->copy(toCopy); 
+    this->copy(toCopy);
 };
 
-Measure& Measure::operator=(const Measure& toCopy) {
+/*Measure& Measure::operator=(const Measure& toCopy) {
 this->copy(toCopy);
 return *this->;
 };*/
@@ -78,35 +48,35 @@ map<string,double> Measure::variablesMap() {
     }
     return toReturn;
 }
-/*
-   void Measure::copy(const Measure& toCopy) {
-   peak= toCopy.peak;
-   min= toCopy.min;
-   vartakeoff= toCopy.vartakeoff;
-   repol = toCopy.repol;
-   amp = toCopy.amp;
-   maxderiv= toCopy.maxderiv;
-   maxderiv2nd= toCopy.maxderiv2nd;
-   cl= toCopy.cl;
-   told = toCopy.told;
-   mint = toCopy.mint;
-   maxt = toCopy.maxt;
-   varold = toCopy.varold;
-   derivold = toCopy.derivold;
-   minflag = toCopy.minflag;
-   maxflag = toCopy.maxflag;
-   ampflag = toCopy.ampflag;
-   ddrflag = toCopy.ddrflag;
-   derivt2 = toCopy.derivt2;
-   derivt1 = toCopy.derivt1;
-   derivt = toCopy.derivt;
-   deriv2ndt = toCopy.deriv2ndt;
-   durflag = toCopy.durflag;
-   percrepol = toCopy.percrepol;
-   returnflag = toCopy.returnflag;
-   dur = toCopy.dur;
-   varname = toCopy.varname;
-   };*/
+
+void Measure::copy(const Measure& toCopy) {
+    peak= toCopy.peak;
+    min= toCopy.min;
+    vartakeoff= toCopy.vartakeoff;
+    repol = toCopy.repol;
+    amp = toCopy.amp;
+    maxderiv= toCopy.maxderiv;
+    maxderiv2nd= toCopy.maxderiv2nd;
+    cl= toCopy.cl;
+    told = toCopy.told;
+    mint = toCopy.mint;
+    maxt = toCopy.maxt;
+    varold = toCopy.varold;
+    derivold = toCopy.derivold;
+    minflag = toCopy.minflag;
+    maxflag = toCopy.maxflag;
+    ampflag = toCopy.ampflag;
+    ddrflag = toCopy.ddrflag;
+    derivt2 = toCopy.derivt2;
+    derivt1 = toCopy.derivt1;
+    derivt = toCopy.derivt;
+    deriv2ndt = toCopy.deriv2ndt;
+    durflag = toCopy.durflag;
+    __percrepol = toCopy.__percrepol;
+    returnflag = toCopy.returnflag;
+    dur = toCopy.dur;
+    __selection = toCopy.__selection;
+};
 
 //################################################################
 // Function to track properties (e.g. peak, min, duration) of
@@ -208,7 +178,7 @@ string Measure::getNameString(string name) {
 string Measure::getValueString() {
     string valStr = "";
     for(auto& sel: this->__selection) {
-        valStr += to_string(*this->varmap.at(sel));
+        valStr += to_string(*this->varmap.at(sel))+"\t";
     }
     return valStr;
 }

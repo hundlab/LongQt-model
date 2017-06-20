@@ -105,7 +105,7 @@ Protocol::Protocol(const Protocol& toCopy) {
 };
 
 Protocol::Protocol(Protocol&& toCopy) {
-    this->copy(toCopy); 
+    this->copy(toCopy);
 };
 
 Protocol& Protocol::operator=(const Protocol& toCopy) {
@@ -169,6 +169,7 @@ void Protocol::copy(const Protocol& toCopy) {
 
     pvars = toCopy.pvars->clone();
     measureMgr = toCopy.measureMgr->clone();
+    measureMgr->cell(cell);
 }
 //############################################################
 // Run the cell simulation
@@ -181,7 +182,7 @@ int Protocol::runSim() {
     //###############################################################
     for(;trial<numtrials;setTrial(getTrial() +1))
     {
-        return_val = (int)runTrial(); 
+        return_val = (int)runTrial();
     }
     return return_val;
 };
@@ -237,6 +238,7 @@ bool Protocol::setCell(const string& type, bool reset) {
     try {
         cell = (cellMap.at(type))();
         measureMgr->clear();
+        measureMgr->cell(cell);
         if(pvars)
             pvars->clear();
         return true;

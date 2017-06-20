@@ -77,7 +77,7 @@ std::string GridMeasureManager::nameString() {
         nameStr += meas.second.getNameString(
             "cell"+to_string(meas.first.second.first)+
             "_"+to_string(meas.first.second.second)+
-            "/"+meas.first.first+"/");
+            "/"+meas.first.first);
     }
     return nameStr;
 }

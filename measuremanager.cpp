@@ -17,8 +17,10 @@ Cell* MeasureManager::cell() {
 }
 
 void MeasureManager::cell(Cell* cell) {
-    this->variableSelection.clear();
-    this->measures.clear();
+    if(cell->type != __cell->type) {
+        this->variableSelection.clear();
+        this->measures.clear();
+    }
     this->__cell = cell;
 }
 
@@ -58,7 +60,7 @@ void MeasureManager::setupMeasures(string filename) {
     }
     for(auto& sel: variableSelection) {
         auto it = measures.insert({sel.first,Measure(sel.second,__percrepol)}).first;
-        string nameStr = it->second.getNameString(sel.first+"/");
+        string nameStr = it->second.getNameString(sel.first);
         if(ofile->write(nameStr.c_str())==-1) {
             qWarning("MeasureManager: File cound not be written to");
         }
@@ -88,7 +90,7 @@ void MeasureManager::writeLast(string filename) {
         qWarning("MeasureManager: File could not be opened for writing.");
     }
     for(auto& meas: this->measures) {
-        string nameStr = meas.second.getNameString(meas.first+"/");
+        string nameStr = meas.second.getNameString(meas.first);
         if(lastFile.write(nameStr.c_str())==-1) {
             qWarning("MeasureManager: Last file cound not be written to");
         }

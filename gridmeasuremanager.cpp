@@ -62,7 +62,7 @@ void GridMeasureManager::setupMeasures(string filename) {
                 &&this->grid->findNode(node)->cell->vars.count(sel.first) > 0)
                 {
                 measures.insert({{sel.first,{node.first,node.second}},
-                    Measure(sel.second,__percrepol)}).first;
+                    this->getMeasure(sel.first,sel.second)}).first;
             }
         }
     }
@@ -74,7 +74,7 @@ void GridMeasureManager::setupMeasures(string filename) {
 std::string GridMeasureManager::nameString() {
     string nameStr = "";
     for(auto& meas: this->measures) {
-        nameStr += meas.second.getNameString(
+        nameStr += meas.second->getNameString(
             "cell"+to_string(meas.first.second.first)+
             "_"+to_string(meas.first.second.second)+
             "/"+meas.first.first);
@@ -87,7 +87,7 @@ void GridMeasureManager::measure(double time) {
     for(auto& m: this->measures) {
         double* val = this->grid->findNode(m.first.second)->
             cell->vars.at(m.first.first);
-        bool varWrite = m.second.measure(time, *val);
+        bool varWrite = m.second->measure(time, *val);
         if(m.first.first=="vOld"&&varWrite) {
             write = true;
         }
@@ -111,7 +111,7 @@ void GridMeasureManager::write(QFile* file) {
     }
     this->last = "";
     for(auto& meas: measures) {
-        string valStr = meas.second.getValueString();
+        string valStr = meas.second->getValueString();
         last += valStr;
         if(ofile->write(valStr.c_str())==-1) {
             qWarning("MeasureManager: File cound not be written to");
@@ -149,7 +149,7 @@ void GridMeasureManager::clear() {
 
 void GridMeasureManager::resetMeasures() {
     for(auto& meas: this->measures) {
-        meas.second.reset();
+        meas.second->reset();
     }
 }
 

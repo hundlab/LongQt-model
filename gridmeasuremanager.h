@@ -35,7 +35,7 @@ class GridMeasureManager: public MeasureManager {
 
     private:
         set<pair<int,int>> __dataNodes;
-        map<pair<string,pair<int,int>>,Measure> measures;
+        map<pair<string,pair<int,int>>,Measure*> measures;
         Grid* grid = 0;
 };
 #endif

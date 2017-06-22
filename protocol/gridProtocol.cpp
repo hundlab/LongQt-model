@@ -56,6 +56,7 @@ GridProtocol::GridProtocol(const GridProtocol& toCopy) : CurrentClamp(toCopy){
 void GridProtocol::CCcopy(const GridProtocol& toCopy) {
     this->stimNodes = toCopy.stimNodes;
     this->grid = ((GridCell*)this->cell)->getGrid();
+    ((PvarsGrid*)pvars)->setGrid(this->grid);
 }
 // External stimulus.
 int GridProtocol::stim()

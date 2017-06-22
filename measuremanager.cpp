@@ -6,6 +6,9 @@ MeasureManager::MeasureManager(Cell* cell): __cell(cell) {};
 
 MeasureManager::~MeasureManager() {
     this->ofile->close();
+    for(auto& meas: measures) {
+        delete meas.second;
+    }
 }
 
 MeasureManager* MeasureManager::clone() {
@@ -40,12 +43,22 @@ void MeasureManager::percrepol(double percrepol) {
     this->__percrepol = percrepol;
 }
 
+Measure* MeasureManager::getMeasure(string varname, set<string> selection) {
+    if(varsMeas.count(varname)>0) {
+        string measName = varsMeas.at(varname);
+        return varMeasCreator.at(measName)(selection);
+    }
+    return new Measure(selection);
+}
+
 void MeasureManager::addMeasure(string var) {
     variableSelection.insert({var,{}});
 }
 
 void MeasureManager::removeMeasure(string var) {
+    Measure* meas = measures.at(var);
     measures.erase(var);
+    delete meas;
 }
 
 void MeasureManager::setupMeasures(string filename) {
@@ -59,8 +72,9 @@ void MeasureManager::setupMeasures(string filename) {
         qWarning("MeasureManager: File could not be opened for writing.");
     }
     for(auto& sel: variableSelection) {
-        auto it = measures.insert({sel.first,Measure(sel.second,__percrepol)}).first;
-        string nameStr = it->second.getNameString(sel.first);
+        auto it = measures
+            .insert({sel.first,this->getMeasure(sel.first,sel.second)}).first;
+        string nameStr = it->second->getNameString(sel.first);
         if(ofile->write(nameStr.c_str())==-1) {
             qWarning("MeasureManager: File cound not be written to");
         }
@@ -73,7 +87,7 @@ void MeasureManager::setupMeasures(string filename) {
 void MeasureManager::measure(double time) {
     bool write = false;
     for(auto& m: this->measures) {
-        bool varWrite = m.second.measure(time, *__cell->vars.at(m.first));
+        bool varWrite = m.second->measure(time, *__cell->vars.at(m.first));
         if(m.first=="vOld"&&varWrite) {
             write = true;
         }
@@ -90,7 +104,7 @@ void MeasureManager::writeLast(string filename) {
         qWarning("MeasureManager: File could not be opened for writing.");
     }
     for(auto& meas: this->measures) {
-        string nameStr = meas.second.getNameString(meas.first);
+        string nameStr = meas.second->getNameString(meas.first);
         if(lastFile.write(nameStr.c_str())==-1) {
             qWarning("MeasureManager: Last file cound not be written to");
         }
@@ -121,7 +135,7 @@ void MeasureManager::write(QFile* file) {
     }
     this->last = "";
     for(auto& meas: measures) {
-        string valStr = meas.second.getValueString();
+        string valStr = meas.second->getValueString();
         last += valStr;
         if(ofile->write(valStr.c_str())==-1) {
             qWarning("MeasureManager: File cound not be written to");
@@ -147,7 +161,7 @@ void MeasureManager::close() {
 
 void MeasureManager::resetMeasures() {
     for(auto& meas: this->measures) {
-        meas.second.reset();
+        meas.second->reset();
     }
 }
 

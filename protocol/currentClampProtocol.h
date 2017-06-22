@@ -21,9 +21,9 @@ class CurrentClamp : public Protocol {
     CurrentClamp* clone();
     CurrentClamp& operator=(const CurrentClamp& toCopy);
 
-	virtual void setupTrial() override;
+    virtual void setupTrial() override;
     virtual bool runTrial() override;
-	void readInCellState(bool read) override;
+    void readInCellState(bool read) override;
 
   protected:
     double bcl,stimval,stimdur,stimt;

@@ -49,6 +49,7 @@ void VoltageClamp::CCcopy(const VoltageClamp& toCopy) {
     t3 = toCopy.t3;
     t4 = toCopy.t4;
     t5 = toCopy.t5;
+    ((PvarsVoltageClamp*)pvars)->protocol(this);
 }
 
 // External stimulus.

@@ -2,7 +2,7 @@
 #include "cellutils.h"
 #include "pvarscurrentclamp.h"
 
-CurrentClamp::CurrentClamp()  : Protocol(){
+CurrentClamp::CurrentClamp()  : Protocol() {
     stimdur = 1.0;  // stim duration, ms
     stimt = 0.0;    // time of first stim, ms
     stimval = 0.0;  // stim current amplitude, uA/uF
@@ -51,6 +51,7 @@ void CurrentClamp::CCcopy(const CurrentClamp& toCopy) {
     stimflag = toCopy.stimflag;
     stimcounter = toCopy.stimcounter;
     paceflag = toCopy.paceflag;   // 1 to pace cell.
+    ((PvarsCurrentClamp*)pvars)->protocol(this);
 }
 
 // External stimulus.

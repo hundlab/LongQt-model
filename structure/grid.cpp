@@ -156,7 +156,7 @@ Node* Grid::findNode(const pair<int,int>& p) {
     try {
         return fiber.at(p.first).nodes.at(p.second);
     } catch(const std::out_of_range&) {
-        qWarning("Grid: (%i,%i) not in grid", p.first,p.second);
+        qDebug("Grid: (%i,%i) not in grid", p.first,p.second);
         return NULL;
     }
 }

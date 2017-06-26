@@ -193,7 +193,7 @@ void PvarsGrid::calcIonChanParam(MIonChanParam* param) {
             this->visited.insert(e);
         }
         ++i;
-        this->getNext();	
+        this->getNext();
     }
     this->current.clear();
     this->visited.clear();

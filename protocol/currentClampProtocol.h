@@ -20,6 +20,7 @@ class CurrentClamp : public Protocol {
     CurrentClamp(const CurrentClamp& toCopy);
     CurrentClamp* clone();
     CurrentClamp& operator=(const CurrentClamp& toCopy);
+    virtual ~CurrentClamp();
 
     virtual void setupTrial() override;
     virtual bool runTrial() override;

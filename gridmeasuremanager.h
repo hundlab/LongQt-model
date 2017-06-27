@@ -11,11 +11,11 @@
 #include <set>
 #include <string>
 #include <utility>
+#include <memory>
 
 class GridMeasureManager: public MeasureManager {
     public:
         GridMeasureManager(GridCell* cell);
-        GridMeasureManager(const GridMeasureManager&) = default;
         virtual ~GridMeasureManager() = default;
         virtual GridMeasureManager* clone();
 
@@ -34,8 +34,9 @@ class GridMeasureManager: public MeasureManager {
         virtual void resetMeasures();
 
     private:
+        GridMeasureManager(const GridMeasureManager&);
         set<pair<int,int>> __dataNodes;
-        map<pair<string,pair<int,int>>,Measure*> measures;
+        map<pair<string,pair<int,int>>,shared_ptr<Measure>> measures;
         Grid* grid = 0;
 };
 #endif

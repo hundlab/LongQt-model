@@ -11,7 +11,7 @@ Node::Node(const Node& other) {
 	r = other.r;
 	vNew = other.vNew;
 	nodeType = other.nodeType;
-	cell = other.cell->clone();
+    cell.reset(other.cell->clone());
 }
 
 /*double Node::calPerc(int X, double dx, double val) {

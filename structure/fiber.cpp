@@ -6,7 +6,7 @@ Fiber::Fiber(int size) {
     nodes.resize(size, NULL);
     B.resize(size +1);
     for(;i < nodes.size(); i++) {
-        nodes[i] = new Node();
+        nodes[i].reset(new Node());
         B[i] = 0;
     }
     B[size] = 0;

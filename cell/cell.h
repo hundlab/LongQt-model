@@ -42,7 +42,7 @@ public:
         parsSelection = toCopy.parsSelection;
         varsSelection = toCopy.varsSelection;
     };
-    ~Cell() {};
+    virtual ~Cell() {};
 
     virtual Cell* clone() {//public copy function
         return new Cell(*this);

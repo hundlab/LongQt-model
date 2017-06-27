@@ -5,6 +5,7 @@
 #define FIBER_H
 
 #include "node.h"
+#include <memory>
 
 class Fiber {
   public:
@@ -16,7 +17,7 @@ class Fiber {
 	virtual inline void diffuseBottom(int node);
 	virtual inline void diffuseTop(int node);
 
-    vector<Node*> nodes;
+    vector<shared_ptr<Node>> nodes;
     vector<double> B; //coefficients for tridag solver.
 };
 

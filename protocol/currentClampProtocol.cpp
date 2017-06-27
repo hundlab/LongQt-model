@@ -24,7 +24,7 @@ CurrentClamp::CurrentClamp()  : Protocol() {
                 numtrials = std::stoi(value);
                 this->pvars->calcIonChanParams();});
     type = "Current Clamp Protocol";
-    this->pvars = new PvarsCurrentClamp(this);
+    this->pvars.reset(new PvarsCurrentClamp(this));
 
     CellUtils::set_default_vals(this);
 }
@@ -42,6 +42,8 @@ CurrentClamp& CurrentClamp::operator=(const CurrentClamp& toCopy) {
     return *this;
 }
 
+CurrentClamp::~CurrentClamp() {}
+
 void CurrentClamp::CCcopy(const CurrentClamp& toCopy) {
     stimdur = toCopy.stimdur;  // stim duration, ms
     stimt = toCopy.stimt;    // time of first stim, ms
@@ -51,7 +53,7 @@ void CurrentClamp::CCcopy(const CurrentClamp& toCopy) {
     stimflag = toCopy.stimflag;
     stimcounter = toCopy.stimcounter;
     paceflag = toCopy.paceflag;   // 1 to pace cell.
-    ((PvarsCurrentClamp*)pvars)->protocol(this);
+    ((PvarsCurrentClamp*)pvars.get())->protocol(this);
 }
 
 // External stimulus.

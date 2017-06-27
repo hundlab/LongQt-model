@@ -8,12 +8,12 @@
 #include <set>
 #include <functional>
 #include <string>
+#include <memory>
 #include <QFile>
 
 class MeasureManager {
     public:
         MeasureManager(Cell* cell);
-        MeasureManager(const MeasureManager&) = default;
         virtual ~MeasureManager();
         virtual MeasureManager* clone();
 
@@ -26,7 +26,7 @@ class MeasureManager {
         void selection(map<string,set<string>> sel);
         double percrepol();
         void percrepol(double percrepol);
-        Measure* getMeasure(string varname, set<string> selection);
+        shared_ptr<Measure> getMeasure(string varname, set<string> selection);
 
         virtual void addMeasure(string var);
         virtual void removeMeasure(string var);
@@ -44,19 +44,22 @@ class MeasureManager {
         };
 
     protected:
+        MeasureManager(const MeasureManager&);
+
         Cell* __cell = 0;
         map<string,set<string>> variableSelection;
         double __percrepol = 50;
-        QFile* ofile = 0;
+        unique_ptr<QFile> ofile;
         string last = "";
         const map<string,function<Measure*(set<string> selection)>> varMeasCreator =
             {{"MeasureWave", [this](set<string> selection)
-                {return (Measure*) new MeasureWave(selection,this->__percrepol);}}
+                {return (Measure*)new MeasureWave(selection,this->__percrepol);}}
             };
 
     private:
         void removeBad();
+        void copy(const MeasureManager& other);
 
-        map<string,Measure*> measures;
+        map<string,shared_ptr<Measure>> measures;
 };
 #endif

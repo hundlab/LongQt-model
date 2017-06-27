@@ -290,6 +290,7 @@ bool GridCell::handleGrid(QXmlStreamReader& xml) {
     }
 
     grid.setCellTypes(cells);
+    delete info;
     return success;
 }
 bool GridCell::handleRow(QXmlStreamReader& xml, set<CellInfo*>& cells, CellInfo* info) {
@@ -379,7 +380,7 @@ bool GridCell::readCellState(string file) {
     while(!xml.atEnd() && xml.readNextStartElement()){
         int row = xml.attributes().value("row").toInt();
         int col = xml.attributes().value("col").toInt();
-        Node* n = this->grid.findNode({row,col});
+        Node* n = this->grid(row,col);
         if(n == NULL) {
             qWarning("Warning: (%i,%i) not a cell in grid",col,row);	
             xml.skipCurrentElement();

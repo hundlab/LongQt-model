@@ -5,6 +5,12 @@ MeasureManager(cell) {
     this->grid = cell->getGrid();
 }
 
+GridMeasureManager::GridMeasureManager(const GridMeasureManager& o):
+MeasureManager(o) {
+    __dataNodes = o.__dataNodes;
+    grid = o.grid;
+}
+
 GridMeasureManager* GridMeasureManager::clone() {
     return new GridMeasureManager(*this);
 }
@@ -52,14 +58,14 @@ void GridMeasureManager::setupMeasures(string filename) {
     if(variableSelection.count("vOld") == 0) {
         variableSelection.insert({"vOld",{}});
     }
-    this->ofile = new QFile(filename.c_str());
+    this->ofile.reset(new QFile(filename.c_str()));
     if(!ofile->open(QIODevice::WriteOnly | QIODevice::Text)) {
         qWarning("MeasureManager: File could not be opened for writing.");
     }
     for(auto& sel: variableSelection) {
         for(auto& node: this->__dataNodes) {
-            if(this->grid->findNode(node)!=NULL
-                &&this->grid->findNode(node)->cell->vars.count(sel.first) > 0)
+            if((*this->grid)(node)!=NULL
+                &&(*this->grid)(node)->cell->vars.count(sel.first) > 0)
                 {
                 measures.insert({{sel.first,{node.first,node.second}},
                     this->getMeasure(sel.first,sel.second)}).first;
@@ -85,7 +91,7 @@ std::string GridMeasureManager::nameString() {
 void GridMeasureManager::measure(double time) {
     bool write = false;
     for(auto& m: this->measures) {
-        double* val = this->grid->findNode(m.first.second)->
+        double* val = (*this->grid)(m.first.second)->
             cell->vars.at(m.first.first);
         bool varWrite = m.second->measure(time, *val);
         if(m.first.first=="vOld"&&varWrite) {
@@ -99,13 +105,8 @@ void GridMeasureManager::measure(double time) {
 }
 
 void GridMeasureManager::write(QFile* file) {
-    QFile* ofile;
-    if(file == 0) {
-        ofile = this->ofile;
-    } else {
-        ofile  = file;
-    }
-    if(!ofile->isOpen()) {
+    QFile& ofile = file? *file: *this->ofile;
+    if(!ofile.isOpen()) {
         qWarning("MeasureManager: Measure file must be open to be written");
         return;
     }
@@ -113,12 +114,12 @@ void GridMeasureManager::write(QFile* file) {
     for(auto& meas: measures) {
         string valStr = meas.second->getValueString();
         last += valStr;
-        if(ofile->write(valStr.c_str())==-1) {
+        if(ofile.write(valStr.c_str())==-1) {
             qWarning("MeasureManager: File cound not be written to");
         }
     }
     last += "\n";
-    if(ofile->write("\n")==-1) {
+    if(ofile.write("\n")==-1) {
         qWarning("MeasureManager: File cound not be written to");
     }
 }

@@ -27,6 +27,7 @@ class CellPvars {
             virtual string str(string name);
         };
 
+        virtual ~CellPvars() = default;
         typedef std::map<string,IonChanParam*>::const_iterator const_iterator;
 
         //Functions

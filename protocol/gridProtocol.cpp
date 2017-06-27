@@ -14,10 +14,10 @@
 
 GridProtocol::GridProtocol() : CurrentClamp(){
     GridCell* temp = new GridCell();
-    measureMgr = new GridMeasureManager(temp);
+    measureMgr.reset(new GridMeasureManager(temp));
     cell = temp;
     grid = temp->getGrid();
-    this->pvars = new PvarsGrid(grid);
+    this->pvars.reset(new PvarsGrid(grid));
     baseCellMap = cellMap;
     baseCellMap["Inexcitable Cell"] = [] () {return new Cell;};
     cellMap.clear();
@@ -56,13 +56,13 @@ GridProtocol::GridProtocol(const GridProtocol& toCopy) : CurrentClamp(toCopy){
 void GridProtocol::CCcopy(const GridProtocol& toCopy) {
     this->stimNodes = toCopy.stimNodes;
     this->grid = ((GridCell*)this->cell)->getGrid();
-    ((PvarsGrid*)pvars)->setGrid(this->grid);
+    ((PvarsGrid*)pvars.get())->setGrid(this->grid);
 }
 // External stimulus.
 int GridProtocol::stim()
 {
     for(auto it : stimNodes) {
-        Cell* cell = grid->findNode(it)->cell;
+        Cell* cell = (*grid)(it)->cell.get();
         if(cell->t>=stimt&&cell->t<(stimt+stimdur)){
             if(stimflag==0){
                 stimcounter++;
@@ -185,7 +185,7 @@ string GridProtocol::setToString(set<pair<int,int>>& nodes) {
     return toReturn.str();
 }
 GridMeasureManager* GridProtocol::gridMeasureMgr() {
-    return (GridMeasureManager*)this->measureMgr;
+    return (GridMeasureManager*)this->measureMgr.get();
 }
 set<pair<int,int>> GridProtocol::stringToSet(string nodesList) {
     set<pair<int,int>> toReturn;
@@ -193,7 +193,7 @@ set<pair<int,int>> GridProtocol::stringToSet(string nodesList) {
     while(!stream.eof()) {
         pair<int,int> p(-1,-1);
         stream >> p.first >> p.second;
-        Node* n = grid->findNode(p);
+        Node* n = (*grid)(p);
         if(n != NULL) {
             toReturn.insert(p);
         }

@@ -48,7 +48,8 @@ class Grid {
     virtual int rowCount();
     virtual int columnCount();
     virtual pair<int,int> findNode(const Node* node);
-    virtual Node* findNode(const pair<int,int>& p);
+    virtual Node* operator()(const pair<int,int>& p);
+    virtual Node* operator()(const int x, const int y);
 	virtual void reset();
 	virtual void updateB(CellInfo node, CellUtils::Side s);
 

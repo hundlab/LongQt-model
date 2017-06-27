@@ -33,7 +33,7 @@ Protocol::Protocol()
 {
     //##### Assign default parameters ##################
     cell = new Cell();
-    measureMgr = new MeasureManager(cell);
+    measureMgr.reset(new MeasureManager(cell));
     doneflag = 1;       // set to 0 to end simulation
 
     tMax = 10000;   // max simulation time, ms
@@ -97,6 +97,13 @@ Protocol::Protocol()
     cellMap = CellUtils::cellMap;
     this->setCell(HRD09Control().type);
 };
+
+Protocol::~Protocol() {
+    if(this->cell) {
+        delete cell;
+        cell = 0;
+    }
+}
 //######################################################
 // Deep Copy Constructor
 //######################################################
@@ -167,8 +174,8 @@ void Protocol::copy(const Protocol& toCopy) {
     //###### Duplicate cells, measures outputs and maps######
     cell = toCopy.cell->clone();
 
-    pvars = toCopy.pvars->clone();
-    measureMgr = toCopy.measureMgr->clone();
+    pvars = unique_ptr<CellPvars>(toCopy.pvars->clone());
+    measureMgr.reset(toCopy.measureMgr->clone());
     measureMgr->cell(cell);
 }
 //############################################################
@@ -236,11 +243,15 @@ bool Protocol::setCell(const string& type, bool reset) {
         return false;
     }
     try {
+        auto oldCell = cell;
         cell = (cellMap.at(type))();
-        measureMgr->clear();
-        measureMgr->cell(cell);
+        if(measureMgr) {
+            measureMgr->clear();
+            measureMgr->cell(cell);
+        }
         if(pvars)
             pvars->clear();
+        delete oldCell;
         return true;
     } catch(const std::out_of_range&) {
         qWarning("Protocol: %s is not a valid cell type",type.c_str());

@@ -19,7 +19,7 @@ VoltageClamp::VoltageClamp()  : Protocol(){
     pars["t5"] = toInsert.Initialize("double",[this] () {return std::to_string(t5);},[this] (const string& value) {t5 = std::stod(value);});
 
     type = "Voltage Clamp Protocol";
-    this->pvars = new PvarsVoltageClamp(this);
+    this->pvars.reset(new PvarsVoltageClamp(this));
 
     CellUtils::set_default_vals(this);
 }
@@ -49,7 +49,7 @@ void VoltageClamp::CCcopy(const VoltageClamp& toCopy) {
     t3 = toCopy.t3;
     t4 = toCopy.t4;
     t5 = toCopy.t5;
-    ((PvarsVoltageClamp*)pvars)->protocol(this);
+    ((PvarsVoltageClamp*)pvars.get())->protocol(this);
 }
 
 // External stimulus.

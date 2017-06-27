@@ -1,13 +1,14 @@
 #include <cstdlib>
 #include <cstdio>
 #include <vector>
+#include <memory>
 
 #ifndef TRIDAG_H
 #define TRIDAG_H
 
-void tridag(vector<Node*>& nodes);
+void tridag(vector<shared_ptr<Node>>& nodes);
 
-void tridag(vector<Node*>& nodes)
+void tridag(vector<shared_ptr<Node>>& nodes)
 {
 	int j;
 	double bet;

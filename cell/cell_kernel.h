@@ -31,7 +31,7 @@ class CellKernel
   public:
     CellKernel();
     CellKernel(const CellKernel& toCopy);
-    ~CellKernel(); 
+    virtual ~CellKernel(); 
     
     virtual CellKernel* clone(); //public copy function
   //##### Declare class functions ##############

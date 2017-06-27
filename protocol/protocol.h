@@ -15,6 +15,7 @@
 #include <string>
 #include <list>
 #include <functional>
+#include <memory>
 #include <QXmlStreamWriter>
 #include <QXmlStreamReader>
 
@@ -44,7 +45,7 @@ class Protocol
         Protocol(Protocol&& toCopy);
         Protocol& operator=(const Protocol& toCopy);
         virtual Protocol* clone() = 0;
-        virtual ~Protocol() = default;
+        virtual ~Protocol();
 
         //##### Declare class functions ##############
         virtual int runSim();
@@ -81,13 +82,13 @@ class Protocol
         string datadir;
         string cellStateDir;
 
-        CellPvars* pvars = 0;
+        unique_ptr<CellPvars> pvars;
 
         //##### Declare maps for vars/params ##############
         map<string, GetSetRef> pars;
 
         map<string, CellUtils::CellInitializer> cellMap;
-        MeasureManager* measureMgr = 0; // set of measure class for measuring SV props.
+        unique_ptr<MeasureManager> measureMgr; // set of measure class for measuring SV props.
 
     protected:
         void copy(const Protocol& toCopy);

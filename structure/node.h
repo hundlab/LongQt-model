@@ -29,7 +29,7 @@ struct Node {
     double d3 = 0; //off-diagonal for tridag solver
     double r = 0; //right side of eqn for tridag solver
     double vNew = 0; //vOld(t+1) for tridag solver
-    string nodeType;
+    string nodeType ="";
 
 };
 #endif

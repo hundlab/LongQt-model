@@ -15,6 +15,8 @@
 GridProtocol::GridProtocol() : CurrentClamp(){
     GridCell* temp = new GridCell();
     measureMgr.reset(new GridMeasureManager(temp));
+    if(this->cell)
+        delete cell;
     cell = temp;
     grid = temp->getGrid();
     this->pvars.reset(new PvarsGrid(grid));

@@ -13,6 +13,7 @@
 #include <QXmlStreamWriter>
 #include <QXmlStreamReader>
 
+#include <list>
 #include <set>
 
 class GridCell: public Cell {
@@ -39,9 +40,6 @@ class GridCell: public Cell {
         virtual bool writeGridfile(QXmlStreamWriter& xml);
         virtual bool writeGridfile(string fileName ="");
         virtual bool readGridfile(QXmlStreamReader& xml);
-        bool handleNode(QXmlStreamReader& xml, set<CellInfo*>& cells, CellInfo* info);
-        bool handleRow(QXmlStreamReader& xml, set<CellInfo*>& cells, CellInfo* info);
-        bool handleGrid(QXmlStreamReader& xml);
         virtual bool readGridfile(string filename);
         virtual bool setOutputfileConstants(string filename);
         virtual bool setOuputfileVariables(string filename);
@@ -54,6 +52,10 @@ class GridCell: public Cell {
         virtual bool writeCellState(string filename);
 
     private:
+        bool handleNode(QXmlStreamReader& xml, list<CellInfo>& cells, CellInfo& info);
+        bool handleRow(QXmlStreamReader& xml, list<CellInfo>& cells, CellInfo& info);
+        bool handleGrid(QXmlStreamReader& xml);
+
         Grid grid;
         char buffer[500];
         double dx; //0.01

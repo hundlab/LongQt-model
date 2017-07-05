@@ -1,5 +1,5 @@
-#ifndef PVARSGRID_H
-#define PVARSGRID_H
+#ifndef PVARSVOLTAGECLAMP_H
+#define PVARSVOLTAGECLAMP_H
 
 #include "protocol.h"
 #include "cellpvars.h"
@@ -19,7 +19,7 @@ class PvarsVoltageClamp : public CellPvars {
         PvarsVoltageClamp(const PvarsVoltageClamp&) = default;
         virtual ~PvarsVoltageClamp() = default;
         virtual CellPvars* clone();
-        void protocol(Protocol* proto);
+        void protocol(Protocol *proto);
 
         virtual void setIonChanParams();
         virtual void calcIonChanParams();

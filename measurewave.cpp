@@ -7,7 +7,7 @@ MeasureWave::MeasureWave(set<string> selected, double percrepol):
     varmap.insert({{"cl",&cl},{"amp",&amp},{"ddr",&ddr},{"dur",&dur},
         {"durtime1",&durtime1},{"vartakeoff",&vartakeoff},
         {"deriv2ndt",&deriv2ndt}});
-
+    this->selection(selected);
 };
 
 MeasureWave::MeasureWave(const MeasureWave& toCopy):

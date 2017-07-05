@@ -1,6 +1,6 @@
 #include "pvarscurrentclamp.h"
 
-PvarsCurrentClamp::PvarsCurrentClamp(Protocol* proto): proto(proto) {}
+PvarsCurrentClamp::PvarsCurrentClamp(Protocol *proto): proto(proto) {}
 
 CellPvars* PvarsCurrentClamp::clone() {
     return new PvarsCurrentClamp(*this);
@@ -9,9 +9,9 @@ void PvarsCurrentClamp::protocol(Protocol* proto) {
     this->proto = proto;
 }
 void PvarsCurrentClamp::setIonChanParams() {
-    int trial = proto->getTrial();
+    int trial = proto->trial();
     for(auto& pvar : *this->__pvars) {
-        *proto->cell->pars.at(pvar.first) = pvar.second->trials[trial];
+        *proto->cell()->pars.at(pvar.first) = pvar.second->trials[trial];
     }
 }
 void PvarsCurrentClamp::calcIonChanParams() {

@@ -7,9 +7,9 @@ Grid::Grid(const Grid& other) {
     for(unsigned int i = 0; i < fiber.size();i++) {
         fiber[i].B = other.fiber[i].B;
         for(unsigned int j = 0; j < fibery.size(); j++) {
-            Node* n = new Node(*other.fiber[i].nodes[j]);
-            fiber[i].nodes[j].reset(n);
-            fibery[j].nodes[i].reset(n);
+            shared_ptr<Node> n(new Node(*other.fiber[i].nodes[j]));
+            fiber[i].nodes[j] = n;
+            fibery[j].nodes[i] = n;
         }
     }
     for(unsigned int i = 0; i < fibery.size(); i++) {
@@ -88,9 +88,9 @@ void Grid::removeColumn(int pos) {
         it->B.erase(it->B.begin() +pos);
     }
 }
-void Grid::setCellTypes(set<CellInfo*>& cells) {
-    for(auto it : cells) {
-        setCellTypes(*it);
+void Grid::setCellTypes(list<CellInfo>& cells) {
+    for(auto& c : cells) {
+        setCellTypes(c);
     }
 }
 void Grid::setCellTypes(const CellInfo& singleCell) {

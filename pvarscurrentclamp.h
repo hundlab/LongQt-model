@@ -1,5 +1,5 @@
-#ifndef PVARSGRID_H
-#define PVARSGRID_H
+#ifndef PVARSCURRENTCLAMP_H
+#define PVARSCURRENTCLAMP_H
 
 #include "protocol.h"
 #include "cellpvars.h"
@@ -19,7 +19,7 @@ class PvarsCurrentClamp : public CellPvars {
         PvarsCurrentClamp(const PvarsCurrentClamp&) = default;
         virtual ~PvarsCurrentClamp() = default;
         virtual CellPvars* clone();
-        void protocol(Protocol* proto);
+        void protocol(Protocol *proto);
 
         virtual void setIonChanParams();
         virtual void calcIonChanParams();

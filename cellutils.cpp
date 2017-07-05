@@ -85,13 +85,13 @@ const map<string, list<pair<string,string>>> CellUtils::protocolCellDefaults = {
                              {"numstims","500"}}}
 };
 
-void CellUtils::set_default_vals(Protocol* proto) {
-    const string& name = proto->cell->type;
+void CellUtils::set_default_vals(Protocol &proto) {
+    const string& name = proto.cell()->type;
     try {
         const auto& vals = CellUtils::protocolCellDefaults.at(name);
         for(auto& val :vals) {
             try {
-                proto->pars.at(val.first).set(val.second);
+                proto.pars.at(val.first).set(val.second);
             } catch(bad_function_call) {
             } catch(out_of_range) {
                 qDebug("CellUtils: default %s not in proto pars", val.first.c_str());
@@ -115,11 +115,11 @@ std::string CellUtils::strprintf(const char * format, ...) {
     va_start(args, format);
     va_copy(argsLen,args);
     int numbytes = vsnprintf((char*)NULL, 0, format, argsLen);
-    char* cstr = (char*)malloc((numbytes + 1)*sizeof(char));
+    char* cstr = new char[(numbytes+1)*sizeof(char)];
     vsnprintf(cstr, numbytes+1, format, args);
     std::string str(cstr);
     va_end(args);
-    free(cstr);
+    delete cstr;
     return str;
 }
 

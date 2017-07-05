@@ -1,6 +1,6 @@
 #include "pvarsvoltageclamp.h"
 
-PvarsVoltageClamp::PvarsVoltageClamp(Protocol* proto): proto(proto) {}
+PvarsVoltageClamp::PvarsVoltageClamp(Protocol *proto): proto(proto) {}
 
 CellPvars* PvarsVoltageClamp::clone() {
     return new PvarsVoltageClamp(*this);
@@ -10,7 +10,7 @@ void PvarsVoltageClamp::protocol(Protocol* proto) {
 }
 void PvarsVoltageClamp::setIonChanParams() {
     for(auto& pvar : *this->__pvars) {
-        *proto->cell->pars.at(pvar.first) = pvar.second->paramVal;
+        *proto->cell()->pars.at(pvar.first) = pvar.second->paramVal;
     }
 }
 void PvarsVoltageClamp::calcIonChanParams() {

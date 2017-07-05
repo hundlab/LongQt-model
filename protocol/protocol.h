@@ -49,19 +49,27 @@ class Protocol
 
         //##### Declare class functions ##############
         virtual int runSim();
-        virtual bool runTrial() = 0;
-        virtual void setupTrial();
         virtual int readpars(QXmlStreamReader& xml);
         virtual bool writepars(QXmlStreamWriter& xml); //write the contents of pars to a file
-        virtual void setTrial(unsigned int current_trial);
-        virtual unsigned int getTrial();
-        virtual bool setCell(const string& type, bool reset = false);
-        virtual list<string> cellOptions();
         virtual void readInCellState(bool read);
         virtual void writeOutCellState(bool write);
 
+        virtual void trial(unsigned int current_trial);
+        virtual unsigned int trial() const;
+        virtual bool runTrial() = 0;
+        virtual void setupTrial();
+
+
+        virtual bool cell(const string& type);
+        virtual void cell(Cell* cell) = 0;
+        virtual Cell* cell() const = 0;
+        virtual list<string> cellOptions();
+
+        virtual CellPvars& pvars() = 0;
+
+        virtual MeasureManager& measureMgr() = 0;
+
         //##### Declare class variables ##############
-        Cell* cell = 0;        // pointer to cell class
         double vM;         // membrane potential, mV
         double time;       // time, ms
         const char* type = "protocol";
@@ -82,17 +90,13 @@ class Protocol
         string datadir;
         string cellStateDir;
 
-        unique_ptr<CellPvars> pvars;
 
         //##### Declare maps for vars/params ##############
         map<string, GetSetRef> pars;
 
-        map<string, CellUtils::CellInitializer> cellMap;
-        unique_ptr<MeasureManager> measureMgr; // set of measure class for measuring SV props.
-
-    protected:
+protected:
         void copy(const Protocol& toCopy);
-        int trial;
+        int __trial;
 };
 
 #endif

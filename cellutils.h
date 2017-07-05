@@ -11,6 +11,7 @@
 #include <string>
 #include <stdarg.h>
 #include <QXmlStreamReader>
+#include <memory>
 
 #include "cell.h"
 
@@ -58,7 +59,7 @@ namespace CellUtils {
         left = 3
     };
 
-    void set_default_vals(Protocol* proto);
+    void set_default_vals(Protocol& proto);
 
     /*reads in until the next StartElement with name name
      *returns:

@@ -172,8 +172,7 @@ void MeasureManager::resetMeasures() {
 //where varname is the first word on the line
 //and all sequential words are properties to measure (the selection)
 //#############################################################
-bool MeasureManager::readMvarsFile(QXmlStreamReader& xml)
-{
+bool MeasureManager::readMvarsFile(QXmlStreamReader& xml) {
     variableSelection.clear();
     set<string> possible_vars = __cell->getVariables();
     if(!CellUtils::readNext(xml, "mvars")) return false;
@@ -191,12 +190,11 @@ bool MeasureManager::readMvarsFile(QXmlStreamReader& xml)
             xml.readNext();
             string propName = xml.text().toString().toStdString();
             selection.insert(propName);
-            xml.readNext();
+            xml.skipCurrentElement();
         }
         if(possible_vars.count(varname) == 1) {
             variableSelection.insert({varname,selection});
         }
-        xml.skipCurrentElement();
     }
     return true;
 };

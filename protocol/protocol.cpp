@@ -24,16 +24,12 @@
 #define strncasecmp _strnicmp
 #endif
 
-
-
 //######################################################
 // Default Constructor
 //######################################################
 Protocol::Protocol()
 {
     //##### Assign default parameters ##################
-    cell = new Cell();
-    measureMgr.reset(new MeasureManager(cell));
     doneflag = 1;       // set to 0 to end simulation
 
     tMax = 10000;   // max simulation time, ms
@@ -44,7 +40,7 @@ Protocol::Protocol()
     readfile = "r.txt"; // File to read SV ICs
     savefile = "s.txt"; // File to save final SV
 
-    trial = 0;
+    __trial = 0;
 
     writestd = 0;
     writeflag = 1;      // 1 to write data to file during sim
@@ -92,18 +88,12 @@ Protocol::Protocol()
     //	pars["measfile"]= toInsert.Initialize("file", [this] () {return measfile;}, [this] (const string& value) {measfile = value;});
     pars["simvarfile"]= toInsert.Initialize("file", [this] () {return simvarfile;}, [this] (const string& value) {simvarfile = value;});
     pars["cellStateFile"]= toInsert.Initialize("file", [this] () {return cellStateFile;}, [this] (const string& value) {cellStateFile = value;});
-    pars["celltype"]= toInsert.Initialize("cell", [this] () {return cell->type;}, [this] (const string& value) {this->setCell(value);});
+    pars["celltype"]= toInsert.Initialize("cell", [this] () {return cell()->type;}, [this] (const string& value) {this->cell(value);});
 
-    cellMap = CellUtils::cellMap;
-    this->setCell(HRD09Control().type);
 };
 
-Protocol::~Protocol() {
-    if(this->cell) {
-        delete cell;
-        cell = 0;
-    }
-}
+Protocol::~Protocol() {}
+
 //######################################################
 // Deep Copy Constructor
 //######################################################
@@ -126,8 +116,6 @@ Protocol& Protocol::operator=(const Protocol& toCopy) {
 
 
 void Protocol::copy(const Protocol& toCopy) {
-    std::map<string, double*>::iterator it;
-
     //##### Assign default parameters ##################
 
     datadir = toCopy.datadir;
@@ -140,7 +128,7 @@ void Protocol::copy(const Protocol& toCopy) {
     readfile = toCopy.readfile; // File to read SV ICs
     savefile = toCopy.savefile; // File to save final SV
 
-    trial = toCopy.trial;
+    __trial = toCopy.__trial;
     writestd = toCopy.writestd;
     writeflag = toCopy.writeflag;      // 1 to write data to file during sim
     dvarfile = toCopy.dvarfile;  // File with SV to write.
@@ -172,11 +160,6 @@ void Protocol::copy(const Protocol& toCopy) {
     pars = toCopy.pars;
 
     //###### Duplicate cells, measures outputs and maps######
-    cell = toCopy.cell->clone();
-
-    pvars = unique_ptr<CellPvars>(toCopy.pvars->clone());
-    measureMgr.reset(toCopy.measureMgr->clone());
-    measureMgr->cell(cell);
 }
 //############################################################
 // Run the cell simulation
@@ -187,7 +170,7 @@ int Protocol::runSim() {
     //###############################################################
     // Loop over number of trials
     //###############################################################
-    for(;trial<numtrials;setTrial(getTrial() +1))
+    for(;__trial<numtrials;trial(trial() +1))
     {
         return_val = (int)runTrial();
     }
@@ -207,7 +190,8 @@ int Protocol::readpars(QXmlStreamReader& xml) {
         name = xml.attributes().value("name").toString().toStdString();
         try {
             xml.readNext();
-            pars.at(name).set(xml.text().toString().toStdString());
+            if(name != "datadir")
+                pars.at(name).set(xml.text().toString().toStdString());
         } catch (const std::out_of_range&) {
             qWarning("Protocol: %s not in pars", name.c_str());
         }
@@ -229,53 +213,60 @@ bool Protocol::writepars(QXmlStreamWriter& xml) {
     xml.writeEndElement();
     return 0;
 }
-void Protocol::setTrial(unsigned int current_trial) {
-    trial = current_trial;
+void Protocol::trial(unsigned int current_trial) {
+    __trial = current_trial;
     //	assign_cell_pars(pnames,pvals,trial);   // Assign cell pars
 }
 
-unsigned int Protocol::getTrial() {
-    return trial;
+unsigned int Protocol::trial() const {
+    return __trial;
 }
 
-bool Protocol::setCell(const string& type, bool reset) {
-    if(cell != NULL && type == cell->type && !reset) {
+bool Protocol::cell(const string& type) {
+    if(cell() != NULL && type == cell()->type) {
         return false;
     }
     try {
-        auto oldCell = cell;
-        cell = (cellMap.at(type))();
-        if(measureMgr) {
-            measureMgr->clear();
-            measureMgr->cell(cell);
-        }
-        if(pvars)
-            pvars->clear();
-        delete oldCell;
+        this->cell((CellUtils::cellMap.at(type))());
         return true;
     } catch(const std::out_of_range&) {
-        qWarning("Protocol: %s is not a valid cell type",type.c_str());
+        qDebug("Protocol: %s is not a valid cell type",type.c_str());
         return false;
     }
 }
 
+/*void Protocol::cell(Cell* cell) {
+    if(measureMgr) {
+        measureMgr().clear();
+        measureMgr().cell(cell);
+    }
+
+    pvars().clear();
+    this->__cell.reset(cell);
+}
+
+Cell* Protocol::cell() const
+{
+    return __cell.get();
+}*/
+
 list<string> Protocol::cellOptions() {
     list<string> options;
-    for(auto it = cellMap.begin(); it != cellMap.end(); it++) {
-        options.push_back(it->first);
+    for(auto& cellOpt : CellUtils::cellMap) {
+        options.push_back(cellOpt.first);
     }
     return options;
 }
 
 void Protocol::readInCellState(bool read) {
     if(read) {
-        cell->readCellState(cellStateDir+"/"+cellStateFile+std::to_string(trial)+".xml");
-        this->tMax += this->cell->t;
+        cell()->readCellState(cellStateDir+"/"+cellStateFile+std::to_string(__trial)+".xml");
+        this->tMax += this->cell()->t;
     }
 }
 
 void Protocol::writeOutCellState(bool write) {
     if(write) {
-        cell->writeCellState(datadir+"/"+cellStateFile+std::to_string(trial)+".xml");
+        cell()->writeCellState(datadir+"/"+cellStateFile+std::to_string(__trial)+".xml");
     }
 }

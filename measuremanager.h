@@ -42,6 +42,10 @@ class MeasureManager {
             {"vOld","MeasureWave"},
             {"caI","MeasureWave"}
         };
+        const map<string,function<Measure*(set<string> selection)>> varMeasCreator =
+            {{"MeasureWave", [this](set<string> selection)
+                {return (Measure*)new MeasureWave(selection,this->__percrepol);}}
+            };
 
     protected:
         MeasureManager(const MeasureManager&);
@@ -51,10 +55,6 @@ class MeasureManager {
         double __percrepol = 50;
         unique_ptr<QFile> ofile;
         string last = "";
-        const map<string,function<Measure*(set<string> selection)>> varMeasCreator =
-            {{"MeasureWave", [this](set<string> selection)
-                {return (Measure*)new MeasureWave(selection,this->__percrepol);}}
-            };
 
     private:
         void removeBad();

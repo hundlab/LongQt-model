@@ -14,9 +14,14 @@
 // Measure class constructor and destructor
 //#############################################################
 
-Measure::Measure(set<string> selected):
-    __selection(selected)
-{};
+Measure::Measure(set<string> selected)
+{
+    for(auto& select: selected) {
+        if(varmap.count(select)>0) {
+            __selection.insert(select);
+        }
+    }
+};
 
 Measure::Measure(const Measure& toCopy) {
     this->copy(toCopy);

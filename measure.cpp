@@ -113,14 +113,14 @@ void Measure::reset()
 //    told = 0.0;
     returnflag = false;
 };
-string Measure::getNameString(string name) {
+string Measure::getNameString(string name) const {
     string nameStr = "";
     for(auto& sel: this->__selection) {
         nameStr += name+"/"+sel+"\t";
     }
     return nameStr;
 }
-string Measure::getValueString() {
+string Measure::getValueString() const {
     string valStr = "";
     for(auto& sel: this->__selection) {
         valStr += to_string(*this->varmap.at(sel))+"\t";

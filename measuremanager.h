@@ -50,16 +50,16 @@ class MeasureManager {
     protected:
         MeasureManager(const MeasureManager&);
 
-        Cell* __cell = 0;
         map<string,set<string>> variableSelection;
-        double __percrepol = 50;
-        unique_ptr<QFile> ofile;
-        string last = "";
 
     private:
         void removeBad();
         void copy(const MeasureManager& other);
 
+        Cell* __cell = 0;
+        string last = "";
+        double __percrepol = 50;
+        unique_ptr<QFile> ofile;
         map<string,shared_ptr<Measure>> measures;
 };
 #endif

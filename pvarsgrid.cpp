@@ -16,7 +16,9 @@ void PvarsGrid::setIonChanParams() {
     for(auto& pvar : *this->__pvars) {
         for(auto& oneCell : pvar.second->cells) {
             cell = (*this->grid)(oneCell.first.second,oneCell.first.first)->cell.get();
-            *cell->pars.at(pvar.first) = oneCell.second;
+            try {
+                *cell->pars.at(pvar.first) = oneCell.second;
+            } catch(std::out_of_range&) {}
         }
     }
 }

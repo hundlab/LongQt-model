@@ -15,6 +15,11 @@ GridMeasureManager* GridMeasureManager::clone() {
     return new GridMeasureManager(*this);
 }
 
+void GridMeasureManager::cell(GridCell* cell) {
+    this->grid = cell->getGrid();
+    this->MeasureManager::cell(cell);
+}
+
 void GridMeasureManager::dataNodes(set<pair<int,int>> nodes) {
     this->__dataNodes = nodes;
 }
@@ -53,104 +58,139 @@ bool GridMeasureManager::readMvarsFile(QXmlStreamReader& xml) {
     return true;
 }
 
-void GridMeasureManager::setupMeasures(string filename) {
+void GridMeasureManager::setupMeasures(string filenameTemplate) {
     this->measures.clear();
     if(variableSelection.count("vOld") == 0) {
         variableSelection.insert({"vOld",{}});
     }
-    this->ofile.reset(new QFile(filename.c_str()));
-    if(!ofile->open(QIODevice::WriteOnly | QIODevice::Text)) {
-        qWarning("MeasureManager: File could not be opened for writing.");
-    }
-    for(auto& sel: variableSelection) {
-        for(auto& node: this->__dataNodes) {
-            if((*this->grid)(node)!=NULL
-                &&(*this->grid)(node)->cell->vars.count(sel.first) > 0)
-                {
-                measures.insert({{sel.first,{node.first,node.second}},
-                    this->getMeasure(sel.first,sel.second)}).first;
+    for(auto& node: this->__dataNodes) {
+        auto pos = measures.insert({node,{}}).first;
+        for(auto& sel: variableSelection) {
+            if((*this->grid)(node)!= NULL
+                &&(*this->grid)(node)->cell->vars.count(sel.first) > 0) {
+                pos->second.insert({sel.first,
+                    this->getMeasure(sel.first,sel.second)});
             }
         }
-    }
-    if(ofile->write((this->nameString()+"\n").c_str())==-1) {
-        qWarning("MeasureManager: File cound not be written to");
+        QString filename = CellUtils::strprintf(filenameTemplate.c_str(),
+            node.first,node.second).c_str();
+        this->ofiles[node].reset(new QFile(filename));
+        auto ofile = this->ofiles[node];
+        if(!ofile->open(QIODevice::WriteOnly | QIODevice::Text)) {
+            qWarning("MeasureManager: File could not be opened for writing.");
+        }
+        if(ofile->write((this->nameString(node)+"\n").c_str())==-1) {
+            qWarning("MeasureManager: File cound not be written to");
+        }
     }
 }
 
-std::string GridMeasureManager::nameString() {
+std::string GridMeasureManager::nameString(pair<int,int> node) const {
     string nameStr = "";
-    for(auto& meas: this->measures) {
+    for(auto& meas: this->measures.at(node)) {
         nameStr += meas.second->getNameString(
-            "cell"+to_string(meas.first.second.first)+
-            "_"+to_string(meas.first.second.second)+
-            "/"+meas.first.first);
+            "cell"+to_string(node.first)+
+            "_"+to_string(node.second)+
+            "/"+meas.first);
     }
     return nameStr;
 }
 
 void GridMeasureManager::measure(double time) {
-    bool write = false;
-    for(auto& m: this->measures) {
-        double* val = (*this->grid)(m.first.second)->
-            cell->vars.at(m.first.first);
-        bool varWrite = m.second->measure(time, *val);
-        if(m.first.first=="vOld"&&varWrite) {
-            write = true;
+    for(auto& pos: this->measures) {
+        bool writeCell = false;
+        for(auto& meas: pos.second) {
+            double* val = (*this->grid)(pos.first)->
+                cell->vars.at(meas.first);
+            if(meas.second->measure(time, *val)&&meas.first=="vOld") {
+                writeCell = true;
+            }
+        }
+        if(writeCell) {
+            this->writeSingleCell(pos.first);
+            this->resetMeasures(pos.first);
         }
     }
-    if(write) {
-        this->write();
-        this->resetMeasures();
+}
+void GridMeasureManager::write(QFile* file) {
+    if(!file->isOpen()) {
+        qWarning("MeasureManager: Measure file must be open to be written");
+        return;
+    }
+    for(auto& pos: measures) {
+        QFile& ofile = file? *file: *ofiles[pos.first];
+        this->lasts[pos.first] = "";
+        for(auto& meas: pos.second) {
+            string valStr = meas.second->getValueString();
+            this->lasts[pos.first] += valStr;
+            if(ofile.write(valStr.c_str())==-1) {
+                qWarning("MeasureManager: File cound not be written to");
+            }
+        }
+        lasts[pos.first] += "\n";
+        if(ofile.write("\n")==-1) {
+            qWarning("MeasureManager: File cound not be written to");
+        }
     }
 }
 
-void GridMeasureManager::write(QFile* file) {
-    QFile& ofile = file? *file: *this->ofile;
+void GridMeasureManager::writeSingleCell(pair<int,int> node, QFile* file) {
+    QFile& ofile = file? *file: *this->ofiles[node];
     if(!ofile.isOpen()) {
         qWarning("MeasureManager: Measure file must be open to be written");
         return;
     }
-    this->last = "";
-    for(auto& meas: measures) {
+    auto& last = this->lasts[node];
+    last = "";
+    for(auto& meas: measures[node]) {
         string valStr = meas.second->getValueString();
         last += valStr;
-        if(ofile.write(valStr.c_str())==-1) {
+        if(ofiles[node]->write(valStr.c_str())==-1) {
             qWarning("MeasureManager: File cound not be written to");
         }
     }
     last += "\n";
-    if(ofile.write("\n")==-1) {
+    if(ofiles[node]->write("\n")==-1) {
         qWarning("MeasureManager: File cound not be written to");
     }
 }
 
 void GridMeasureManager::writeLast(string filename) {
-    QFile lastFile(filename.c_str());
-    if (!lastFile.open(QIODevice::WriteOnly | QIODevice::Text)) {
-        qWarning("MeasureManager: File could not be opened for writing.");
-    }
-    if(lastFile.write((this->nameString()+"\n").c_str())==-1) {
-        qWarning("MeasureManager: Last file cound not be written to");
-    }
-    if(this->last == "") {
-        this->write(&lastFile);
-    } else {
-        if(lastFile.write(last.c_str())==-1) {
+    for(auto& pos: this->measures) {
+        QFile lastFile(CellUtils::strprintf(filename.c_str(),pos.first.first,pos.first.second).c_str());
+        if (!lastFile.open(QIODevice::WriteOnly | QIODevice::Text)) {
+            qWarning("MeasureManager: File could not be opened for writing.");
+        }
+        if(lastFile.write((this->nameString(pos.first)+"\n").c_str())==-1) {
             qWarning("MeasureManager: Last file cound not be written to");
         }
+        if(this->lasts[pos.first] == "") {
+            this->writeSingleCell(pos.first,&lastFile);
+        } else {
+            if(lastFile.write(lasts[pos.first].c_str())==-1) {
+                qWarning("MeasureManager: Last file cound not be written to");
+            }
+        }
+        lastFile.close();
     }
-    lastFile.close();
 }
 
 void GridMeasureManager::clear() {
-    __percrepol = 50;
+    this->percrepol(50);
     variableSelection.clear();
     measures.clear();
 }
 
-void GridMeasureManager::resetMeasures() {
-    for(auto& meas: this->measures) {
+void GridMeasureManager::resetMeasures(pair<int,int> node) {
+    for(auto& meas: this->measures[node]) {
         meas.second->reset();
     }
 }
 
+void GridMeasureManager::close() {
+    for(auto& ofile: this->ofiles) {
+        if(ofile.second->isOpen()) {
+            ofile.second->close();
+        }
+    }
+}

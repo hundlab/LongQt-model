@@ -11,7 +11,7 @@
 #include <QFile>
 #include <QDebug>
 
-GridProtocol::GridProtocol() : CurrentClamp(){
+GridProtocol::GridProtocol() : CurrentClamp() {
     __measureMgr.reset(new GridMeasureManager(this->__cell.get()));
     grid = __cell->getGrid();
     this->__pvars.reset(new PvarsGrid(grid));
@@ -39,6 +39,10 @@ GridProtocol::GridProtocol() : CurrentClamp(){
     stimdur2 = stimdur;
     bcl2 = bcl;
     stimt2 = stimt;
+    propertyoutfile = "cell_%%i_%%i_"+this->propertyoutfile;
+    finalpropertyoutfile = "cell_%%i_%%i_"+this->finalpropertyoutfile;
+    dvarsoutfile = "cell_%%i_%%i_"+this->dvarsoutfile;
+    finaldvarsoutfile = "cell_%%i_%%i_"+this->finaldvarsoutfile;
 
     CellUtils::set_default_vals(*this);
 }
@@ -56,7 +60,7 @@ void GridProtocol::CCcopy(const GridProtocol& toCopy) {
     __pvars = unique_ptr<PvarsGrid>(new PvarsGrid(*toCopy.__pvars));
     __pvars->setGrid(this->grid);
     __measureMgr.reset(toCopy.__measureMgr->clone());
-    __measureMgr->cell(cell());
+    __measureMgr->cell(this->__cell.get());
 }
 // External stimulus.
 int GridProtocol::stim()
@@ -94,8 +98,8 @@ void GridProtocol::setupTrial() {
     }
     __cell->setConstantSelection(temp);
     temp.clear();
-    this->__measureMgr->setupMeasures(
-        CellUtils::strprintf((datadir+"/"+propertyoutfile).c_str(),__trial));
+    this->__measureMgr->setupMeasures(datadir+"/"+
+        CellUtils::strprintf(propertyoutfile.c_str(),__trial));
 
     time = __cell->t = 0.0;      // reset time
 
@@ -105,8 +109,7 @@ void GridProtocol::setupTrial() {
     doneflag=1;     // reset doneflag
 
     __cell->setOuputfileVariables(datadir+"/"
-        +"cell_%i_%i_"+CellUtils::strprintf(dvarsoutfile.c_str(),__trial));
-
+        +CellUtils::strprintf(dvarsoutfile.c_str(),__trial));
 }
 
 bool GridProtocol::runTrial() {
@@ -147,7 +150,7 @@ bool GridProtocol::runTrial() {
         (datadir+"/"+finalpropertyoutfile).c_str(),__trial));
 
     // Output parameter values for each trial
-    __cell->setOutputfileConstants(datadir+"/"+"cell_%i_%i_"+CellUtils::strprintf(
+    __cell->setOutputfileConstants(datadir+"/"+CellUtils::strprintf(
         finaldvarsoutfile.c_str(),__trial));
     __cell->writeConstants();
     this->__measureMgr->close();
@@ -191,7 +194,7 @@ Cell* GridProtocol::cell() const
 void GridProtocol::cell(Cell* cell) {
     if(__measureMgr) {
         __measureMgr->clear();
-        __measureMgr->cell(cell);
+        __measureMgr->cell(dynamic_cast<GridCell*>(cell));
     }
     if(__pvars)
         pvars().clear();

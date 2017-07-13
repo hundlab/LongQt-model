@@ -112,6 +112,7 @@ void MeasureWave::reset()
     maxflag = false;
     ampflag = false;
     ddrflag = false;
+    this->Measure::reset();
 };
 void MeasureWave::percrepol(double val) {
     this->__percrepol = val;

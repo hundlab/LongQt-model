@@ -40,8 +40,8 @@ class Measure
         set<string> selection();
         void selection(set<string> new_selection);
         //		void restoreLast();
-        virtual string getNameString(string name);
-        virtual string getValueString();
+        virtual string getNameString(string name) const;
+        virtual string getValueString() const;
     protected:
         virtual void calcMeasure(double time, double var);
         virtual void updateOld(double time, double var);

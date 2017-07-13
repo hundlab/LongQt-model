@@ -21,6 +21,7 @@ class GridMeasureManager: public MeasureManager {
 
         void dataNodes(set<pair<int,int>> nodes);
         set<pair<int,int>> dataNodes();
+        void cell(GridCell* cell);
 
         virtual bool writeMVarsFile(QXmlStreamWriter& xml);
         virtual bool readMvarsFile(QXmlStreamReader& xml);
@@ -28,15 +29,19 @@ class GridMeasureManager: public MeasureManager {
         virtual void setupMeasures(string filename);
         virtual void measure(double time);
         virtual void write(QFile* file = 0);
+        virtual void writeSingleCell(pair<int,int> node, QFile* file = 0);
         virtual void writeLast(string filename);
-        virtual std::string nameString();
+        virtual std::string nameString(pair<int,int> node) const;
+        virtual void close();
         virtual void clear();
-        virtual void resetMeasures();
+        virtual void resetMeasures(pair<int,int> node);
 
     private:
         GridMeasureManager(const GridMeasureManager&);
         set<pair<int,int>> __dataNodes;
-        map<pair<string,pair<int,int>>,shared_ptr<Measure>> measures;
+        map<pair<int,int>,shared_ptr<QFile>> ofiles;
+        map<pair<int,int>,string> lasts;
+        map<pair<int,int>,map<string,shared_ptr<Measure>>> measures;
         Grid* grid = 0;
 };
 #endif

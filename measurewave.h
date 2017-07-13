@@ -42,18 +42,17 @@ class MeasureWave: public Measure
 
     protected:
 
-        double vartakeoff=-100; //var value at point of max deflection.
-        double durtime1;
-        double amp = 70;
-        double ddr;      //diastolic depol. rate
+        double vartakeoff = NAN; //var value at point of max deflection.
+        double durtime1 = NAN;
+        double amp = NAN;
+        double ddr = NAN;      //diastolic depol. rate
         //		double maxderiv1;
         //		double maxderiv2;
-        double derivt1 = 0;  // time of prev. cycle max deriv.
-        double derivt2 = 0;
-        double deriv2ndt = 0;  // time of max 2nd deriv.
+        double derivt1 = NAN;  // time of prev. cycle max deriv.
+        double deriv2ndt = NAN;  // time of max 2nd deriv.
         double maxderiv2nd = 0;
         double cl = 0;
-        double dur;   //duration
+        double dur = NAN;   //duration
         double __percrepol = 50;   //specify percent repolarization
         double repol = -25;           // repol var val for duration measure.
         bool minflag = false;

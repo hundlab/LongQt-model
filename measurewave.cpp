@@ -34,7 +34,6 @@ void MeasureWave::copy(const MeasureWave& toCopy) {
     maxflag = toCopy.maxflag;
     ampflag = toCopy.ampflag;
     ddrflag = toCopy.ddrflag;
-    derivt2 = toCopy.derivt2;
     derivt1 = toCopy.derivt1;
     durflag = toCopy.durflag;
     deriv2ndt = toCopy.deriv2ndt;
@@ -73,6 +72,8 @@ void MeasureWave::calcMeasure(double time, double var) {
     }
 
    if(deriv2nd>.02&&var>(0.01*abs(min)+min)&&!ddrflag){   // Track 2nd deriv for SAN ddr
+   //not functioning for cal as it is has small values and does not meet the 0.2
+   //threshold
         vartakeoff=var;
         maxderiv2nd=deriv2nd;
         deriv2ndt=time;
@@ -83,7 +84,7 @@ void MeasureWave::calcMeasure(double time, double var) {
     }
 
     if(var>repol&&!durflag){          // t1 for dur calculation = first time var crosses repol.
-        durtime1=time;            // will depend on __percrepol - default is 50 but can be changed.
+        durtime1=time;            // will depend on __percrepol default is 50 but can be changed.
         durflag=true;
     }
 
@@ -91,7 +92,6 @@ void MeasureWave::calcMeasure(double time, double var) {
         amp=peak-min;
         ampflag = true;
         cl=derivt-derivt1;
-        derivt2=derivt1;
         derivt1=derivt;
         repol = (1-__percrepol*0.01)*amp+min;
     }

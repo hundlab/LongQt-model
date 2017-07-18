@@ -74,6 +74,7 @@ class TNNP04Control : public Cell
 	virtual void updateConc();
 	virtual int externalStim(double stimval);
 	virtual void makemap();
+    virtual const char* type() const;
  
 //##### Declare class variables ##############
 	double Vc;

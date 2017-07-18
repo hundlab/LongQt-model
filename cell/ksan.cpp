@@ -30,7 +30,6 @@ Ksan::~Ksan()
 void Ksan::Initialize() {
 //##### Initialize variables ###################
 
-type = "Canine Ventricular Myocyte (Hund-Rudy 2008)";
 dtmin=dtmed=dtmax=0.005;
 
 vOld = -64.5216286940;
@@ -564,6 +563,11 @@ void Ksan::makemap()
   vars["Jtr"]=&Jtr;
   vars["Jcadif"]=&Jcadif;
 
+}
+
+const char *Ksan::type() const
+{
+    return "Canine Ventricular Myocyte (Hund-Rudy 2008)";
 }
 
 // External stimulus.

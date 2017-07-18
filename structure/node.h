@@ -6,6 +6,7 @@
 
 #include "cell.h"
 #include "cellutils.h"
+#include "inexcitablecell.h"
 #include <memory>
 
 struct Node {
@@ -15,7 +16,7 @@ struct Node {
 
 	void setCondConst(int X, double dx, CellUtils::Side s, bool perc = true, double val = 1);
 //	void updateV(double dt);
-    unique_ptr<Cell> cell = unique_ptr<Cell>(new Cell());
+    unique_ptr<Cell> cell = unique_ptr<Cell>(new InexcitableCell());
     double rd = 1.5; // gap junctional disk resistance.
 	double condConst[4] = {0,0,0,0};
 //## default value cannot be deterimined by constructor

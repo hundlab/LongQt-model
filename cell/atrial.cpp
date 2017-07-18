@@ -22,7 +22,6 @@ Courtemanche98::Courtemanche98(Courtemanche98& toCopy) : Cell(toCopy) {
 }
 void Courtemanche98::Initialize() {
         //##### Initialize variables ###################
-        type = "Human Atrial (Courtemanche 1998)";
         dVdt=dVdtmax=5.434230843e-10;
         t=0.0;
         dt=dtmin=0.005;
@@ -560,5 +559,10 @@ void Courtemanche98::makemap()
   vars["iKt"]=&iKt;
   //vars["iTot"] = &iTot;
 
+}
+
+const char *Courtemanche98::type() const
+{
+    return "Human Atrial (Courtemanche 1998)";
 }
 

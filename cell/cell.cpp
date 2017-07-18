@@ -92,7 +92,7 @@ bool Cell::writeCellState(string file) {
 }
 bool Cell::writeCellState(QXmlStreamWriter& xml) {
 	xml.writeStartElement("cell");
-	xml.writeAttribute("type", this->type);
+	xml.writeAttribute("type", this->type());
 
 	xml.writeStartElement("pars");
 	for(auto& par : this->pars){
@@ -131,9 +131,9 @@ bool Cell::readCellState(QXmlStreamReader& xml) {
 	string name = "";
 	if(!CellUtils::readNext(xml, "cell")) return false;
 	QString type = xml.attributes().value("type").toString();
-	if(type != this->type) {
+	if(type != this->type()) {
 		qCritical("Error: cell state file is for %s but cell is of type %s"
-				,type.toStdString().c_str(),this->type);
+				,type.toStdString().c_str(),this->type());
 		qCritical("Aborting read cell state");
 	}
 	if(!CellUtils::readNext(xml, "pars")) return false;

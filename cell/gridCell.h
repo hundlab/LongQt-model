@@ -50,6 +50,7 @@ class GridCell: public Cell {
         virtual void closeFiles();
         virtual bool readCellState(string filename);
         virtual bool writeCellState(string filename);
+        virtual const char* type() const;
 
     private:
         bool handleNode(QXmlStreamReader& xml, list<CellInfo>& cells, CellInfo& info);

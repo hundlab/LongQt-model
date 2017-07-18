@@ -31,7 +31,6 @@ HRD09BorderZone::~HRD09BorderZone()
 
 //##### Initialize variables ##################
 void HRD09BorderZone::Initialize() {
-        type = "Canine Ventricular Border Zone (Hund-Rudy 2009)";
         dVdt=dVdtmax=1.017497198e-09;
         t=0.0;
 	dt=dtmin = 0.005;
@@ -382,5 +381,10 @@ void HRD09BorderZone::updateCamk()
    fBlock=dt*(kibl*kn93*fI-kbli*fBlock)+fBlock;
    fI=1-fBound-fPhos-fOx-fOxP-fBlock;
    caM=(0.75*fBound+fPhos+fOxP+.5*fOx);
+}
+
+const char *HRD09BorderZone::type() const
+{
+    return "Canine Ventricular Border Zone (Hund-Rudy 2009)";
 };
 

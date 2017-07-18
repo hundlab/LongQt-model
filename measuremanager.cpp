@@ -29,7 +29,7 @@ void MeasureManager::copy(const MeasureManager& o) {
 }
 
 void MeasureManager::cell(Cell* cell) {
-    if(cell->type != __cell->type) {
+    if(cell->type() != __cell->type()) {
         this->variableSelection.clear();
         this->measures.clear();
     }

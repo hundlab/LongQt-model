@@ -33,14 +33,14 @@
  * and also add it to the protocolCellDefualts map below
  */
 const map<string, CellUtils::CellInitializer> CellUtils::cellMap = {
-    { ControlSa().type, [] () {return (Cell*) new ControlSa; }},
-    { GpbAtrial().type, [] () {return (Cell*) new GpbAtrial;}},
-    { HRD09Control().type, [] () {return (Cell*) new HRD09Control;}},
-    { HRD09BorderZone().type, [] () {return (Cell*) new HRD09BorderZone;}},
-    { TNNP04Control().type, [] () {return (Cell*) new TNNP04Control;}},
-    { OHaraRudyEndo().type, [] () {return (Cell*) new OHaraRudyEndo;}},
-    { OHaraRudyEpi().type, [] () {return (Cell*) new OHaraRudyEpi;}},
-    { OHaraRudyM().type, [] () {return (Cell*) new OHaraRudyM;}}
+    { ControlSa().type(), [] () {return (Cell*) new ControlSa; }},
+    { GpbAtrial().type(), [] () {return (Cell*) new GpbAtrial;}},
+    { HRD09Control().type(), [] () {return (Cell*) new HRD09Control;}},
+    { HRD09BorderZone().type(), [] () {return (Cell*) new HRD09BorderZone;}},
+    { TNNP04Control().type(), [] () {return (Cell*) new TNNP04Control;}},
+    { OHaraRudyEndo().type(), [] () {return (Cell*) new OHaraRudyEndo;}},
+    { OHaraRudyEpi().type(), [] () {return (Cell*) new OHaraRudyEpi;}},
+    { OHaraRudyM().type(), [] () {return (Cell*) new OHaraRudyM;}}
 
     /*		{ GpbVent().type, [] () {return (Cell*) new GpbVent;}},
             { Br04().type, [] () {return (Cell*) new Br04;}},
@@ -56,37 +56,37 @@ const map<string, CellUtils::CellInitializer> CellUtils::cellMap = {
  * study-state ~500,000 ms and output values for the last 5,000 ms
  */
 const map<string, list<pair<string,string>>> CellUtils::protocolCellDefaults = {
-    { ControlSa().type, {{"paceflag","false"},{"stimval","-60"},{"stimdur","1"},
+    { ControlSa().type(), {{"paceflag","false"},{"stimval","-60"},{"stimdur","1"},
                             {"tMax","500000"},{"writetime","495000"},{"bcl","1000"},
                             {"numstims","500"}}},
-    { HRD09Control().type, {{"paceflag","true"},{"stimval","-80"},
+    { HRD09Control().type(), {{"paceflag","true"},{"stimval","-80"},
                                {"stimdur","0.5"},{"tMax","500000"},{"writetime","495000"},
                                {"bcl","1000"},{"numstims","500"}}},
-    { GpbAtrial().type, {{"paceflag","true"},{"stimval","-12.5"},{"stimdur","5"},
+    { GpbAtrial().type(), {{"paceflag","true"},{"stimval","-12.5"},{"stimdur","5"},
                             {"tMax","500000"},{"writetime","495000"},{"bcl","1000"},
                             {"numstims","500"}}},
-    { GridCell().type, {{"paceflag","true"},{"stimval","-12.5"},{"stimdur","5"},
+    { GridCell().type(), {{"paceflag","true"},{"stimval","-12.5"},{"stimdur","5"},
                            {"tMax","500000"},{"writetime","495000"},{"bcl","1000"},
                            {"numstims","500"}}},
-    { HRD09BorderZone().type, {{"paceflag","true"},{"stimval","-80"},
+    { HRD09BorderZone().type(), {{"paceflag","true"},{"stimval","-80"},
                                   {"stimdur","0.5"},{"tMax","500000"},{"writetime","495000"},
                                   {"bcl","1000"},{"numstims","500"}}},
-    { TNNP04Control().type, {{"paceflag","true"},{"stimval","-60"},
+    { TNNP04Control().type(), {{"paceflag","true"},{"stimval","-60"},
                                 {"stimdur","1"},{"tMax","500000"},{"writetime","495000"},{"bcl","1000"},
                                 {"numstims","500"}}},
-    { OHaraRudyEndo().type, {{"paceflag","true"},{"stimval","-80"},
+    { OHaraRudyEndo().type(), {{"paceflag","true"},{"stimval","-80"},
                                 {"stimdur","0.5"},{"tMax","500000"},{"writetime","495000"},{"bcl","1000"},
                                 {"numstims","500"}}},
-    { OHaraRudyEpi().type, {{"paceflag","true"},{"stimval","-80"},
+    { OHaraRudyEpi().type(), {{"paceflag","true"},{"stimval","-80"},
                                {"stimdur","0.5"},{"tMax","500000"},{"writetime","495000"},{"bcl","1000"},
                                {"numstims","500"}}},
-    { OHaraRudyM().type, {{"paceflag","true"},{"stimval","-80"},
+    { OHaraRudyM().type(), {{"paceflag","true"},{"stimval","-80"},
                              {"stimdur","0.5"},{"tMax","500000"},{"writetime","495000"},{"bcl","1000"},
                              {"numstims","500"}}}
 };
 
 void CellUtils::set_default_vals(Protocol &proto) {
-    const string& name = proto.cell()->type;
+    const string& name = proto.cell()->type();
     try {
         const auto& vals = CellUtils::protocolCellDefaults.at(name);
         for(auto& val :vals) {

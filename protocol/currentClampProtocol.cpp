@@ -68,7 +68,8 @@ MeasureManager &CurrentClamp::measureMgr() {
 }
 
 void CurrentClamp::CCcopy(const CurrentClamp& toCopy) {
-    __cell.reset(toCopy.cell()->clone());
+    auto test = toCopy.cell()->clone();
+    __cell.reset(test);
     stimdur = toCopy.stimdur;  // stim duration, ms
     stimt = toCopy.stimt;    // time of first stim, ms
     stimval = toCopy.stimval;  // stim current amplitude, uA/uF

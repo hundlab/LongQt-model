@@ -12,5 +12,6 @@ class OHaraRudyM : public OHaraRudy
 
 		void Initialize();
 		virtual OHaraRudyM* clone();
+        virtual const char* type() const;
 };
 #endif

@@ -26,7 +26,7 @@ Node::Node(const Node& other) {
 }*/
 
 void Node::setCondConst(int X, double dx, CellUtils::Side s, bool perc, double val) {
-	if(cell->type == string("Cell")) {
+    if(cell->type() == string("Inexcitable Cell")) {
 		condConst[s] = 0.0;
 		return;
 	}

@@ -36,7 +36,8 @@ $$PWD/pvarsgrid.cpp\
 $$PWD/pvarscurrentclamp.cpp\
 $$PWD/pvarsvoltageclamp.cpp\
 $$PWD/protocol/currentClampProtocol.cpp\
-$$PWD/protocol/voltageClampProtocol.cpp
+$$PWD/protocol/voltageClampProtocol.cpp \
+    $$PWD/cell/inexcitablecell.cpp
 
 HEADERS  += $$PWD/measuremanager.h\
 $$PWD/gridmeasuremanager.h\
@@ -74,4 +75,5 @@ $$PWD/pvarsgrid.h\
 $$PWD/pvarscurrentclamp.h\
 $$PWD/pvarsvoltageclamp.h\
 $$PWD/protocol/protocol.h\
-$$PWD/protocol/gridProtocol.h
+$$PWD/protocol/gridProtocol.h \
+    $$PWD/cell/inexcitablecell.h

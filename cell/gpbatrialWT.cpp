@@ -23,7 +23,6 @@ GpbAtrialWT::~GpbAtrialWT()
 }
 
 void GpbAtrialWT::Initialize() {
-    type = "Human Atrial (Grandi 2011) WT";
     Cm = 1.0; //uF/cm2
     ACap = 1.10E-4; //capacitive area, cm2
     dVdt=dVdtmax=0.0;
@@ -840,4 +839,9 @@ void GpbAtrialWT::makemap()
   vars["iCabsl"]=&iCabsl;
   vars["iCab"]=&iCab;
 
+}
+
+const char *GpbAtrialWT::type() const
+{
+    return "Human Atrial (Grandi 2011) WT";
 }

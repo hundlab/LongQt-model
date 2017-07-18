@@ -12,11 +12,15 @@ OHaraRudyEpi::OHaraRudyEpi(OHaraRudyEpi& toCopy) : OHaraRudy(toCopy) {
 }
 
 void OHaraRudyEpi::Initialize() {
-	type = "Human Ventricular Epi (O'Hara-Rudy 2011)";
 	celltype = OHaraRudy::epi;
 	this->makemap();
 }
 
 OHaraRudyEpi* OHaraRudyEpi::clone() {
     return new OHaraRudyEpi(*this);
+}
+
+const char *OHaraRudyEpi::type() const
+{
+    return "Human Ventricular Epi (O'Hara-Rudy 2011)";
 }

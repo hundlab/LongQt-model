@@ -33,12 +33,12 @@ class CellKernel
     CellKernel(const CellKernel& toCopy);
     virtual ~CellKernel(); 
     
-    virtual CellKernel* clone(); //public copy function
+    virtual CellKernel* clone() = 0; //public copy function
   //##### Declare class functions ##############
     virtual double updateV();
     virtual void setV(double v);
-    virtual void updateCurr();
-    virtual void updateConc();
+    virtual void updateCurr() = 0;
+    virtual void updateConc() = 0;
     virtual double tstep(double stimt);
     virtual int externalStim(double stimval);
 
@@ -71,8 +71,6 @@ class CellKernel
     double RGAS;
     double TEMP;
     double FDAY;
-
-    const char* type;
     
     //##### Declare maps for vars/params ##############
     map<string, double*> vars;  // map of state vars
@@ -83,7 +81,9 @@ class CellKernel
     virtual bool setPar(string name, double val);
     virtual set<string> getVariables();
     virtual set<string> getConstants();
-  protected:
+    virtual const char* type() const = 0;
+
+protected:
     void copyVarPar(const CellKernel& toCopy);
 };
 #endif

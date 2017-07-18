@@ -16,6 +16,7 @@
 
 #include "gridCell.h"
 #include "cellutils.h"
+#include "inexcitablecell.h"
 
 GridCell::GridCell() {
     this->Initialize();
@@ -24,7 +25,6 @@ void GridCell::Initialize() {
     dx = 0.01;
     dy = 0.01;
     np = 1;
-    type = "gridCell";
     gridfileName = "grid.txt";
     tcount = 0;
     makeMap();
@@ -199,6 +199,11 @@ void GridCell::makeMap() {//only aply to cells added after the change?
     pars["dy"] = &dy;
     pars["np"] = &np;
 }
+
+const char *GridCell::type() const
+{
+    return "gridCell";
+}
 void GridCell::setGridfile(string name) {
     gridfileName = name;
 }
@@ -221,7 +226,7 @@ bool GridCell::writeGridfile(QXmlStreamWriter& xml) {
         for(auto& iv : it.nodes) {
             xml.writeStartElement("node");
             xml.writeAttribute("pos",QString::number(i));
-            xml.writeTextElement("type",iv->cell->type);
+            xml.writeTextElement("type",iv->cell->type());
             xml.writeStartElement("conductance");
             xml.writeTextElement("left", QString::number(it.B[i]));
             xml.writeTextElement("right", QString::number(it.B[i+1]));
@@ -301,7 +306,7 @@ bool GridCell::handleRow(QXmlStreamReader& xml, list<CellInfo>& cells, CellInfo&
 bool GridCell::handleNode(QXmlStreamReader& xml, list<CellInfo>& cells, CellInfo& info) {
     if(xml.atEnd()) return false;
     auto cellMap = CellUtils::cellMap;
-    cellMap[Cell().type] = [] () {return (Cell*) new Cell;};
+    cellMap[InexcitableCell().type()] = [] () {return (Cell*) new InexcitableCell;};
     map<QString,function<bool(QXmlStreamReader& xml)>> handlers; 
     handlers["type"] = [&info,cellMap] (QXmlStreamReader& xml) {
         bool success = true;
@@ -313,7 +318,7 @@ bool GridCell::handleNode(QXmlStreamReader& xml, list<CellInfo>& cells, CellInfo
         } catch(const std::out_of_range&) {
             success = false;
             qWarning("%s not a valid cell type", cell_type.c_str());
-            info.cell = new Cell();
+            info.cell = new InexcitableCell();
         }
         xml.skipCurrentElement();
         return success;

@@ -25,7 +25,6 @@ CellKernel::CellKernel()
     Rcg = 1.0;
     cellRadius = 0.001; // cm
     cellLength = 0.01;  // cm
-    type = "Inexcitable Cell";  // class name
     RGAS = 8314.0;
     TEMP = 310.0;
     FDAY = 96487.0;
@@ -64,8 +63,8 @@ CellKernel::CellKernel()
     pars["ACap"]=&ACap;
     
 		//add potenttially needed values to pars
-		pars["vNew"]=&vNew;
-		pars["dVdtmax"]=&dVdtmax;
+    pars["vNew"]=&vNew;
+    pars["dVdtmax"]=&dVdtmax;
 
 };
 
@@ -84,7 +83,6 @@ CellKernel::CellKernel(const CellKernel& toCopy)
     Rcg = toCopy.Rcg;
     cellRadius = toCopy.cellRadius; // cm
     cellLength = toCopy.cellLength;  // cm
-    type = "Cell";  // class name
     RGAS = toCopy.RGAS;
     TEMP = toCopy.TEMP;
     FDAY = toCopy.FDAY;
@@ -129,17 +127,7 @@ CellKernel::CellKernel(const CellKernel& toCopy)
     
 };
 
-//######################################################
-// Destructor for parent cell class.
-//#####################################################
-CellKernel::~CellKernel()
-{
-};
-
-//default copy function
-CellKernel* CellKernel::clone() {
-    return new CellKernel(*this);
-};
+CellKernel::~CellKernel() {}
 
 // Transmembrane potential 
 double CellKernel::updateV()
@@ -185,17 +173,7 @@ int CellKernel::externalStim(double stimval)
     iTot = iTot+stimval;   // If [ion] change, also should add stimval to specific ion total (e.g. iKt)
     
   return 1;
-};
-
-// Overwritten in child classes with calls to fxns that update currents
-void CellKernel::updateCurr()
-{
-};
-
-// Ditto but for intracellular ion concentration changes
-void CellKernel::updateConc()
-{
-};
+}
 double CellKernel::var(string name) {
     return *vars.at(name);
 }

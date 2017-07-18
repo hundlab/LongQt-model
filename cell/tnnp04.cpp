@@ -32,7 +32,6 @@ void TNNP04Control::Initialize() {
         TEMP = 310.0;
         FDAY=96485.3415;
 
-	type = "Human Ventricular (Ten Tusscher 2004)";
         dVdt=dVdtmax=-7.293176907E-7;
         t=0.0;
         dt=dtmin=0.005;
@@ -514,4 +513,9 @@ void TNNP04Control::makemap()
   pars["InakFactor"]=&Inakfactor;
   pars["InabFactor"]=&Inabfactor;
   pars["InaFactor"]=&Inafactor;
-};
+}
+
+const char *TNNP04Control::type() const
+{
+    return "Human Ventricular (Ten Tusscher 2004)";
+}

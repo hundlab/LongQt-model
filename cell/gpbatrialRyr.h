@@ -226,7 +226,8 @@ class gpbatrialRyr: public Cell
 	virtual void updateConc();
 
 	virtual void updateInal();
-        virtual int externalStim(double val);
+    virtual int externalStim(double val);
+    virtual const char* type() const;
     virtual map<string, double*> makemap();
     struct GateVariable Gate;
     struct RateConst Rate;

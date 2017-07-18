@@ -23,7 +23,6 @@ GpbVent::~GpbVent()
 }
 
 void GpbVent::Initialize() {
-    type = "Human Ventricular (Grandi 10)";
     Cm = 1.0; //uF/cm2
     ACap = 1.3810E-4; //capacitive area, cm2
     dVdt=dVdtmax=0.0;
@@ -700,6 +699,11 @@ void GpbVent::makemap()
   vars["iCabsl"]=&iCabsl;
   vars["iCab"]=&iCab;
 
+}
+
+const char *GpbVent::type() const
+{
+    return "Human Ventricular (Grandi 10)";
 }
 
 

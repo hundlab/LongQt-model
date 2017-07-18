@@ -14,7 +14,6 @@ OHaraRudy::OHaraRudy(OHaraRudy& toCopy) : Cell(toCopy) {
 
 void OHaraRudy::Initialize() {
 	vOld=-87.5;
-	type = "Human Ventricular (O'Hara-Rudy 2011)";
 	this->makemap();
 }
 
@@ -28,7 +27,12 @@ int OHaraRudy::externalStim(double stimval)
 	iKt = iKt + stimval;
 	iTot = iTot + stimval;
 
-	return 1;
+    return 1;
+}
+
+const char *OHaraRudy::type() const
+{
+    return "Human Ventricular (O'Hara-Rudy 2011)";
 };
 /*
    void OHaraRudy::stimulus()

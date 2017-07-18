@@ -92,6 +92,7 @@ class Courtemanche98 : public Cell
 
     virtual int externalStim(double stimval);
     virtual void makemap();
+    virtual const char* type() const;
 
     //##### Declare class variables ##############
     double naI,naO,kI,kO,caI,caO;  // Ion concentrations, mM

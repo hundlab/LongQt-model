@@ -105,6 +105,7 @@ class HRD09Control : public Cell
     virtual void updateConc();
     virtual int externalStim(double stimval);
     virtual void makemap();
+   virtual const char* type() const;
     //##### Declare class variables ##############
     double naI,naO,kI,kO,caI,caO,clI,clO;  // Ion concentrations
     double iNa;           // Fast inward Na current
@@ -196,6 +197,7 @@ class HRD09BorderZone : public HRD09Control
     virtual void updateIk1();
     virtual void updateIto();
     virtual void updateCamk();
+    virtual const char* type() const;
   private:
     void Initialize();
 };

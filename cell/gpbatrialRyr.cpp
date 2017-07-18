@@ -27,7 +27,6 @@ gpbatrialRyr::~gpbatrialRyr()
 
 void gpbatrialRyr::Initialize()
 {
-    type = "gpbatrialRyr";
     Cm = 1.0; //uF/cm2
     ACap = 1.10E-4; //capacitive area, cm2
     dVdt=dVdtmax=0.0;
@@ -760,6 +759,11 @@ int gpbatrialRyr::externalStim(double val)
 {
    iTot = iTot + val;
    return 1;
+}
+
+const char *gpbatrialRyr::type() const
+{
+    return "gpbatrialRyr";
 };
 
 // Create map for easy retrieval of variable values.

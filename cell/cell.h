@@ -41,12 +41,9 @@ public:
     Cell(const Cell& toCopy) : CellKernel(toCopy) {
         parsSelection = toCopy.parsSelection;
         varsSelection = toCopy.varsSelection;
-    };
-    virtual ~Cell() {};
-
-    virtual Cell* clone() {//public copy function
-        return new Cell(*this);
     }
+    virtual ~Cell() {}
+    virtual Cell* clone() = 0;
 
     virtual bool setOutputfileConstants(string filename);
     virtual bool setOuputfileVariables(string filename);

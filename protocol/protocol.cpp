@@ -88,7 +88,7 @@ Protocol::Protocol()
     //	pars["measfile"]= toInsert.Initialize("file", [this] () {return measfile;}, [this] (const string& value) {measfile = value;});
     pars["simvarfile"]= toInsert.Initialize("file", [this] () {return simvarfile;}, [this] (const string& value) {simvarfile = value;});
     pars["cellStateFile"]= toInsert.Initialize("file", [this] () {return cellStateFile;}, [this] (const string& value) {cellStateFile = value;});
-    pars["celltype"]= toInsert.Initialize("cell", [this] () {return cell()->type;}, [this] (const string& value) {this->cell(value);});
+    pars["celltype"]= toInsert.Initialize("cell", [this] () {return cell()->type();}, [this] (const string& value) {this->cell(value);});
 
 };
 
@@ -223,7 +223,7 @@ unsigned int Protocol::trial() const {
 }
 
 bool Protocol::cell(const string& type) {
-    if(cell() != NULL && type == cell()->type) {
+    if(cell() != NULL && type == cell()->type()) {
         return false;
     }
     try {

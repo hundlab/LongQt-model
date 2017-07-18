@@ -178,6 +178,7 @@ struct GateVariable {
 	virtual void updateConc();
     virtual int externalStim(double stimval);
     virtual void makemap();
+    virtual const char* type() const;
 
     struct GateVariable gate;
 };

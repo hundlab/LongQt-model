@@ -20,7 +20,7 @@ class ControlSa : public Cell
     ControlSa(const ControlSa& toCopy);
     ~ControlSa();
 
-  virtual ControlSa* clone();
+  virtual ControlSa* clone() override;
 
 /*########################*/
 /*    DEFINE STRUCTS      */
@@ -74,6 +74,7 @@ class ControlSa : public Cell
     virtual void updateCurr();
     virtual void updateConc();
     virtual int externalStim(double stimval);
+    virtual const char* type() const;
     
     //##### Declare additional class variables ##############
     double naI,kI,caI;  // Intracellular Ion concentrations
@@ -126,7 +127,8 @@ class ControlSa : public Cell
     double Vjsr;
     double Vss;
 
-    
+private:
+    void Initialize();
 };
 
 #endif

@@ -131,7 +131,7 @@ void GpbAtrialOnal17::Initialize()
 	fPhos = 8.382592879e-09;
 
 	fiNalP = 0;
-	isoflag=0;
+    isoflag=1;
 	RyRP = 382.6E-3;
 
 	Icalfactor = Icabfactor = Ipcafactor = 1;
@@ -213,12 +213,12 @@ void GpbAtrialOnal17::updateInal()
 
 
 	//WT
-	double iNalNP=(0.006*5)*Gate.ml*Gate.ml*Gate.ml*Gate.hl*(vOld-ENa); 
-	double iNalP = 3.2*iNalNP; 
-	double dfiNalP = (caMkii/(caMkii + .15) - fiNalP)/100*dt;
-	fiNalP = fiNalP + dfiNalP;
-	double fiNalNP = 1- fiNalP;
-	iNal = 	Inalfactor* fiNalP * iNalP + fiNalNP * iNalNP;
+    double iNalNP=(0.006*5)*Gate.ml*Gate.ml*Gate.ml*Gate.hl*(vOld-ENa);
+    double iNalP = 3.2*iNalNP;
+    double dfiNalP = (caMkii/(caMkii + .15) - fiNalP)/100*dt;
+    fiNalP = fiNalP + dfiNalP;
+    double fiNalNP = 1- fiNalP;
+    iNal = 	Inalfactor* fiNalP * iNalP + fiNalNP * iNalNP;
 	
 //for SA - SE fitting atrial data, 8 - 57
 //for SA - SE fitting vent data, 63 - 213
@@ -229,8 +229,8 @@ void GpbAtrialOnal17::updateInal()
 
 
 	//SE	
-//	double iNalP = (0.006*5*3.2)*Gate.ml*Gate.ml*Gate.ml*Gate.hl*(vOld-ENa); 
-//	iNal = iNalP;	
+ //   double iNalP = (0.006*5*3.2)*Gate.ml*Gate.ml*Gate.ml*Gate.hl*(vOld-ENa);
+  //  iNal = iNalP;
 };
 
 
@@ -302,9 +302,9 @@ void GpbAtrialOnal17::updateSRFlux(){
 	
 	double RyRN = RyRtot - RyRP;
 	double Rxnbasal = kb2815*RyRN;
-	double Rxnckryr =1.2923* kckryr*(caMkii*120E-3)*RyRN/(kmckryr+RyRN);//for WT
+    double Rxnckryr =1.2923* kckryr*(caMkii*120E-3)*RyRN/(kmckryr+RyRN);//for WT
 
-//	double Rxnckryr =1.2923* kckryr*(1*120E-3)*RyRN/(kmckryr+RyRN);//for S2814D
+ //   double Rxnckryr =1.2923* kckryr*(1*120E-3)*RyRN/(kmckryr+RyRN);//for S2814D
 //	double Rxnckryr = 0; //for S2814A
 	double Rxnpp1ryr = kpp1ryr*PP1*RyRP*OApp1/(kmpp1ryr+RyRP);
 	double Rxnpp2ryr = kpp2ryr*PP2A*RyRP*OApp2/(kmpp2ryr+RyRP);	

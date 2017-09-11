@@ -97,7 +97,7 @@ void TNNP04Control::Initialize() {
     makemap();
 }
 
-TNNP04Control* TNNP04Control::clone() {
+TNNP04Control *TNNP04Control::clone() {
     return new TNNP04Control(*this);
 }
 

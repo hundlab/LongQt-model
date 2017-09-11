@@ -19,7 +19,7 @@ Grid::Grid(const Grid& other) {
 Grid::~Grid(){}
 
 void Grid::addRow(int pos) {
-    if(pos < 0) {
+    if(pos < 0|| pos>fiber.size()) {
         pos = fiber.size();
     }
     fiber.insert(fiber.begin() +pos, Fiber(static_cast<int>(fibery.size())));
@@ -36,7 +36,7 @@ void Grid::addRows(unsigned int num, int position) {
     }
 }
 void Grid::addColumn(int pos) {
-    if(pos < 0) {
+    if(pos < 0 || pos>fibery.size()) {
         pos = fibery.size();
     }
     fibery.insert(fibery.begin() +pos, Fiber(static_cast<int>(fiber.size())));
@@ -95,9 +95,10 @@ void Grid::setCellTypes(list<CellInfo>& cells) {
 }
 void Grid::setCellTypes(const CellInfo& singleCell) {
     try {
-        Node* n = (*this)(singleCell.X,singleCell.Y);
+        shared_ptr<Node> n = (*this)(singleCell.X,singleCell.Y);
+        if(!n) return;
 		if(singleCell.cell) {
-            n->cell.reset(singleCell.cell);
+            n->cell = singleCell.cell;
 		}
 		n->np = singleCell.np;
 //        n->x = singleCell.X*singleCell.dx;
@@ -152,16 +153,16 @@ pair<int,int> Grid::findNode(const Node* node) {
     }
     return p;
 }
-Node* Grid::operator()(const pair<int,int>& p) {
+shared_ptr<Node> Grid::operator()(const pair<int,int>& p) {
     return (*this)(p.first,p.second);
 }
 
-Node* Grid::operator()(const int x, const int y) {
+shared_ptr<Node> Grid::operator()(const int x, const int y) {
     try {
-        return fiber.at(x).nodes.at(y).get();
+        return fiber.at(x).nodes.at(y);
     } catch(const std::out_of_range&) {
         qDebug("Grid: (%i,%i) not in grid", x,y);
-        return NULL;
+        return shared_ptr<Node>();
     }
 }
 
@@ -173,14 +174,14 @@ void Grid::reset() {
 void Grid::updateB(CellInfo node, CellUtils::Side s) {
 	int x = node.X;
 	int y = node.Y;
-    Node* nc = (*this)(x,y);
+    shared_ptr<Node> nc = (*this)(x,y);
 	double condOther;
 	double xo = x;
 	double yo = y;
 	double bpx = x;
 	double bpy = y;
 	bool lr = true;
-	Node* n = NULL;
+    shared_ptr<Node> n;
 	CellUtils::Side so;
 
 	if(!isnan(node.c[s]))
@@ -213,7 +214,7 @@ void Grid::updateB(CellInfo node, CellUtils::Side s) {
 		break;
 	}
     n = (*this)(xo,yo);
-	if(n == NULL) {
+    if(!n) {
 		return;
 	}
 	if(!isnan(node.c[s]))
@@ -228,4 +229,12 @@ void Grid::updateB(CellInfo node, CellUtils::Side s) {
 	} catch(const std::out_of_range& oor) {
         throw new std::out_of_range(string(oor.what())+string(": new cell was not in range of grid"));
     }
+}
+
+Grid::const_iterator Grid::begin() const {
+    return this->fiber.begin();
+}
+
+Grid::const_iterator Grid::end() const {
+    return this->fiber.end();
 }

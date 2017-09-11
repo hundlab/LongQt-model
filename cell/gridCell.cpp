@@ -34,7 +34,7 @@ GridCell::GridCell(GridCell& toCopy) : Cell(toCopy) {
     this->gridfileName = toCopy.gridfileName;
     this->grid = Grid(toCopy.grid);
 }
-GridCell* GridCell::clone() {
+GridCell *GridCell::clone() {
     return new GridCell(*this);
 }
 GridCell::~GridCell() {}
@@ -306,9 +306,10 @@ bool GridCell::handleRow(QXmlStreamReader& xml, list<CellInfo>& cells, CellInfo&
 bool GridCell::handleNode(QXmlStreamReader& xml, list<CellInfo>& cells, CellInfo& info) {
     if(xml.atEnd()) return false;
     auto cellMap = CellUtils::cellMap;
-    cellMap[InexcitableCell().type()] = [] () {return (Cell*) new InexcitableCell;};
+    auto inexcitable = InexcitableCell().type();
+    cellMap[inexcitable] = [] () {return make_shared<InexcitableCell>();};
     map<QString,function<bool(QXmlStreamReader& xml)>> handlers; 
-    handlers["type"] = [&info,cellMap] (QXmlStreamReader& xml) {
+    handlers["type"] = [&info,cellMap,inexcitable] (QXmlStreamReader& xml) {
         bool success = true;
         string cell_type;
         try {
@@ -318,7 +319,7 @@ bool GridCell::handleNode(QXmlStreamReader& xml, list<CellInfo>& cells, CellInfo
         } catch(const std::out_of_range&) {
             success = false;
             qWarning("%s not a valid cell type", cell_type.c_str());
-            info.cell = new InexcitableCell();
+            info.cell = cellMap.at(inexcitable)();
         }
         xml.skipCurrentElement();
         return success;
@@ -380,8 +381,8 @@ bool GridCell::readCellState(string file) {
     while(!xml.atEnd() && xml.readNextStartElement()){
         int row = xml.attributes().value("row").toInt();
         int col = xml.attributes().value("col").toInt();
-        Node* n = this->grid(row,col);
-        if(n == NULL) {
+        shared_ptr<Node> n = this->grid(row,col);
+        if(!n) {
             qWarning("Warning: (%i,%i) not a cell in grid",col,row);	
             xml.skipCurrentElement();
             continue;

@@ -5,21 +5,8 @@ VoltageClamp::VoltageClamp()  : Protocol(){
     __measureMgr.reset(new MeasureManager(cell()));
     v1 = v2 = v3 = v4 = v5 = 0;
     t1 = t2 = t3 = t4 = t5 = 0;
-    pars.erase("numtrials");
-    pars.erase("meastime");
-    GetSetRef toInsert;
-    pars["v1"] = toInsert.Initialize("double",[this] () {return std::to_string(v1);},[this] (const string& value) {v1 = std::stod(value);});
-    pars["v2"] = toInsert.Initialize("double",[this] () {return std::to_string(v2);},[this] (const string& value) {v2 = std::stod(value);});
-    pars["v3"] = toInsert.Initialize("double",[this] () {return std::to_string(v3);},[this] (const string& value) {v3 = std::stod(value);});
-    pars["v4"] = toInsert.Initialize("double",[this] () {return std::to_string(v4);},[this] (const string& value) {v4 = std::stod(value);});
-    pars["v5"] = toInsert.Initialize("double",[this] () {return std::to_string(v5);},[this] (const string& value) {v5 = std::stod(value);});
-    pars["t1"] = toInsert.Initialize("double",[this] () {return std::to_string(t1);},[this] (const string& value) {t1 = std::stod(value);});
-    pars["t2"] = toInsert.Initialize("double",[this] () {return std::to_string(t2);},[this] (const string& value) {t2 = std::stod(value);});
-    pars["t3"] = toInsert.Initialize("double",[this] () {return std::to_string(t3);},[this] (const string& value) {t3 = std::stod(value);});
-    pars["t4"] = toInsert.Initialize("double",[this] () {return std::to_string(t4);},[this] (const string& value) {t4 = std::stod(value);});
-    pars["t5"] = toInsert.Initialize("double",[this] () {return std::to_string(t5);},[this] (const string& value) {t5 = std::stod(value);});
-
     type = "Voltage Clamp Protocol";
+    this->mkmap();
 
     CellUtils::set_default_vals(*this);
 }
@@ -37,19 +24,19 @@ VoltageClamp& VoltageClamp::operator=(const VoltageClamp& toCopy) {
     this->CCcopy(toCopy);
     return *this;
 }
-Cell* VoltageClamp::cell() const
+shared_ptr<Cell> VoltageClamp::cell() const
 {
-    return __cell.get();
+    return __cell;
 }
 
-void VoltageClamp::cell(Cell* cell) {
+void VoltageClamp::cell(shared_ptr<Cell> cell) {
     if(__measureMgr) {
         __measureMgr->clear();
         __measureMgr->cell(cell);
     }
     if(__pvars)
         pvars().clear();
-    this->__cell.reset(cell);
+    this->__cell = cell;
 }
 
 CellPvars &VoltageClamp::pvars() {
@@ -58,6 +45,8 @@ CellPvars &VoltageClamp::pvars() {
 
 
 void VoltageClamp::CCcopy(const VoltageClamp& toCopy) {
+    this->mkmap();
+
     __cell.reset(toCopy.cell()->clone());
     v1 = toCopy.v1;
     v2= toCopy.v2;
@@ -93,6 +82,7 @@ int VoltageClamp::clamp()
 };
 
 void VoltageClamp::setupTrial() {
+    this->Protocol::setupTrial();
     set<string> temp;
     for(auto& pvar: pvars()) {
         temp.insert(pvar.first);
@@ -106,9 +96,9 @@ void VoltageClamp::setupTrial() {
     doneflag=1;     // reset doneflag
 
     this->__measureMgr->setupMeasures(
-        CellUtils::strprintf((datadir+"/"+propertyoutfile).c_str(),__trial));
+        CellUtils::strprintf((getDataDir()+"/"+propertyoutfile).c_str(),__trial));
     __cell->setOuputfileVariables(
-        CellUtils::strprintf((datadir+"/"+dvarsoutfile).c_str(),__trial));
+        CellUtils::strprintf((getDataDir()+"/"+dvarsoutfile).c_str(),__trial));
 }
 
 bool VoltageClamp::runTrial() {
@@ -145,11 +135,11 @@ bool VoltageClamp::runTrial() {
 
     // Output final (ss) property values for each trial
     this->__measureMgr->writeLast(CellUtils::strprintf(
-        (datadir+"/"+finalpropertyoutfile).c_str(),__trial));
+        (getDataDir()+"/"+finalpropertyoutfile).c_str(),__trial));
 
     // Output parameter values for each trial
     __cell->setOutputfileConstants(CellUtils::strprintf(
-        (datadir+"/"+finaldvarsoutfile).c_str(),__trial));
+        (getDataDir()+"/"+finaldvarsoutfile).c_str(),__trial));
     __cell->writeConstants();
     this->__measureMgr->close();
     __cell->closeFiles();
@@ -159,7 +149,7 @@ bool VoltageClamp::runTrial() {
 }
 void VoltageClamp::readInCellState(bool read) {
     if(read) {
-        __cell->readCellState(cellStateDir+"/"+cellStateFile+".xml");
+        __cell->readCellState(cellStateDir.absolutePath().toStdString()+"/"+cellStateFile+".xml");
         this->tMax += this->__cell->t;
         this->t1 += this->__cell->t;
         this->t2 += this->__cell->t;
@@ -173,4 +163,20 @@ MeasureManager &VoltageClamp::measureMgr()
 {
     return *this->__measureMgr;
 }
+void VoltageClamp::mkmap() {
+    pars.erase("numtrials");
+    pars.erase("meastime");
+    GetSetRef toInsert;
+    pars["v1"] = toInsert.Initialize("double",[this] () {return std::to_string(v1);},[this] (const string& value) {v1 = std::stod(value);});
+    pars["v2"] = toInsert.Initialize("double",[this] () {return std::to_string(v2);},[this] (const string& value) {v2 = std::stod(value);});
+    pars["v3"] = toInsert.Initialize("double",[this] () {return std::to_string(v3);},[this] (const string& value) {v3 = std::stod(value);});
+    pars["v4"] = toInsert.Initialize("double",[this] () {return std::to_string(v4);},[this] (const string& value) {v4 = std::stod(value);});
+    pars["v5"] = toInsert.Initialize("double",[this] () {return std::to_string(v5);},[this] (const string& value) {v5 = std::stod(value);});
+    pars["t1"] = toInsert.Initialize("double",[this] () {return std::to_string(t1);},[this] (const string& value) {t1 = std::stod(value);});
+    pars["t2"] = toInsert.Initialize("double",[this] () {return std::to_string(t2);},[this] (const string& value) {t2 = std::stod(value);});
+    pars["t3"] = toInsert.Initialize("double",[this] () {return std::to_string(t3);},[this] (const string& value) {t3 = std::stod(value);});
+    pars["t4"] = toInsert.Initialize("double",[this] () {return std::to_string(t4);},[this] (const string& value) {t4 = std::stod(value);});
+    pars["t5"] = toInsert.Initialize("double",[this] () {return std::to_string(t5);},[this] (const string& value) {t5 = std::stod(value);});
 
+
+}

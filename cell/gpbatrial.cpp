@@ -152,7 +152,7 @@ void GpbAtrial::Initialize() {
     makemap();
 
 }
-GpbAtrial* GpbAtrial::clone() {
+GpbAtrial *GpbAtrial::clone() {
     return new GpbAtrial(*this);
 }
 

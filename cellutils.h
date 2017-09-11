@@ -12,6 +12,7 @@
 #include <stdarg.h>
 #include <QXmlStreamReader>
 #include <memory>
+#include <functional>
 
 #include "cell.h"
 
@@ -23,7 +24,7 @@ class Protocol;
  */
 namespace CellUtils {
     //declare CellInitializer function type
-    typedef Cell* (*CellInitializer)(void);
+    typedef function<shared_ptr<Cell>(void)> CellInitializer;
 
     /*
      * cell map this is how new instances of cells are created
@@ -41,7 +42,7 @@ namespace CellUtils {
     extern const map<string, list<pair<string,string>>> protocolCellDefaults;
 
     //declare the ProtocolIntializer type
-    typedef Protocol* (*ProtocolInitializer) (void);
+    typedef function<shared_ptr<Protocol>(void)> ProtocolInitializer;
 
     /*
      * map of known protocols used to create new instances of protocols in

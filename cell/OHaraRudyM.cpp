@@ -16,7 +16,7 @@ void OHaraRudyM::Initialize() {
 	this->makemap();
 }
 
-OHaraRudyM* OHaraRudyM::clone() {
+OHaraRudyM *OHaraRudyM::clone() {
     return new OHaraRudyM(*this);
 }
 

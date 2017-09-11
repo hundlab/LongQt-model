@@ -118,7 +118,7 @@ iNaCafactor=1;
  
 this->makemap();
 }
-Ksan* Ksan::clone() {
+Ksan *Ksan::clone() {
     return new Ksan(*this);
 }
 /*Ist********************************************************************/

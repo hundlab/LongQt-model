@@ -16,8 +16,8 @@ void OHaraRudyEndo::Initialize() {
 	this->makemap();
 }
 
-OHaraRudyEndo* OHaraRudyEndo::clone() {
-    return new OHaraRudyEndo(*this);
+OHaraRudyEndo *OHaraRudyEndo::clone() {
+    return  new OHaraRudyEndo(*this);
 }
 
 const char *OHaraRudyEndo::type() const

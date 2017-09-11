@@ -2,6 +2,14 @@
 
 PvarsVoltageClamp::PvarsVoltageClamp(Protocol *proto): proto(proto) {}
 
+PvarsVoltageClamp::PvarsVoltageClamp(const PvarsVoltageClamp& o) {
+    this->generator = o.generator;
+    this->proto = o.proto;
+    for(auto pvar: *(o.__pvars)) {
+        this->__pvars->insert({pvar.first,new SIonChanParam(*pvar.second)});
+    }
+}
+
 CellPvars* PvarsVoltageClamp::clone() {
     return new PvarsVoltageClamp(*this);
 }
@@ -28,14 +36,14 @@ void PvarsVoltageClamp::calcIonChanParam(SIonChanParam* param) {
             {
                 normal_distribution<double> distribution(param->val[0]
                         ,param->val[1]);
-                val = distribution(this->generator);
+                val = distribution(*this->generator);
                 break;
             }
         case Distribution::lognormal:
             {
                 lognormal_distribution<double> logdistribution(
                         param->val[0], param->val[1]);
-                val = logdistribution(this->generator);
+                val = logdistribution(*this->generator);
                 break;
             }
     }

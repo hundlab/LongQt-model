@@ -29,8 +29,7 @@ class Br04 : public Cell
     Br04(Br04& toCopy);
     virtual ~Br04();
     
-    void Initialize();
-    Br04* clone();
+    Br04* clone() override;
 
 
  /*########################*/
@@ -156,6 +155,8 @@ class Br04 : public Cell
     double Vss;
 
     struct GateVariable gate;
+    protected:
+    virtual void Initialize();
 };
 
 #endif

@@ -363,9 +363,8 @@ ControlSa::~ControlSa()
 {
 };
 //overriden deep copy funtion
-ControlSa* ControlSa::clone(){
-    auto temp =  new ControlSa(*this);
-    return temp;
+ControlSa *ControlSa::clone(){
+    return new ControlSa(*this);
 };
 //L-type Ca2+ current
 void ControlSa::updateIcal()

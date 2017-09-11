@@ -27,7 +27,7 @@ class HRD09Control : public Cell
     HRD09Control();
     HRD09Control(const HRD09Control& toCopy);
     ~HRD09Control(); 
-    virtual HRD09Control* clone();
+    virtual HRD09Control* clone() override;
   
 /*########################*/
 /*    DEFINE STRUCTS	  */
@@ -172,8 +172,8 @@ class HRD09Control : public Cell
     double Iupfactor;
     double Ileakfactor;
 
-    private:
-    void Initialize();
+    protected:
+    virtual void Initialize();
 
 };
 
@@ -184,7 +184,7 @@ class HRD09BorderZone : public HRD09Control
     HRD09BorderZone(const HRD09BorderZone& toCopy);
     ~HRD09BorderZone();
 
-    virtual HRD09BorderZone* clone();
+    virtual HRD09BorderZone* clone() override;
 
   //##################################################
   // Declare functions that will be overwritten in 
@@ -198,8 +198,8 @@ class HRD09BorderZone : public HRD09Control
     virtual void updateIto();
     virtual void updateCamk();
     virtual const char* type() const;
-  private:
-    void Initialize();
+  protected:
+    virtual void Initialize();
 };
 
 #endif

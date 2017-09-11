@@ -6,10 +6,17 @@ Fiber::Fiber(int size) {
     nodes.resize(size, NULL);
     B.resize(size +1);
     for(;i < nodes.size(); i++) {
-        nodes[i].reset(new Node());
+        nodes[i] = make_shared<Node>();
         B[i] = 0;
     }
     B[size] = 0;
+}
+Fiber::Fiber(const Fiber& o) {
+    this->B = o.B;
+    this->nodes.resize(o.nodes.size());
+    for(unsigned int i = 0; i < o.nodes.size(); ++i) {
+        this->nodes[i] = make_shared<Node>(*o.nodes[i]);
+    }
 }
 Fiber::~Fiber() {}
 //#############################################################
@@ -49,6 +56,16 @@ void Fiber::updateVm(double& dt) {
         nodes[i]->cell->iKt=nodes[i]->cell->iKt+nodes[i]->dIax;
         nodes[i]->cell->setV(nodes[i]->vNew);
    }
+}
+shared_ptr<Node> Fiber::operator[](int pos) {
+    if(0 <= pos&&pos < nodes.size()) {
+        return this->nodes[pos];
+    } else {
+        return shared_ptr<Node>();
+    }
+}
+int Fiber::size() const{
+    return nodes.size();
 }
 void Fiber::diffuseBottom(int node) {
 	nodes[node]->cell->iTot-=
@@ -93,3 +110,11 @@ int Fiber::tstep()
   else
      return 1;
 }*/
+
+Fiber::const_iterator Fiber::begin() const{
+    return nodes.begin();
+}
+
+Fiber::const_iterator Fiber::end() const{
+    return nodes.end();
+}

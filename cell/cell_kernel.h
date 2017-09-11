@@ -17,6 +17,7 @@
 #include <fstream>
 #include <string>
 #include <iostream>
+#include <memory>
 
 #include "iobase.h"
 
@@ -26,7 +27,7 @@ using namespace std;
 //######################################################
 //Define class for parent cell.
 //######################################################
-class CellKernel
+class CellKernel : public std::enable_shared_from_this<CellKernel>
 {
   public:
     CellKernel();
@@ -82,8 +83,12 @@ class CellKernel
     virtual set<string> getVariables();
     virtual set<string> getConstants();
     virtual const char* type() const = 0;
+    void reset();
 
 protected:
     void copyVarPar(const CellKernel& toCopy);
+    virtual void Initialize();
+private:
+    void mkmap();
 };
 #endif

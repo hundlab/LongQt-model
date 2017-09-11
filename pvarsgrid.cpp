@@ -3,6 +3,14 @@
 
 PvarsGrid::PvarsGrid(Grid* grid): grid(grid) {}
 
+PvarsGrid::PvarsGrid(const PvarsGrid& o) {
+    this->generator = o.generator;
+    this->grid = o.grid;
+    for(auto pvar: *(o.__pvars)) {
+        this->__pvars->insert({pvar.first,new MIonChanParam(*pvar.second)});
+    }
+}
+
 CellPvars* PvarsGrid::clone() {
     return new PvarsGrid(*this);
 }
@@ -12,10 +20,10 @@ void PvarsGrid::setGrid(Grid* grid) {
 }
 
 void PvarsGrid::setIonChanParams() {
-    Cell* cell = 0;
+    shared_ptr<Cell> cell = 0;
     for(auto& pvar : *this->__pvars) {
         for(auto& oneCell : pvar.second->cells) {
-            cell = (*this->grid)(oneCell.first.second,oneCell.first.first)->cell.get();
+            cell = (*this->grid)(oneCell.first.second,oneCell.first.first)->cell;
             try {
                 *cell->pars.at(pvar.first) = oneCell.second;
             } catch(std::out_of_range&) {}
@@ -178,13 +186,13 @@ void PvarsGrid::calcIonChanParam(MIonChanParam* param) {
                 case CellPvars::Distribution::normal: 
                     {
                         normal_distribution<double> distribution(param->val[0],param->val[1]);
-                        val = distribution(generator);
+                        val = distribution(*generator);
                         break;
                     }
                 case CellPvars::Distribution::lognormal:
                     {
                         lognormal_distribution<double> logdistribution(param->val[0], param->val[1]);
-                        val = logdistribution(generator);
+                        val = logdistribution(*generator);
                         break;
                     }
             }

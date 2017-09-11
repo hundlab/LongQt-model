@@ -19,8 +19,7 @@ class GpbAtrialSE: public Cell
     GpbAtrialSE(GpbAtrialSE& toCopy);
     virtual ~GpbAtrialSE();
     
-    void Initialize();
-    GpbAtrialSE* clone();
+    GpbAtrialSE* clone() override;
 
 
 /*########################*/
@@ -227,5 +226,8 @@ struct GateVariable {
     virtual const char* type() const;
     struct GateVariable gate;
     struct RateConst Rate;
+
+    protected:
+    virtual void Initialize();
 };
 #endif

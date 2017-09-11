@@ -131,7 +131,7 @@ void GpbAtrialSE::Initialize() {
     this->makemap();
 
 }
-GpbAtrialSE* GpbAtrialSE::clone() {
+GpbAtrialSE *GpbAtrialSE::clone() {
     return new GpbAtrialSE(*this);
 }
 // CaMKII activity

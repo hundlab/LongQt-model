@@ -24,8 +24,8 @@ class CurrentClamp : public Protocol {
     CurrentClamp& operator=(const CurrentClamp& toCopy);
     virtual ~CurrentClamp();
 
-    virtual Cell* cell() const override;
-    virtual void cell(Cell* cell) override;
+    virtual shared_ptr<Cell> cell() const override;
+    virtual void cell(shared_ptr<Cell> cell) override;
 
     virtual CellPvars& pvars() override;
 
@@ -35,17 +35,18 @@ class CurrentClamp : public Protocol {
     virtual bool runTrial() override;
     void readInCellState(bool read) override;
 
-  protected:
     double bcl,stimval,stimdur,stimt;
     int numstims;   //variables for pacing.
     bool stimflag,paceflag;
-    double stimcounter;
 
+  protected:
     virtual int stim();
+    double stimcounter;
   private:
     void CCcopy(const CurrentClamp& toCopy);
+    void mkmap();
 
-    unique_ptr<Cell> __cell = unique_ptr<Cell>(new HRD09Control);        // pointer to cell class
+    shared_ptr<Cell> __cell = make_shared<HRD09Control>();        // pointer to cell class
     unique_ptr<PvarsCurrentClamp> __pvars
         = unique_ptr<PvarsCurrentClamp>(new PvarsCurrentClamp(this));
     unique_ptr<MeasureManager> __measureMgr; // set of measure class for measuring SV props.

@@ -142,7 +142,7 @@ void gpbatrialRyr::Initialize()
 }
 
 //overriden deep copy funtion
-gpbatrialRyr* gpbatrialRyr::clone(){
+gpbatrialRyr *gpbatrialRyr::clone(){
     return new gpbatrialRyr(*this);
 };
 

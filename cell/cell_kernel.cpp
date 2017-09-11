@@ -10,12 +10,8 @@
 
 #include <QDebug>
 
-//######################################################
-// Constructor for parent cell class - the basis for 
-// any excitable cell model.  
-//######################################################
-CellKernel::CellKernel()
-{
+
+void CellKernel::Initialize() {
     //##### Assign default parameters ##################
     dtmin = 0.005;  // ms
     dtmed = 0.01;
@@ -36,36 +32,15 @@ CellKernel::CellKernel()
     vOld = vNew =  -88.0;
     iTot = iTotold = 0.000000000001;
     iNat = iKt = iCat = 0.0;
-    
-    // make map of state vars
-    vars["vOld"]=&vOld;
-    vars["t"]=&t;
-    vars["dVdt"]=&dVdt;
-    vars["iTot"]=&iTot;
-    vars["iKt"]=&iKt;
-    vars["iNat"]=&iNat;
-    vars["iCat"]=&iCat;
-    
-    // make map of params
-    pars["dtmin"]=&dtmin;
-    pars["dtmed"]=&dtmed;
-    pars["dtmax"]=&dtmax;
-    pars["Cm"]=&Cm;
-    pars["Rcg"]=&Rcg;
-    pars["RGAS"]=&RGAS;
-    pars["TEMP"]=&TEMP;
-    pars["FDAY"]=&FDAY;
-    pars["cellRadius"]=&cellRadius;
-    pars["cellLength"]=&cellLength;
-    pars["Vcell"]=&Vcell;
-    pars["Vmyo"]=&Vmyo;
-    pars["AGeo"]=&AGeo;
-    pars["ACap"]=&ACap;
-    
-		//add potenttially needed values to pars
-    pars["vNew"]=&vNew;
-    pars["dVdtmax"]=&dVdtmax;
+    this->mkmap();
+}
 
+//######################################################
+// Constructor for parent cell class - the basis for 
+// any excitable cell model.  
+//######################################################
+CellKernel::CellKernel() {
+    this->Initialize();
 };
 
 //#####################################################
@@ -73,61 +48,11 @@ CellKernel::CellKernel()
 //#####################################################
 CellKernel::CellKernel(const CellKernel& toCopy)
 {
-
-    //##### Assign default parameters ##################
-    dtmin = toCopy.dtmin;
-    dtmed = toCopy.dtmed;
-    dtmax = toCopy.dtmax;
-    dvcut = toCopy.dvcut;    // mV/ms
-    Cm = toCopy.Cm ;  // uF/cm^s
-    Rcg = toCopy.Rcg;
-    cellRadius = toCopy.cellRadius; // cm
-    cellLength = toCopy.cellLength;  // cm
-    RGAS = toCopy.RGAS;
-    TEMP = toCopy.TEMP;
-    FDAY = toCopy.FDAY;
-
-    //##### Initialize variables ##################
-    dVdt= toCopy.dVdt;
-    dVdtmax= toCopy.dVdtmax;
-    t= toCopy.t;
-    dt=toCopy.dt;
-    vOld = toCopy.vOld;
-    vNew = toCopy.vNew;
-    iTot = toCopy.iTot;
-    iTotold = toCopy.iTotold;
-    iNat = toCopy.iNat;
-    iKt = toCopy.iKt;
-    iCat = toCopy.iCat;
-    
-    // make map of state vars
-    vars["vOld"]=&vOld;
-    vars["t"]=&t;
-    vars["dVdt"]=&dVdt;
-    vars["iTot"]=&iTot;
-    vars["iKt"]=&iKt;
-    vars["iNat"]=&iNat;
-    vars["iCat"]=&iCat;
-    
-    // make map of params
-    pars["dtmin"]=&dtmin;
-    pars["dtmed"]=&dtmed;
-    pars["dtmax"]=&dtmax;
-    pars["Cm"]=&Cm;
-    pars["Rcg"]=&Rcg;
-    pars["RGAS"]=&RGAS;
-    pars["TEMP"]=&TEMP;
-    pars["FDAY"]=&FDAY;
-    pars["cellRadius"]=&cellRadius;
-    pars["cellLength"]=&cellLength;
-    pars["Vcell"]=&Vcell;
-    pars["Vmyo"]=&Vmyo;
-    pars["AGeo"]=&AGeo;
-    pars["ACap"]=&ACap;
-    
+    this->Initialize();
 };
 
-CellKernel::~CellKernel() {}
+CellKernel::~CellKernel() {
+}
 
 // Transmembrane potential 
 double CellKernel::updateV()
@@ -230,4 +155,37 @@ void CellKernel::copyVarPar(const CellKernel& toCopy) {
         }
 
     }
+}
+void CellKernel::mkmap() {
+    // make map of state vars
+    vars["vOld"]=&vOld;
+    vars["t"]=&t;
+    vars["dVdt"]=&dVdt;
+    vars["iTot"]=&iTot;
+    vars["iKt"]=&iKt;
+    vars["iNat"]=&iNat;
+    vars["iCat"]=&iCat;
+    
+    // make map of params
+    pars["dtmin"]=&dtmin;
+    pars["dtmed"]=&dtmed;
+    pars["dtmax"]=&dtmax;
+    pars["Cm"]=&Cm;
+    pars["Rcg"]=&Rcg;
+    pars["RGAS"]=&RGAS;
+    pars["TEMP"]=&TEMP;
+    pars["FDAY"]=&FDAY;
+    pars["cellRadius"]=&cellRadius;
+    pars["cellLength"]=&cellLength;
+    pars["Vcell"]=&Vcell;
+    pars["Vmyo"]=&Vmyo;
+    pars["AGeo"]=&AGeo;
+    pars["ACap"]=&ACap;
+    
+		//add potenttially needed values to pars
+    pars["vNew"]=&vNew;
+    pars["dVdtmax"]=&dVdtmax;
+}
+void CellKernel::reset() {
+    this->Initialize();
 }

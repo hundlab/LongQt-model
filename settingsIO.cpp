@@ -2,6 +2,7 @@
 #include "cellutils.h"
 #include <QFile>
 #include <QDebug>
+#include <QDir>
 
 SettingsIO* SettingsIO::__instance = 0;
 
@@ -46,8 +47,8 @@ bool SettingsIO::readProtoType(shared_ptr<Protocol>& proto,  QXmlStreamReader& x
                 return false;
             }
             try {
-                string datadir = proto->datadir;
-                proto.reset(CellUtils::protoMap.at(type.toStdString())());
+                QDir datadir = proto->datadir;
+                proto = CellUtils::protoMap.at(type.toStdString())();
                 proto->datadir = datadir;
                 emit ProtocolChanged(proto);
             } catch (const std::out_of_range&) {

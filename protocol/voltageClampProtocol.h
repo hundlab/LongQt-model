@@ -22,8 +22,8 @@ class VoltageClamp : public Protocol {
     VoltageClamp* clone();
     VoltageClamp& operator=(const VoltageClamp& toCopy);
 
-    virtual Cell* cell() const override;
-    virtual void cell(Cell* cell) override;
+    virtual shared_ptr<Cell> cell() const override;
+    virtual void cell(shared_ptr<Cell> cell) override;
 
     virtual CellPvars& pvars() override;
 
@@ -33,13 +33,15 @@ class VoltageClamp : public Protocol {
 
     virtual MeasureManager& measureMgr() override;
 
+    double v1, v2, v3, v4, v5;
+    double t1, t2, t3, t4, t5;
+
   private:
 	int clamp();
     void CCcopy(const VoltageClamp& toCopy);
+    void mkmap();
 
-    double v1, v2, v3, v4, v5;
-    double t1, t2, t3, t4, t5;
-    unique_ptr<Cell> __cell = unique_ptr<Cell>(new HRD09Control);        // pointer to cell class
+    shared_ptr<Cell> __cell = make_shared<HRD09Control>();        // pointer to cell class
     unique_ptr<PvarsVoltageClamp> __pvars
         = unique_ptr<PvarsVoltageClamp>(new PvarsVoltageClamp(this));
     unique_ptr<MeasureManager> __measureMgr; // set of measure class for measuring SV props.

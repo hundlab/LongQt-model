@@ -23,7 +23,7 @@ class SettingsIO : public QObject {
         void writeSettings(shared_ptr<Protocol> proto, QString filename);
     signals:
         void ProtocolChanged(shared_ptr<Protocol>);
-        void CellChanged(Cell*);
+        void CellChanged(shared_ptr<Cell>);
         void settingsRead();
 };
 

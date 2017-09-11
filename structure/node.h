@@ -8,17 +8,18 @@
 #include "cellutils.h"
 #include "inexcitablecell.h"
 #include <memory>
+#include <array>
 
-struct Node {
+struct Node : public std::enable_shared_from_this<Node> {
     Node() {};
 	Node(const Node& other);
 	~Node() {};
 
 	void setCondConst(int X, double dx, CellUtils::Side s, bool perc = true, double val = 1);
 //	void updateV(double dt);
-    unique_ptr<Cell> cell = unique_ptr<Cell>(new InexcitableCell());
+    shared_ptr<Cell> cell = make_shared<InexcitableCell>();
     double rd = 1.5; // gap junctional disk resistance.
-	double condConst[4] = {0,0,0,0};
+	array<double,4> condConst = {0,0,0,0};
 //## default value cannot be deterimined by constructor
     double dIax = 0;
 	int np = 1; //number of cells in each node

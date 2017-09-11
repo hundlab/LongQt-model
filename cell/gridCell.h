@@ -22,8 +22,7 @@ class GridCell: public Cell {
         GridCell(GridCell& toCopy);
         ~GridCell();
 
-        void Initialize();
-        GridCell* clone();
+        GridCell* clone() override;
         Grid* getGrid();
 
         virtual void updateConc();
@@ -66,5 +65,7 @@ class GridCell: public Cell {
         string gridfileName;
 
         void makeMap();
+    protected:
+        virtual void Initialize();
 };
 #endif

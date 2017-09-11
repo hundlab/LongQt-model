@@ -29,7 +29,6 @@ class MeasureWave: public Measure
 
         MeasureWave& operator=(const MeasureWave& toCopy) = delete;
 
-        virtual void calcMeasure(double time,double var);  //measures props related to var; returns 1 when ready for output.
         void reset();   //resets params to init vals
 
         //		string varname;
@@ -42,6 +41,7 @@ class MeasureWave: public Measure
 
     protected:
 
+        virtual void calcMeasure(double time,double var);  //measures props related to var; returns 1 when ready for output.
         double vartakeoff = NAN; //var value at point of max deflection.
         double durtime1 = NAN;
         double amp = NAN;

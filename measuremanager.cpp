@@ -2,7 +2,7 @@
 #include "cellutils.h"
 #include <QDebug>
 
-MeasureManager::MeasureManager(Cell* cell): __cell(cell) {};
+MeasureManager::MeasureManager(shared_ptr<Cell> cell): __cell(cell) {};
 
 MeasureManager::~MeasureManager() {
     if(this->ofile) {
@@ -18,7 +18,7 @@ MeasureManager* MeasureManager::clone() {
     return new MeasureManager(*this);
 }
 
-Cell* MeasureManager::cell() {
+shared_ptr<Cell> MeasureManager::cell() {
     return this->__cell;
 }
 void MeasureManager::copy(const MeasureManager& o) {
@@ -28,7 +28,7 @@ void MeasureManager::copy(const MeasureManager& o) {
     last = o.last;
 }
 
-void MeasureManager::cell(Cell* cell) {
+void MeasureManager::cell(shared_ptr<Cell> cell) {
     if(cell->type() != __cell->type()) {
         this->variableSelection.clear();
         this->measures.clear();
@@ -60,8 +60,8 @@ shared_ptr<Measure> MeasureManager::getMeasure(string varname, set<string> selec
     return shared_ptr<Measure>(new Measure(selection));
 }
 
-void MeasureManager::addMeasure(string var) {
-    variableSelection.insert({var,{}});
+void MeasureManager::addMeasure(string var,set<string> selection) {
+    variableSelection.insert({var,selection});
 }
 
 void MeasureManager::removeMeasure(string var) {

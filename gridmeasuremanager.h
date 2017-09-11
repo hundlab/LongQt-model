@@ -15,13 +15,13 @@
 
 class GridMeasureManager: public MeasureManager {
     public:
-        GridMeasureManager(GridCell* cell);
+        GridMeasureManager(shared_ptr<GridCell> cell);
         virtual ~GridMeasureManager() = default;
         virtual GridMeasureManager* clone();
 
         void dataNodes(set<pair<int,int>> nodes);
         set<pair<int,int>> dataNodes();
-        void cell(GridCell* cell);
+        void cell(shared_ptr<GridCell> cell);
 
         virtual bool writeMVarsFile(QXmlStreamWriter& xml);
         virtual bool readMvarsFile(QXmlStreamReader& xml);

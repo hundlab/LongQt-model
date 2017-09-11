@@ -18,12 +18,12 @@ class PvarsGrid : public CellPvars {
             virtual string str(string name) override;
             MIonChanParam() = default;
             MIonChanParam(const IonChanParam& other): IonChanParam(other) {};
-
+            virtual ~MIonChanParam() = default;
         };
 
         //Functions
         PvarsGrid(Grid* grid);
-        PvarsGrid(const PvarsGrid&) = default;
+        PvarsGrid(const PvarsGrid&);
         virtual ~PvarsGrid() = default;
         virtual CellPvars* clone();
         void setGrid(Grid* grid);

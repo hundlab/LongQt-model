@@ -12,11 +12,12 @@ class PvarsVoltageClamp : public CellPvars {
             virtual string str(string name) override;
             SIonChanParam() = default;
             SIonChanParam(const IonChanParam& other): IonChanParam(other) {};
+            virtual ~SIonChanParam() = default;
         };
 
         //Functions
         PvarsVoltageClamp(Protocol* proto);
-        PvarsVoltageClamp(const PvarsVoltageClamp&) = default;
+        PvarsVoltageClamp(const PvarsVoltageClamp&);
         virtual ~PvarsVoltageClamp() = default;
         virtual CellPvars* clone();
         void protocol(Protocol *proto);

@@ -13,17 +13,7 @@ CurrentClamp::CurrentClamp()  : Protocol() {
     stimflag = 0;
     stimcounter = 0;
 
-    GetSetRef toInsert;
-    pars["stimdur"]= toInsert.Initialize("double", [this] () {return std::to_string(stimdur);}, [this] (const string& value) {stimdur = std::stod(value);});
-    pars["stimt"]= toInsert.Initialize("double", [this] () {return std::to_string(stimt);}, [this] (const string& value) {stimt = std::stod(value);});
-    pars["stimval"]= toInsert.Initialize("double", [this] () {return std::to_string(stimval);}, [this] (const string& value) {stimval = std::stod(value);});
-    pars["bcl"] = toInsert.Initialize("double", [this] () {return std::to_string(bcl);}, [this] (const string& value) {bcl = std::stod(value);});
-    pars["numstims"]= toInsert.Initialize("int", [this] () {return std::to_string(numstims);}, [this] (const string& value) {numstims = std::stoi(value);});
-    pars["paceflag"]= toInsert.Initialize("bool", [this] () {return CellUtils::to_string(paceflag);}, [this] (const string& value) {paceflag = CellUtils::stob(value);});
-    pars["numtrials"]= toInsert.Initialize("int", [this] () {return std::to_string(numtrials);},
-            [this] (const string& value) {
-                numtrials = std::stoi(value);
-                this->pvars().calcIonChanParams();});
+    this->mkmap();
     type = "Current Clamp Protocol";
 
     CellUtils::set_default_vals(*this);
@@ -44,19 +34,19 @@ CurrentClamp& CurrentClamp::operator=(const CurrentClamp& toCopy) {
 
 CurrentClamp::~CurrentClamp() {}
 
-Cell* CurrentClamp::cell() const
+shared_ptr<Cell> CurrentClamp::cell() const
 {
-    return __cell.get();
+    return __cell;
 }
 
-void CurrentClamp::cell(Cell* cell) {
+void CurrentClamp::cell(shared_ptr<Cell> cell) {
     if(__measureMgr) {
         __measureMgr->clear();
         __measureMgr->cell(cell);
     }
     if(__pvars)
         pvars().clear();
-    this->__cell.reset(cell);
+    this->__cell = cell;
 }
 
 CellPvars& CurrentClamp::pvars() {
@@ -68,6 +58,7 @@ MeasureManager &CurrentClamp::measureMgr() {
 }
 
 void CurrentClamp::CCcopy(const CurrentClamp& toCopy) {
+    this->mkmap();
     auto test = toCopy.cell()->clone();
     __cell.reset(test);
     stimdur = toCopy.stimdur;  // stim duration, ms
@@ -111,6 +102,7 @@ int CurrentClamp::stim()
 };
 
 void CurrentClamp::setupTrial() {
+    this->Protocol::setupTrial();
     set<string> temp;
     for(auto& pvar: *__pvars) {
         temp.insert(pvar.first);
@@ -118,13 +110,15 @@ void CurrentClamp::setupTrial() {
     __cell->setConstantSelection(temp);
     temp.clear();
     time = __cell->t = 0.0;      // reset time
+    stimt = 0;
+    stimcounter = 0;
     this->readInCellState(this->readCellState);
     this->__pvars->setIonChanParams();
     doneflag=1;     // reset doneflag
     __cell->setOuputfileVariables(
-        CellUtils::strprintf((datadir+"/"+dvarsoutfile).c_str(),__trial));
+        CellUtils::strprintf((getDataDir()+"/"+dvarsoutfile).c_str(),__trial));
     this->__measureMgr->setupMeasures(
-        CellUtils::strprintf((datadir+"/"+propertyoutfile).c_str(),__trial));
+        CellUtils::strprintf((getDataDir()+"/"+propertyoutfile).c_str(),__trial));
 }
 
 bool CurrentClamp::runTrial() {
@@ -157,11 +151,11 @@ bool CurrentClamp::runTrial() {
 
     // Output final (ss) property values for each trial
     this->__measureMgr->writeLast(CellUtils::strprintf(
-        (datadir+"/"+finalpropertyoutfile).c_str(),__trial));
+        (getDataDir()+"/"+finalpropertyoutfile).c_str(),__trial));
 
     // Output parameter values for each trial
     __cell->setOutputfileConstants(CellUtils::strprintf(
-        (datadir+"/"+finaldvarsoutfile).c_str(),__trial));
+        (getDataDir()+"/"+finaldvarsoutfile).c_str(),__trial));
     __cell->writeConstants();
     this->__measureMgr->close();
     __cell->closeFiles();
@@ -172,10 +166,22 @@ bool CurrentClamp::runTrial() {
 
 void CurrentClamp::readInCellState(bool read) {
     if(read) {
-        __cell->readCellState(cellStateDir+"/"+cellStateFile+std::to_string(__trial)+".xml");
+        __cell->readCellState(cellStateDir.absolutePath().toStdString()+"/"+cellStateFile+std::to_string(__trial)+".xml");
         this->stimt = __cell->t;
         this->tMax += this->__cell->t;
     }
 }
 
-
+void CurrentClamp::mkmap() {
+    GetSetRef toInsert;
+    pars["stimdur"]= toInsert.Initialize("double", [this] () {return std::to_string(stimdur);}, [this] (const string& value) {stimdur = std::stod(value);});
+    pars["stimt"]= toInsert.Initialize("double", [this] () {return std::to_string(stimt);}, [this] (const string& value) {stimt = std::stod(value);});
+    pars["stimval"]= toInsert.Initialize("double", [this] () {return std::to_string(stimval);}, [this] (const string& value) {stimval = std::stod(value);});
+    pars["bcl"] = toInsert.Initialize("double", [this] () {return std::to_string(bcl);}, [this] (const string& value) {bcl = std::stod(value);});
+    pars["numstims"]= toInsert.Initialize("int", [this] () {return std::to_string(numstims);}, [this] (const string& value) {numstims = std::stoi(value);});
+    pars["paceflag"]= toInsert.Initialize("bool", [this] () {return CellUtils::to_string(paceflag);}, [this] (const string& value) {paceflag = CellUtils::stob(value);});
+    pars["numtrials"]= toInsert.Initialize("int", [this] () {return std::to_string(numtrials);},
+            [this] (const string& value) {
+                numtrials = std::stoi(value);
+                this->pvars().calcIonChanParams();});
+}

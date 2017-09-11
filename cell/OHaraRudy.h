@@ -65,8 +65,7 @@ class OHaraRudy : public Cell
 		OHaraRudy(OHaraRudy& toCopy);
 		~OHaraRudy();
 
-		void Initialize();
-		virtual OHaraRudy* clone();
+        virtual OHaraRudy* clone() override;
 
 		virtual void makemap();
 
@@ -181,5 +180,7 @@ class OHaraRudy : public Cell
 		virtual int externalStim(double stimval);
         virtual const char* type() const;
 
+    protected:
+		virtual void Initialize();
 };
 #endif

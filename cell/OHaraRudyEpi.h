@@ -10,8 +10,10 @@ class OHaraRudyEpi : public OHaraRudy
 		OHaraRudyEpi(OHaraRudyEpi& toCopy);
 		~OHaraRudyEpi();
 
-		void Initialize();
-		virtual OHaraRudyEpi* clone();
+        virtual OHaraRudyEpi* clone() override;
         virtual const char* type() const;
+
+    protected:
+		virtual void Initialize();
 };
 #endif

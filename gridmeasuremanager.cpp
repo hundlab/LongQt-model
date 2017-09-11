@@ -1,6 +1,6 @@
 #include "gridmeasuremanager.h"
 
-GridMeasureManager::GridMeasureManager(GridCell* cell):
+GridMeasureManager::GridMeasureManager(shared_ptr<GridCell> cell):
 MeasureManager(cell) {
     this->grid = cell->getGrid();
 }
@@ -15,7 +15,7 @@ GridMeasureManager* GridMeasureManager::clone() {
     return new GridMeasureManager(*this);
 }
 
-void GridMeasureManager::cell(GridCell* cell) {
+void GridMeasureManager::cell(shared_ptr<GridCell> cell) {
     this->grid = cell->getGrid();
     this->MeasureManager::cell(cell);
 }

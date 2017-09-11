@@ -104,7 +104,7 @@ void Courtemanche98::Initialize() {
         Csqn_m = 10; //mM
         this->makemap();
 }
-Courtemanche98* Courtemanche98::clone() {
+Courtemanche98 *Courtemanche98::clone() {
     return new Courtemanche98(*this);
 }
 //######################################################

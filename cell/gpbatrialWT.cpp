@@ -128,7 +128,7 @@ void GpbAtrialWT::Initialize() {
 
     this->makemap();
 }
-GpbAtrialWT* GpbAtrialWT::clone() {
+GpbAtrialWT *GpbAtrialWT::clone() {
     return new GpbAtrialWT(*this);
 }
 

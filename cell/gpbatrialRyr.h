@@ -45,8 +45,7 @@ class gpbatrialRyr: public Cell
     gpbatrialRyr();
     virtual ~gpbatrialRyr();
     gpbatrialRyr(const gpbatrialRyr& toCopy);
-    virtual gpbatrialRyr* clone();
-    virtual void Initialize();
+    virtual gpbatrialRyr* clone() override;
 
     double Vsl;
     double Vjunc;
@@ -231,5 +230,7 @@ class gpbatrialRyr: public Cell
     virtual map<string, double*> makemap();
     struct GateVariable Gate;
     struct RateConst Rate;
+    protected:
+    virtual void Initialize();
 };
 #endif

@@ -12,11 +12,12 @@ class PvarsCurrentClamp : public CellPvars {
             virtual string str(string name) override;
             TIonChanParam() = default;
             TIonChanParam(const IonChanParam& other): IonChanParam(other) {};
+            virtual ~TIonChanParam() = default;
         };
 
         //Functions
         PvarsCurrentClamp(Protocol* proto);
-        PvarsCurrentClamp(const PvarsCurrentClamp&) = default;
+        PvarsCurrentClamp(const PvarsCurrentClamp&);
         virtual ~PvarsCurrentClamp() = default;
         virtual CellPvars* clone();
         void protocol(Protocol *proto);

@@ -16,7 +16,7 @@ void OHaraRudyEpi::Initialize() {
 	this->makemap();
 }
 
-OHaraRudyEpi* OHaraRudyEpi::clone() {
+OHaraRudyEpi *OHaraRudyEpi::clone() {
     return new OHaraRudyEpi(*this);
 }
 

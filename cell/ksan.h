@@ -29,8 +29,7 @@ class Ksan : public Cell
     Ksan(Ksan& toCopy);
     virtual ~Ksan();
     
-    void Initialize();
-    Ksan* clone();
+    Ksan* clone() override;
 
 /*########################*/
 /*    DEFINE STRUCTS	  */
@@ -142,7 +141,8 @@ class Ksan : public Cell
    double iNaCafactor;
 
 
-
+protected:
+    virtual void Initialize();
 };
 
 #endif

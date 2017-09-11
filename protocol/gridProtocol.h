@@ -28,10 +28,12 @@ class GridProtocol : public CurrentClamp {
         virtual bool writepars(QXmlStreamWriter& xml);
         virtual int readpars(QXmlStreamReader& xml);
 
-        virtual Cell* cell() const override;
-        virtual void cell(Cell* cell) override;
+        virtual shared_ptr<Cell> cell() const override;
+        virtual void cell(shared_ptr<Cell> cell) override;
         virtual bool cell(const string& type) override;
         virtual list<string> cellOptions() override;
+
+        Grid& getGrid();
 
         GridMeasureManager& gridMeasureMgr();
 
@@ -40,17 +42,21 @@ class GridProtocol : public CurrentClamp {
         virtual MeasureManager& measureMgr() override;
 
         void setStim2(bool enable);
-    private:
-        void CCcopy(const GridProtocol& toCopy);
+        bool getStim2();
+
         set<pair<int,int>> stimNodes;
         set<pair<int,int>> stimNodes2;
         double stimval2, stimdur2, bcl2, stimt2;
+
+    private:
+        void CCcopy(const GridProtocol& toCopy);
+        void mkmap();
         bool stim2 = false;
         string setToString(set<pair<int,int>>& nodes);
         set<pair<int,int>> stringToSet(string nodesList);
         Grid* grid;
         void swapStims();
-        unique_ptr<GridCell> __cell = unique_ptr<GridCell>(new GridCell());        // pointer to cell class
+        shared_ptr<GridCell> __cell = make_shared<GridCell>();        // pointer to cell class
         unique_ptr<PvarsGrid> __pvars;
         unique_ptr<GridMeasureManager> __measureMgr; // set of measure class for measuring SV props.
 

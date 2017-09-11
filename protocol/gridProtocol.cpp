@@ -12,28 +12,10 @@
 #include <QDebug>
 
 GridProtocol::GridProtocol() : CurrentClamp() {
-    __measureMgr.reset(new GridMeasureManager(this->__cell.get()));
+    __measureMgr.reset(new GridMeasureManager(this->__cell));
     grid = __cell->getGrid();
     this->__pvars.reset(new PvarsGrid(grid));
-    GetSetRef toInsert;
-    pars["gridFile"]= toInsert.Initialize("file",
-            [this] () {return __cell->gridfile();},
-            [this] (const string& value) {__cell->setGridfile(value);});
-//    pars["measNodes"]= toInsert.Initialize("set",
-//            [this] () {return setToString(dataNodes);},
-//            [this] (const string& value) {dataNodes = stringToSet(value);});
-    pars["stimNodes"]= toInsert.Initialize("set",
-            [this] () {return setToString(stimNodes);},
-            [this] (const string& value) {stimNodes = stringToSet(value);});
-    pars["secondStim"]= toInsert.Initialize("bool",
-            [this] () {return CellUtils::to_string(this->stim2);},
-            [this] (const string& value) {this->setStim2(CellUtils::stob(value));});
-    pars["celltype"]= toInsert.Initialize("cell",
-            [this] () {return "";},
-            [] (const string&) {});
-    pars.erase("numtrials");
-    pars["paceflag"].set("true");
-    pars.erase("paceflag");
+    this->mkmap();
     type = "Grid Protocol";
     stimval2 = stimval;
     stimdur2 = stimdur;
@@ -54,13 +36,19 @@ GridProtocol::GridProtocol(const GridProtocol& toCopy) : CurrentClamp(toCopy){
     this->CCcopy(toCopy);
 }
 void GridProtocol::CCcopy(const GridProtocol& toCopy) {
+    this->mkmap();
+    this->setStim2(toCopy.stim2);
+    stimval2 = toCopy.stimval2;
+    stimdur2 = toCopy.stimdur2;
+    bcl2 = toCopy.bcl2;
+    stimt2 = toCopy.stimt2;
     __cell.reset(dynamic_cast<GridCell*>(toCopy.cell()->clone()));
     this->stimNodes = toCopy.stimNodes;
     this->grid = this->__cell->getGrid();
     __pvars = unique_ptr<PvarsGrid>(new PvarsGrid(*toCopy.__pvars));
     __pvars->setGrid(this->grid);
     __measureMgr.reset(toCopy.__measureMgr->clone());
-    __measureMgr->cell(this->__cell.get());
+    __measureMgr->cell(this->__cell);
 }
 // External stimulus.
 int GridProtocol::stim()
@@ -92,13 +80,14 @@ int GridProtocol::stim()
 };
 
 void GridProtocol::setupTrial() {
+    this->Protocol::setupTrial();
     set<string> temp;
     for(auto& pvar: pvars()) {
         temp.insert(pvar.first);
     }
     __cell->setConstantSelection(temp);
     temp.clear();
-    this->__measureMgr->setupMeasures(datadir+"/"+
+    this->__measureMgr->setupMeasures(getDataDir()+"/"+
         CellUtils::strprintf(propertyoutfile.c_str(),__trial));
 
     time = __cell->t = 0.0;      // reset time
@@ -108,7 +97,7 @@ void GridProtocol::setupTrial() {
     this->pvars().setIonChanParams();
     doneflag=1;     // reset doneflag
 
-    __cell->setOuputfileVariables(datadir+"/"
+    __cell->setOuputfileVariables(getDataDir()+"/"
         +CellUtils::strprintf(dvarsoutfile.c_str(),__trial));
 }
 
@@ -147,10 +136,10 @@ bool GridProtocol::runTrial() {
 
     // Output final (ss) property values for each trial
     this->__measureMgr->writeLast(CellUtils::strprintf(
-        (datadir+"/"+finalpropertyoutfile).c_str(),__trial));
+        (getDataDir()+"/"+finalpropertyoutfile).c_str(),__trial));
 
     // Output parameter values for each trial
-    __cell->setOutputfileConstants(datadir+"/"+CellUtils::strprintf(
+    __cell->setOutputfileConstants(getDataDir()+"/"+CellUtils::strprintf(
         finaldvarsoutfile.c_str(),__trial));
     __cell->writeConstants();
     this->__measureMgr->close();
@@ -183,22 +172,25 @@ string GridProtocol::setToString(set<pair<int,int>>& nodes) {
     }
     return toReturn.str();
 }
+Grid& GridProtocol::getGrid() {
+    return *this->grid;
+}
 GridMeasureManager& GridProtocol::gridMeasureMgr() {
     return *this->__measureMgr;
 }
-Cell* GridProtocol::cell() const
+shared_ptr<Cell> GridProtocol::cell() const
 {
-    return __cell.get();
+    return __cell;
 }
 
-void GridProtocol::cell(Cell* cell) {
+void GridProtocol::cell(shared_ptr<Cell> cell) {
     if(__measureMgr) {
         __measureMgr->clear();
-        __measureMgr->cell(dynamic_cast<GridCell*>(cell));
+        __measureMgr->cell(dynamic_pointer_cast<GridCell>(cell));
     }
     if(__pvars)
         pvars().clear();
-    this->__cell.reset(dynamic_cast<GridCell*>(cell));
+    this->__cell = dynamic_pointer_cast<GridCell>(cell);
 }
 
 bool GridProtocol::cell(const string&) {
@@ -222,8 +214,8 @@ set<pair<int,int>> GridProtocol::stringToSet(string nodesList) {
     while(!stream.eof()) {
         pair<int,int> p(-1,-1);
         stream >> p.first >> p.second;
-        Node* n = (*grid)(p);
-        if(n != NULL) {
+        shared_ptr<Node> n = (*grid)(p);
+        if(n) {
             toReturn.insert(p);
         }
     }
@@ -284,4 +276,28 @@ void GridProtocol::setStim2(bool enable) {
         pars.erase("stimval2");
         pars.erase("stimNodes2");
     }
+}
+bool GridProtocol::getStim2() {
+    return this->stim2;
+}
+void GridProtocol::mkmap() {
+    GetSetRef toInsert;
+    pars["gridFile"]= toInsert.Initialize("file",
+            [this] () {return __cell->gridfile();},
+            [this] (const string& value) {__cell->setGridfile(value);});
+//    pars["measNodes"]= toInsert.Initialize("set",
+//            [this] () {return setToString(dataNodes);},
+//            [this] (const string& value) {dataNodes = stringToSet(value);});
+    pars["stimNodes"]= toInsert.Initialize("set",
+            [this] () {return setToString(stimNodes);},
+            [this] (const string& value) {stimNodes = stringToSet(value);});
+    pars["secondStim"]= toInsert.Initialize("bool",
+            [this] () {return CellUtils::to_string(this->stim2);},
+            [this] (const string& value) {this->setStim2(CellUtils::stob(value));});
+    pars["celltype"]= toInsert.Initialize("cell",
+            [this] () {return "";},
+            [] (const string&) {});
+    pars.erase("numtrials");
+    pars["paceflag"].set("true");
+    pars.erase("paceflag");
 }

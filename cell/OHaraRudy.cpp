@@ -17,7 +17,7 @@ void OHaraRudy::Initialize() {
 	this->makemap();
 }
 
-OHaraRudy* OHaraRudy::clone() {
+OHaraRudy *OHaraRudy::clone() {
     return new OHaraRudy(*this);
 }
 // External stimulus.

@@ -16,6 +16,9 @@
 #include <QXmlStreamReader>
 #include <QFile>
 #include <QDebug>
+#include <QDate>
+#include <QTime>
+#include <QStandardPaths>
 
 #if defined(_WIN32) || defined(_WIN64)
 #define snprintf _snprintf
@@ -34,8 +37,6 @@ Protocol::Protocol()
 
     tMax = 10000;   // max simulation time, ms
 
-    datadir = "./data/";
-    cellStateDir = datadir;
 
     readfile = "r.txt"; // File to read SV ICs
     savefile = "s.txt"; // File to save final SV
@@ -73,23 +74,9 @@ Protocol::Protocol()
     //type = "Cell";  // class name
 
     // make map of params
-    GetSetRef toInsert;
-    pars["tMax"] = toInsert.Initialize("double",[this] () {return std::to_string(tMax);},[this] (const string& value) {tMax = std::stod(value);});
-    pars["numtrials"]= toInsert.Initialize("int", [this] () {return std::to_string(numtrials);}, [this] (const string& value) {numtrials = std::stoi(value);});
-    pars["writeint"]= toInsert.Initialize("int", [this] () {return std::to_string(writeint);}, [this] (const string& value) {writeint = std::stoi(value);});
-    pars["writetime"]= toInsert.Initialize("double", [this] () {return std::to_string(writetime);}, [this] (const string& value) {writetime = std::stod(value);});
-    pars["meastime"]= toInsert.Initialize("double", [this] () {return std::to_string(meastime);}, [this] (const string& value) {meastime = std::stod(value);});
-    pars["writeCellState"]= toInsert.Initialize("bool", [this] () {return CellUtils::to_string(writeCellState);}, [this] (const string& value) {writeCellState = CellUtils::stob(value);});
-    pars["readCellState"]= toInsert.Initialize("bool", [this] () {return CellUtils::to_string(readCellState);}, [this] (const string& value) {readCellState = CellUtils::stob(value);});
-    pars["datadir"]= toInsert.Initialize("directory", [this] () {return datadir;}, [this] (const string& value) {datadir = value;});
-    pars["cellStateDir"]= toInsert.Initialize("directory", [this] () {return cellStateDir;}, [this] (const string& value) {cellStateDir = value;});
-    //	pars["pvarfile"]= toInsert.Initialize("file", [this] () {return pvarfile;}, [this] (const string& value) {pvarfile = value;});
-    //	pars["dvarfile"]= toInsert.Initialize("file", [this] () {return dvarfile;}, [this] (const string& value) {dvarfile = value;});
-    //	pars["measfile"]= toInsert.Initialize("file", [this] () {return measfile;}, [this] (const string& value) {measfile = value;});
-    pars["simvarfile"]= toInsert.Initialize("file", [this] () {return simvarfile;}, [this] (const string& value) {simvarfile = value;});
-    pars["cellStateFile"]= toInsert.Initialize("file", [this] () {return cellStateFile;}, [this] (const string& value) {cellStateFile = value;});
-    pars["celltype"]= toInsert.Initialize("cell", [this] () {return cell()->type();}, [this] (const string& value) {this->cell(value);});
-
+    this->mkmap();
+    this->setDataDir();
+    cellStateDir = datadir;
 };
 
 Protocol::~Protocol() {}
@@ -97,7 +84,7 @@ Protocol::~Protocol() {}
 //######################################################
 // Deep Copy Constructor
 //######################################################
-Protocol::Protocol(const Protocol& toCopy) {
+Protocol::Protocol(const Protocol& toCopy) : std::enable_shared_from_this<Protocol>(toCopy) {
     this->copy(toCopy);
 };
 
@@ -118,6 +105,7 @@ Protocol& Protocol::operator=(const Protocol& toCopy) {
 void Protocol::copy(const Protocol& toCopy) {
     //##### Assign default parameters ##################
 
+    this->mkmap();
     datadir = toCopy.datadir;
     cellStateDir = toCopy.cellStateDir;
 
@@ -156,9 +144,6 @@ void Protocol::copy(const Protocol& toCopy) {
     time= toCopy.time;
     vM = toCopy.vM;
 
-    // make map of params
-    pars = toCopy.pars;
-
     //###### Duplicate cells, measures outputs and maps######
 }
 //############################################################
@@ -177,7 +162,10 @@ int Protocol::runSim() {
     return return_val;
 };
 
-void Protocol::setupTrial() {};
+void Protocol::setupTrial() {
+    this->mkDirs();
+    cell()->reset();
+};
 
 //#############################################################
 // Read values of variables in varmap from file.
@@ -235,7 +223,7 @@ bool Protocol::cell(const string& type) {
     }
 }
 
-/*void Protocol::cell(Cell* cell) {
+/*void Protocol::cell(shared_ptr<Cell> cell) {
     if(measureMgr) {
         measureMgr().clear();
         measureMgr().cell(cell);
@@ -245,7 +233,7 @@ bool Protocol::cell(const string& type) {
     this->__cell.reset(cell);
 }
 
-Cell* Protocol::cell() const
+shared_ptr<Cell> Protocol::cell() const
 {
     return __cell.get();
 }*/
@@ -260,13 +248,52 @@ list<string> Protocol::cellOptions() {
 
 void Protocol::readInCellState(bool read) {
     if(read) {
-        cell()->readCellState(cellStateDir+"/"+cellStateFile+std::to_string(__trial)+".xml");
+        cell()->readCellState(cellStateDir.absolutePath().toStdString()+"/"+cellStateFile+std::to_string(__trial)+".xml");
         this->tMax += this->cell()->t;
     }
 }
 
 void Protocol::writeOutCellState(bool write) {
     if(write) {
-        cell()->writeCellState(datadir+"/"+cellStateFile+std::to_string(__trial)+".xml");
+        cell()->writeCellState(getDataDir()+"/"+cellStateFile+std::to_string(__trial)+".xml");
     }
+}
+
+void Protocol::setDataDir(string location) {
+    QDir working_dir = QDir(QString(location.c_str()));
+    if(working_dir == QDir::currentPath()) {
+        auto date_time = QDate::currentDate().toString("MMddyy") + "-" + QTime::currentTime().toString("hhmm");
+        working_dir = (QStandardPaths::standardLocations(QStandardPaths::DocumentsLocation).first() + "/data" + date_time);
+        for(int i = 1; working_dir.exists(); i++) {
+            working_dir = (QStandardPaths::standardLocations(QStandardPaths::DocumentsLocation).first() + "/data" + date_time + "_" + QString::number(i));
+        }
+    }
+    this->datadir = working_dir;
+}
+
+void Protocol::mkDirs() {
+    this->datadir.mkpath(datadir.absolutePath());
+}
+
+string Protocol::getDataDir() {
+    return this->datadir.absolutePath().toStdString();
+}
+
+void Protocol::mkmap() {
+    GetSetRef toInsert;
+    pars["tMax"] = toInsert.Initialize("double",[this] () {return std::to_string(tMax);},[this] (const string& value) {tMax = std::stod(value);});
+    pars["numtrials"]= toInsert.Initialize("int", [this] () {return std::to_string(numtrials);}, [this] (const string& value) {numtrials = std::stoi(value);});
+    pars["writeint"]= toInsert.Initialize("int", [this] () {return std::to_string(writeint);}, [this] (const string& value) {writeint = std::stoi(value);});
+    pars["writetime"]= toInsert.Initialize("double", [this] () {return std::to_string(writetime);}, [this] (const string& value) {writetime = std::stod(value);});
+    pars["meastime"]= toInsert.Initialize("double", [this] () {return std::to_string(meastime);}, [this] (const string& value) {meastime = std::stod(value);});
+    pars["writeCellState"]= toInsert.Initialize("bool", [this] () {return CellUtils::to_string(writeCellState);}, [this] (const string& value) {writeCellState = CellUtils::stob(value);});
+    pars["readCellState"]= toInsert.Initialize("bool", [this] () {return CellUtils::to_string(readCellState);}, [this] (const string& value) {readCellState = CellUtils::stob(value);});
+    pars["datadir"]= toInsert.Initialize("directory", [this] () {return getDataDir();}, [this] (const string& value) {setDataDir(value);});
+    pars["cellStateDir"]= toInsert.Initialize("directory", [this] () {return cellStateDir.absolutePath().toStdString();}, [this] (const string& value) {cellStateDir.setPath(QString(value.c_str()));});
+    //	pars["pvarfile"]= toInsert.Initialize("file", [this] () {return pvarfile;}, [this] (const string& value) {pvarfile = value;});
+    //	pars["dvarfile"]= toInsert.Initialize("file", [this] () {return dvarfile;}, [this] (const string& value) {dvarfile = value;});
+    //	pars["measfile"]= toInsert.Initialize("file", [this] () {return measfile;}, [this] (const string& value) {measfile = value;});
+    pars["simvarfile"]= toInsert.Initialize("file", [this] () {return simvarfile;}, [this] (const string& value) {simvarfile = value;});
+    pars["cellStateFile"]= toInsert.Initialize("file", [this] () {return cellStateFile;}, [this] (const string& value) {cellStateFile = value;});
+    pars["celltype"]= toInsert.Initialize("cell", [this] () {return cell()->type();}, [this] (const string& value) {this->cell(value);});
 }

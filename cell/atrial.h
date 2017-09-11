@@ -28,8 +28,7 @@ class Courtemanche98 : public Cell
     Courtemanche98(Courtemanche98& toCopy);
     virtual ~Courtemanche98();
     
-    void Initialize();
-    Courtemanche98* clone();
+    Courtemanche98* clone() override;
 
 
 
@@ -144,6 +143,8 @@ class Courtemanche98 : public Cell
     double Csqn_m;
 
     struct GateVariable Gate;
+    protected:
+    virtual void Initialize();
 };
 
 #endif

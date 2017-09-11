@@ -1,5 +1,11 @@
 #include "cellpvars.h"
 
+CellPvars::~CellPvars() {
+//    for(auto pvar : pvars) {
+//        delete pvar.second;
+//    }
+}
+
 void CellPvars::erase(string elem) {
     this->pvars.erase(elem);
 }
@@ -11,6 +17,9 @@ CellPvars::const_iterator CellPvars::begin() const {
 }
 CellPvars::const_iterator CellPvars::end() const {
     return this->pvars.end();
+}
+int CellPvars::size() const {
+    return this->pvars.size();
 }
 void CellPvars::clear() {
     this->pvars.clear();
@@ -25,11 +34,11 @@ string CellPvars::IonChanParam::str(string name) {
             var2Text = "\tIncrement Amount: ";
             break;
         case Distribution::normal:
-            var1Text = "\tNormal Distribution\t Mean: ";
+            var1Text = "\tNormal Distribution\tMean: ";
             var2Text = "\tStandard Deviation: ";
             break;
         case Distribution::lognormal:
-            var1Text = "\tLognormal Distribution\t Mean: ";
+            var1Text = "\tLognormal Distribution\tMean: ";
             var2Text = "\tStandard Deviation: ";
             break;
     }

@@ -13,22 +13,22 @@
 
 class MeasureManager {
     public:
-        MeasureManager(Cell* cell);
+        MeasureManager(shared_ptr<Cell> cell);
         virtual ~MeasureManager();
         virtual MeasureManager* clone();
 
         virtual bool writeMVarsFile(QXmlStreamWriter& xml);
         virtual bool readMvarsFile(QXmlStreamReader& xml);
 
-        Cell* cell();
-        void cell(Cell* cell);
+        shared_ptr<Cell> cell();
+        void cell(shared_ptr<Cell> cell);
         map<string,set<string>> selection();
         void selection(map<string,set<string>> sel);
         double percrepol();
         void percrepol(double percrepol);
         shared_ptr<Measure> getMeasure(string varname, set<string> selection);
 
-        virtual void addMeasure(string var);
+        virtual void addMeasure(string var,set<string> selection = {});
         virtual void removeMeasure(string var);
         virtual void setupMeasures(string filename);
         virtual void measure(double time);
@@ -56,7 +56,7 @@ class MeasureManager {
         void removeBad();
         void copy(const MeasureManager& other);
 
-        Cell* __cell = 0;
+        shared_ptr<Cell> __cell = 0;
         string last = "";
         double __percrepol = 50;
         unique_ptr<QFile> ofile;

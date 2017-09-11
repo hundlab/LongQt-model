@@ -9,15 +9,15 @@ public:
     InexcitableCell(const InexcitableCell& toCopy);
     virtual ~InexcitableCell();
 
-    virtual InexcitableCell* clone(); //public copy function
+    virtual InexcitableCell* clone() override; //public copy function
 
     virtual void updateCurr();
     virtual void updateConc();
 
     virtual const char* type() const;
 
-private:
-    void Initialize();
+protected:
+    virtual void Initialize();
 };
 
 #endif // INEXCITABLECELL_H

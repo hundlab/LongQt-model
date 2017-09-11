@@ -15,7 +15,7 @@ QMAKE_MAC_SDK = macosx10.12
 CONFIG += c++11 debug
 CONFIG -= release
 
-include(modellib/model.pri)
+include(model.pri)
 
 linux {
     debug {

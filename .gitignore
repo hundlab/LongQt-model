@@ -1,0 +1,38 @@
+#executables and libraries
+*.so
+*.out
+*.exe
+*.app
+
+#objects and other compiled files
+moc_*
+*.o
+.qmake.stash
+Makefile
+LongQt
+LongQtGrapher
+LQGridEditor
+build/*
+*.cmake
+PyLongQt_autogen/
+CMakeCache.txt
+CMakeFiles/
+
+#data files and temp text editor files
+data*/
+defaultTrials/
+*.swp
+*.swo
+
+#qt creator
+*.pro.user*
+
+#kdev files
+.kdev4/
+*.kdev4
+
+#precompiled version
+versions
+
+#docs
+site/

@@ -18,8 +18,7 @@ class GpbVent: public Cell
     GpbVent(GpbVent& toCopy);
     virtual ~GpbVent();
     
-    void Initialize();
-    GpbVent* clone();
+    GpbVent* clone() override;
 
 /*########################*/
 /*    DEFINE STRUCTS	  */
@@ -181,5 +180,8 @@ struct GateVariable {
     virtual const char* type() const;
 
     struct GateVariable gate;
+
+    protected:
+    virtual void Initialize();
 };
 #endif

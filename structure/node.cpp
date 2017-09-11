@@ -1,6 +1,6 @@
 #include "node.h"
 
-Node::Node(const Node& other) {
+Node::Node(const Node& other) : std::enable_shared_from_this<Node>(other) {
 	rd = other.rd;
 	dIax = other.dIax;
 //	x = other.x;

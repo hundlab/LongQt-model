@@ -18,8 +18,7 @@ class GpbAtrialWT: public Cell
     GpbAtrialWT(GpbAtrialWT& toCopy);
     virtual ~GpbAtrialWT();
     
-    void Initialize();
-    GpbAtrialWT* clone();
+    GpbAtrialWT* clone() override;
 
 
 /*########################*/
@@ -227,5 +226,7 @@ struct GateVariable {
     virtual const char* type() const;
     struct GateVariable gate;
     struct RateConst Rate;
+    protected:
+    virtual void Initialize();
 };
 #endif

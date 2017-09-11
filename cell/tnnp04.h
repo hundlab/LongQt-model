@@ -26,7 +26,6 @@ class TNNP04Control : public Cell
     TNNP04Control(const TNNP04Control& toCopy);
     ~TNNP04Control();
 
-    void Initialize();
     virtual TNNP04Control* clone();
   
 /*########################*/
@@ -128,6 +127,8 @@ class TNNP04Control : public Cell
 	double Inafactor;
 	
     	struct GateVariable Gate;
+    protected:
+   virtual  void Initialize();
 };
 
 #endif

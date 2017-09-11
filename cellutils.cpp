@@ -33,14 +33,14 @@
  * and also add it to the protocolCellDefualts map below
  */
 const map<string, CellUtils::CellInitializer> CellUtils::cellMap = {
-    { ControlSa().type(), [] () {return (Cell*) new ControlSa; }},
-    { GpbAtrial().type(), [] () {return (Cell*) new GpbAtrial;}},
-    { HRD09Control().type(), [] () {return (Cell*) new HRD09Control;}},
-    { HRD09BorderZone().type(), [] () {return (Cell*) new HRD09BorderZone;}},
-    { TNNP04Control().type(), [] () {return (Cell*) new TNNP04Control;}},
-    { OHaraRudyEndo().type(), [] () {return (Cell*) new OHaraRudyEndo;}},
-    { OHaraRudyEpi().type(), [] () {return (Cell*) new OHaraRudyEpi;}},
-    { OHaraRudyM().type(), [] () {return (Cell*) new OHaraRudyM;}}
+    { ControlSa().type(), [] () {return make_shared<ControlSa>(); }},
+    { GpbAtrial().type(), [] () {return make_shared<GpbAtrial>();}},
+    { HRD09Control().type(), [] () {return make_shared<HRD09Control>();}},
+    { HRD09BorderZone().type(), [] () {return make_shared<HRD09BorderZone>();}},
+    { TNNP04Control().type(), [] () {return make_shared<TNNP04Control>();}},
+    { OHaraRudyEndo().type(), [] () {return make_shared<OHaraRudyEndo>();}},
+    { OHaraRudyEpi().type(), [] () {return make_shared<OHaraRudyEpi>();}},
+    { OHaraRudyM().type(), [] () {return make_shared<OHaraRudyM>();}}
 
     /*		{ GpbVent().type, [] () {return (Cell*) new GpbVent;}},
             { Br04().type, [] () {return (Cell*) new Br04;}},
@@ -105,9 +105,9 @@ void CellUtils::set_default_vals(Protocol &proto) {
  * longqt
  */
 const map<string, CellUtils::ProtocolInitializer> CellUtils::protoMap = {
-    {CurrentClamp().type, [] () {return (Protocol*) new CurrentClamp;}},
-    {VoltageClamp().type, [] () {return (Protocol*) new VoltageClamp;}},
-    {GridProtocol().type, [] () {return (Protocol*) new GridProtocol;}}
+    {CurrentClamp().type, [] () {return make_shared<CurrentClamp>();}},
+    {VoltageClamp().type, [] () {return make_shared<VoltageClamp>();}},
+    {GridProtocol().type, [] () {return make_shared<GridProtocol>();}}
 };
 
 std::string CellUtils::strprintf(const char * format, ...) {

@@ -18,6 +18,7 @@
 #include <memory>
 #include <QXmlStreamWriter>
 #include <QXmlStreamReader>
+#include <QDir>
 
 #include "measuremanager.h"
 #include "cellutils.h"
@@ -37,7 +38,7 @@ struct GetSetRef {
     }
 };
 
-class Protocol
+class Protocol :  public std::enable_shared_from_this<Protocol>
 {
     public:
         Protocol();
@@ -58,11 +59,13 @@ class Protocol
         virtual unsigned int trial() const;
         virtual bool runTrial() = 0;
         virtual void setupTrial();
-
+        void setDataDir(string location = "");
+        void mkDirs();
+        string getDataDir();
 
         virtual bool cell(const string& type);
-        virtual void cell(Cell* cell) = 0;
-        virtual Cell* cell() const = 0;
+        virtual void cell(shared_ptr<Cell> cell) = 0;
+        virtual shared_ptr<Cell> cell() const = 0;
         virtual list<string> cellOptions();
 
         virtual CellPvars& pvars() = 0;
@@ -87,8 +90,8 @@ class Protocol
                propertyoutfile, dvarsoutfile, finalpropertyoutfile,
                finaldvarsoutfile, cellStateFile;
 
-        string datadir;
-        string cellStateDir;
+        QDir datadir;
+        QDir cellStateDir;
 
 
         //##### Declare maps for vars/params ##############
@@ -97,6 +100,8 @@ class Protocol
 protected:
         void copy(const Protocol& toCopy);
         int __trial;
+private:
+        void mkmap();
 };
 
 #endif

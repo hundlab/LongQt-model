@@ -114,7 +114,7 @@ void GpbVent::Initialize() {
 
     this->makemap();
 }
-GpbVent* GpbVent::clone() {
+GpbVent *GpbVent::clone() {
     return new GpbVent(*this);
 }
 void GpbVent::updatecaI() {

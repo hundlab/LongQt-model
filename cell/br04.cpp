@@ -120,7 +120,7 @@ void Br04::Initialize() {
 
     this->makemap();
 }
-Br04* Br04::clone() {
+Br04 *Br04::clone() {
     return new Br04(*this);
 }
 //######################################################

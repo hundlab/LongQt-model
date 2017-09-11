@@ -127,8 +127,8 @@ class ControlSa : public Cell
     double Vjsr;
     double Vss;
 
-private:
-    void Initialize();
+protected:
+    virtual void Initialize();
 };
 
 #endif

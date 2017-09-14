@@ -39,7 +39,7 @@ struct CellInfo {
     int np = 1;
 	//if cell == NULL then cell will not be changed
     shared_ptr<Cell> cell = 0;
-	array<double,4> c = {NAN,NAN,NAN,NAN};
+    array<double,4> c = {{NAN,NAN,NAN,NAN}};
 	bool c_perc = false;
 };
 

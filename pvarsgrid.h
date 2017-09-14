@@ -43,7 +43,7 @@ class PvarsGrid : public CellPvars {
 
     private:
         map<string,MIonChanParam*>* __pvars =
-            reinterpret_cast<map<string,MIonChanParam*>*>(&this->pvars);
+            (reinterpret_cast<map<string,MIonChanParam*>*>(&this->pvars));
         Grid* grid;
 
         void calcIonChanParam(MIonChanParam* param);

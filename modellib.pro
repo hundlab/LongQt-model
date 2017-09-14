@@ -12,8 +12,7 @@ TEMPLATE = lib
 
 QMAKE_MAC_SDK = macosx10.12
 
-CONFIG += c++11 debug
-CONFIG -= release
+CONFIG += c++11
 
 include(model.pri)
 

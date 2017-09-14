@@ -37,7 +37,7 @@ class PvarsCurrentClamp : public CellPvars {
         void calcIonChanParam(TIonChanParam* param);
 
         map<string,TIonChanParam*>* __pvars =
-            reinterpret_cast<map<string,TIonChanParam*>*>(&this->pvars);
+            (reinterpret_cast<map<string,TIonChanParam*>*>(&this->pvars));
         Protocol* proto;
 };
 #endif

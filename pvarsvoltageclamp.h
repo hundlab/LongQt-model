@@ -35,7 +35,7 @@ class PvarsVoltageClamp : public CellPvars {
 
     private:
         map<string,SIonChanParam*>* __pvars =
-            reinterpret_cast<map<string,SIonChanParam*>*>(&this->pvars);
+            (reinterpret_cast<map<string,SIonChanParam*>*>(&this->pvars));
         Protocol* proto;
 };
 #endif

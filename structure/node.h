@@ -19,7 +19,7 @@ struct Node : public std::enable_shared_from_this<Node> {
 //	void updateV(double dt);
     shared_ptr<Cell> cell = make_shared<InexcitableCell>();
     double rd = 1.5; // gap junctional disk resistance.
-	array<double,4> condConst = {0,0,0,0};
+    array<double,4> condConst = {{0,0,0,0}};
 //## default value cannot be deterimined by constructor
     double dIax = 0;
 	int np = 1; //number of cells in each node

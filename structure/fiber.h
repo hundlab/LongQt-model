@@ -17,6 +17,7 @@ class Fiber {
 
     virtual void updateVm(double& dt);
     virtual shared_ptr<Node> operator[](int pos);
+    virtual shared_ptr<Node> at(int pos);
     virtual int size() const;
 	virtual inline void diffuse(int node);
 	virtual inline void diffuseBottom(int node);

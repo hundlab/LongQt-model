@@ -42,32 +42,36 @@ Grid* GridCell::getGrid() {
     return &grid;
 }
 bool GridCell::setOutputfileConstants(string filename) {
-    int i = 0;
+    int rc = 0;
     bool toReturn = true;
-    for(auto it = grid.fiber.begin(); it != grid.fiber.end(); it++, i++) {
-        int j = 0;
-        for(auto iv = it->nodes.begin(); iv != it->nodes.end(); iv++, j++) {
-            toReturn &= (*iv)->cell->setOutputfileConstants(CellUtils::strprintf(filename.c_str(),j,i));
+    for(auto& row : grid.rows) {
+        int cc = 0;
+        for(auto& column : row) {
+            toReturn &= column->cell->setOutputfileConstants(CellUtils::strprintf(filename.c_str(),rc,cc));
+            cc++;
         }
+        rc++;
     }
     return toReturn;
 }
 bool GridCell::setOuputfileVariables(string filename) {
-    int i = 0;
+    int rc = 0;
     bool toReturn = true;
-    for(auto it = grid.fiber.begin(); it != grid.fiber.end(); it++, i++) {
-        int j = 0;
-        for(auto iv = it->nodes.begin(); iv != it->nodes.end(); iv++, j++) {
-            toReturn &= (*iv)->cell->setOuputfileVariables(CellUtils::strprintf(filename.c_str(),j,i));
+    for(auto& row : grid.rows) {
+        int cc = 0;
+        for(auto& column : row) {
+            toReturn &= column->cell->setOuputfileVariables(CellUtils::strprintf(filename.c_str(),rc,cc));
+            ++cc;
         }
+        ++rc;
     }
     return toReturn;
 }
 set<string> GridCell::getVariables() {
     set<string> toReturn = Cell::getVariables();
-    for(auto it = grid.fiber.begin(); it != grid.fiber.end(); it++) {
-        for(auto iv = it->nodes.begin(); iv != it->nodes.end(); iv++) {
-            set<string> ivSet = (*iv)->cell->getVariables();
+    for(auto& row : grid.rows) {
+        for(auto& column : row) {
+            set<string> ivSet = column->cell->getVariables();
             toReturn.insert(ivSet.begin(), ivSet.end());
         }
     }
@@ -75,9 +79,9 @@ set<string> GridCell::getVariables() {
 }
 set<string> GridCell::getConstants() {
     set<string> toReturn = Cell::getConstants();
-    for(auto it = grid.fiber.begin(); it != grid.fiber.end(); it++) {
-        for(auto iv = it->nodes.begin(); iv != it->nodes.end(); iv++) {
-            set<string> ivSet = (*iv)->cell->getConstants();
+    for(auto& row : grid.rows) {
+        for(auto& column : row) {
+            set<string> ivSet = column->cell->getConstants();
             toReturn.insert(ivSet.begin(), ivSet.end());
         }
     }
@@ -87,9 +91,9 @@ set<string> GridCell::getConstants() {
 bool GridCell::setConstantSelection(set<string> new_selection) {
     bool toReturn = true;
     parsSelection = new_selection;
-    for(auto it = grid.fiber.begin(); it != grid.fiber.end(); it++) {
-        for(auto iv = it->nodes.begin(); iv != it->nodes.end(); iv++) {
-            toReturn &=(*iv)->cell->setConstantSelection(new_selection);
+    for(auto& it :grid.rows) {
+        for(auto& iv : it.nodes) {
+            toReturn &=iv->cell->setConstantSelection(new_selection);
         }
     }
     return toReturn;
@@ -97,67 +101,64 @@ bool GridCell::setConstantSelection(set<string> new_selection) {
 bool GridCell::setVariableSelection(set<string> new_selection) {
     bool toReturn = true;
     varsSelection = new_selection;
-    for(auto it = grid.fiber.begin(); it != grid.fiber.end(); it++) {
-        for(auto iv = it->nodes.begin(); iv != it->nodes.end(); iv++) {
-            toReturn &= (*iv)->cell->setVariableSelection(new_selection);
+    for(auto& it : grid.rows) {
+        for(auto& iv : it) {
+            toReturn &= iv->cell->setVariableSelection(new_selection);
         }
     }
     return toReturn;
 }
 void GridCell::writeConstants() {
-    for(auto& it : grid.fiber) {
-        for(auto& iv : it.nodes) {
+    for(auto& it : grid.rows) {
+        for(auto& iv : it) {
             iv->cell->writeConstants();
         }
     }
 }
 void GridCell::writeVariables() {
-    for(auto& it : grid.fiber) {
-        for(auto& iv : it.nodes) {
+    for(auto& it : grid.rows) {
+        for(auto& iv : it) {
             iv->cell->writeVariables();
         }
     }
 }
 void GridCell::closeFiles() {
-    for(auto& it : grid.fiber) {
-        for(auto& iv : it.nodes) {
+    for(auto& it : grid.rows) {
+        for(auto& iv : it) {
             iv->cell->closeFiles();
         }
-    }   
+    }
 }
 double GridCell::updateV() {
-    int i;
-    int xLen = static_cast<int>(grid.fibery.size());
-    int yLen = static_cast<int>(grid.fiber.size());
     if((tcount%2==0)){
-        for(i=0;i<yLen;i++){
-            grid.fiber[i].updateVm(dt);
+        for(auto& row: grid.rows){
+            row.updateVm(dt);
         }
     } else {
-        for(i=0;i<xLen;i++){
-            grid.fibery[i].updateVm(dt);
+        for(auto& column: grid.columns){
+            column.updateVm(dt);
         }
     }
     return 0.0;
 }
 void GridCell::updateConc() {
-    for(auto it = grid.fiber.begin(); it != grid.fiber.end(); it++) {
-        for(auto iv = it->nodes.begin(); iv != it->nodes.end(); iv++) {
-            (*iv)->cell->updateConc();
+    for(auto& row: grid.rows) {
+        for(auto& node: row) {
+            node->cell->updateConc();
         }
     }
 }
 void GridCell::updateCurr() {
-    for(auto it = grid.fiber.begin(); it != grid.fiber.end(); it++) {
-        for(auto iv = it->nodes.begin(); iv != it->nodes.end(); iv++) {
-            (*iv)->cell->updateCurr();
+    for(auto& row: grid.rows) {
+        for(auto& node: row) {
+            node->cell->updateCurr();
         }
     }
 }
 int GridCell::externalStim(double stimval) {
-    for(auto it = grid.fiber.begin(); it != grid.fiber.end(); it++) {
-        for(auto iv = it->nodes.begin(); iv != it->nodes.end(); iv++) {
-            (*iv)->cell->externalStim(stimval);
+    for(auto& row: grid.rows) {
+        for(auto& node: row) {
+            node->cell->externalStim(stimval);
         }
     }
     return 1;
@@ -169,12 +170,12 @@ double GridCell::tstep(double stimt)
 
     tcount++;
     t=t+dt;
-    for(i=0;i<grid.fiber.size();i++){
-        for(j=0;j<grid.fibery.size();j++){
-            grid.fiber[i].nodes[j]->cell->t=t;
-            grid.fiber[i].nodes[j]->cell->dt = dt;
+    for(i=0;i<grid.rows.size();i++){
+        for(j=0;j<grid.columns.size();j++){
+            grid.rows[i][j]->cell->t=t;
+            grid.rows[i][j]->cell->dt = dt;
             if(tcount%2==0){  // used to prevent time step change in middle of ADI	
-                if(grid.fiber[i].nodes[j]->cell->dVdt>grid.fiber[i].nodes[j]->cell->dvcut||(t>(stimt-2.0)&&t<stimt+10)||(apTime<5.0))
+                if(grid.rows[i][j]->cell->dVdt>grid.rows[i][j]->cell->dvcut||(t>(stimt-2.0)&&t<stimt+10)||(apTime<5.0))
                     vmflag = 2;
                 else if((apTime<40)&&vmflag!=2)
                     vmflag = 1;
@@ -218,18 +219,18 @@ bool GridCell::writeGridfile(QXmlStreamWriter& xml) {
     xml.writeAttribute("dx", QString::number(dx));
     xml.writeAttribute("dy", QString::number(dy));
 
-    for(auto& it : grid.fiber) {
+    for(auto& row : grid.rows) {
         xml.writeStartElement("row");
         xml.writeAttribute("pos",QString::number(j));
-        for(auto& iv : it.nodes) {
+        for(auto& node : row) {
             xml.writeStartElement("node");
             xml.writeAttribute("pos",QString::number(i));
-            xml.writeTextElement("type",iv->cell->type());
+            xml.writeTextElement("type",node->cell->type());
             xml.writeStartElement("conductance");
-            xml.writeTextElement("left", QString::number(it.B[i]));
-            xml.writeTextElement("right", QString::number(it.B[i+1]));
-            xml.writeTextElement("top", QString::number(grid.fibery[i].B[j]));
-            xml.writeTextElement("bottom", QString::number(grid.fibery[i].B[j+1]));
+            xml.writeTextElement("left", QString::number(row.B[i]));
+            xml.writeTextElement("right", QString::number(row.B[i+1]));
+            xml.writeTextElement("top", QString::number(grid.columns[i].B[j]));
+            xml.writeTextElement("bottom", QString::number(grid.columns[i].B[j+1]));
             xml.writeEndElement();
             xml.writeEndElement();
             i++;
@@ -240,7 +241,7 @@ bool GridCell::writeGridfile(QXmlStreamWriter& xml) {
     }
 
     xml.writeEndElement();
-    return true;    
+    return true;
 }
 bool GridCell::writeGridfile(string fileName) {
     if(fileName == "") {
@@ -295,7 +296,7 @@ bool GridCell::handleGrid(QXmlStreamReader& xml) {
 bool GridCell::handleRow(QXmlStreamReader& xml, list<CellInfo>& cells, CellInfo& info) {
     if(xml.atEnd()) return false;
     bool success = true;
-    info.X = xml.attributes().value("pos").toInt();
+    info.row = xml.attributes().value("pos").toInt();
     while(xml.readNextStartElement() && xml.name() == "node") {
         success &= this->handleNode(xml, cells, info);
     }
@@ -346,7 +347,7 @@ bool GridCell::handleNode(QXmlStreamReader& xml, list<CellInfo>& cells, CellInfo
     };
 
     bool success = true;
-    info.Y = xml.attributes().value("pos").toInt();
+    info.col = xml.attributes().value("pos").toInt();
     while(xml.readNextStartElement()) {
         try {
             success &= handlers.at(xml.name().toString())(xml);
@@ -405,19 +406,19 @@ bool GridCell::writeCellState(string file) {
     xml.writeStartElement("grid");
     bool success = true;
     success &= Cell::writeCellState(xml);
-    int row = 0;
-    int col = 0;
-    for(auto& fiber : grid.fiber) {
-        for(auto& node : fiber.nodes) {
+    int rn = 0;
+    int cn = 0;
+    for(auto& row : grid.rows) {
+        for(auto& node : row) {
             xml.writeStartElement("pos");
-            xml.writeAttribute("row",QString::number(row));
-            xml.writeAttribute("col",QString::number(col));
+            xml.writeAttribute("row",QString::number(rn));
+            xml.writeAttribute("col",QString::number(cn));
             success &= node->cell->writeCellState(xml);
             xml.writeEndElement();
-            col++;
+            cn++;
         }
-        row++;
-        col = 0;
+        rn++;
+        cn = 0;
     }
     xml.writeEndElement();
     xml.writeEndDocument();

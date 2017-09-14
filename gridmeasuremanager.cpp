@@ -34,8 +34,8 @@ bool GridMeasureManager::writeMVarsFile(QXmlStreamWriter& xml) {
     xml.writeStartElement("dataNodes");
     for(auto& node: this->__dataNodes) {
         xml.writeStartElement("node");
-        xml.writeAttribute("x",QString::number(node.first));
-        xml.writeAttribute("y",QString::number(node.second));
+        xml.writeAttribute("row",QString::number(node.first));
+        xml.writeAttribute("col",QString::number(node.second));
         xml.writeEndElement();
     }
     xml.writeEndElement();
@@ -49,9 +49,9 @@ bool GridMeasureManager::readMvarsFile(QXmlStreamReader& xml) {
     if(xml.readNextStartElement() && xml.name()=="dataNodes") {
         while(!xml.atEnd() && xml.readNextStartElement() && xml.name()=="node"){
             auto attrib = xml.attributes();
-            int x = attrib.value("x").toInt();
-            int y = attrib.value("y").toInt();
-            this->__dataNodes.insert({x,y});
+            int row = attrib.value("row").toInt();
+            int col = attrib.value("col").toInt();
+            this->__dataNodes.insert({row,col});
             xml.skipCurrentElement();
         }
     }

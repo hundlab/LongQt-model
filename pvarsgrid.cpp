@@ -23,7 +23,7 @@ void PvarsGrid::setIonChanParams() {
     shared_ptr<Cell> cell = 0;
     for(auto& pvar : *this->__pvars) {
         for(auto& oneCell : pvar.second->cells) {
-            cell = (*this->grid)(oneCell.first.second,oneCell.first.first)->cell;
+            cell = (*this->grid)(oneCell.first)->cell;
             try {
                 *cell->pars.at(pvar.first) = oneCell.second;
             } catch(std::out_of_range&) {}
@@ -43,8 +43,8 @@ void PvarsGrid::writePvars(QXmlStreamWriter& xml) {
         xml.writeStartElement("cells");
         for(auto& cell : pvar.second->cells) {
             xml.writeStartElement("cell");
-            xml.writeAttribute("x", QString::number(cell.first.first));
-            xml.writeAttribute("y", QString::number(cell.first.second));
+            xml.writeAttribute("row", QString::number(cell.first.first));
+            xml.writeAttribute("col", QString::number(cell.first.second));
             if(pvar.second->startCells.count(cell.first) > 0) {
                 xml.writeAttribute("start", "1");
             }
@@ -122,8 +122,8 @@ void PvarsGrid::handlePvar(QXmlStreamReader& xml) {
 pair<pair<int,int>,double> PvarsGrid::handleCell(QXmlStreamReader& xml, bool& start) {
     pair<pair<int,int>,double> c;
     if(xml.atEnd()) return c;
-    c.first.first = xml.attributes().value("x").toInt();
-    c.first.second = xml.attributes().value("y").toInt();
+    c.first.first = xml.attributes().value("row").toInt();
+    c.first.second = xml.attributes().value("col").toInt();
     if(xml.attributes().value("start").toInt() == 1) {
         start = true;
     } else {
@@ -136,7 +136,7 @@ pair<pair<int,int>,double> PvarsGrid::handleCell(QXmlStreamReader& xml, bool& st
 }
 
 string PvarsGrid::MIonChanParam::str(string name) {
-    string text = "(X <column>, Y <row>)\n";
+    string text = "(row, column)\n";
     text += name+"\n";
     for(auto& cell: this->cells) {
         text += "(" + std::to_string(cell.first.first) +","+
@@ -146,6 +146,11 @@ string PvarsGrid::MIonChanParam::str(string name) {
 }
 void PvarsGrid::insert(string name,IonChanParam param) {
     MIonChanParam* nparam = new MIonChanParam(const_cast<IonChanParam&>(param));
+    for(int rn = 0; rn<grid->rowCount();++rn) {
+        for(int cn = 0; cn<grid->columnCount();++cn) {
+            nparam->startCells.insert({rn,cn});
+        }
+    }
     this->calcIonChanParam(nparam);
     (*this->__pvars)[name] = nparam;
 }
@@ -174,6 +179,15 @@ void PvarsGrid::calcIonChanParams() {
     }
 }
 void PvarsGrid::calcIonChanParam(MIonChanParam* param) {
+    set<pair<int,int>> good;
+    for(auto& node: param->startCells) {
+        if(node.first < grid->rowCount()&&
+            node.second < grid->columnCount()) {
+            good.insert(node);
+        }
+    }
+    param->startCells = good;
+    param->cells.clear();
     this->current = param->startCells;
     int i = 0;
     double val = 0;
@@ -183,7 +197,7 @@ void PvarsGrid::calcIonChanParam(MIonChanParam* param) {
                 case CellPvars::Distribution::none:
                     val = param->val[0]+param->val[1]*i;
                     break;
-                case CellPvars::Distribution::normal: 
+                case CellPvars::Distribution::normal:
                     {
                         normal_distribution<double> distribution(param->val[0],param->val[1]);
                         val = distribution(*generator);
@@ -199,7 +213,7 @@ void PvarsGrid::calcIonChanParam(MIonChanParam* param) {
             if(val > param->maxVal) {
                 val = param->maxVal;
             }
-            param->cells[make_pair(e.first,e.second)] = val;
+            param->cells[e] = val;
             this->visited.insert(e);
         }
         ++i;
@@ -222,7 +236,7 @@ void PvarsGrid::getNext() {
 //need to check for duplicates
 void PvarsGrid::add(pair<int,int> e, set<pair<int,int>>& next) {
     //check for out of bounds
-    if(e.second<0||e.first<0||e.second>=this->grid->rowCount()||e.first>=this->grid->columnCount()) {
+    if(e.second<0||e.first<0||e.second>=this->grid->columnCount()||e.first>=this->grid->rowCount()) {
         return;
     }
     if(this->visited.count(e) == 0) {

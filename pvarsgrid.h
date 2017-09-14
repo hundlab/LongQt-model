@@ -12,8 +12,8 @@ class PvarsGrid : public CellPvars {
         struct MIonChanParam : CellPvars::IonChanParam {
             int maxDist = 0;
             double maxVal = 100;
-            set<pair<int,int>> startCells; //x,y pos of start cells
-            map<pair<int,int>,double> cells; //map from x,y pos -> value
+            set<pair<int,int>> startCells; //row,col of start cells
+            map<pair<int,int>,double> cells; //map from row,col -> value
 
             virtual string str(string name) override;
             MIonChanParam() = default;

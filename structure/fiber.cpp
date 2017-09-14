@@ -64,6 +64,10 @@ shared_ptr<Node> Fiber::operator[](int pos) {
         return shared_ptr<Node>();
     }
 }
+shared_ptr<Node> Fiber::at(int pos) {
+    return this->nodes.at(pos);
+}
+
 int Fiber::size() const{
     return nodes.size();
 }

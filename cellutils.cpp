@@ -119,7 +119,7 @@ std::string CellUtils::strprintf(const char * format, ...) {
     vsnprintf(cstr, numbytes+1, format, args);
     std::string str(cstr);
     va_end(args);
-    delete cstr;
+    delete[] cstr;
     return str;
 }
 

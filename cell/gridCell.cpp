@@ -47,8 +47,7 @@ bool GridCell::setOutputfileConstants(string filename) {
     for(auto it = grid.fiber.begin(); it != grid.fiber.end(); it++, i++) {
         int j = 0;
         for(auto iv = it->nodes.begin(); iv != it->nodes.end(); iv++, j++) {
-            sprintf(buffer,filename.c_str(),j,i);
-            toReturn &= (*iv)->cell->setOutputfileConstants(string(buffer));
+            toReturn &= (*iv)->cell->setOutputfileConstants(CellUtils::strprintf(filename.c_str(),j,i));
         }
     }
     return toReturn;
@@ -59,8 +58,7 @@ bool GridCell::setOuputfileVariables(string filename) {
     for(auto it = grid.fiber.begin(); it != grid.fiber.end(); it++, i++) {
         int j = 0;
         for(auto iv = it->nodes.begin(); iv != it->nodes.end(); iv++, j++) {
-            sprintf(buffer,filename.c_str(),j,i);
-            toReturn &= (*iv)->cell->setOuputfileVariables(string(buffer));
+            toReturn &= (*iv)->cell->setOuputfileVariables(CellUtils::strprintf(filename.c_str(),j,i));
         }
     }
     return toReturn;
@@ -107,15 +105,15 @@ bool GridCell::setVariableSelection(set<string> new_selection) {
     return toReturn;
 }
 void GridCell::writeConstants() {
-    for(auto it : grid.fiber) {
-        for(auto iv : it.nodes) {
+    for(auto& it : grid.fiber) {
+        for(auto& iv : it.nodes) {
             iv->cell->writeConstants();
         }
     }
 }
 void GridCell::writeVariables() {
-    for(auto it : grid.fiber) {
-        for(auto iv : it.nodes) {
+    for(auto& it : grid.fiber) {
+        for(auto& iv : it.nodes) {
             iv->cell->writeVariables();
         }
     }

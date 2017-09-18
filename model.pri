@@ -24,6 +24,7 @@ $$PWD/cell/OHaraRudy.cpp\
 $$PWD/cell/OHaraRudyEndo.cpp\
 $$PWD/cell/OHaraRudyEpi.cpp\
 $$PWD/cell/OHaraRudyM.cpp\
+$$PWD/cell/FR.cpp\
 $$PWD/iobase.cpp\
 $$PWD/structure/fiber.cpp\
 $$PWD/structure/node.cpp\
@@ -64,6 +65,7 @@ $$PWD/cell/OHaraRudy.h\
 $$PWD/cell/OHaraRudyEndo.h\
 $$PWD/cell/OHaraRudyEpi.h\
 $$PWD/cell/OHaraRudyM.h\
+$$PWD/cell/FR.h\
 $$PWD/iobase.h\
 $$PWD/cellutils.h\
 $$PWD/structure/grid.h\

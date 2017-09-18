@@ -17,6 +17,7 @@
 #include "OHaraRudyEndo.h"
 #include "OHaraRudyEpi.h"
 #include "OHaraRudyM.h"
+#include "FR.h"
 
 #include "gridProtocol.h"
 #include "voltageClampProtocol.h"
@@ -42,7 +43,8 @@ const map<string, CellUtils::CellInitializer> CellUtils::cellMap = {
     { OHaraRudyEndo().type(), [] () {return make_shared<OHaraRudyEndo>();}},
     { OHaraRudyEpi().type(), [] () {return make_shared<OHaraRudyEpi>();}},
     { OHaraRudyM().type(), [] () {return make_shared<OHaraRudyM>();}},
-    { GpbAtrialOnal17().type(), [] () {return make_shared<GpbAtrialOnal17>();}}
+    { GpbAtrialOnal17().type(), [] () {return make_shared<GpbAtrialOnal17>();}},
+    { FR().type(), [] () {return make_shared<FR>();}}
 
     /*		{ GpbVent().type, [] () {return (Cell*) new GpbVent;}},
             { Br04().type, [] () {return (Cell*) new Br04;}},
@@ -85,7 +87,8 @@ const map<string, list<pair<string,string>>> CellUtils::protocolCellDefaults = {
     { OHaraRudyM().type(), {{"paceflag","true"},{"stimval","-80"},
                              {"stimdur","0.5"},{"tMax","500000"},{"writetime","495000"},{"bcl","1000"},
                              {"numstims","500"}}},
-    { GpbAtrialOnal17().type(), {{"paceflag","true"},{"stimval","-12.5"},{"stimdur","5"},{"tMax","500000"},{"writetime","495000"},{"bcl","1000"},{"numstims","500"}}}
+    { GpbAtrialOnal17().type(), {{"paceflag","true"},{"stimval","-12.5"},{"stimdur","5"},{"tMax","500000"},{"writetime","495000"},{"bcl","1000"},{"numstims","500"}}},
+    { FR().type(), {{"paceflag","true"},{"stimval","-80"},{"stimdur","0.5"},{"tMax","1000"},{"writetime","0"},{"bcl","300"},{"numstims","20"}}}
 };
 
 void CellUtils::set_default_vals(Protocol &proto) {

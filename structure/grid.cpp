@@ -136,20 +136,20 @@ int Grid::rowCount() {
 int Grid::columnCount() {
     return static_cast<int>(columns.size());
 }
-pair<int,int> Grid::findNode(const Node* node) {
+pair<int,int> Grid::findNode(const shared_ptr<Node> toFind) {
     pair<int,int> p(-1,-1);
-    int i,j;
-    i = j = 0;
-    for(auto it : rows) {
-        for(auto iv : it.nodes) {
-            if(iv.get() == node) {
-                p = make_pair(i,j);
+    int rn,cn;
+    rn = cn = 0;
+    for(auto row : rows) {
+        for(auto node : row) {
+            if(node == toFind) {
+                p = make_pair(rn,cn);
                 return p;
             }
-            j++;
+            cn++;
         }
-        j=0;
-        i++;
+        cn=0;
+        rn++;
     }
     return p;
 }

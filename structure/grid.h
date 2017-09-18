@@ -66,7 +66,7 @@ class Grid {
     virtual void setCellTypes(const CellInfo& singleCell);
     virtual int rowCount();
     virtual int columnCount();
-    virtual pair<int,int> findNode(const Node* node);
+    virtual pair<int,int> findNode(const shared_ptr<Node> toFind);
     virtual shared_ptr<Node> operator()(const pair<int,int>& p);
     virtual shared_ptr<Node> operator()(const int row, const int col);
 	virtual void reset();

@@ -17,6 +17,7 @@ $$PWD/cell/gpbhuman.cpp\
 $$PWD/cell/ksan.cpp\
 $$PWD/cell/gpbatrialWT.cpp\
 $$PWD/cell/gpbatrialSE.cpp\
+$$PWD/cell/gpbatrialonal17.cc\
 $$PWD/cell/atrial.cpp\
 $$PWD/cell/br04.cpp\
 $$PWD/cell/OHaraRudy.cpp\
@@ -56,6 +57,7 @@ $$PWD/cell/gpbhuman.h\
 $$PWD/cell/ksan.h\
 $$PWD/cell/gpbatrialWT.h\
 $$PWD/cell/gpbatrialSE.h\
+$$PWD/cell/gpbatrialonal17.h\
 $$PWD/cell/atrial.h\
 $$PWD/cell/br04.h\
 $$PWD/cell/OHaraRudy.h\

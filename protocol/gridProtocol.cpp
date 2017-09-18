@@ -53,8 +53,8 @@ void GridProtocol::CCcopy(const GridProtocol& toCopy) {
 // External stimulus.
 int GridProtocol::stim()
 {
-    for(auto it : stimNodes) {
-        Cell* cell = (*grid)(it)->cell.get();
+    for(auto n : __stimN) {
+        auto cell = n->cell;
         if(cell->t>=stimt&&cell->t<(stimt+stimdur)){
             if(stimflag==0){
                 stimcounter++;
@@ -81,6 +81,18 @@ int GridProtocol::stim()
 
 void GridProtocol::setupTrial() {
     this->Protocol::setupTrial();
+    for(auto& n: stimNodes) {
+        auto n_ptr = (*grid)(n);
+        if(n_ptr) {
+            __stimN.insert(n_ptr);
+        }
+    }
+    for(auto& n: stimNodes2) {
+        auto n_ptr = (*grid)(n);
+        if(n_ptr) {
+            __stimN2.insert(n_ptr);
+        }
+    }
     set<string> temp;
     for(auto& pvar: pvars()) {
         temp.insert(pvar.first);
@@ -103,19 +115,26 @@ void GridProtocol::setupTrial() {
 
 bool GridProtocol::runTrial() {
     this->setupTrial();
+    this->runBefore(*this);
 
     //###############################################################
     // Every time step, currents, concentrations, and Vm are calculated.
     //###############################################################
     int pCount = 0;
-
+    bool stimSet = false;
+    int numrunsLeft = this->numruns;
+    double nextRunT = this->firstRun + this->runEvery;
     while(int(doneflag)&&(time<tMax)){
-
-
+        if(numrunsLeft > 1 && time >= nextRunT) {
+            this->runDuring(*this);
+            --numrunsLeft;
+            nextRunT += this->runEvery;
+        }
         time = __cell->tstep(stimt);    // Update time
         __cell->updateCurr();    // Update membrane currents
-        if(stim2 && stimt2 > __cell->t) {
+        if(stim2&&!stimSet&&stimt2 > __cell->t) {
             this->swapStims();
+            stimSet=true;
         }
         if(int(paceflag)==1) {  // Apply stimulus
             stim();
@@ -145,9 +164,10 @@ bool GridProtocol::runTrial() {
     this->__measureMgr->close();
     __cell->closeFiles();
     this->writeOutCellState(this->writeCellState);
-    if(stim2 && stimt2 > __cell->t) {
+    if(stimSet) {
         this->swapStims();
     }
+    this->runAfter(*this);
     return true;
 }
 set<pair<int,int>>& GridProtocol::getStimNodes() {
@@ -242,9 +262,9 @@ void GridProtocol::swapStims() {
     stimt = stimt2;
     stimt2 = temp;
 
-    set<pair<int,int>> temp2 = stimNodes;
-    stimNodes = stimNodes2;
-    stimNodes2 = temp2;
+    auto temp2 = __stimN;
+    __stimN = __stimN2;
+    __stimN2 = temp2;
 }
 
 void GridProtocol::setStim2(bool enable) {
@@ -254,9 +274,9 @@ void GridProtocol::setStim2(bool enable) {
     stim2 = !stim2;
     if(stim2) {
         GetSetRef toInsert;
-        pars["stim2"] = toInsert.Initialize("double", 
-                [this] () {return std::to_string(this->stim2);}, 
-                [this] (const string& value) {this->stim2 = stod(value);});
+        pars["stimt2"] = toInsert.Initialize("double", 
+                [this] () {return std::to_string(this->stimt2);}, 
+                [this] (const string& value) {this->stimt2 = stod(value);});
         pars["bcl2"] = toInsert.Initialize("double", 
                 [this] () {return std::to_string(this->stim2);}, 
                 [this] (const string& value) {this->stim2 = stod(value);});
@@ -270,7 +290,7 @@ void GridProtocol::setStim2(bool enable) {
                 [this] () {return setToString(stimNodes2);}, 
                 [this] (const string& value) {stimNodes2 = stringToSet(value);});
     } else {
-        pars.erase("stim2");
+        pars.erase("stimt2");
         pars.erase("bcl2");
         pars.erase("stimdur2");
         pars.erase("stimval2");

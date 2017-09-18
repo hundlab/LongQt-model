@@ -103,14 +103,22 @@ void VoltageClamp::setupTrial() {
 
 bool VoltageClamp::runTrial() {
     this->setupTrial();
+    this->runBefore(*this);
     //        if (int(readflag)==1)
     //            readvals(cell->vars, readfile);  // Init SVs before each trial.
     //###############################################################
     // Every time step, currents, concentrations, and Vm are calculated.
     //###############################################################
     int pCount = 0;
+    int numrunsLeft = this->numruns;
+    double nextRunT = this->firstRun + this->runEvery;
 
     while(int(doneflag)&&(time<tMax)){
+        if(numrunsLeft > 1 && time >= nextRunT) {
+            this->runDuring(*this);
+            --numrunsLeft;
+            nextRunT += this->runEvery;
+        }
 
         //what should stimt be made to be??
         time = __cell->tstep(0.0);    // Update time
@@ -145,6 +153,7 @@ bool VoltageClamp::runTrial() {
     __cell->closeFiles();
     this->writeOutCellState(this->writeCellState);
 
+    this->runAfter(*this);
     return true;
 }
 void VoltageClamp::readInCellState(bool read) {

@@ -123,13 +123,21 @@ void CurrentClamp::setupTrial() {
 
 bool CurrentClamp::runTrial() {
     this->setupTrial();
+    this->runBefore(*this);
 
     //###############################################################
     // Every time step, currents, concentrations, and Vm are calculated.
     //###############################################################
     int pCount = 0;
+    int numrunsLeft = this->numruns;
+    double nextRunT = this->firstRun + this->runEvery;
 
     while(int(doneflag)&&(time<tMax)){
+        if(numrunsLeft > 1 && time >= nextRunT) {
+            this->runDuring(*this);
+            --numrunsLeft;
+            nextRunT += this->runEvery;
+        }
         time = __cell->tstep(stimt);    // Update time
         __cell->updateCurr();    // Update membrane currents
         if(int(paceflag)==1)  // Apply stimulus
@@ -161,6 +169,7 @@ bool CurrentClamp::runTrial() {
     __cell->closeFiles();
     this->writeOutCellState(this->writeCellState);
 
+    this->runAfter(*this);
     return true;
 }
 

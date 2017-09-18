@@ -56,6 +56,8 @@ class GridProtocol : public CurrentClamp {
         set<pair<int,int>> stringToSet(string nodesList);
         Grid* grid;
         void swapStims();
+        set<shared_ptr<Node>> __stimN;
+        set<shared_ptr<Node>> __stimN2;
         shared_ptr<GridCell> __cell = make_shared<GridCell>();        // pointer to cell class
         unique_ptr<PvarsGrid> __pvars;
         unique_ptr<GridMeasureManager> __measureMgr; // set of measure class for measuring SV props.

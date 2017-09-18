@@ -297,3 +297,24 @@ void Protocol::mkmap() {
     pars["cellStateFile"]= toInsert.Initialize("file", [this] () {return cellStateFile;}, [this] (const string& value) {cellStateFile = value;});
     pars["celltype"]= toInsert.Initialize("cell", [this] () {return cell()->type();}, [this] (const string& value) {this->cell(value);});
 }
+
+void Protocol::setRunBefore(function<void(Protocol&)> p) {
+    this->runBefore = p;
+}
+function<void(Protocol&)> Protocol::getRunBefore() {
+    return this->runBefore;
+}
+void Protocol::setRunDuring(function<void(Protocol&)> p) {
+    this->runDuring = p;
+}
+function<void(Protocol&)> Protocol::getRunDuring() {
+    return this->runAfter;
+}
+void Protocol::setRunAfter(function<void(Protocol&)> p) {
+    this->runAfter = p;
+}
+function<void(Protocol&)> Protocol::getRunAfter() {
+    return this->runAfter;
+}
+
+

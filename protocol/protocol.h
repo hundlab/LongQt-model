@@ -72,6 +72,7 @@ class Protocol :  public std::enable_shared_from_this<Protocol>
 
         virtual MeasureManager& measureMgr() = 0;
 
+
         //##### Declare class variables ##############
         double vM;         // membrane potential, mV
         double time;       // time, ms
@@ -93,6 +94,15 @@ class Protocol :  public std::enable_shared_from_this<Protocol>
         QDir datadir;
         QDir cellStateDir;
 
+        void setRunBefore(function<void(Protocol&)>);
+        function<void(Protocol&)> getRunBefore();
+        void setRunDuring(function<void(Protocol&)>);
+        function<void(Protocol&)> getRunDuring();
+        int numruns = 0;
+        double firstRun = 0;
+        double runEvery = 0;
+        void setRunAfter(function<void(Protocol&)>);
+        function<void(Protocol&)> getRunAfter();
 
         //##### Declare maps for vars/params ##############
         map<string, GetSetRef> pars;
@@ -100,6 +110,9 @@ class Protocol :  public std::enable_shared_from_this<Protocol>
 protected:
         void copy(const Protocol& toCopy);
         int __trial;
+        function<void(Protocol&)> runBefore;
+        function<void(Protocol&)> runDuring;
+        function<void(Protocol&)> runAfter;
 private:
         void mkmap();
 };

@@ -26,7 +26,7 @@ void SettingsIO::writeSettings(shared_ptr<Protocol> proto, QString filename) {
     xml.writeStartDocument();
     xml.writeStartElement("file");
 
-    xml.writeTextElement("protocolType",proto->type);
+    xml.writeTextElement("protocolType",proto->type());
     proto->writepars(xml);
     proto->measureMgr().writeMVarsFile(xml);
     this->writedvars(proto, xml);
@@ -40,7 +40,7 @@ bool SettingsIO::readProtoType(shared_ptr<Protocol>& proto,  QXmlStreamReader& x
     if(CellUtils::readNext(xml, "protocolType")) {
         xml.readNext();
         QString type = xml.text().toString();
-        if(proto->type != type) {
+        if(proto->type() != type) {
             if(!allowProtoChange) {
                 qWarning("SettingsIO: Changing protocol type is disabled");
                 throw std::invalid_argument("SettingsIO: Changing protocol type is disabled");

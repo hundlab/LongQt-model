@@ -16,7 +16,6 @@ GridProtocol::GridProtocol() : CurrentClamp() {
     grid = __cell->getGrid();
     this->__pvars.reset(new PvarsGrid(grid));
     this->mkmap();
-    type = "Grid Protocol";
     stimval2 = stimval;
     stimdur2 = stimdur;
     bcl2 = bcl;
@@ -125,14 +124,14 @@ bool GridProtocol::runTrial() {
     int numrunsLeft = this->numruns;
     double nextRunT = this->firstRun + this->runEvery;
     while(int(doneflag)&&(time<tMax)){
-        if(numrunsLeft > 1 && time >= nextRunT) {
+        if(numrunsLeft > 0 && time >= nextRunT) {
             this->runDuring(*this);
             --numrunsLeft;
             nextRunT += this->runEvery;
         }
         time = __cell->tstep(stimt);    // Update time
         __cell->updateCurr();    // Update membrane currents
-        if(stim2&&!stimSet&&stimt2 > __cell->t) {
+        if(stim2&&(!stimSet)&&(__cell->t >= stimt2)) {
             this->swapStims();
             stimSet=true;
         }
@@ -320,4 +319,8 @@ void GridProtocol::mkmap() {
     pars.erase("numtrials");
     pars["paceflag"].set("true");
     pars.erase("paceflag");
+}
+
+const char* GridProtocol::type() const {
+    return "Grid Protocol";
 }

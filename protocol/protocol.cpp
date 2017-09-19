@@ -73,6 +73,9 @@ Protocol::Protocol()
     vM =  -88.0;
     //type = "Cell";  // class name
 
+    this->runBefore = ([] (Protocol&) {});
+    this->runDuring = [] (Protocol&) {};
+    this->runAfter = [] (Protocol&) {};
     // make map of params
     this->mkmap();
     this->setDataDir();
@@ -143,6 +146,13 @@ void Protocol::copy(const Protocol& toCopy) {
     //##### Initialize variables ##################
     time= toCopy.time;
     vM = toCopy.vM;
+
+    numruns = toCopy.numruns;
+    firstRun = toCopy.firstRun;
+    runEvery = toCopy.runEvery;
+    runBefore = toCopy.runBefore;
+    runDuring = toCopy.runDuring;
+    runAfter = toCopy.runAfter;
 
     //###### Duplicate cells, measures outputs and maps######
 }

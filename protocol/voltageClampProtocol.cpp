@@ -5,7 +5,6 @@ VoltageClamp::VoltageClamp()  : Protocol(){
     __measureMgr.reset(new MeasureManager(cell()));
     v1 = v2 = v3 = v4 = v5 = 0;
     t1 = t2 = t3 = t4 = t5 = 0;
-    type = "Voltage Clamp Protocol";
     this->mkmap();
 
     CellUtils::set_default_vals(*this);
@@ -114,7 +113,7 @@ bool VoltageClamp::runTrial() {
     double nextRunT = this->firstRun + this->runEvery;
 
     while(int(doneflag)&&(time<tMax)){
-        if(numrunsLeft > 1 && time >= nextRunT) {
+        if(numrunsLeft > 0 && time >= nextRunT) {
             this->runDuring(*this);
             --numrunsLeft;
             nextRunT += this->runEvery;
@@ -188,4 +187,7 @@ void VoltageClamp::mkmap() {
     pars["t5"] = toInsert.Initialize("double",[this] () {return std::to_string(t5);},[this] (const string& value) {t5 = std::stod(value);});
 
 
+}
+const char* VoltageClamp::type() const {
+    return "Voltage Clamp Protocol";
 }

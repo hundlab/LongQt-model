@@ -14,7 +14,6 @@ CurrentClamp::CurrentClamp()  : Protocol() {
     stimcounter = 0;
 
     this->mkmap();
-    type = "Current Clamp Protocol";
 
     CellUtils::set_default_vals(*this);
 }
@@ -133,7 +132,7 @@ bool CurrentClamp::runTrial() {
     double nextRunT = this->firstRun + this->runEvery;
 
     while(int(doneflag)&&(time<tMax)){
-        if(numrunsLeft > 1 && time >= nextRunT) {
+        if(numrunsLeft > 0 && time >= nextRunT) {
             this->runDuring(*this);
             --numrunsLeft;
             nextRunT += this->runEvery;
@@ -193,4 +192,7 @@ void CurrentClamp::mkmap() {
             [this] (const string& value) {
                 numtrials = std::stoi(value);
                 this->pvars().calcIonChanParams();});
+}
+const char* CurrentClamp::type() const {
+    return "Current Clamp Protocol";
 }

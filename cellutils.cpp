@@ -111,9 +111,9 @@ void CellUtils::set_default_vals(Protocol &proto) {
  * longqt
  */
 const map<string, CellUtils::ProtocolInitializer> CellUtils::protoMap = {
-    {CurrentClamp().type, [] () {return make_shared<CurrentClamp>();}},
-    {VoltageClamp().type, [] () {return make_shared<VoltageClamp>();}},
-    {GridProtocol().type, [] () {return make_shared<GridProtocol>();}}
+    {CurrentClamp().type(), [] () {return make_shared<CurrentClamp>();}},
+    {VoltageClamp().type(), [] () {return make_shared<VoltageClamp>();}},
+    {GridProtocol().type(), [] () {return make_shared<GridProtocol>();}}
 };
 
 std::string CellUtils::strprintf(const char * format, ...) {

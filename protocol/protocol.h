@@ -76,7 +76,7 @@ class Protocol :  public std::enable_shared_from_this<Protocol>
         //##### Declare class variables ##############
         double vM;         // membrane potential, mV
         double time;       // time, ms
-        const char* type = "protocol";
+        virtual const char* type() const = 0;
         //##### Declare class params ##############
         double meastime,writetime;
         double writeint;

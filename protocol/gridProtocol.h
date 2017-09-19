@@ -48,6 +48,8 @@ class GridProtocol : public CurrentClamp {
         set<pair<int,int>> stimNodes2;
         double stimval2, stimdur2, bcl2, stimt2;
 
+        const char* type() const override;
+
     private:
         void CCcopy(const GridProtocol& toCopy);
         void mkmap();

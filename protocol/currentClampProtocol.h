@@ -39,6 +39,8 @@ class CurrentClamp : public Protocol {
     int numstims;   //variables for pacing.
     bool stimflag,paceflag;
 
+    const char* type() const override;
+
   protected:
     virtual int stim();
     double stimcounter;

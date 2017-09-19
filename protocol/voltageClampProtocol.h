@@ -36,6 +36,8 @@ class VoltageClamp : public Protocol {
     double v1, v2, v3, v4, v5;
     double t1, t2, t3, t4, t5;
 
+    const char* type() const override;
+
   private:
 	int clamp();
     void CCcopy(const VoltageClamp& toCopy);

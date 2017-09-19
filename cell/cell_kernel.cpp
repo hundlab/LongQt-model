@@ -96,8 +96,7 @@ double CellKernel::tstep(double stimt)
 int CellKernel::externalStim(double stimval)
 {
     iTot = iTot+stimval;   // If [ion] change, also should add stimval to specific ion total (e.g. iKt)
-    
-  return 1;
+    return 1;
 }
 double CellKernel::var(string name) {
     return *vars.at(name);

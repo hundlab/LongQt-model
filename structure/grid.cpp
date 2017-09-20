@@ -2,18 +2,17 @@
 
 Grid::Grid(){}
 Grid::Grid(const Grid& other) {
-    rows = vector<Fiber>(other.rows.size(), Fiber(other.columns.size()));
-    columns = vector<Fiber>(other.columns.size(), Fiber(other.rows.size()));
-    for(unsigned int i = 0; i < rows.size();i++) {
-        rows[i].B = other.rows[i].B;
-        for(unsigned int j = 0; j < columns.size(); j++) {
-            shared_ptr<Node> n(new Node(*other.rows[i].nodes[j]));
-            rows[i].nodes[j] = n;
-            columns[j].nodes[i] = n;
+    rows.resize(other.rowCount(), Fiber(other.columnCount()));
+    columns.resize(other.columnCount(), Fiber(other.rowCount()));
+    for(unsigned int rn = 0; rn < rows.size();rn++) {
+        rows[rn].B = other.rows[rn].B;
+        for(unsigned int cn = 0; cn < columns.size(); cn++) {
+            rows[rn].nodes[cn] = make_shared<Node>(*other.rows[rn].nodes[cn]);
+            columns[cn].nodes[rn] = rows[rn].nodes[cn];
         }
     }
-    for(unsigned int i = 0; i < columns.size(); i++) {
-        columns[i].B = other.columns[i].B;
+    for(unsigned int cn = 0; cn < columns.size(); cn++) {
+        columns[cn].B = other.columns[cn].B;
     }
 }
 Grid::~Grid(){}
@@ -130,10 +129,10 @@ void Grid::setCellTypes(const CellInfo& singleCell) {
         throw new std::out_of_range(string(oor.what())+string(": new cell was not in range of grid"));
     }
 }
-int Grid::rowCount() {
+int Grid::rowCount() const {
     return static_cast<int>(rows.size());
 }
-int Grid::columnCount() {
+int Grid::columnCount() const {
     return static_cast<int>(columns.size());
 }
 pair<int,int> Grid::findNode(const shared_ptr<Node> toFind) {

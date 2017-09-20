@@ -53,6 +53,8 @@ class Grid {
     typedef std::vector<Fiber>::const_iterator const_iterator;
     typedef std::vector<Fiber>::iterator iterator;
 
+    Grid& operator=(const Grid&) = delete;
+
 //	inline virtual edge(int x, int y, CellUtils::Side s);
     virtual void addRow(int pos); //create new row at 0 <= pos < len of empty cells
     virtual void addRows(unsigned int num, int position = 0);
@@ -64,8 +66,8 @@ class Grid {
     virtual void removeColumns(unsigned int num, int position = 0);
     virtual void setCellTypes(list<CellInfo>& cells);
     virtual void setCellTypes(const CellInfo& singleCell);
-    virtual int rowCount();
-    virtual int columnCount();
+    virtual int rowCount() const;
+    virtual int columnCount() const;
     virtual pair<int,int> findNode(const shared_ptr<Node> toFind);
     virtual shared_ptr<Node> operator()(const pair<int,int>& p);
     virtual shared_ptr<Node> operator()(const int row, const int col);

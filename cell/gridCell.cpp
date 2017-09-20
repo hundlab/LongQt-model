@@ -29,10 +29,9 @@ void GridCell::Initialize() {
     tcount = 0;
     makeMap();
 }
-GridCell::GridCell(GridCell& toCopy) : Cell(toCopy) {
+GridCell::GridCell(GridCell& toCopy) : Cell(toCopy),grid(toCopy.grid) {
     this->Initialize();
     this->gridfileName = toCopy.gridfileName;
-    this->grid = Grid(toCopy.grid);
 }
 GridCell *GridCell::clone() {
     return new GridCell(*this);

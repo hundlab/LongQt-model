@@ -130,7 +130,7 @@ void GpbAtrialOnal17::Initialize()
 	fPhos = 8.382592879e-09;
 
 	fiNalP = 0;
-    isoflag=1;
+    isoflag=0;
 	RyRP = 382.6E-3;
 
 	Icalfactor = Icabfactor = Ipcafactor = 1;

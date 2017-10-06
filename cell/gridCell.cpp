@@ -129,7 +129,7 @@ void GridCell::closeFiles() {
     }
 }
 double GridCell::updateV() {
-    if((tcount%2==0)){
+    if(tcount==0&&grid.columnCount()>1){
         for(auto& row: grid.rows){
             row.updateVm(dt);
         }
@@ -167,13 +167,16 @@ double GridCell::tstep(double stimt)
     unsigned int i,j;
     int vmflag=0;
 
-    tcount++;
+    tcount = ((++tcount)%2);
+    if(tcount==1&&(grid.rowCount()==1||grid.columnCount()==1)) {
+        tcount = 0;
+    }
     t=t+dt;
     for(i=0;i<grid.rows.size();i++){
         for(j=0;j<grid.columns.size();j++){
             grid.rows[i][j]->cell->t=t;
             grid.rows[i][j]->cell->dt = dt;
-            if(tcount%2==0){  // used to prevent time step change in middle of ADI	
+            if(tcount==0){  // used to prevent time step change in middle of ADI
                 if(grid.rows[i][j]->cell->dVdt>grid.rows[i][j]->cell->dvcut||(t>(stimt-2.0)&&t<stimt+10)||(apTime<5.0))
                     vmflag = 2;
                 else if((apTime<40)&&vmflag!=2)
@@ -181,7 +184,7 @@ double GridCell::tstep(double stimt)
             }
         }
     }
-    if(tcount%2==0){
+    if(tcount==0){
         if(vmflag==2)
             dt = dtmin;
         else if(vmflag==1)

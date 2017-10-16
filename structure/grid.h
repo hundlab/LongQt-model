@@ -73,6 +73,7 @@ class Grid {
     virtual shared_ptr<Node> operator()(const int row, const int col);
 	virtual void reset();
 	virtual void updateB(CellInfo node, CellUtils::Side s);
+    virtual void updateConnectivities();
 
     virtual const_iterator begin() const;
     virtual const_iterator end() const;

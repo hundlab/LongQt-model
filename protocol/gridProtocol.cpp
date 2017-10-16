@@ -110,6 +110,7 @@ void GridProtocol::setupTrial() {
 
     __cell->setOuputfileVariables(getDataDir()+"/"
         +CellUtils::strprintf(dvarsoutfile.c_str(),__trial));
+    this->grid->updateConnectivities();
 }
 
 bool GridProtocol::runTrial() {

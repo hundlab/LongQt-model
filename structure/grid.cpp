@@ -230,6 +230,30 @@ void Grid::updateB(CellInfo node, CellUtils::Side s) {
     }
 }
 
+void Grid::updateConnectivities()
+{
+    for(int row = 0; row < this->rowCount(); ++row) {
+        for(int col = 0; col < this->columnCount(); ++col) {
+            if(row == 0) {
+                (*this)(row,col)->condConst[CellUtils::Side::top] = 0;
+            }
+            if(row == this->rowCount()-1) {
+                (*this)(row,col)->condConst[CellUtils::Side::bottom] = 0;
+            }
+            if(col == 0) {
+                (*this)(row,col)->condConst[CellUtils::Side::left] = 0;
+            }
+            if(col == this->columnCount()-1) {
+                (*this)(row,col)->condConst[CellUtils::Side::right] = 0;
+            }
+            this->rows.at(row).B[col] = (*this)(row,col)->condConst[CellUtils::Side::left];
+            this->rows.at(row).B[col+1] = (*this)(row,col)->condConst[CellUtils::Side::right];
+            this->columns.at(col).B[row] = (*this)(row,col)->condConst[CellUtils::Side::top];
+            this->columns.at(col).B[row+1] = (*this)(row,col)->condConst[CellUtils::Side::bottom];
+        }
+    }
+}
+
 Grid::const_iterator Grid::begin() const {
     return this->rows.begin();
 }

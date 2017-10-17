@@ -1,4 +1,5 @@
 #include "node.h"
+#include "grid.h"
 
 Node::Node(const Node& other) : std::enable_shared_from_this<Node>(other) {
 	rd = other.rd;
@@ -12,6 +13,8 @@ Node::Node(const Node& other) : std::enable_shared_from_this<Node>(other) {
 	vNew = other.vNew;
 	nodeType = other.nodeType;
     cell.reset(other.cell->clone());
+    row = other.row;
+    col = other.col;
 }
 
 /*double Node::calPerc(int X, double dx, double val) {
@@ -25,20 +28,121 @@ Node::Node(const Node& other) : std::enable_shared_from_this<Node>(other) {
 	}
 }*/
 
-void Node::setCondConst(int X, double dx, CellUtils::Side s, bool perc, double val) {
-    if(cell->type() == string("Inexcitable Cell")) {
-		condConst[s] = 0.0;
+void Node::setCondConst(double dx, CellUtils::Side s, bool perc, double val) {
+    auto nei = this->calcNeighborPos(s);
+    auto neiNode = (*parent)(nei);
+    if(!neiNode) {
+        return;
+    }
+    if(cell->type() == string("Inexcitable Cell")
+            || neiNode->cell->type() == string("Inexcitable Cell")) {
+        setCondConstDirect(s,0.0);
 		return;
-	}
+    }
+    if(isnan(val)) {
+        double ourCond = this->calcCondConst(dx,s,1);
+        double theirCond = neiNode->calcCondConst(dx,CellUtils::flipSide(s),1);
+        setCondConstDirect(s,(ourCond+theirCond)/2);
+        return;
+    }
 	if(!perc) {
-		condConst[s] = val;
+        setCondConstDirect(s,val);
 		return;
-	}
-	if((np==1)||((X%np)==0)) {
-		condConst[s] = 1000*cell->cellRadius/(2*cell->Rcg*(cell->Rmyo*dx+rd*val)*cell->Cm*dx);
-	} else {
-		condConst[s] = 1001*cell->cellRadius/(2*cell->Rcg*cell->Rmyo*cell->Cm*dx*dx);
-	}
+    } else {
+        setCondConstDirect(s,this->calcCondConst(dx,s,val));
+    }
+}
+pair<int,int> Node::calcNeighborPos(CellUtils::Side s) {
+    pair<int,int> nei;
+    switch(s) {
+    case CellUtils::Side::left:
+        nei = pair<int,int>(row,col-1);
+        break;
+    case CellUtils::Side::right:
+        nei = pair<int,int>(row,col+1);
+        break;
+    case CellUtils::Side::top:
+        nei = pair<int,int>(row-1,col);
+        break;
+    case CellUtils::Side::bottom:
+        nei = pair<int,int>(row+1,col);
+        break;
+    }
+    return nei;
+}
+
+double Node::calcCondConst(double dx, CellUtils::Side s, double val) {
+    if(val==0) {
+        return 0;
+    }
+    int X = (s==CellUtils::Side::right||CellUtils::Side::right) ? row : col;
+    if((np==1)||((X%np)==0)) {
+        return 1000*cell->cellRadius/(2*cell->Rcg*(cell->Rmyo*dx+rd*val)*cell->Cm*dx);
+    } else {
+        return 1001*cell->cellRadius/(2*cell->Rcg*cell->Rmyo*cell->Cm*dx*dx);
+    }
+}
+
+void Node::setCondConstDirect(CellUtils::Side s, double val) {
+    switch(s) {
+    case CellUtils::Side::left:
+        parent->rows.at(row).B.at(col) = val;
+        break;
+    case CellUtils::Side::right:
+        parent->rows.at(row).B.at(col+1) = val;
+        break;
+    case CellUtils::Side::top:
+        parent->columns.at(col).B.at(row) = val;
+        break;
+    case CellUtils::Side::bottom:
+        parent->columns.at(col).B.at(row+1) = val;
+        break;
+    }
+}
+
+double Node::getCondConst(CellUtils::Side s)
+{
+    double val = -1;
+    switch(s) {
+    case CellUtils::Side::left:
+        val = parent->rows.at(row).B[col];
+        break;
+    case CellUtils::Side::right:
+        val = parent->rows.at(row).B[col+1];
+        break;
+    case CellUtils::Side::top:
+        val = parent->columns.at(col).B[row];
+        break;
+    case CellUtils::Side::bottom:
+        val = parent->columns.at(col).B[row+1];
+        break;
+    }
+
+    return val;
+}
+
+void Node::setParent(Grid *par,int row, int col)
+{
+    this->parent = par;
+    if(row==-1||col==-1) {
+        auto temp = parent->findNode(this->shared_from_this());
+        this->row = temp.first;
+        this->col = temp.second;
+    } else {
+        this->row = row;
+        this->col = col;
+    }
+}
+
+void Node::setPosition(int row, int col)
+{
+    this->row = row;
+    this->col = col;
+}
+
+Grid *Node::getParent()
+{
+    return this->parent;
 }
 /*
 void Node::updateV(double dt) {

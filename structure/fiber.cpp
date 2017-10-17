@@ -13,10 +13,12 @@ Fiber::Fiber(int size) {
 }
 Fiber::Fiber(const Fiber& o) {
     this->B = o.B;
+    this->nodes = o.nodes;
+    /*
     this->nodes.resize(o.nodes.size());
     for(unsigned int i = 0; i < o.nodes.size(); ++i) {
         this->nodes[i] = make_shared<Node>(*o.nodes[i]);
-    }
+    }*/
 }
 Fiber::~Fiber() {}
 //#############################################################

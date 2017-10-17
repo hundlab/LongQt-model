@@ -60,6 +60,8 @@ namespace CellUtils {
         left = 3
     };
 
+    Side flipSide(Side s);
+
     void set_default_vals(Protocol& proto);
 
     /*reads in until the next StartElement with name name

@@ -56,10 +56,10 @@ class Grid {
     Grid& operator=(const Grid&) = delete;
 
 //	inline virtual edge(int x, int y, CellUtils::Side s);
-    virtual void addRow(int pos); //create new row at 0 <= pos < len of empty cells
-    virtual void addRows(unsigned int num, int position = 0);
-    virtual void addColumn(int pos); //same but for culumns
-    virtual void addColumns(unsigned int num, int position = 0);
+    virtual void addRow();
+    virtual void addRows(unsigned int num);
+    virtual void addColumn();
+    virtual void addColumns(unsigned int num);
     virtual void removeRow(int pos);
     virtual void removeRows(unsigned int num, int position = 0);
     virtual void removeColumn(int pos);
@@ -73,7 +73,7 @@ class Grid {
     virtual shared_ptr<Node> operator()(const int row, const int col);
 	virtual void reset();
 	virtual void updateB(CellInfo node, CellUtils::Side s);
-    virtual void updateConnectivities();
+    void updateNodePositions();
 
     virtual const_iterator begin() const;
     virtual const_iterator end() const;

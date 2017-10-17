@@ -129,3 +129,17 @@ std::string CellUtils::strprintf(const char * format, ...) {
     return str;
 }
 
+
+CellUtils::Side CellUtils::flipSide(CellUtils::Side s)
+{
+    switch(s) {
+    case CellUtils::Side::top:
+        return CellUtils::Side::bottom;
+    case CellUtils::Side::bottom:
+        return CellUtils::Side::top;
+    case CellUtils::Side::left:
+        return CellUtils::Side::right;
+    case CellUtils::Side::right:
+        return CellUtils::Side::left;
+    }
+}

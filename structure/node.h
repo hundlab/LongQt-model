@@ -10,16 +10,18 @@
 #include <memory>
 #include <array>
 
+class Grid;
+
 struct Node : public std::enable_shared_from_this<Node> {
     Node() {};
 	Node(const Node& other);
 	~Node() {};
 
-	void setCondConst(int X, double dx, CellUtils::Side s, bool perc = true, double val = 1);
+    void setCondConst(double dx, CellUtils::Side s, bool perc = true, double val = 1);
 //	void updateV(double dt);
     shared_ptr<Cell> cell = make_shared<InexcitableCell>();
     double rd = 1.5; // gap junctional disk resistance.
-    array<double,4> condConst = {{0,0,0,0}};
+    double getCondConst(CellUtils::Side s);
 //## default value cannot be deterimined by constructor
     double dIax = 0;
 	int np = 1; //number of cells in each node
@@ -32,6 +34,16 @@ struct Node : public std::enable_shared_from_this<Node> {
     double r = 0; //right side of eqn for tridag solver
     double vNew = 0; //vOld(t+1) for tridag solver
     string nodeType ="";
+    int row = -1;
+    int col = -1;
+    void setParent(Grid* par,int row = -1, int col = -1);
+    void setPosition(int row, int col);
+    Grid* getParent();
 
+private:
+    void setCondConstDirect(CellUtils::Side s, double val);
+    Grid* parent;
+    pair<int, int> calcNeighborPos(CellUtils::Side s);
+    double calcCondConst(double dx, CellUtils::Side s, double val);
 };
 #endif

@@ -9,46 +9,46 @@ Grid::Grid(const Grid& other) {
         for(unsigned int cn = 0; cn < columns.size(); cn++) {
             rows[rn].nodes[cn] = make_shared<Node>(*other.rows[rn].nodes[cn]);
             columns[cn].nodes[rn] = rows[rn].nodes[cn];
+            rows[rn].nodes[cn]->setParent(this,rn,cn);
         }
     }
     for(unsigned int cn = 0; cn < columns.size(); cn++) {
         columns[cn].B = other.columns[cn].B;
     }
+    this->updateNodePositions();
 }
 Grid::~Grid(){}
 
-void Grid::addRow(int pos) {
-    if(pos < 0|| pos>rows.size()) {
-        pos = rows.size();
-    }
-    rows.insert(rows.begin() +pos, Fiber(static_cast<int>(columns.size())));
-    {unsigned int i = 0;
-    for(auto it = columns.begin(); it != columns.end()&&i<rows[pos].nodes.size(); it++,i++) {
-        it->nodes.insert(it->nodes.begin() + pos, rows[pos].nodes[i]);
-        it->B.insert(it->B.begin() + pos, 0);
-    }
+void Grid::addRow() {
+    rows.push_back(Fiber(static_cast<int>(columns.size())));
+    int cc = 0;
+    int rc = rows.size()-1;
+    for(auto& column: columns) {
+        column.nodes.push_back(rows.at(rc)[cc]);
+        column.B.push_back(0.0);
+        rows[rc][cc]->setParent(this,rc,cc);
+        ++cc;
     }
 }
-void Grid::addRows(unsigned int num, int position) {
+void Grid::addRows(unsigned int num) {
     for(unsigned int i = 0; i < num; i++) {
-        this->addRow(position);
+        this->addRow();
     }
 }
-void Grid::addColumn(int pos) {
-    if(pos < 0 || pos>columns.size()) {
-        pos = columns.size();
-    }
-    columns.insert(columns.begin() +pos, Fiber(static_cast<int>(rows.size())));
-    {unsigned int i = 0;
-    for(auto it = rows.begin(); it != rows.end()&&i<columns[pos].nodes.size(); it++,i++) {
-        it->nodes.insert(it->nodes.begin() + pos, columns[pos].nodes[i]);
-        it->B.insert(it->B.begin() + pos, 0);
-    }
+void Grid::addColumn() {
+    columns.push_back(Fiber(static_cast<int>(rows.size())));
+    int rc = 0;
+    int cc = columns.size()-1;
+    for(auto& row: rows) {
+        row.nodes.push_back(columns[cc][rc]);
+        row.B.push_back(0.0);
+        columns[cc][rc]->setParent(this,rc,cc);
+        ++rc;
     }
 }
-void Grid::addColumns(unsigned int num, int position) {
+void Grid::addColumns(unsigned int num) {
     for(unsigned int i = 0; i < num; i++) {
-        this->addColumn(position);
+        this->addColumn();
     }
 }
 void Grid::removeRows(unsigned int num, int position) {
@@ -105,18 +105,12 @@ void Grid::setCellTypes(const CellInfo& singleCell) {
 
 		bool update = !(isnan(singleCell.c[0])&&isnan(singleCell.c[1])
 				&&isnan(singleCell.c[2])&&isnan(singleCell.c[3]));
-		if(!(update&&isnan(singleCell.c[CellUtils::top]))) {
-			this->updateB(singleCell, CellUtils::top);
-		}
-		if(!(update&&isnan(singleCell.c[CellUtils::bottom]))) {
-			this->updateB(singleCell, CellUtils::bottom);
-		}
-		if(!(update&&isnan(singleCell.c[CellUtils::left]))) {
-			this->updateB(singleCell, CellUtils::left);
-		}
-		if(!(update&&isnan(singleCell.c[CellUtils::right]))) {
-			this->updateB(singleCell, CellUtils::right);
-		}
+        for(int i = 0; i < 4; ++i) {
+            if(!(update&&isnan(singleCell.c[i]))) {
+                 n->setCondConst(singleCell.dx,CellUtils::Side(i),
+                     singleCell.c_perc,singleCell.c[i]);
+            }
+        }
         if(singleCell.row == 0 ||
 				static_cast<unsigned int>(singleCell.row) == rows.size()) {
 //            fibery.at(singleCell.Y).B.at(singleCell.X) = 0.0;
@@ -171,7 +165,8 @@ void Grid::reset() {
 }
 
 void Grid::updateB(CellInfo node, CellUtils::Side s) {
-    int row = node.row;
+
+/*    int row = node.row;
     int col = node.col;
     shared_ptr<Node> nc = (*this)(row,col);
 	double condOther;
@@ -184,11 +179,11 @@ void Grid::updateB(CellInfo node, CellUtils::Side s) {
 	CellUtils::Side so;
 
 	if(!isnan(node.c[s]))
-        nc->setCondConst(row, node.dx, s, node.c_perc, node.c[s]);
+        nc->setCondConst(node.dx, s, node.c_perc, node.c[s]);
 	else
-        nc->setCondConst(row, node.dx, s);
+        nc->setCondConst(node.dx, s);
 
-	double cond = nc->condConst[s];
+    double cond = nc->getCondConst(s);
 
 	switch(s) {
 	case CellUtils::top:
@@ -217,8 +212,8 @@ void Grid::updateB(CellInfo node, CellUtils::Side s) {
 		return;
 	}
 	if(!isnan(node.c[s]))
-        n->setCondConst(rowo, node.dx, so, node.c_perc, node.c[s]);
-	condOther = n->condConst[so];
+        n->setCondConst(node.dx, so, node.c_perc, node.c[s]);
+        condOther = n->getCondConst(so);
 	try {
 		if(lr) {
 			rows.at(bpx).B.at(bpy) = (cond+condOther)/2;
@@ -228,30 +223,7 @@ void Grid::updateB(CellInfo node, CellUtils::Side s) {
 	} catch(const std::out_of_range& oor) {
         throw new std::out_of_range(string(oor.what())+string(": new cell was not in range of grid"));
     }
-}
-
-void Grid::updateConnectivities()
-{
-    for(int row = 0; row < this->rowCount(); ++row) {
-        for(int col = 0; col < this->columnCount(); ++col) {
-            if(row == 0) {
-                (*this)(row,col)->condConst[CellUtils::Side::top] = 0;
-            }
-            if(row == this->rowCount()-1) {
-                (*this)(row,col)->condConst[CellUtils::Side::bottom] = 0;
-            }
-            if(col == 0) {
-                (*this)(row,col)->condConst[CellUtils::Side::left] = 0;
-            }
-            if(col == this->columnCount()-1) {
-                (*this)(row,col)->condConst[CellUtils::Side::right] = 0;
-            }
-            this->rows.at(row).B[col] = (*this)(row,col)->condConst[CellUtils::Side::left];
-            this->rows.at(row).B[col+1] = (*this)(row,col)->condConst[CellUtils::Side::right];
-            this->columns.at(col).B[row] = (*this)(row,col)->condConst[CellUtils::Side::top];
-            this->columns.at(col).B[row+1] = (*this)(row,col)->condConst[CellUtils::Side::bottom];
-        }
-    }
+    */
 }
 
 Grid::const_iterator Grid::begin() const {
@@ -268,4 +240,13 @@ Grid::iterator Grid::begin() {
 
 Grid::iterator Grid::end() {
     return this->rows.end();
+}
+
+void Grid::updateNodePositions()
+{
+    for(int rc = 0; rc < rowCount(); ++rc) {
+        for(int cc = 0; cc < columnCount(); ++cc) {
+            (*this)(rc,cc)->setPosition(rc,cc);
+        }
+    }
 }

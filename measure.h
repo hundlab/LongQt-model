@@ -48,7 +48,7 @@ class Measure
 
         map<string, double* const> varmap = // map for refing properties that can be measured.
         {{"peak",&peak},{"min",&min},{"maxderiv",&maxderiv},
-        {"mint",&mint},{"derivt",&derivt}};
+        {"mint",&mint},{"derivt",&derivt},{"maxt",&maxt}};
 
         //		map<string, double> lastMap;
 

@@ -4,7 +4,6 @@
 PvarsGrid::PvarsGrid(Grid* grid): grid(grid) {}
 
 PvarsGrid::PvarsGrid(const PvarsGrid& o) {
-    this->generator = o.generator;
     this->grid = o.grid;
     for(auto pvar: *(o.__pvars)) {
         this->__pvars->insert({pvar.first,new MIonChanParam(*pvar.second)});
@@ -200,13 +199,13 @@ void PvarsGrid::calcIonChanParam(MIonChanParam* param) {
                 case CellPvars::Distribution::normal:
                     {
                         normal_distribution<double> distribution(param->val[0],param->val[1]);
-                        val = distribution(*generator);
+                        val = distribution(generator);
                         break;
                     }
                 case CellPvars::Distribution::lognormal:
                     {
                         lognormal_distribution<double> logdistribution(param->val[0], param->val[1]);
-                        val = logdistribution(*generator);
+                        val = logdistribution(generator);
                         break;
                     }
             }

@@ -4,7 +4,6 @@
 #include <random>
 #include <array>
 #include <memory>
-#include <chrono>
 
 #include <QXmlStreamReader>
 #include <QXmlStreamWriter>
@@ -59,8 +58,8 @@ class CellPvars {
         virtual const_iterator end() const;
 
     protected:
-        shared_ptr<default_random_engine> generator =
-            make_shared<default_random_engine>(std::chrono::system_clock::now().time_since_epoch().count());
+        default_random_engine generator =
+                default_random_engine(std::random_device{}());
         map<string,IonChanParam*> pvars;
 };
 #endif

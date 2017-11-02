@@ -132,19 +132,19 @@ void GridCell::closeFiles() {
 double GridCell::updateV() {
     double dt = this->dt;
     if(tcount==0&&grid.columnCount()>1){
-        QtConcurrent::blockingMap(grid.rows,[dt] (Fiber& f) {
-            f.updateVm(dt);
-        });
-//        for(auto& row: grid.rows){
-//            row.updateVm(dt);
-//        }
+//        QtConcurrent::blockingMap(grid.rows,[dt] (Fiber& f) {
+//            f.updateVm(dt);
+//        });
+        for(auto& row: grid.rows){
+            row.updateVm(dt);
+        }
     } else {
-        QtConcurrent::blockingMap(grid.columns,[dt] (Fiber& f) {
-            f.updateVm(dt);
-        });
-//        for(auto& column: grid.columns){
-//            column.updateVm(dt);
-//        }
+//        QtConcurrent::blockingMap(grid.columns,[dt] (Fiber& f) {
+//            f.updateVm(dt);
+//        });
+        for(auto& column: grid.columns){
+            column.updateVm(dt);
+        }
     }
     return 0.0;
 }

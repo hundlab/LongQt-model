@@ -13,16 +13,7 @@ SettingsIO* SettingsIO::getInstance() {
     return __instance;
 }
 
-void SettingsIO::writeSettings(shared_ptr<Protocol> proto, QString filename) {
-    QFile ofile(filename);
-    string name;
-
-    if(!ofile.open(QIODevice::WriteOnly|QIODevice::Text|QIODevice::Truncate)){
-        qCritical() << "SettingsIO: Error opening " << filename;
-        return;
-    }
-    QXmlStreamWriter xml(&ofile);
-    xml.setAutoFormatting(true);
+void SettingsIO::write(shared_ptr<Protocol> proto, QXmlStreamWriter& xml) {
     xml.writeStartDocument();
     xml.writeStartElement("file");
 
@@ -33,7 +24,24 @@ void SettingsIO::writeSettings(shared_ptr<Protocol> proto, QString filename) {
     proto->pvars().writePvars(xml);
 
     xml.writeEndElement();
+}
 
+void SettingsIO::writeSettings(shared_ptr<Protocol> proto, QString filename) {
+    QFile ofile(filename);
+    string name;
+
+    if(!ofile.open(QIODevice::WriteOnly|QIODevice::Text|QIODevice::Truncate)){
+        qCritical() << "SettingsIO: Error opening " << filename;
+        return;
+    }
+    QXmlStreamWriter xml(&ofile);
+    xml.setAutoFormatting(true);
+    this->write(proto, xml);
+}
+
+void SettingsIO::writeSettingsStr(shared_ptr<Protocol> proto, QString* text) {
+    QXmlStreamWriter xml(text);
+    this->write(proto, xml);
 }
 
 bool SettingsIO::readProtoType(shared_ptr<Protocol>& proto,  QXmlStreamReader& xml) {
@@ -63,15 +71,7 @@ bool SettingsIO::readProtoType(shared_ptr<Protocol>& proto,  QXmlStreamReader& x
     return true;
 }
 
-void SettingsIO::readSettings(shared_ptr<Protocol> proto, QString filename) {
-    QFile ifile(filename);
-
-    if(!ifile.open(QIODevice::ReadOnly)){
-        qCritical() << "SettingsIO: Error opening " << filename;
-        return;
-    }
-    QXmlStreamReader xml(&ifile);
-
+void SettingsIO::read(shared_ptr<Protocol> proto, QXmlStreamReader& xml) {
     try {
         this->readProtoType(proto,xml);
         proto->readpars(xml);
@@ -96,9 +96,25 @@ void SettingsIO::readSettings(shared_ptr<Protocol> proto, QString filename) {
     }
 
     this->lastProto = proto;
-    ifile.close();
 }
 
+void SettingsIO::readSettings(shared_ptr<Protocol> proto, QString filename) {
+    QFile ifile(filename);
+
+    if(!ifile.open(QIODevice::ReadOnly)){
+        qCritical() << "SettingsIO: Error opening " << filename;
+        return;
+    }
+    QXmlStreamReader xml(&ifile);
+
+    this->read(proto, xml);
+
+    ifile.close();
+}
+void SettingsIO::readSettingsStr(shared_ptr<Protocol> proto, QString text) {
+    QXmlStreamReader xml(text);
+    this->read(proto, xml);
+}
 void SettingsIO::writedvars(shared_ptr<Protocol> proto, QXmlStreamWriter& xml) {
     set<string> selection = proto->cell()->getVariableSelection();
 

@@ -24,7 +24,7 @@ Fiber::~Fiber() {}
 //#############################################################
 // Solve PDE for Vm along fiber using tridiagonal solver.
 //#############################################################
-void Fiber::updateVm(double& dt) {
+void Fiber::updateVm(const double& dt) {
     int i;
     int nn = static_cast<int>(nodes.size());
     if(nn <= 1) { return;}

@@ -15,7 +15,7 @@ class Fiber {
 
     typedef std::vector<shared_ptr<Node>>::const_iterator const_iterator;
 
-    virtual void updateVm(double& dt);
+    virtual void updateVm(const double& dt);
     virtual shared_ptr<Node> operator[](int pos);
     virtual shared_ptr<Node> at(int pos);
     virtual int size() const;

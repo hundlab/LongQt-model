@@ -57,7 +57,7 @@ shared_ptr<Measure> MeasureManager::getMeasure(string varname, set<string> selec
         string measName = varsMeas.at(varname);
         return shared_ptr<Measure>(varMeasCreator.at(measName)(selection));
     }
-    return shared_ptr<Measure>(new Measure(selection));
+    return make_shared<Measure>(selection);
 }
 
 void MeasureManager::addMeasure(string var,set<string> selection) {

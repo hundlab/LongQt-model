@@ -99,15 +99,12 @@ void Grid::setCellTypes(const CellInfo& singleCell) {
 		if(singleCell.cell) {
             n->cell = singleCell.cell;
 		}
-		n->np = singleCell.np;
-//        n->x = singleCell.X*singleCell.dx;
-//        n->y = singleCell.Y*singleCell.dy;
 
 		bool update = !(isnan(singleCell.c[0])&&isnan(singleCell.c[1])
 				&&isnan(singleCell.c[2])&&isnan(singleCell.c[3]));
         for(int i = 0; i < 4; ++i) {
             if(!(update&&isnan(singleCell.c[i]))) {
-                 n->setCondConst(singleCell.dx,CellUtils::Side(i),
+                 n->setCondConst(CellUtils::Side(i),
                      singleCell.c_perc,singleCell.c[i]);
             }
         }
@@ -162,68 +159,6 @@ shared_ptr<Node> Grid::operator()(const int row, const int col) {
 void Grid::reset() {
 	this->rows.clear();
 	this->columns.clear();
-}
-
-void Grid::updateB(CellInfo node, CellUtils::Side s) {
-
-/*    int row = node.row;
-    int col = node.col;
-    shared_ptr<Node> nc = (*this)(row,col);
-	double condOther;
-    double rowo = row;
-    double colo = col;
-    double bpx = row;
-    double bpy = col;
-	bool lr = true;
-    shared_ptr<Node> n;
-	CellUtils::Side so;
-
-	if(!isnan(node.c[s]))
-        nc->setCondConst(node.dx, s, node.c_perc, node.c[s]);
-	else
-        nc->setCondConst(node.dx, s);
-
-    double cond = nc->getCondConst(s);
-
-	switch(s) {
-	case CellUtils::top:
-        rowo = row-1;
-		lr = false;
-		so = CellUtils::bottom;
-		break;
-	case CellUtils::bottom:
-        rowo = row+1;
-        bpx = row+1;
-		lr = false;
-		so = CellUtils::top;
-		break;
-	case CellUtils::right:
-        colo = col+1;
-        bpy = col+1;
-		so = CellUtils::left;
-		break;
-	case CellUtils::left:
-        colo = col-1;
-		so = CellUtils::right;
-		break;
-	}
-    n = (*this)(rowo,colo);
-    if(!n) {
-		return;
-	}
-	if(!isnan(node.c[s]))
-        n->setCondConst(node.dx, so, node.c_perc, node.c[s]);
-        condOther = n->getCondConst(so);
-	try {
-		if(lr) {
-			rows.at(bpx).B.at(bpy) = (cond+condOther)/2;
-		} else {
-			columns.at(bpy).B.at(bpx) = (cond+condOther)/2;
-		}
-	} catch(const std::out_of_range& oor) {
-        throw new std::out_of_range(string(oor.what())+string(": new cell was not in range of grid"));
-    }
-    */
 }
 
 Grid::const_iterator Grid::begin() const {

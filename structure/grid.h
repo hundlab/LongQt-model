@@ -19,13 +19,11 @@
 
 struct CellInfo {
 	//necessary
-    CellInfo(int row=-1, int col=-1, double dx=0.01, double dy=0.01, int np=1,
+    CellInfo(int row=-1, int col=-1, int np=1,
         shared_ptr<Cell> cell=0, array<double,4> c={NAN,NAN,NAN,NAN},
         bool c_perc=false) {
         this->row = row;
         this->col = col;
-        this->dx = dx;
-        this->dy = dy;
         this->np = np;
         this->cell = cell;
         this->c = c;
@@ -34,8 +32,6 @@ struct CellInfo {
     ~CellInfo() {}
     int row = -1;
     int col = -1;
-    double dx = 0.01;
-    double dy = 0.01;
     int np = 1;
 	//if cell == NULL then cell will not be changed
     shared_ptr<Cell> cell = 0;
@@ -72,7 +68,6 @@ class Grid {
     virtual shared_ptr<Node> operator()(const pair<int,int>& p);
     virtual shared_ptr<Node> operator()(const int row, const int col);
 	virtual void reset();
-	virtual void updateB(CellInfo node, CellUtils::Side s);
     void updateNodePositions();
 
     virtual const_iterator begin() const;
@@ -82,5 +77,8 @@ class Grid {
 
     vector<Fiber> rows;
     vector<Fiber> columns;
+
+    double dx = 0.01; //0.01
+    double dy = 0.01;
 };
 #endif

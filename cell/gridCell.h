@@ -57,9 +57,6 @@ class GridCell: public Cell {
         bool handleGrid(QXmlStreamReader& xml);
 
         Grid grid;
-        double dx; //0.01
-        double dy;
-        double np; //1
         int tcount;//0
         string gridfileName;
 

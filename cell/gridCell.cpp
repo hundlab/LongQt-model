@@ -23,9 +23,6 @@ GridCell::GridCell() {
     this->Initialize();
 }
 void GridCell::Initialize() {
-    dx = 0.01;
-    dy = 0.01;
-    np = 1;
     gridfileName = "grid.txt";
     tcount = 0;
     makeMap();
@@ -204,9 +201,8 @@ double GridCell::tstep(double stimt)
     return t;
 }
 void GridCell::makeMap() {//only aply to cells added after the change?
-    pars["dx"] = &dx;
-    pars["dy"] = &dy;
-    pars["np"] = &np;
+    pars["dx"] = &grid.dx;
+    pars["dy"] = &grid.dy;
 }
 
 const char *GridCell::type() const
@@ -225,9 +221,8 @@ bool GridCell::writeGridfile(QXmlStreamWriter& xml) {
     xml.writeStartElement("grid");
     xml.writeAttribute("rows", QString::number(grid.rowCount()));
     xml.writeAttribute("columns", QString::number(grid.columnCount()));
-    xml.writeAttribute("np", QString::number(np));
-    xml.writeAttribute("dx", QString::number(dx));
-    xml.writeAttribute("dy", QString::number(dy));
+    xml.writeAttribute("dx", QString::number(grid.dx));
+    xml.writeAttribute("dy", QString::number(grid.dy));
 
     for(auto& row : grid.rows) {
         xml.writeStartElement("row");
@@ -237,11 +232,12 @@ bool GridCell::writeGridfile(QXmlStreamWriter& xml) {
             xml.writeAttribute("pos",QString::number(i));
             xml.writeTextElement("type",node->cell->type());
             xml.writeStartElement("conductance");
-            xml.writeTextElement("left", QString::number(row.B[i]));
-            xml.writeTextElement("right", QString::number(row.B[i+1]));
-            xml.writeTextElement("top", QString::number(grid.columns[i].B[j]));
-            xml.writeTextElement("bottom", QString::number(grid.columns[i].B[j+1]));
+            xml.writeTextElement("left", QString::number(node->getCondConst(CellUtils::left)));
+            xml.writeTextElement("right", QString::number(node->getCondConst(CellUtils::right)));
+            xml.writeTextElement("top", QString::number(node->getCondConst(CellUtils::top)));
+            xml.writeTextElement("bottom", QString::number(node->getCondConst(CellUtils::bottom)));
             xml.writeEndElement();
+            xml.writeAttribute("np", QString::number(node->np));
             xml.writeEndElement();
             i++;
         }
@@ -287,14 +283,10 @@ bool GridCell::handleGrid(QXmlStreamReader& xml) {
 
     grid.addRows(xml.attributes().value("rows").toInt());
     grid.addColumns(xml.attributes().value("columns").toInt());
-    this->np =  xml.attributes().value("np").toDouble();
-    this->dx =  xml.attributes().value("dx").toDouble();
-    this->dy =  xml.attributes().value("dy").toDouble();
+    this->grid.dx =  xml.attributes().value("dx").toDouble();
+    this->grid.dy =  xml.attributes().value("dy").toDouble();
 
     CellInfo info;
-    info.dx = dx;
-    info.dy = dy;
-    info.np = np;
 
     while(xml.readNextStartElement() && xml.name()=="row"){
         success = this->handleRow(xml, cells, info);
@@ -317,7 +309,13 @@ bool GridCell::handleNode(QXmlStreamReader& xml, list<CellInfo>& cells, CellInfo
     auto cellMap = CellUtils::cellMap;
     auto inexcitable = InexcitableCell().type();
     cellMap[inexcitable] = [] () {return make_shared<InexcitableCell>();};
-    map<QString,function<bool(QXmlStreamReader& xml)>> handlers; 
+    map<QString,function<bool(QXmlStreamReader& xml)>> handlers;
+    handlers["np"] = [&info] (QXmlStreamReader& xml) {
+        xml.readNext();
+        info.np = xml.text().toInt();
+        xml.skipCurrentElement();
+        return true;
+    };
     handlers["type"] = [&info,cellMap,inexcitable] (QXmlStreamReader& xml) {
         bool success = true;
         string cell_type;

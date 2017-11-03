@@ -17,15 +17,14 @@ struct Node : public std::enable_shared_from_this<Node> {
 	Node(const Node& other);
 	~Node() {};
 
-    void setCondConst(double dx, CellUtils::Side s, bool perc = true, double val = 1);
+    void setCondConst(CellUtils::Side s, bool perc = true, double val = 1);
 //	void updateV(double dt);
     shared_ptr<Cell> cell = make_shared<InexcitableCell>();
     double rd = 1.5; // gap junctional disk resistance.
     double getCondConst(CellUtils::Side s);
 //## default value cannot be deterimined by constructor
     double dIax = 0;
-	int np = 1; //number of cells in each node
-	//can't change atm
+    int np = 1; //number of cells in each node
 //    double x = 0;
 //    double y = 0;
     double d1 = 0; //off-diagonal for tridag solver
@@ -44,6 +43,6 @@ private:
     void setCondConstDirect(CellUtils::Side s, double val);
     Grid* parent;
     pair<int, int> calcNeighborPos(CellUtils::Side s);
-    double calcCondConst(double dx, CellUtils::Side s, double val);
+    double calcCondConst(CellUtils::Side s, double val);
 };
 #endif

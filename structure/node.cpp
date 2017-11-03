@@ -28,7 +28,7 @@ Node::Node(const Node& other) : std::enable_shared_from_this<Node>(other) {
 	}
 }*/
 
-void Node::setCondConst(double dx, CellUtils::Side s, bool perc, double val) {
+void Node::setCondConst(CellUtils::Side s, bool perc, double val) {
     auto nei = this->calcNeighborPos(s);
     auto neiNode = (*parent)(nei);
     if(!neiNode) {
@@ -40,8 +40,8 @@ void Node::setCondConst(double dx, CellUtils::Side s, bool perc, double val) {
 		return;
     }
     if(isnan(val)) {
-        double ourCond = this->calcCondConst(dx,s,1);
-        double theirCond = neiNode->calcCondConst(dx,CellUtils::flipSide(s),1);
+        double ourCond = this->calcCondConst(s,1);
+        double theirCond = neiNode->calcCondConst(CellUtils::flipSide(s),1);
         setCondConstDirect(s,(ourCond+theirCond)/2);
         return;
     }
@@ -49,7 +49,7 @@ void Node::setCondConst(double dx, CellUtils::Side s, bool perc, double val) {
         setCondConstDirect(s,val);
 		return;
     } else {
-        setCondConstDirect(s,this->calcCondConst(dx,s,val));
+        setCondConstDirect(s,this->calcCondConst(s,val));
     }
 }
 pair<int,int> Node::calcNeighborPos(CellUtils::Side s) {
@@ -71,11 +71,12 @@ pair<int,int> Node::calcNeighborPos(CellUtils::Side s) {
     return nei;
 }
 
-double Node::calcCondConst(double dx, CellUtils::Side s, double val) {
+double Node::calcCondConst(CellUtils::Side s, double val) {
     if(val==0) {
         return 0;
     }
-    int X = (s==CellUtils::Side::right||CellUtils::Side::right) ? row : col;
+    int X = (s==CellUtils::Side::right||s==CellUtils::Side::left) ? row : col;
+    double dx = (s==CellUtils::Side::right||s==CellUtils::Side::left) ? parent->dx : parent->dy;
     if((np==1)||((X%np)==0)) {
         return 1000*cell->cellRadius/(2*cell->Rcg*(cell->Rmyo*dx+rd*val)*cell->Cm*dx);
     } else {

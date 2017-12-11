@@ -6,6 +6,7 @@ CurrentClamp::CurrentClamp()  : Protocol() {
     __measureMgr.reset(new MeasureManager(cell()));
     stimdur = 1.0;  // stim duration, ms
     stimt = 0.0;    // time of first stim, ms
+    nextStimt = stimt;
     stimval = 0.0;  // stim current amplitude, uA/uF
     bcl = 1000;     // basic cycle length, ms
     numstims = 1;   // # of stimuli to apply
@@ -62,6 +63,7 @@ void CurrentClamp::CCcopy(const CurrentClamp& toCopy) {
     __cell.reset(test);
     stimdur = toCopy.stimdur;  // stim duration, ms
     stimt = toCopy.stimt;    // time of first stim, ms
+    nextStimt = toCopy.nextStimt;
     stimval = toCopy.stimval;  // stim current amplitude, uA/uF
     bcl = toCopy.bcl;     // basic cycle length, ms
     numstims = toCopy.numstims;   // # of stimuli to apply
@@ -77,20 +79,19 @@ void CurrentClamp::CCcopy(const CurrentClamp& toCopy) {
 // External stimulus.
 int CurrentClamp::stim()
 {
-    if(__cell->t>=stimt&&__cell->t<(stimt+stimdur)){
-        if(stimflag==0){
+    if(__cell->t>=nextStimt&&__cell->t<(nextStimt+stimdur)){
+        if(!stimflag){
             stimcounter++;
-            stimflag=1;
+            stimflag=true;
             if(stimcounter>int(numstims)){
                 doneflag = 0;
                 return 0;
             }
         }
         __cell->externalStim(stimval);
-    }
-    else if(stimflag==1){     //trailing edge of stimulus
-        stimt=stimt+bcl;
-        stimflag=0;
+    } else if(stimflag){     //trailing edge of stimulus
+        nextStimt=nextStimt+bcl;
+        stimflag=false;
         __cell->apTime = 0.0;
     }
 
@@ -109,7 +110,7 @@ void CurrentClamp::setupTrial() {
     __cell->setConstantSelection(temp);
     temp.clear();
     time = __cell->t = 0.0;      // reset time
-    stimt = 0;
+    nextStimt = stimt;
     stimcounter = 0;
     this->readInCellState(this->readCellState);
     this->__pvars->setIonChanParams();
@@ -137,7 +138,7 @@ bool CurrentClamp::runTrial() {
             --numrunsLeft;
             nextRunT += this->runEvery;
         }
-        time = __cell->tstep(stimt);    // Update time
+        time = __cell->tstep(nextStimt);    // Update time
         __cell->updateCurr();    // Update membrane currents
         if(int(paceflag)==1)  // Apply stimulus
             stim();
@@ -175,7 +176,7 @@ bool CurrentClamp::runTrial() {
 void CurrentClamp::readInCellState(bool read) {
     if(read) {
         __cell->readCellState(cellStateDir.absolutePath().toStdString()+"/"+cellStateFile+std::to_string(__trial)+".xml");
-        this->stimt = __cell->t;
+        this->stimt += __cell->t;
         this->tMax += this->__cell->t;
     }
 }

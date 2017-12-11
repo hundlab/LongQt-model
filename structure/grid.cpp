@@ -99,6 +99,7 @@ void Grid::setCellTypes(const CellInfo& singleCell) {
 		if(singleCell.cell) {
             n->cell = singleCell.cell;
 		}
+        n->np = singleCell.np;
 
 		bool update = !(isnan(singleCell.c[0])&&isnan(singleCell.c[1])
 				&&isnan(singleCell.c[2])&&isnan(singleCell.c[3]));

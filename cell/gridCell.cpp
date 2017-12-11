@@ -237,7 +237,7 @@ bool GridCell::writeGridfile(QXmlStreamWriter& xml) {
             xml.writeTextElement("top", QString::number(node->getCondConst(CellUtils::top)));
             xml.writeTextElement("bottom", QString::number(node->getCondConst(CellUtils::bottom)));
             xml.writeEndElement();
-            xml.writeAttribute("np", QString::number(node->np));
+            xml.writeTextElement("np", QString::number(node->np));
             xml.writeEndElement();
             i++;
         }

@@ -21,10 +21,10 @@ class SettingsIO : public QObject {
         static SettingsIO* __instance;
         SettingsIO() = default;
     public slots:
-        void readSettings(shared_ptr<Protocol> proto, QString filename);
-        void readSettingsStr(shared_ptr<Protocol> proto, QString text);
-        void writeSettings(shared_ptr<Protocol> proto, QString filename);
-        void writeSettingsStr(shared_ptr<Protocol> proto, QString* text);
+        void readSettings(QString filename, shared_ptr<Protocol> proto = 0);
+        void readSettingsStr(QString text, shared_ptr<Protocol> proto = 0);
+        void writeSettings(QString filename, shared_ptr<Protocol> proto);
+        void writeSettingsStr(QString* text, shared_ptr<Protocol> proto);
     signals:
         void ProtocolChanged(shared_ptr<Protocol>);
         void CellChanged(shared_ptr<Cell>);

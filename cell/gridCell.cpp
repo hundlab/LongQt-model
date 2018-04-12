@@ -13,7 +13,7 @@
 #include <QXmlStreamReader>
 #include <QFile>
 #include <QDebug>
-#include <QtConcurrent>
+//#include <QtConcurrent>
 
 #include "gridCell.h"
 #include "cellutils.h"

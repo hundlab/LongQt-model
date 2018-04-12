@@ -44,11 +44,11 @@ const map<string, CellUtils::CellInitializer> CellUtils::cellMap = {
     { OHaraRudyEpi().type(), [] () {return make_shared<OHaraRudyEpi>();}},
     { OHaraRudyM().type(), [] () {return make_shared<OHaraRudyM>();}},
     { GpbAtrialOnal17().type(), [] () {return make_shared<GpbAtrialOnal17>();}},
-    { FR().type(), [] () {return make_shared<FR>();}}
+    { FR().type(), [] () {return make_shared<FR>();}},
+    { Ksan().type(), [] () {return make_shared<Ksan>();}}
 
     /*		{ GpbVent().type, [] () {return (Cell*) new GpbVent;}},
             { Br04().type, [] () {return (Cell*) new Br04;}},
-            { Ksan().type, [] () {return (Cell*) new Ksan;}},
             { Courtemanche98().type, [] () {return (Cell*) new Courtemanche98;}},
             { GpbAtrialWT().type, [] () {return (Cell*) new GpbAtrialWT;}},
             { GpbAtrialSE().type, [] () {return (Cell*) new GpbAtrialSE;}}*/

@@ -44,8 +44,8 @@ class CellKernel : public std::enable_shared_from_this<CellKernel>
     virtual int externalStim(double stimval);
 
     //##### Declare class variables ##############
-    double vOld;    // Transmembrane potential
-    double vNew;
+    double vOld;    // Transmembrane potential from previous iteration
+    double vNew;    // new Transmembrane potential in calculation
     double t;       // time, ms
     double dt;	  // Time increment
     double iNat;  // Total transmembrane sodium current.

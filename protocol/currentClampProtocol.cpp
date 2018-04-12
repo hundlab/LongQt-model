@@ -190,7 +190,9 @@ void CurrentClamp::mkmap() {
     pars["paceflag"]= toInsert.Initialize("bool", [this] () {return CellUtils::to_string(paceflag);}, [this] (const string& value) {paceflag = CellUtils::stob(value);});
     pars["numtrials"]= toInsert.Initialize("int", [this] () {return std::to_string(numtrials);},
             [this] (const string& value) {
-                numtrials = std::stoi(value);
+                auto temp = std::stoi(value);
+                if(temp == numtrials) return;
+                numtrials = temp;
                 this->pvars().calcIonChanParams();});
 }
 const char* CurrentClamp::type() const {

@@ -17,6 +17,8 @@ build/*
 PyLongQt_autogen/
 CMakeCache.txt
 CMakeFiles/
+*.Release
+*.Debug
 
 #data files and temp text editor files
 data*/

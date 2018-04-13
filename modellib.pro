@@ -11,7 +11,7 @@ TEMPLATE = lib
 
 QMAKE_MAC_SDK = macosx10.12
 
-CONFIG += c++11 shared
+CONFIG += c++11 staticlib
 
 include(model.pri)
 
@@ -61,4 +61,4 @@ INSTALLS += CMAKE_INSTALLS
 target.path = $$INSTALL_DIR
 dlltarget.path = $$INSTALL_DIR
 #message($$HEADER_INSTALLS.files)
-INSTALLS += target dlltarget
+INSTALLS += target

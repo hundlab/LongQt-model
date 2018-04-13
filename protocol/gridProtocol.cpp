@@ -203,6 +203,9 @@ shared_ptr<Cell> GridProtocol::cell() const
 }
 
 void GridProtocol::cell(shared_ptr<Cell> cell) {
+    if(!cell || string(cell->type()) != "gridCell") {
+        return;
+    }
     if(__measureMgr) {
         __measureMgr->clear();
         __measureMgr->cell(dynamic_pointer_cast<GridCell>(cell));

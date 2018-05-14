@@ -7,7 +7,6 @@
 #ifndef GPBATRIALONAL17_H
 #define GPBATRIALONAL17_H
 
-
 //####################################
 // subclass of Cell
 //####################################
@@ -42,7 +41,12 @@ struct GateVariable {
    double hl;	
 };	
 
-
+//    S571E //Nav1.5 S571E
+//    S571A //Nav1.5 S571A
+//    S2814D //RyR2 S2814D
+//    S2814A //RyR2 S2814A
+//    ISO //isoproterenol
+MAKE_OPTIONS(S571E,S571A,S2814D,S2814A,ISO)
 
     double Vsl;
     double Vjunc;
@@ -170,7 +174,6 @@ struct GateVariable {
 	double tempscalar;
 
 	double perchange;
-	double isoflag;
 	double RyRP;
 
  //###Concentration updating functions ######
@@ -220,11 +223,14 @@ struct GateVariable {
 	double Inalfactor;
 	double JSRcarelfactor;
 	double Jsercafactor;
+    double IcaMkiiFactor;
+    double InalPFactor;
 
 
 	int externalStim(double stimval);
     void makemap();
     struct GateVariable Gate;
+    enum Options opts;
     virtual const char* type() const;
 
 };

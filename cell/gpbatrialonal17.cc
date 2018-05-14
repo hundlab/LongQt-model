@@ -8,6 +8,7 @@
 //######################################################
 
 #include "gpbatrialonal17.h"
+#include <QDebug>
 
 
 GpbAtrialOnal17::GpbAtrialOnal17()
@@ -130,8 +131,9 @@ void GpbAtrialOnal17::Initialize()
 	fPhos = 8.382592879e-09;
 
 	fiNalP = 0;
-    isoflag=0;
 	RyRP = 382.6E-3;
+
+    opts = ISO;
 
 	Icalfactor = Icabfactor = Ipcafactor = 1;
 	Itofactor =	Iksfactor =	Ikrfactor = 1;
@@ -140,9 +142,9 @@ void GpbAtrialOnal17::Initialize()
 	Inabfactor = Inafactor = Iclcafactor = 1;
 	Iclbkfactor =	Inalfactor = 1;
 	JSRcarelfactor = 	Jsercafactor = 1;
+    IcaMkiiFactor = 1;
+    InalPFactor = 1;
 
-
- 	
  	makemap();
 
 }
@@ -184,7 +186,7 @@ void GpbAtrialOnal17::updateCamk()
         fOxP=dt*(va2-P*fOxP+kox*ros*fPhos-kred*fOxP)+fOxP;
         fBlock=dt*(kibl*kn93*fI-kbli*fBlock)+fBlock;
         fI=1-fBound-fPhos-fOx-fOxP-fBlock;
-        caMkii=(0.75*fBound+fPhos+fOxP+.5*fOx);
+        caMkii=IcaMkiiFactor*(0.75*fBound+fPhos+fOxP+.5*fOx);
 
 };
 
@@ -208,28 +210,22 @@ void GpbAtrialOnal17::updateInal()
 	
 	thl=600;
 	Gate.hl=hlinf-(hlinf-Gate.hl)*exp(-dt/thl);
-	
 
-
-	//WT
     double iNalNP=(0.006*5)*Gate.ml*Gate.ml*Gate.ml*Gate.hl*(vOld-ENa);
     double iNalP = 3.2*iNalNP;
-    double dfiNalP = (caMkii/(caMkii + .15) - fiNalP)/100*dt;
+    double dfiNalP = (InalPFactor*caMkii/(InalPFactor*caMkii + .15) - fiNalP)/100*dt;
     fiNalP = fiNalP + dfiNalP;
     double fiNalNP = 1- fiNalP;
-    iNal = 	Inalfactor* fiNalP * iNalP + fiNalNP * iNalNP;
-	
+    iNal = 	Inalfactor*(fiNalP * iNalP + fiNalNP * iNalNP);
 //for SA - SE fitting atrial data, 8 - 57
 //for SA - SE fitting vent data, 63 - 213
-	//SA	
-//	double iNalP = (0.006*5)*Gate.ml*Gate.ml*Gate.ml*Gate.hl*(vOld-ENa); 
-//	iNal = iNalP;	
-
-
-
-	//SE	
- //   double iNalP = (0.006*5*3.2)*Gate.ml*Gate.ml*Gate.ml*Gate.hl*(vOld-ENa);
-  //  iNal = iNalP;
+    if(opts & S571A) { //SA
+        double iNalP = (0.006*5)*Gate.ml*Gate.ml*Gate.ml*Gate.hl*(vOld-ENa);
+        iNal = iNalP;
+    } else if(opts & S571E) { //SE
+        double iNalP = (0.006*5*3.2)*Gate.ml*Gate.ml*Gate.ml*Gate.hl*(vOld-ENa);
+        iNal = iNalP;
+    }
 };
 
 
@@ -257,7 +253,7 @@ void GpbAtrialOnal17::updateSRFlux(){
 	double condisomf = 1;
 	double condisoca = 1;
 //SR fluxes
-	if (isoflag==1){
+    if (opts & ISO){
 	condisomf = 0.5;
 	condisoca = 2;
 	}
@@ -302,9 +298,11 @@ void GpbAtrialOnal17::updateSRFlux(){
 	double RyRN = RyRtot - RyRP;
 	double Rxnbasal = kb2815*RyRN;
     double Rxnckryr =1.2923* kckryr*(caMkii*120E-3)*RyRN/(kmckryr+RyRN);//for WT
-
- //   double Rxnckryr =1.2923* kckryr*(1*120E-3)*RyRN/(kmckryr+RyRN);//for S2814D
-//	double Rxnckryr = 0; //for S2814A
+    if(opts & S2814D) { // S2814D
+        Rxnckryr =1.2923* kckryr*(1*120E-3)*RyRN/(kmckryr+RyRN);
+    } else if(opts & S2814A) { // S2814A
+        Rxnckryr = 0;
+    }
 	double Rxnpp1ryr = kpp1ryr*PP1*RyRP*OApp1/(kmpp1ryr+RyRP);
 	double Rxnpp2ryr = kpp2ryr*PP2A*RyRP*OApp2/(kmpp2ryr+RyRP);	
 
@@ -381,7 +379,7 @@ void GpbAtrialOnal17::updatecytobuff(){
    double BmaxSR = 0.0171;
    double koffsr = 0.06;
 
-   if (isoflag == 1){
+   if (opts & ISO){
 	koffTnCl = .0196*1.5;
 	}
 
@@ -477,7 +475,7 @@ void GpbAtrialOnal17::updateIcal(){
 
 //	tauf = 1/(0.0197*exp(-(0.0337*(vOld+25))*(0.0337*(vOld+25)))+0.02);
 
-	if (isoflag == 1){
+    if (opts & ISO){
 	d_inf = 1/(1+exp(-(vOld+12)/6)); 
 	taud = d_inf*(1-exp(-(vOld+12)/6))/(0.035*(vOld+12));
 	f_inf = 1/(1+exp((vOld+33)/7))+0.2/(1+exp((47-vOld)/20));
@@ -603,7 +601,7 @@ void GpbAtrialOnal17::updateIkur() {
  	Gate.xkur = xkur_inf-(xkur_inf-Gate.xkur)*exp(-dt/tau_xkur);
 	Gate.ykur = ykur_inf-(ykur_inf-Gate.ykur)*exp(-dt/tau_ykur);
 	
-	if (isoflag ==1){
+    if (opts & ISO){
 	condiso = 3;
 	}
 	iKur = Ikurfactor* condiso*gkur*Gate.xkur*Gate.ykur*(vOld-Ek);
@@ -622,7 +620,7 @@ void GpbAtrialOnal17::updateIks() {
 	xs_inf = 1.0/(1.0+exp((-3.8-vOld)/14.25));
 	tau_xs = 990.1/(1.0+exp((-2.436-vOld)/14.12));
 
-	if (isoflag ==1){
+    if (opts & ISO){
 	condiso = 3;
 	xs_inf = 1.0/(1.0+exp((-43.8-vOld)/14.25));
 	tau_xs = 990.1/(1.0+exp((-42.436-vOld)/14.12));
@@ -717,7 +715,7 @@ void GpbAtrialOnal17::updateInak() {
 	double sigma, fnak;
 	double condiso = 1;
 
-	if (isoflag == 1){
+    if (opts & ISO){
 	condiso = 0.75;
 	}
 	
@@ -1003,9 +1001,14 @@ void GpbAtrialOnal17::makemap()
   pars["InalFactor"]=&Inalfactor;
   pars["JSRcarelFactor"]=&JSRcarelfactor;
   pars["JsercaFactor"]=&Jsercafactor;
+  pars["IcaMkiiFactor"]=&IcaMkiiFactor;
+  pars["InalPFactor"]=&InalPFactor;
 
   //return vars;
 }
 const char* GpbAtrialOnal17::type() const {
     return "GpbAtrialOnal17";
 }
+
+MAKE_OPTIONS_FUNCTIONS(GpbAtrialOnal17);
+

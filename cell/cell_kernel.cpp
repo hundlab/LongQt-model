@@ -188,3 +188,22 @@ void CellKernel::mkmap() {
 void CellKernel::reset() {
     this->Initialize();
 }
+
+map<string, int> CellKernel::optionsMap() const
+{
+    return {{"WT",0}};
+}
+
+int CellKernel::option() const
+{
+    return 0;
+}
+
+string CellKernel::optionStr() const
+{
+    return "WT";
+}
+
+void CellKernel::setOption(string){}
+
+void CellKernel::setOption(int){}

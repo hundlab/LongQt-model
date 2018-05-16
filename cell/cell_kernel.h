@@ -184,12 +184,19 @@ int CLASS_NAME::option() const\
 }\
 string CLASS_NAME::optionStr() const\
 {\
+    string str = "";\
+    bool first = true;\
     for (auto& it: optsMap) {\
         if (it.second == this->opts) {\
-            return it.first;\
+            if(first) {\
+                str = it.first;\
+                first = false;\
+            } else {\
+                str += "|"+it.first;\
+            }\
         }\
     }\
-    return "";\
+    return str;\
 }\
 vector<string> split(string s, char delim) {\
     vector<string> v;\
@@ -199,10 +206,12 @@ vector<string> split(string s, char delim) {\
     while((pos = s.find(delim,prev_pos)) != std::string::npos) {\
         token = s.substr(prev_pos, pos);\
         v.push_back(token);\
-        prev_pos = pos;\
+        prev_pos = pos+1;\
     }\
     token = s.substr(prev_pos);\
-    v.push_back(token);\
+    if(token != "") {\
+        v.push_back(token);\
+    }\
     return v;\
 }\
 void CLASS_NAME::setOption(string opt)\

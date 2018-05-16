@@ -306,7 +306,7 @@ void Protocol::mkmap() {
     pars["simvarfile"]= toInsert.Initialize("file", [this] () {return simvarfile;}, [this] (const string& value) {simvarfile = value;});
     pars["cellStateFile"]= toInsert.Initialize("file", [this] () {return cellStateFile;}, [this] (const string& value) {cellStateFile = value;});
     pars["celltype"]= toInsert.Initialize("cell", [this] () {return cell()->type();}, [this] (const string& value) {this->cell(value);});
-    pars["cellOptions"] = toInsert.Initialize("cellOptions", [this] () {return cell()->optionStr();}, [this] (const string& value) {this->cell()->setOption(value);});
+    pars["cell_option"] = toInsert.Initialize("cell_option", [this] () {return cell()->optionStr();}, [this] (const string& value) {this->cell()->setOption(value);});
 }
 
 void Protocol::setRunBefore(function<void(Protocol&)> p) {

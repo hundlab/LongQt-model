@@ -133,7 +133,7 @@ void GpbAtrialOnal17::Initialize()
 	fiNalP = 0;
 	RyRP = 382.6E-3;
 
-    opts = ISO;
+    opts = WT;
 
 	Icalfactor = Icabfactor = Ipcafactor = 1;
 	Itofactor =	Iksfactor =	Ikrfactor = 1;

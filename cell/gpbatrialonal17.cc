@@ -222,10 +222,10 @@ void GpbAtrialOnal17::updateInal()
 //for SA - SE fitting vent data, 63 - 213
     if(opts & S571A) { //SA
         double iNalP = (0.006*5)*Gate.ml*Gate.ml*Gate.ml*Gate.hl*(vOld-ENa);
-        iNal = iNalP;
+        iNal = Inalfactor*iNalP;
     } else if(opts & S571E) { //SE
         double iNalP = (0.006*5*3.2)*Gate.ml*Gate.ml*Gate.ml*Gate.hl*(vOld-ENa);
-        iNal = iNalP;
+        iNal = Inalfactor*iNalP;
     }
 };
 
@@ -456,15 +456,17 @@ void GpbAtrialOnal17::updateIcal(){
 	double df_cabjdt, df_cabsldt;
 
 	double deltatfca =tempscalar;
-	double deltat =0;
+    double deltat = 20;
 	double deltad = 5;
 	double KMCAM = 0.2;
 	double kmca = .002;
 	
 	double cafacj =1/(1.0+cajI/kmca);
 	double cafacsl = 1/(1.0+caslI/kmca);
+    double camfact = 1;
 //	double camfact = caMkii/(0.15+caMkii);
-	double camfact = 1/(1+pow((KMCAM/caMkii),2.0));
+//    double camfact = 1 + 1.2*(caMkii/(0.15+pow(caMkii,4)));
+    double tauf_CaMK = 1/(1+pow((KMCAM/caMkii),2.0));
 
 	d_inf = 1/(1+exp(-(vOld+9)/6)); 
 	taud = d_inf*(1-exp(-(vOld+9)/6))/(0.035*(vOld+9)); 
@@ -472,7 +474,7 @@ void GpbAtrialOnal17::updateIcal(){
 //	taud = d_inf*(1-exp(-(vOld+9)/6))/(0.035*(vOld+9)); 
 
 	f_inf = 1/(1+exp((vOld+30)/7))+0.2/(1+exp((50-vOld)/20)); 
-	tauf = 1/(0.0197*exp(-(0.0337*(vOld+25))*(0.0337*(vOld+25)))+0.02);
+    tauf = 1/(0.0197*exp(-(0.0337*(vOld+25))*(0.0337*(vOld+25)))+0.02)+deltat*tauf_CaMK;
 
 //	tauf = 1/(0.0197*exp(-(0.0337*(vOld+25))*(0.0337*(vOld+25)))+0.02);
 
@@ -480,7 +482,7 @@ void GpbAtrialOnal17::updateIcal(){
 	d_inf = 1/(1+exp(-(vOld+12)/6)); 
 	taud = d_inf*(1-exp(-(vOld+12)/6))/(0.035*(vOld+12));
 	f_inf = 1/(1+exp((vOld+33)/7))+0.2/(1+exp((47-vOld)/20));
-	tauf = 1/(0.0197*exp(-(0.0337*(vOld+28))*(0.0337*(vOld+28)))+0.02);
+    tauf = 1/(0.0197*exp(-(0.0337*(vOld+28))*(0.0337*(vOld+28)))+0.02)+deltat*tauf_CaMK;
 	pca = 1.5*2.7E-4;
 	pk = 1.5*1.35E-7;
 	pna = 1.5*7.5E-9;
@@ -493,10 +495,10 @@ void GpbAtrialOnal17::updateIcal(){
 //	gate.f_cabj=gate.f_cabj+df_cabjdt*dt;
 //	gate.f_cabsl=gate.f_cabsl+df_cabsldt*dt;
 
-	double taufcaj = 1/(1.7*cajI + 11.9E-3);
+    double taufcaj = 1/(1.7*cajI + 11.9E-3)+deltat*tauf_CaMK;
 	double fcajinf = 1.7*cajI*taufcaj;
 	Gate.f_cabj = fcajinf - (fcajinf - Gate.f_cabj)*exp(-dt/taufcaj);
-	double taufcasl = 1/(1.7*caslI + 11.9E-3);
+    double taufcasl = 1/(1.7*caslI + 11.9E-3)+deltat*tauf_CaMK;
 	double fcaslinf = 1.7*caslI*taufcasl;
 	Gate.f_cabsl = fcaslinf - (fcaslinf - Gate.f_cabsl)*exp(-dt/taufcasl);
 	
@@ -507,19 +509,15 @@ void GpbAtrialOnal17::updateIcal(){
 	icanajbar = pna*(vOld*Frdy*FoRT)*(0.75*najI*exp(vOld*FoRT)-0.75*naO)/(exp(vOld*FoRT)-1);
 	icanaslbar = pna*(vOld*Frdy*FoRT)*(0.75*naslI*exp(vOld*FoRT)-0.75*naO)/(exp(vOld*FoRT)-1);
 	
-    iCajunc = Icalfactor*((F_juncCaL*icajbar*Gate.d*Gate.f*((1-Gate.f_cabj)))*0.45*1);
-    iCasl = Icalfactor*((F_slCaL*icaslbar*Gate.d*Gate.f*((1-Gate.f_cabsl)))*0.45*1);
+    iCajunc = Icalfactor*camfact*((F_juncCaL*icajbar*Gate.d*Gate.f*((1-Gate.f_cabj)))*0.45*1);
+    iCasl = Icalfactor*camfact*((F_slCaL*icaslbar*Gate.d*Gate.f*((1-Gate.f_cabsl)))*0.45*1);
 	iCa = iCajunc+iCasl;
-    iCak = Icalfactor*((icakbar*Gate.d*Gate.f*(F_juncCaL*((1-Gate.f_cabj))+F_slCaL*((1-Gate.f_cabsl))))*0.45*1);
+    iCak = Icalfactor*camfact*((icakbar*Gate.d*Gate.f*(F_juncCaL*((1-Gate.f_cabj))+F_slCaL*((1-Gate.f_cabsl))))*0.45*1);
 
-
-    double iUp =1.2*(caMkii/(0.15+pow(caMkii,4)));
-	
-		
-    iCanajunc = Icalfactor*((F_juncCaL*icanajbar*Gate.d*Gate.f*((1-Gate.f_cabj)))*0.45*1);
-    iCanasl = Icalfactor*((F_slCaL*icanaslbar*Gate.d*Gate.f*((1-Gate.f_cabsl)))*.45*1);
+    iCanajunc = Icalfactor*camfact*((F_juncCaL*icanajbar*Gate.d*Gate.f*((1-Gate.f_cabj)))*0.45*1);
+    iCanasl = Icalfactor*camfact*((F_slCaL*icanaslbar*Gate.d*Gate.f*((1-Gate.f_cabsl)))*.45*1);
 	iCana = iCanajunc+iCanasl;
-    iCaL = (1+iUp)*(iCa+iCak+iCana);
+    iCaL = (iCa+iCak+iCana);
 }
 
 void GpbAtrialOnal17::updateIcab() {
@@ -614,7 +612,7 @@ void GpbAtrialOnal17::updateIks() {
 	double gkssl = 0.0035; //ms/uF
 
 	double xs_inf, tau_xs;
-    	double pnak =0.01833; 
+    double pnak =0.01833;
 	double EKsjunc = RGAS*TEMP/FDAY*log((kO+pnak*naO)/(kI+pnak*naI));
 	double EKssl = RGAS*TEMP/FDAY*log((kO+pnak*naO)/(kI+pnak*naI));
 
@@ -626,10 +624,6 @@ void GpbAtrialOnal17::updateIks() {
 	xs_inf = 1.0/(1.0+exp((-43.8-vOld)/14.25));
 	tau_xs = 990.1/(1.0+exp((-42.436-vOld)/14.12));
 	}
-
-
-	
-
 
 	Gate.xks = xs_inf-(xs_inf-Gate.xks)*exp(-dt/tau_xs);
 
@@ -758,6 +752,15 @@ void GpbAtrialOnal17::updatenaI() {
 	naslI = naslI + dnaslI;
 	naI = naI + dnaI;
 }
+
+//update kI? (not apart of original model. formulation from FR model
+//not used
+//void GpbAtrialOnal17::updatekI()
+//{
+//    double dkI = -dt*(iKt*ACap)/(Vmyo*1*FDAY);
+//    kI += dkI;
+//}
+//end mod
 
 void GpbAtrialOnal17::updateIna() {
         double gna = 23.0; //mS/uF

@@ -187,7 +187,7 @@ string CLASS_NAME::optionStr() const\
     string str = "";\
     bool first = true;\
     for (auto& it: optsMap) {\
-        if (it.second == this->opts) {\
+        if (it.second & this->opts) {\
             if(first) {\
                 str = it.first;\
                 first = false;\
@@ -196,17 +196,20 @@ string CLASS_NAME::optionStr() const\
             }\
         }\
     }\
-    return str;\
+    return str != "" ? str: "WT";\
 }\
 vector<string> split(string s, char delim) {\
     vector<string> v;\
-    size_t pos = 0;\
     size_t prev_pos = 0;\
+    size_t pos = s.find(delim,prev_pos);\
     std::string token;\
-    while((pos = s.find(delim,prev_pos)) != std::string::npos) {\
-        token = s.substr(prev_pos, pos);\
-        v.push_back(token);\
+    while(pos != std::string::npos) {\
+        token = s.substr(prev_pos, pos-prev_pos);\
+        if(token != "") {\
+            v.push_back(token);\
+        }\
         prev_pos = pos+1;\
+        pos = s.find(delim,prev_pos);\
     }\
     token = s.substr(prev_pos);\
     if(token != "") {\
@@ -219,7 +222,11 @@ void CLASS_NAME::setOption(string opt)\
     Options o = WT;\
     auto splits = split(opt,'|');\
     for(auto& sp: splits) {\
-        o |= static_cast<Options>(this->optsMap[sp]);\
+        try {\
+            o |= static_cast<Options>(this->optsMap.at(sp));\
+        } catch(std::out_of_range) {\
+            qDebug() << ("CellKernel: Cell Option "+sp+" does not exist").c_str();\
+        }\
     }\
     opts = o;\
 }\

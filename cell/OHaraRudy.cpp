@@ -218,9 +218,9 @@ void OHaraRudy::updateICa() {
 	double PCaNap=0.00125*PCap;
 	double PCaKp=3.574e-4*PCap;
 	double fICaLp=(1.0/(1.0+KmCaMK/CaMKa));
-	ICaL=(1.0-fICaLp)*PCa*PhiCaL*d*(f*(1.0-nca)+jca*fca*nca)+fICaLp*PCap*PhiCaL*d*(fp*(1.0-nca)+jca*fcap*nca);
-	ICaNa=(1.0-fICaLp)*PCaNa*PhiCaNa*d*(f*(1.0-nca)+jca*fca*nca)+fICaLp*PCaNap*PhiCaNa*d*(fp*(1.0-nca)+jca*fcap*nca);
-	ICaK=(1.0-fICaLp)*PCaK*PhiCaK*d*(f*(1.0-nca)+jca*fca*nca)+fICaLp*PCaKp*PhiCaK*d*(fp*(1.0-nca)+jca*fcap*nca);
+    ICaL=IcalFactor*((1.0-fICaLp)*PCa*PhiCaL*d*(f*(1.0-nca)+jca*fca*nca)+fICaLp*PCap*PhiCaL*d*(fp*(1.0-nca)+jca*fcap*nca));
+    ICaNa=IcalFactor*((1.0-fICaLp)*PCaNa*PhiCaNa*d*(f*(1.0-nca)+jca*fca*nca)+fICaLp*PCaNap*PhiCaNa*d*(fp*(1.0-nca)+jca*fcap*nca));
+    ICaK=IcalFactor*((1.0-fICaLp)*PCaK*PhiCaK*d*(f*(1.0-nca)+jca*fca*nca)+fICaLp*PCaKp*PhiCaK*d*(fp*(1.0-nca)+jca*fcap*nca));
 
 }
 
@@ -706,6 +706,7 @@ void OHaraRudy::makemap()
 	pars["CaMKo"]=&CaMKo;
 	pars["KmCaM"]=&KmCaM;
 	pars["KmCaMK"]=&KmCaMK;
+    pars["IcalFactor"] = &IcalFactor;
 
 };
 

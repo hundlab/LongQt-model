@@ -45,13 +45,13 @@ const map<string, CellUtils::CellInitializer> CellUtils::cellMap = {
     { OHaraRudyM().type(), [] () {return make_shared<OHaraRudyM>();}},
     { GpbAtrialOnal17().type(), [] () {return make_shared<GpbAtrialOnal17>();}},
     { FR().type(), [] () {return make_shared<FR>();}},
-    { Ksan().type(), [] () {return make_shared<Ksan>();}}
+    { Ksan().type(), [] () {return make_shared<Ksan>();}},
 
-    /*		{ GpbVent().type, [] () {return (Cell*) new GpbVent;}},
-            { Br04().type, [] () {return (Cell*) new Br04;}},
-            { Courtemanche98().type, [] () {return (Cell*) new Courtemanche98;}},
-            { GpbAtrialWT().type, [] () {return (Cell*) new GpbAtrialWT;}},
-            { GpbAtrialSE().type, [] () {return (Cell*) new GpbAtrialSE;}}*/
+            { GpbVent().type(), [] () {return make_shared<GpbVent>();}},
+            { Br04().type(), [] () {return make_shared<Br04>();}},
+            { Courtemanche98().type(), [] () {return make_shared<Courtemanche98>();}},
+//            { GpbAtrialWT().type(), [] () {return make_shared<GpbAtrialWT>();}},
+//            { GpbAtrialSE().type(), [] () {return make_shared<GpbAtrialSE>();}},
 };
 
 /*

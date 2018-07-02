@@ -225,6 +225,7 @@ MAKE_OPTIONS(S571E,S571A,S2814D,S2814A,ISO)
 	double Jsercafactor;
     double IcaMkiiFactor;
     double InalPFactor;
+    double Jsrleakfactor;
 
 
 	int externalStim(double stimval);

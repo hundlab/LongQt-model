@@ -144,6 +144,7 @@ void GpbAtrialOnal17::Initialize()
 	JSRcarelfactor = 	Jsercafactor = 1;
     IcaMkiiFactor = 1;
     InalPFactor = 1;
+    Jsrleakfactor = 1;
 
  	makemap();
 
@@ -176,17 +177,17 @@ void GpbAtrialOnal17::updateCamk()
         calmodulin = calmtotal*(caslI*caslI*caslI*caslI/(caslI*caslI*caslI*caslI+0.005*0.005*0.005*0.005));
         tcamk=fBound+fPhos+fOx+fOxP;
         kt = kbi/kib/(1/tcamk-1);
-        ka = kbi*kt/(kt+0.01851);
+        ka = IcaMkiiFactor*kbi*kt/(kt+0.01851);
         va = ka*fBound;
         va2 = ka*fOx;
 
-        fBound=dt*(kib*calmodulin*fI+P*fPhos+kred*fOx-(kbi+kox*ros)*fBound-va)+fBound;
+        fBound=dt*(IcaMkiiFactor*kib*calmodulin*fI+P*fPhos+kred*fOx-(kbi+kox*ros)*fBound-va)+fBound;
         fPhos=dt*(va+kred*fOxP-(kox*ros+P)*fPhos)+fPhos;
         fOx=dt*(kox*ros*fBound+P*fOxP-kred*fOx-va2)+fOx;
         fOxP=dt*(va2-P*fOxP+kox*ros*fPhos-kred*fOxP)+fOxP;
         fBlock=dt*(kibl*kn93*fI-kbli*fBlock)+fBlock;
         fI=1-fBound-fPhos-fOx-fOxP-fBlock;
-        caMkii=IcaMkiiFactor*(0.75*fBound+fPhos+fOxP+.5*fOx);
+        caMkii=(0.75*fBound+fPhos+fOxP+.5*fOx);
 
 };
 
@@ -347,7 +348,7 @@ void GpbAtrialOnal17::updateSRFlux(){
 	
         Jserca =Jsercafactor*VmaxSRcaP*(alpha/beta);
 	
-	Jsrleak =kleak*0.000005348*(caSr-cajI);
+    Jsrleak =Jsrleakfactor*kleak*0.000005348*(caSr-cajI);
 	
 
 	double dRyRP = dt*(Rxnbasal+Rxnckryr-Rxnpp1ryr-Rxnpp2ryr);//Soltis-Saucerman
@@ -506,19 +507,19 @@ void GpbAtrialOnal17::updateIcal(){
 	icanajbar = pna*(vOld*Frdy*FoRT)*(0.75*najI*exp(vOld*FoRT)-0.75*naO)/(exp(vOld*FoRT)-1);
 	icanaslbar = pna*(vOld*Frdy*FoRT)*(0.75*naslI*exp(vOld*FoRT)-0.75*naO)/(exp(vOld*FoRT)-1);
 	
-	iCajunc = ((F_juncCaL*icajbar*Gate.d*Gate.f*((1-Gate.f_cabj)))*0.45*1);
-	iCasl = ((F_slCaL*icaslbar*Gate.d*Gate.f*((1-Gate.f_cabsl)))*0.45*1);
+    iCajunc = Icalfactor*((F_juncCaL*icajbar*Gate.d*Gate.f*((1-Gate.f_cabj)))*0.45*1);
+    iCasl = Icalfactor*((F_slCaL*icaslbar*Gate.d*Gate.f*((1-Gate.f_cabsl)))*0.45*1);
 	iCa = iCajunc+iCasl;
-	iCak = ((icakbar*Gate.d*Gate.f*(F_juncCaL*((1-Gate.f_cabj))+F_slCaL*((1-Gate.f_cabsl))))*0.45*1);
+    iCak = Icalfactor*((icakbar*Gate.d*Gate.f*(F_juncCaL*((1-Gate.f_cabj))+F_slCaL*((1-Gate.f_cabsl))))*0.45*1);
 
 
     double iUp =1.2*(caMkii/(0.15+pow(caMkii,4)));
 	
 		
-	iCanajunc = ((F_juncCaL*icanajbar*Gate.d*Gate.f*((1-Gate.f_cabj)))*0.45*1);
-	iCanasl = ((F_slCaL*icanaslbar*Gate.d*Gate.f*((1-Gate.f_cabsl)))*.45*1);
+    iCanajunc = Icalfactor*((F_juncCaL*icanajbar*Gate.d*Gate.f*((1-Gate.f_cabj)))*0.45*1);
+    iCanasl = Icalfactor*((F_slCaL*icanaslbar*Gate.d*Gate.f*((1-Gate.f_cabsl)))*.45*1);
 	iCana = iCanajunc+iCanasl;
-	iCaL = Icalfactor*(1+iUp)*(iCa+iCak+iCana);
+    iCaL = (1+iUp)*(iCa+iCak+iCana);
 }
 
 void GpbAtrialOnal17::updateIcab() {
@@ -526,10 +527,10 @@ void GpbAtrialOnal17::updateIcab() {
 	double Ecajunc = RGAS*TEMP/(2*FDAY)*log(caO/cajI);
 	double Ecasl = RGAS*TEMP/(2*FDAY)*log(caO/caslI);
 	
-	iCabjunc = Fjunc*gcab*(vOld-Ecajunc);
-	iCabsl = Fsl*gcab*(vOld-Ecasl);
+    iCabjunc = Icabfactor*(Fjunc*gcab*(vOld-Ecajunc));
+    iCabsl = Icabfactor*(Fsl*gcab*(vOld-Ecasl));
 	
-	iCab = Icabfactor* (iCabjunc+iCabsl);
+    iCab = (iCabjunc+iCabsl);
 }
 
 void GpbAtrialOnal17::updateIpca() {
@@ -537,10 +538,10 @@ void GpbAtrialOnal17::updateIpca() {
 	
 	double kmpca = 0.0005;
 	
-	ipCajunc = (Fjunc*ipmcabar*pow(cajI, 1.6))/(pow(kmpca,1.6)+pow(cajI, 1.6));
-	ipCasl = (Fsl*ipmcabar*pow(caslI, 1.6))/(pow(kmpca,1.6)+pow(caslI, 1.6));
+    ipCajunc = Ipcafactor*((Fjunc*ipmcabar*pow(cajI, 1.6))/(pow(kmpca,1.6)+pow(cajI, 1.6)));
+    ipCasl = Ipcafactor*((Fsl*ipmcabar*pow(caslI, 1.6))/(pow(kmpca,1.6)+pow(caslI, 1.6)));
 
-	ipCa = Ipcafactor*(ipCajunc+ipCasl);
+    ipCa = (ipCajunc+ipCasl);
 }
 
 void GpbAtrialOnal17::updateIclca() {
@@ -548,9 +549,9 @@ void GpbAtrialOnal17::updateIclca() {
 	double kd_clca = 0.1;
 	double Ecl = -RGAS*TEMP/FDAY*log(clO/clI);
 
-	iClcajunc = (Fjunc*gclca*(vOld-Ecl))/(1.0+kd_clca/cajI);
-	iClcasl = (Fsl*gclca*(vOld-Ecl))/(1.0+kd_clca/caslI);
-	iClca = Iclcafactor*(iClcajunc + iClcasl);
+    iClcajunc = Iclcafactor*((Fjunc*gclca*(vOld-Ecl))/(1.0+kd_clca/cajI));
+    iClcasl = Iclcafactor*((Fsl*gclca*(vOld-Ecl))/(1.0+kd_clca/caslI));
+    iClca = (iClcajunc + iClcasl);
 }
 
 void GpbAtrialOnal17::updateIclbk(){
@@ -633,10 +634,10 @@ void GpbAtrialOnal17::updateIks() {
 	Gate.xks = xs_inf-(xs_inf-Gate.xks)*exp(-dt/tau_xs);
 
 
-	iKsjunc = condiso*Fjunc*gksjunc*Gate.xks*Gate.xks*(vOld-EKsjunc);
-	iKssl = condiso*Fsl*gkssl*Gate.xks*Gate.xks*(vOld-EKssl);
+    iKsjunc = Iksfactor*condiso*Fjunc*gksjunc*Gate.xks*Gate.xks*(vOld-EKsjunc);
+    iKssl = Iksfactor*condiso*Fsl*gkssl*Gate.xks*Gate.xks*(vOld-EKssl);
 
-	iKs = Iksfactor*(iKsjunc+iKssl);
+    iKs = (iKsjunc+iKssl);
 
 }
 
@@ -676,9 +677,9 @@ void GpbAtrialOnal17::updateIpk() {
 	double Ek = RGAS*TEMP/FDAY*log(kO/kI);
 	
 	kp_kp = 1.0/(1.0+exp(7.488-vOld/5.98));
-	iKpjunc = Fjunc*gkp*kp_kp*(vOld-Ek);
-	iKpsl = Fsl*gkp*kp_kp*(vOld-Ek);
-	iKp = Ipkfactor*(iKpjunc+iKpsl);
+    iKpjunc = Ipkfactor*Fjunc*gkp*kp_kp*(vOld-Ek);
+    iKpsl = Ipkfactor*Fsl*gkp*kp_kp*(vOld-Ek);
+    iKp = (iKpjunc+iKpsl);
 }
 
 void GpbAtrialOnal17::updateInaca() {
@@ -703,10 +704,10 @@ void GpbAtrialOnal17::updateInaca() {
 	s2sl = exp((nu-1)*vOld*(FDAY/RGAS/TEMP))*pow(naO,3)*caslI;
 	s3sl = kmcai*pow(naO,3)*(1+pow((naslI/kmnai),3))+pow(kmnao,3)*caslI*(1+(caslI/kmcai))+kmcao*pow(naslI,3)+pow(naslI,3)*caO+pow(naO,3)*caslI;
 	
-	iNcxjunc = (Fjunc*incxbar*kajunc*(s1junc-s2junc))/(s3junc*(1+ksat*exp((nu-1)*vOld*(FDAY/RGAS/TEMP))));
-	iNcxsl = (Fsl*incxbar*kasl*(s1sl-s2sl))/(s3sl*(1+ksat*exp((nu-1)*vOld*(FDAY/RGAS/TEMP))));
+    iNcxjunc = Inacafactor*((Fjunc*incxbar*kajunc*(s1junc-s2junc))/(s3junc*(1+ksat*exp((nu-1)*vOld*(FDAY/RGAS/TEMP)))));
+    iNcxsl = Inacafactor*((Fsl*incxbar*kasl*(s1sl-s2sl))/(s3sl*(1+ksat*exp((nu-1)*vOld*(FDAY/RGAS/TEMP)))));
 	
-	iNaca = Inacafactor*(iNcxjunc+iNcxsl);
+    iNaca = (iNcxjunc+iNcxsl);
 }
 
 void GpbAtrialOnal17::updateInak() {
@@ -725,9 +726,9 @@ void GpbAtrialOnal17::updateInak() {
 
 	sigma = (exp(naO/67.3)-1)/7;
 	fnak = 1/(1+0.1245*exp(-0.1*vOld*FoRT)+0.0365*sigma*exp(-vOld*FoRT));
-	iNaKjunc = Fjunc*inakbar*fnak*kO/(1+pow(kmnaip/najI,4.0))/(kO+kmko);
-	iNaKsl = Fsl*inakbar*fnak*kO/(1+pow(kmnaip/naslI,4.0))/(kO+kmko);
-	iNak = Inakfactor*(iNaKjunc+iNaKsl);
+    iNaKjunc = Inakfactor*(Fjunc*inakbar*fnak*kO/(1+pow(kmnaip/najI,4.0))/(kO+kmko));
+    iNaKsl = Inakfactor*(Fsl*inakbar*fnak*kO/(1+pow(kmnaip/naslI,4.0))/(kO+kmko));
+    iNak = (iNaKjunc+iNaKsl);
 }
 void GpbAtrialOnal17::updatenaI() {
 
@@ -797,9 +798,9 @@ void GpbAtrialOnal17::updateIna() {
 	Gate.h = h_inf-(h_inf-Gate.h)*exp(-dt/tau_h);
 	Gate.j = j_inf-(j_inf-Gate.j)*exp(-dt/tau_j);
 
-	iNajunc = Fjunc*gna*Gate.m*Gate.m*Gate.m*Gate.h*Gate.j*(vOld-Enajunc);
-	iNasl = Fsl*gna*Gate.m*Gate.m*Gate.m*Gate.h*Gate.j*(vOld-Enasl);		
-	iNa = Inafactor*(iNajunc + iNasl);
+    iNajunc = Inafactor*Fjunc*gna*Gate.m*Gate.m*Gate.m*Gate.h*Gate.j*(vOld-Enajunc);
+    iNasl = Inafactor*Fsl*gna*Gate.m*Gate.m*Gate.m*Gate.h*Gate.j*(vOld-Enasl);
+    iNa = (iNajunc + iNasl);
 }
 
 void GpbAtrialOnal17::updateInab() {
@@ -808,9 +809,9 @@ void GpbAtrialOnal17::updateInab() {
 	double Enajunc = RGAS*TEMP/FDAY*log(naO/najI);
 	double Enasl = RGAS*TEMP/FDAY*log(naO/naslI);
 	
-	iNabjunc = Fjunc*gnab*(vOld-Enajunc);	
-	iNabsl = Fsl*gnab*(vOld-Enasl);
-	iNab = Inabfactor*(iNabjunc + iNabsl);
+    iNabjunc = Inabfactor*Fjunc*gnab*(vOld-Enajunc);
+    iNabsl = Inabfactor*Fsl*gnab*(vOld-Enasl);
+    iNab = (iNabjunc + iNabsl);
 }
 
 void GpbAtrialOnal17::updateCurr() {
@@ -1001,8 +1002,10 @@ void GpbAtrialOnal17::makemap()
   pars["InalFactor"]=&Inalfactor;
   pars["JSRcarelFactor"]=&JSRcarelfactor;
   pars["JsercaFactor"]=&Jsercafactor;
+  pars["Inabfactor*"]=&Inabfactor;
   pars["IcaMkiiFactor"]=&IcaMkiiFactor;
   pars["InalPFactor"]=&InalPFactor;
+  pars["JsrleakFactor"]=&Jsrleakfactor;
 
   //return vars;
 }

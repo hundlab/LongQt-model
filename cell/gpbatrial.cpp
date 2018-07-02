@@ -146,6 +146,7 @@ void GpbAtrial::Initialize() {
 	Iclcaslfactor=1;
 	Iclcajuncfactor=1;
 	Iclbkfactor=1;
+    Icalfactor=1;
 
 
 
@@ -383,7 +384,7 @@ void GpbAtrial::updateIcal(){
 	iCanajunc = Icanajuncfactor*(F_juncCaL*icanajbar*Gate.d*Gate.f*((1-Gate.f_cabj)))*0.45*1;
 	iCanasl = Icanaslfactor*(F_slCaL*icanaslbar*Gate.d*Gate.f*((1-Gate.f_cabsl)))*.45*1;
 	iCana = iCanajunc+iCanasl;
-	iCaL = iCa+iCak+iCana;
+    iCaL = Icalfactor*(iCa+iCak+iCana);
 }
 
 void GpbAtrial::updateIcab() {
@@ -799,6 +800,7 @@ void GpbAtrial::makemap()
   pars["IclcaslFactor"]=&Iclcaslfactor;
   pars["IclcajuncFactor"]=&Iclcajuncfactor;
   pars["IclbkFactor"]=&Iclbkfactor;
+  pars["IcalFactor"]=&Icalfactor;
 		//add potenttially needed values to pars"]=&
 	pars["Ryrr"]=&Ryrr;
 	pars["Ryro"]=&Ryro;

@@ -152,8 +152,8 @@ void CellKernel::copyVarPar(const CellKernel& toCopy) {
         } catch(const std::out_of_range&) {
             qDebug("%s not in cell pars", it.first.c_str());
         }
-
     }
+    this->setOption(toCopy.option());
 }
 void CellKernel::mkmap() {
     // make map of state vars
@@ -186,7 +186,9 @@ void CellKernel::mkmap() {
     pars["dVdtmax"]=&dVdtmax;
 }
 void CellKernel::reset() {
+    int opt = this->option();
     this->Initialize();
+    this->setOption(opt);
 }
 
 map<string, int> CellKernel::optionsMap() const

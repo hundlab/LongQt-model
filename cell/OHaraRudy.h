@@ -148,6 +148,9 @@ class OHaraRudy : public Cell
 		double KmCaM=0.0015;
 		double KmCaMK=0.15;
 
+        //factors
+        double IcalFactor = 1;
+
 		//cell type
 		cellType celltype=endo;  //endo = 0, epi = 1, M = 2
 

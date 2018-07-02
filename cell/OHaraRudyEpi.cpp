@@ -22,5 +22,5 @@ OHaraRudyEpi *OHaraRudyEpi::clone() {
 
 const char *OHaraRudyEpi::type() const
 {
-    return "Human Ventricular Epi (O'Hara-Rudy 2011)";
+    return "Human Ventricular Epicardium (O'Hara-Rudy 2011)";
 }

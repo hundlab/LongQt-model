@@ -184,12 +184,7 @@ struct GateVariable {
 	double Iclcaslfactor;
 	double Iclcajuncfactor;
 	double Iclbkfactor;
-
-
-
-
-
-
+    double Icalfactor;
 
  //###Concentration updating functions ######
     void updateConc();

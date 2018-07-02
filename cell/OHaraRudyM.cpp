@@ -22,5 +22,5 @@ OHaraRudyM *OHaraRudyM::clone() {
 
 const char *OHaraRudyM::type() const
 {
-    return "Human Ventricular (Ten Tusscher 2004)";
+    return "Human Ventricular Mid Myocardial (O'Hara-Rudy 2011)";
 }

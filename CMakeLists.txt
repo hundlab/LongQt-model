@@ -47,6 +47,7 @@ set(modellib_sources
     "${CMAKE_CURRENT_LIST_DIR}/protocol/currentClampProtocol.cpp"
     "${CMAKE_CURRENT_LIST_DIR}/protocol/voltageClampProtocol.cpp"
     "${CMAKE_CURRENT_LIST_DIR}/cell/inexcitablecell.cpp"
+    "${CMAKE_CURRENT_LIST_DIR}/runsim.cpp"
 PARENT_SCOPE
 )
 
@@ -91,5 +92,6 @@ set(modellib_headers
     "${CMAKE_CURRENT_LIST_DIR}/protocol/protocol.h"
     "${CMAKE_CURRENT_LIST_DIR}/protocol/gridProtocol.h"
     "${CMAKE_CURRENT_LIST_DIR}/cell/inexcitablecell.h"
+    "${CMAKE_CURRENT_LIST_DIR}/runsim.h"
 PARENT_SCOPE
 )

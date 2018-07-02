@@ -22,5 +22,5 @@ OHaraRudyEndo *OHaraRudyEndo::clone() {
 
 const char *OHaraRudyEndo::type() const
 {
-    return "Human Ventricular Endo (O'Hara-Rudy 2011)";
+    return "Human Ventricular Endocardium (O'Hara-Rudy 2011)";
 }

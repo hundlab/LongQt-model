@@ -26,7 +26,7 @@ void SettingsIO::write(shared_ptr<Protocol> proto, QXmlStreamWriter& xml) {
     xml.writeEndElement();
 }
 
-void SettingsIO::writeSettings(shared_ptr<Protocol> proto, QString filename) {
+void SettingsIO::writeSettings(QString filename, shared_ptr<Protocol> proto) {
     QFile ofile(filename);
     string name;
 
@@ -39,7 +39,7 @@ void SettingsIO::writeSettings(shared_ptr<Protocol> proto, QString filename) {
     this->write(proto, xml);
 }
 
-void SettingsIO::writeSettingsStr(shared_ptr<Protocol> proto, QString* text) {
+void SettingsIO::writeSettingsStr(QString* text, shared_ptr<Protocol> proto) {
     QXmlStreamWriter xml(text);
     this->write(proto, xml);
 }
@@ -48,16 +48,16 @@ bool SettingsIO::readProtoType(shared_ptr<Protocol>& proto,  QXmlStreamReader& x
     if(CellUtils::readNext(xml, "protocolType")) {
         xml.readNext();
         QString type = xml.text().toString();
-        if(proto->type() != type) {
+        if(!proto|| proto->type() != type) {
             if(!allowProtoChange) {
                 qWarning("SettingsIO: Changing protocol type is disabled");
                 throw std::invalid_argument("SettingsIO: Changing protocol type is disabled");
                 return false;
             }
             try {
-                QDir datadir = proto->datadir;
+                QString datadir = proto ? proto->getDataDir().c_str() : "";
                 proto = CellUtils::protoMap.at(type.toStdString())();
-                proto->datadir = datadir;
+                proto->setDataDir(datadir.toStdString());
                 emit ProtocolChanged(proto);
             } catch (const std::out_of_range&) {
                 qWarning("SettingsIO: %s not in protocol map", type.toStdString().c_str());
@@ -98,7 +98,7 @@ void SettingsIO::read(shared_ptr<Protocol> proto, QXmlStreamReader& xml) {
     this->lastProto = proto;
 }
 
-void SettingsIO::readSettings(shared_ptr<Protocol> proto, QString filename) {
+void SettingsIO::readSettings(QString filename, shared_ptr<Protocol> proto) {
     QFile ifile(filename);
 
     if(!ifile.open(QIODevice::ReadOnly)){
@@ -111,7 +111,7 @@ void SettingsIO::readSettings(shared_ptr<Protocol> proto, QString filename) {
 
     ifile.close();
 }
-void SettingsIO::readSettingsStr(shared_ptr<Protocol> proto, QString text) {
+void SettingsIO::readSettingsStr(QString text, shared_ptr<Protocol> proto) {
     QXmlStreamReader xml(text);
     this->read(proto, xml);
 }

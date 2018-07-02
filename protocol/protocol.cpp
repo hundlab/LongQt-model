@@ -184,16 +184,24 @@ void Protocol::setupTrial() {
 int Protocol::readpars(QXmlStreamReader& xml) {
     string name = "";
     if(!CellUtils::readNext(xml, "pars")) return 1;
+    map<string,string> readValues;
     while(!xml.atEnd() && xml.readNextStartElement()){
         name = xml.attributes().value("name").toString().toStdString();
-        try {
-            xml.readNext();
-            if(name != "datadir")
-                pars.at(name).set(xml.text().toString().toStdString());
-        } catch (const std::out_of_range&) {
-            qWarning("Protocol: %s not in pars", name.c_str());
-        }
         xml.readNext();
+        if(name != "datadir")
+            readValues[name] = xml.text().toString().toStdString();
+        xml.readNext();
+    }
+    //run twice to fix dependancy issues
+    for(int i = 0; i <2; ++i) {
+        for(auto& pair: readValues) {
+            try {
+                pars.at(pair.first).set(pair.second);
+            } catch (const std::out_of_range&) {
+                if(i == 1)
+                    qWarning("Protocol: %s not in pars", name.c_str());
+            }
+        }
     }
     return 0;
 }

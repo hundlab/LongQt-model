@@ -77,6 +77,7 @@ void PvarsCurrentClamp::writePvars(QXmlStreamWriter& xml) {
 }
 
 void PvarsCurrentClamp::readPvars(QXmlStreamReader& xml) {
+    this->clear();
     if(!CellUtils::readNext(xml, "pvars")) return;
     this->handlePvars(xml);
 }

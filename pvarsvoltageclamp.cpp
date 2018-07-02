@@ -63,6 +63,7 @@ void PvarsVoltageClamp::writePvars(QXmlStreamWriter& xml) {
 }
 
 void PvarsVoltageClamp::readPvars(QXmlStreamReader& xml) {
+    this->clear();
     while(!xml.atEnd() && xml.name() != "pvars") {
         xml.readNext();
     }

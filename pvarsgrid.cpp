@@ -61,6 +61,7 @@ void PvarsGrid::readPvars(QXmlStreamReader& xml) {
     //		xml.readNext();
     //	}
     //	xml.readNext();
+    this->clear();
     while(!xml.atEnd() && xml.name() != "pvars") {
         xml.readNext();
     }

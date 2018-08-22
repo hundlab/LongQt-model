@@ -78,6 +78,7 @@ Protocol::Protocol()
     this->runAfter = [] (Protocol&) {};
     // make map of params
     this->mkmap();
+    basedir = QStandardPaths::standardLocations(QStandardPaths::DocumentsLocation).first();
     this->setDataDir();
     cellStateDir = datadir;
 };
@@ -281,9 +282,9 @@ void Protocol::setDataDir(string location) {
     QDir working_dir = QDir(QString(location.c_str()));
     if(working_dir == QDir::currentPath()) {
         auto date_time = QDate::currentDate().toString("MMddyy") + "-" + QTime::currentTime().toString("hhmm");
-        working_dir = (QStandardPaths::standardLocations(QStandardPaths::DocumentsLocation).first() + "/data" + date_time);
+        working_dir = (this->basedir.absolutePath() + "/data" + date_time);
         for(int i = 1; working_dir.exists(); i++) {
-            working_dir = (QStandardPaths::standardLocations(QStandardPaths::DocumentsLocation).first() + "/data" + date_time + "_" + QString::number(i));
+            working_dir = (this->basedir.absolutePath() + "/data" + date_time + "_" + QString::number(i));
         }
     }
     this->datadir = working_dir;

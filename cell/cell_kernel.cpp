@@ -209,3 +209,19 @@ string CellKernel::optionStr() const
 void CellKernel::setOption(string){}
 
 void CellKernel::setOption(int){}
+
+int CellKernel::removeConflicts(int opt)
+{
+    int finalOpt = opt;
+    for(auto& cOptList: this->conflicts) {
+        int first = 0;
+        for(auto& cOpt: cOptList) {
+            if(!first && (cOpt&finalOpt)) {
+                first = cOpt;
+            }
+            finalOpt &= ~cOpt; //remove cOpt
+        }
+        finalOpt |= first; //add the first cOpt from conflicts back
+    }
+    return finalOpt;
+}

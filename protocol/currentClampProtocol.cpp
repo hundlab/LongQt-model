@@ -12,6 +12,8 @@ CurrentClamp::CurrentClamp()  : Protocol() {
     paceflag = 0;   // 1 to pace cell.
     stimflag = 0;
     stimcounter = 0;
+    stimbegin = 0;
+    stimend = 0;
 
     this->mkmap();
 
@@ -77,27 +79,43 @@ void CurrentClamp::CCcopy(const CurrentClamp& toCopy) {
 // External stimulus.
 int CurrentClamp::stim()
 {
-    if(__cell->t>=stimt&&__cell->t<(stimt+stimdur)){
-        if(stimflag==0){
-            stimcounter++;
-            stimflag=1;
-            if(stimcounter>int(numstims)){
-                doneflag = 0;
-                return 0;
-            }
-        }
+    if(stimcounter >= numstims) {
+        return 0;
+    }
+    if(stimbegin <= __cell->t && __cell->t < stimend) {
         __cell->externalStim(stimval);
     }
-    else if(stimflag==1){     //trailing edge of stimulus
-        stimt=stimt+bcl;
-        stimflag=0;
+    if(stimend < __cell->t) {
+        stimbegin += bcl;
+        stimend += bcl;
         __cell->apTime = 0.0;
+        stimcounter++;
     }
 
     __cell->apTime = __cell->apTime+__cell->dt;
-
-    doneflag = 1;
     return 1;
+///////////////////////////////////////////test
+//    if(__cell->t>=stimt&&__cell->t<(stimt+stimdur)){
+//        if(stimflag==0){
+//            stimcounter++;
+//            stimflag=1;
+//            if(stimcounter>int(numstims)){
+//                doneflag = 0;
+//                return 0;
+//            }
+//        }
+//        __cell->externalStim(stimval);
+//    }
+//    else if(stimflag==1){     //trailing edge of stimulus
+//        stimt=stimt+bcl;
+//        stimflag=0;
+//        __cell->apTime = 0.0;
+//    }
+
+//    __cell->apTime = __cell->apTime+__cell->dt;
+
+//    doneflag = 1;
+//    return 1;
 };
 
 void CurrentClamp::setupTrial() {
@@ -109,7 +127,9 @@ void CurrentClamp::setupTrial() {
     __cell->setConstantSelection(temp);
     temp.clear();
     time = __cell->t = 0.0;      // reset time
-    stimt = 0;
+    stimbegin = stimt;
+    stimend = stimt+stimdur;
+//    stimt = 0;
     stimcounter = 0;
     this->readInCellState(this->readCellState);
     this->__pvars->setIonChanParams();

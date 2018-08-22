@@ -91,6 +91,7 @@ class Protocol :  public std::enable_shared_from_this<Protocol>
                propertyoutfile, dvarsoutfile, finalpropertyoutfile,
                finaldvarsoutfile, cellStateFile;
 
+        QDir basedir;
         QDir datadir;
         QDir cellStateDir;
 

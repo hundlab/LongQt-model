@@ -18,6 +18,7 @@ public:
 
     void run();
     bool finished();
+    bool progress();
     void setSims(shared_ptr<Protocol> proto);
     void setSims(std::vector<shared_ptr<Protocol> > protoList);
     void appendSims(shared_ptr<Protocol> proto);

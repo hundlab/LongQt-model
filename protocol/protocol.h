@@ -59,7 +59,7 @@ class Protocol :  public std::enable_shared_from_this<Protocol>
         virtual unsigned int trial() const;
         virtual bool runTrial() = 0;
         virtual void setupTrial();
-        void setDataDir(string location = "");
+        void setDataDir(string location = "", string basedir = "", string appendtxt = "");
         void mkDirs();
         string getDataDir();
 

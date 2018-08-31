@@ -61,7 +61,8 @@ bool RunSim::finished()
 bool RunSim::progress()
 {
     qInfo() << "Threads: " << QThreadPool::globalInstance()->activeThreadCount() << '/'  << QThreadPool::globalInstance()->maxThreadCount();
-    qInfo() << next.progressText();
+    qInfo() << "Progress: " << next.progressValue()-next.progressMinimum() << '/' << next.progressMaximum();
+
     return this->finished();
 }
 

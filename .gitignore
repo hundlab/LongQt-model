@@ -7,13 +7,14 @@
 #objects and other compiled files
 moc_*
 *.o
+*.a
 .qmake.stash
 Makefile
 LongQt
 LongQtGrapher
 LQGridEditor
 build/*
-*.cmake
+cmake_install.cmake
 PyLongQt_autogen/
 CMakeCache.txt
 CMakeFiles/

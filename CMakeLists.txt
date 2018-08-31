@@ -1,97 +1,35 @@
-set(modellib_includes
-    "${CMAKE_CURRENT_LIST_DIR}"
-    "${CMAKE_CURRENT_LIST_DIR}/cell"
-    "${CMAKE_CURRENT_LIST_DIR}/structure"
-    "${CMAKE_CURRENT_LIST_DIR}/protocol"
-PARENT_SCOPE
-)
 
-set(modellib_sources
-    "${CMAKE_CURRENT_LIST_DIR}/measure.cpp"
-    "${CMAKE_CURRENT_LIST_DIR}/measurewave.cpp"
-    "${CMAKE_CURRENT_LIST_DIR}/measuremanager.cpp"
-    "${CMAKE_CURRENT_LIST_DIR}/gridmeasuremanager.cpp"
-    "${CMAKE_CURRENT_LIST_DIR}/cell/gpbatrialRyr.cpp"
-    "${CMAKE_CURRENT_LIST_DIR}/cell/hrd09_bz.cpp"
-    "${CMAKE_CURRENT_LIST_DIR}/cell/cell.cpp"
-    "${CMAKE_CURRENT_LIST_DIR}/cell/cell_kernel.cpp"
-    "${CMAKE_CURRENT_LIST_DIR}/cell/tnnp04.cpp"
-    "${CMAKE_CURRENT_LIST_DIR}/cell/kurata08.cpp"
-    "${CMAKE_CURRENT_LIST_DIR}/cell/hrd09.cpp"
-    "${CMAKE_CURRENT_LIST_DIR}/cell/gpbatrial.cpp"
-    "${CMAKE_CURRENT_LIST_DIR}/cell/gridCell.cpp"
-    "${CMAKE_CURRENT_LIST_DIR}/cell/gpbhuman.cpp"
-    "${CMAKE_CURRENT_LIST_DIR}/cell/ksan.cpp"
-    "${CMAKE_CURRENT_LIST_DIR}/cell/gpbatrialWT.cpp"
-    "${CMAKE_CURRENT_LIST_DIR}/cell/gpbatrialSE.cpp"
-    "${CMAKE_CURRENT_LIST_DIR}/cell/atrial.cpp"
-    "${CMAKE_CURRENT_LIST_DIR}/cell/br04.cpp"
-    "${CMAKE_CURRENT_LIST_DIR}/cell/OHaraRudy.cpp"
-    "${CMAKE_CURRENT_LIST_DIR}/cell/OHaraRudyEndo.cpp"
-    "${CMAKE_CURRENT_LIST_DIR}/cell/OHaraRudyEpi.cpp"
-    "${CMAKE_CURRENT_LIST_DIR}/cell/OHaraRudyM.cpp"
-    "${CMAKE_CURRENT_LIST_DIR}/cell/FR.cpp"
-    "${CMAKE_CURRENT_LIST_DIR}/cell/gpbatrialonal17.cc"
-    "${CMAKE_CURRENT_LIST_DIR}/iobase.cpp"
-    "${CMAKE_CURRENT_LIST_DIR}/structure/fiber.cpp"
-    "${CMAKE_CURRENT_LIST_DIR}/structure/node.cpp"
-    "${CMAKE_CURRENT_LIST_DIR}/structure/grid.cpp"
-    "${CMAKE_CURRENT_LIST_DIR}/protocol/gridProtocol.cpp"
-    "${CMAKE_CURRENT_LIST_DIR}/protocol/protocol.cpp"
-    "${CMAKE_CURRENT_LIST_DIR}/cellutils.cpp"
-    "${CMAKE_CURRENT_LIST_DIR}/settingsIO.cpp"
-    "${CMAKE_CURRENT_LIST_DIR}/cellpvars.cpp"
-    "${CMAKE_CURRENT_LIST_DIR}/pvarsgrid.cpp"
-    "${CMAKE_CURRENT_LIST_DIR}/pvarscurrentclamp.cpp"
-    "${CMAKE_CURRENT_LIST_DIR}/pvarsvoltageclamp.cpp"
-    "${CMAKE_CURRENT_LIST_DIR}/protocol/currentClampProtocol.cpp"
-    "${CMAKE_CURRENT_LIST_DIR}/protocol/voltageClampProtocol.cpp"
-    "${CMAKE_CURRENT_LIST_DIR}/cell/inexcitablecell.cpp"
-    "${CMAKE_CURRENT_LIST_DIR}/runsim.cpp"
-PARENT_SCOPE
-)
+cmake_minimum_required(VERSION 2.8.11)
 
-set(modellib_headers
-    "${CMAKE_CURRENT_LIST_DIR}/measuremanager.h"
-    "${CMAKE_CURRENT_LIST_DIR}/gridmeasuremanager.h"
-    "${CMAKE_CURRENT_LIST_DIR}/measure.h"
-    "${CMAKE_CURRENT_LIST_DIR}/measurewave.h"
-    "${CMAKE_CURRENT_LIST_DIR}/tridag.h"
-    "${CMAKE_CURRENT_LIST_DIR}/cell/gpbatrial.h"
-    "${CMAKE_CURRENT_LIST_DIR}/cell/gridCell.h"
-    "${CMAKE_CURRENT_LIST_DIR}/cell/hrd09.h"
-    "${CMAKE_CURRENT_LIST_DIR}/cell/cell.h"
-    "${CMAKE_CURRENT_LIST_DIR}/cell/kurata08.h"
-    "${CMAKE_CURRENT_LIST_DIR}/cell/tnnp04.h"
-    "${CMAKE_CURRENT_LIST_DIR}/cell/cell_kernel.h"
-    "${CMAKE_CURRENT_LIST_DIR}/cell/gpbatrialRyr.h"
-    "${CMAKE_CURRENT_LIST_DIR}/cell/gpbhuman.h"
-    "${CMAKE_CURRENT_LIST_DIR}/cell/ksan.h"
-    "${CMAKE_CURRENT_LIST_DIR}/cell/gpbatrialWT.h"
-    "${CMAKE_CURRENT_LIST_DIR}/cell/gpbatrialSE.h"
-    "${CMAKE_CURRENT_LIST_DIR}/cell/atrial.h"
-    "${CMAKE_CURRENT_LIST_DIR}/cell/br04.h"
-    "${CMAKE_CURRENT_LIST_DIR}/cell/OHaraRudy.h"
-    "${CMAKE_CURRENT_LIST_DIR}/cell/OHaraRudyEndo.h"
-    "${CMAKE_CURRENT_LIST_DIR}/cell/OHaraRudyEpi.h"
-    "${CMAKE_CURRENT_LIST_DIR}/cell/OHaraRudyM.h"
-    "${CMAKE_CURRENT_LIST_DIR}/cell/gpbatrialonal17.h"
-    "${CMAKE_CURRENT_LIST_DIR}/cell/FR.h"
-    "${CMAKE_CURRENT_LIST_DIR}/iobase.h"
-    "${CMAKE_CURRENT_LIST_DIR}/cellutils.h"
-    "${CMAKE_CURRENT_LIST_DIR}/structure/grid.h"
-    "${CMAKE_CURRENT_LIST_DIR}/structure/node.h"
-    "${CMAKE_CURRENT_LIST_DIR}/structure/fiber.h"
-    "${CMAKE_CURRENT_LIST_DIR}/protocol/voltageClampProtocol.h"
-    "${CMAKE_CURRENT_LIST_DIR}/protocol/currentClampProtocol.h"
-    "${CMAKE_CURRENT_LIST_DIR}/settingsIO.h"
-    "${CMAKE_CURRENT_LIST_DIR}/cellpvars.h"
-    "${CMAKE_CURRENT_LIST_DIR}/pvarsgrid.h"
-    "${CMAKE_CURRENT_LIST_DIR}/pvarscurrentclamp.h"
-    "${CMAKE_CURRENT_LIST_DIR}/pvarsvoltageclamp.h"
-    "${CMAKE_CURRENT_LIST_DIR}/protocol/protocol.h"
-    "${CMAKE_CURRENT_LIST_DIR}/protocol/gridProtocol.h"
-    "${CMAKE_CURRENT_LIST_DIR}/cell/inexcitablecell.h"
-    "${CMAKE_CURRENT_LIST_DIR}/runsim.h"
-PARENT_SCOPE
-)
+project(LongQt-model)
+
+# Find includes in corresponding build directories
+#Release Debug
+set(CMAKE_BUILD_TYPE Release)
+
+find_package(Qt5Core)
+find_package(Qt5Concurrent)
+include("${CMAKE_CURRENT_LIST_DIR}/LongQt-model.cmake")
+set(CMAKE_AUTOMOC ON)
+
+set(CMAKE_INCLUDE_CURRENT_DIR ON)
+
+include_directories(${modellib_includes})
+
+if(${BUILD_QT_STATIC})
+	link_directories(${QT_LIB_DIR})
+	SET(CMAKE_FIND_LIBRARY_SUFFIXES ".a")
+	SET(BUILD_SHARED_LIBRARIES OFF)
+	SET(GCC_COVERAGE_LINK_FLAGS "-static")
+endif()
+
+add_library(LongQt-model STATIC ${modellib_sources})
+
+if(${BUILD_QT_STATIC})
+	target_link_libraries(LongQt-model Qt5::Core Qt5::Concurrent libQt5EventDispatcherSupport.a libQt5FontDatabaseSupport.a libqtfreetype.a libQt5ThemeSupport.a libQt5AccessibilitySupport.a libQt5PrintSupport.a libqtlibpng.a libqtharfbuzz.a libQt5Concurrent.a libQt5Core.a libqtpcre2.a mingw32 shlwapi winspool uxtheme dwmapi comdlg32 oleaut32 imm32 glu32 opengl32 gdi32 mpr version ws2_32 kernel32 user32 shell32 uuid ole32 advapi32 winmm) 
+	#target_link_libraries(LongQt-model Qt5::Core C:/Qt/Static/5.9.3/plugins/printsupport/libwindowsprintersupport.a C:/Qt/Static/5.9.3/plugins/platforms/libqwindows.a libQt5EventDispatcherSupport.a libQt5FontDatabaseSupport.a libqtfreetype.a libQt5ThemeSupport.a libQt5AccessibilitySupport.a C:/Qt/Static/5.9.3/plugins/imageformats/libqgif.a C:/Qt/Static/5.9.3/plugins/imageformats/libqicns.a C:/Qt/Static/5.9.3/plugins/imageformats/libqico.a C:/Qt/Static/5.9.3/plugins/imageformats/libqjpeg.a C:/Qt/Static/5.9.3/plugins/imageformats/libqtga.a C:/Qt/Static/5.9.3/plugins/imageformats/libqtiff.a C:/Qt/Static/5.9.3/plugins/imageformats/libqwbmp.a C:/Qt/Static/5.9.3/plugins/imageformats/libqwebp.a libQt5PrintSupport.a  libQt5Widgets.a libQt5Gui.a libqtlibpng.a libqtharfbuzz.a libQt5Concurrent.a libQt5Core.a libqtpcre2.a mingw32 shlwapi winspool uxtheme dwmapi comdlg32 oleaut32 imm32 glu32 opengl32 gdi32 mpr version ws2_32 kernel32 user32 shell32 uuid ole32 advapi32 winmm) 
+	target_compile_options(LongQt-model PRIVATE -static-libgcc -static-libstdc++)
+else()
+	target_link_libraries(LongQt-model Qt5::Core Qt5::Concurrent)
+endif()
+

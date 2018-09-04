@@ -13,6 +13,7 @@
 #include <cmath>
 #include <map>
 #include <set>
+#include <list>
 #include <vector>
 #include <fstream>
 #include <string>
@@ -90,6 +91,8 @@ class CellKernel : public std::enable_shared_from_this<CellKernel>
     virtual string optionStr() const;
     virtual void setOption(string opt);
     virtual void setOption(int opt);
+    virtual int removeConflicts(int opt);
+    list<list<int>> conflicts; //list of conflicting options
 
 protected:
     void copyVarPar(const CellKernel& toCopy);
@@ -228,11 +231,11 @@ void CLASS_NAME::setOption(string opt)\
             qDebug() << ("CellKernel: Cell Option "+sp+" does not exist").c_str();\
         }\
     }\
-    opts = o;\
+    this->setOption(o);\
 }\
 void CLASS_NAME::setOption(int opt)\
 {\
-    opts = static_cast<Options>(opt);\
+    opts = static_cast<Options>(this->removeConflicts(opt));\
 }
 
 #define MAKE_OPTIONS_FUNCTIONS(CLASS_NAME) OPERATORS(CLASS_NAME) OPTIONS_FUNCTIONS(CLASS_NAME)

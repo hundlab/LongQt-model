@@ -1,4 +1,5 @@
 #include "runsim.h"
+#include <QThreadPool>
 #include <QtConcurrent>
 
 RunSim::RunSim() {}
@@ -53,13 +54,22 @@ QFuture<void>& RunSim::getFuture() {
 
 bool RunSim::finished()
 {
+
     return next.isFinished();
+}
+
+bool RunSim::progress()
+{
+    qInfo() << "Threads: " << QThreadPool::globalInstance()->activeThreadCount() << '/'  << QThreadPool::globalInstance()->maxThreadCount();
+    qInfo() << "Progress: " << next.progressValue()-next.progressMinimum() << '/' << next.progressMaximum();
+
+    return this->finished();
 }
 
 void RunSim::run() {
     next = QtConcurrent::map(vector,[] (shared_ptr<Protocol> p) {
             if(p != NULL) {
-            p->runTrial();
+                p->runTrial();
             }
             });  // pass vector of protocols to QtConcurrent
 }

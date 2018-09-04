@@ -9,6 +9,8 @@
 //#################################################
 
 #include "measure.h"
+#include <iomanip>
+#include <sstream>
 
 //#############################################################
 // Measure class constructor and destructor
@@ -121,11 +123,11 @@ string Measure::getNameString(string name) const {
     return nameStr;
 }
 string Measure::getValueString() const {
-    string valStr = "";
+    std::ostringstream valStr;
     for(auto& sel: this->__selection) {
-        valStr += to_string(*this->varmap.at(sel))+"\t";
+        valStr << std::scientific << *this->varmap.at(sel) << "\t";
     }
-    return valStr;
+    return valStr.str();
 }
 
 set<string> Measure::selection() {

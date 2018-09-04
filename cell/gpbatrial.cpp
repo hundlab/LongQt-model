@@ -768,6 +768,9 @@ void GpbAtrial::makemap()
   vars["iCabjunc"]=&iCabjunc;
   vars["iCabsl"]=&iCabsl;
   vars["iCab"]=&iCab;
+  vars["Jsrleak"]=&Jsrleak;
+  vars["Jsrcarel"]=&Jsrcarel;
+  vars["Jserca"]=&Jserca;
 
   pars["IcajuncFactor"]=&Icajuncfactor;
   pars["IcaslFactor"]=&Icaslfactor;

@@ -226,7 +226,20 @@ MAKE_OPTIONS(S571E,S571A,S2814D,S2814A,ISO)
     double IcaMkiiFactor;
     double InalPFactor;
     double Jsrleakfactor;
+    double ROSFactor;
 
+    //testing
+    void updatekI();
+    void updateClI();
+    double RyRPFactor;
+    double PKAFactor;
+    double testFactor;
+    double test2Factor;
+    double test3Factor;
+    double OAFactor;
+    double tauf,taud;
+    double RyRratio;
+    //
 
 	int externalStim(double stimval);
     void makemap();

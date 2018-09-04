@@ -35,7 +35,7 @@ class CurrentClamp : public Protocol {
     virtual bool runTrial() override;
     void readInCellState(bool read) override;
 
-    double bcl,stimval,stimdur,stimt;
+    double bcl,stimval,stimdur,stimt,stimbegin,stimend;
     int numstims;   //variables for pacing.
     bool stimflag,paceflag;
 

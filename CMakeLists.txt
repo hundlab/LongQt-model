@@ -1,4 +1,3 @@
-
 cmake_minimum_required(VERSION 2.8.11)
 
 project(LongQt-model)
@@ -32,4 +31,3 @@ if(${BUILD_QT_STATIC})
 else()
 	target_link_libraries(LongQt-model Qt5::Core Qt5::Concurrent)
 endif()
-

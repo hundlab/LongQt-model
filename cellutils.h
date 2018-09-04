@@ -10,7 +10,6 @@
 #include <utility>
 #include <string>
 #include <stdarg.h>
-#include <QXmlStreamReader>
 #include <memory>
 #include <functional>
 

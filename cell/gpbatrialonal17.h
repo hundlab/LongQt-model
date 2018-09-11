@@ -161,20 +161,19 @@ MAKE_OPTIONS(S571E,S571A,S2814D,S2814A,ISO)
 	double F_juncCaL;
 	double F_slCaL;
 
+//##### camkii variables ######
+    double fBound;
+    double fPhos;
+    double fOx;
+    double fOxP;
+    double fBlock;
+    double fI;
+    double caMkii;
 
-        double fBound;
-        double fPhos;
-        double fOx;
-        double fOxP;
-        double fBlock;
-        double fI;
-        double caMkii;
 	double fiNalP;
 
-	double tempscalar;
-
-	double perchange;
 	double RyRP;
+    double RyRratio;
 
  //###Concentration updating functions ######
 	void updateConc();
@@ -204,6 +203,8 @@ MAKE_OPTIONS(S571E,S571A,S2814D,S2814A,ISO)
 	virtual void updateIclca();
 	virtual void updateIclbk();
 	virtual void updateInal();
+    virtual void updatekI();
+    virtual void updateClI();
 
 	double Icalfactor;
 	double Icabfactor;
@@ -227,19 +228,6 @@ MAKE_OPTIONS(S571E,S571A,S2814D,S2814A,ISO)
     double InalPFactor;
     double Jsrleakfactor;
     double ROSFactor;
-
-    //testing
-    void updatekI();
-    void updateClI();
-    double RyRPFactor;
-    double PKAFactor;
-    double testFactor;
-    double test2Factor;
-    double test3Factor;
-    double OAFactor;
-    double tauf,taud;
-    double RyRratio;
-    //
 
 	int externalStim(double stimval);
     void makemap();

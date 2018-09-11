@@ -85,7 +85,7 @@ void GpbAtrialOnal17::Initialize()
     SLHj = 0.007347888;
     SLHsl = 0.07297378;
 //SR Ca buffer
-    Csqnb = 0.2;//1.242988; testing
+    Csqnb = 0.2;
 //##### Gating Variables #####
 	Gate.m = 0.001405627;
 	Gate.h = .9867005;
@@ -121,9 +121,9 @@ void GpbAtrialOnal17::Initialize()
 	ipCajunc = ipCasl = ipCa = 0.0;
 	iCabjunc = iCabsl = iCab = 0.0;
 
-       caMkii = 0.0003647207545;
+    caMkii = 0.0003647207545;
    
-        fBlock = 0;
+    fBlock = 0;
 	fBound = 0.0004862831625;
 	fI = 0.9995137085;
 	fOx = 0;
@@ -147,15 +147,8 @@ void GpbAtrialOnal17::Initialize()
     InalPFactor = 1;
     Jsrleakfactor = 1;
     ROSFactor = 0;
-    PKAFactor = 1;
-    RyRPFactor = 1;
-    OAFactor = 0;
-    testFactor = -1;
-    test2Factor = -1;
-    test3Factor = -1;
 
- 	makemap();
-
+    makemap();
 }
 
 
@@ -166,34 +159,34 @@ GpbAtrialOnal17* GpbAtrialOnal17::clone() {
 void GpbAtrialOnal17::updateCamk()
 {
         double P=0.00003;          // rate of dephosphorylation .00003
-        double calmodulin;         // free calmodulin bound to calcium.
-        double calmtotal = .00006*IcaMkiiFactor; // total free calmodulin = 60 nM.
 
-        double va,va2,ka,tcamk;
+        double calmtotal = .00006*IcaMkiiFactor; // total free calmodulin = 60 nM.
+        double calmodulin;         // free calmodulin bound to calcium. in the sl (for camkii)
+
 
         double ros = 1*ROSFactor;          // concentration of H2O2, um
         double kib = 246.0;        // mM-1/ms-1
         double kbi = 0.0022;       // ms-1
         double kox = 0.0002909;    // ms-1  
         double kred = 0.0000228;   // um/ms
-        double kt;  
         double kbp = 0.0022;       // ms;
         double kn93 = 0.0;         // concentration of KN-93, um
         double kbli = 0.0022;      // ms-1
         double kibl = 0.0008536;   // um-1.ms-1
 
         calmodulin = calmtotal*(caslI*caslI*caslI*caslI/(caslI*caslI*caslI*caslI+0.005*0.005*0.005*0.005));
-        tcamk=fBound+fPhos+fOx+fOxP;
-        kt = kbi/kib/(1/tcamk-1);
-        ka = kbi*kt/(kt+0.01851);
-        va = ka*fBound;
-        va2 = ka*fOx;
 
-        fBound=dt*(kib*calmodulin*fI+P*fPhos+kred*fOx-(kbi+kox*ros)*fBound-va)+fBound;
-        fPhos=dt*(va+kred*fOxP-(kox*ros+P)*fPhos)+fPhos;
-        fOx=dt*(kox*ros*fBound+P*fOxP-kred*fOx-va2)+fOx;
-        fOxP=dt*(va2-P*fOxP+kox*ros*fPhos-kred*fOxP)+fOxP;
-        fBlock=dt*(kibl*kn93*fI-kbli*fBlock)+fBlock;
+        double tcamk=fBound+fPhos+fOx+fOxP;
+        double kt = kbi/kib/(1/tcamk-1);
+        double ka = kbi*kt/(kt+0.01851);
+        double va = ka*fBound;
+        double va2 = ka*fOx;
+
+        fBound+=dt*(kib*calmodulin*fI+P*fPhos+kred*fOx-(kbi+kox*ros)*fBound-va);
+        fPhos+=dt*(va+kred*fOxP-(kox*ros+P)*fPhos);
+        fOx+=dt*(kox*ros*fBound+P*fOxP-kred*fOx-va2);
+        fOxP+=dt*(va2-P*fOxP+kox*ros*fPhos-kred*fOxP);
+        fBlock+=dt*(kibl*kn93*fI-kbli*fBlock);
         fI=1-fBound-fPhos-fOx-fOxP-fBlock;
         caMkii=(0.75*fBound+fPhos+fOxP+.5*fOx);
 };
@@ -250,7 +243,6 @@ void GpbAtrialOnal17::updatecaI() {
 	caslI = caslI + dCasl;
 	caI = caI + dcaI;
 	caSr = caSr + dCasr;
-    caSr = test3Factor >=0 && caSr < test3Factor ? caSr : test3Factor; //testing
 }
 
 
@@ -286,8 +278,8 @@ void GpbAtrialOnal17::updateSRFlux(){
 	//////////// RyRser2815 Phosphorylation Eqs from Soltis-Saucerman 
 	double RyRtot = 382.6E-3; //mmol/ L dyad //for SD, RyRP = 0
     RyRratio = RyRP/RyRtot;
-    double kb2815 = 0.35E-3  *0.7; //1/ms //testing
-    double kckryr = 0.4E-3   *2; //testing
+    double kb2815 = 0.35E-3*0.7; //1/ms //refit for wider camkii effect
+    double kckryr = 0.4E-3*2; //refit for wider camkii effect
 	double kmckryr = 12E-3; //mM
 	double PP1 = 95.6E-3;
 	double PP2A = 95.6E-3;
@@ -297,25 +289,24 @@ void GpbAtrialOnal17::updateSRFlux(){
     double kpp2ryr = 0.481E-3;
 	double kioapp1 = 780E-6;
 	double kioapp2 = 37E-6;
-    double OA = OAFactor;//0;
+    double OA = 0;
 	double OApp1 = 1/(1+(OA/kioapp1)*(OA/kioapp1)*(OA/kioapp1));
 	double OApp2 = 1/(1+(OA/kioapp2)*(OA/kioapp2)*(OA/kioapp2));
 	
 	double RyRN = RyRtot - RyRP;
 	double Rxnbasal = kb2815*RyRN;
-    double temp = testFactor >= 0 ? testFactor: caMkii;
-    double Rxnckryr =/*1.2923*/ kckryr*(/*caMkii*/temp*120E-3)*RyRN/(kmckryr+RyRN);//for WT
+    double Rxnckryr = kckryr*(caMkii*120E-3)*RyRN/(kmckryr+RyRN);//for WT 1.2923* was old fit value
     if(opts & S2814D) { // S2814D
-        Rxnckryr =/*1.2923*/ kckryr*(1*120E-3)*RyRN/(kmckryr+RyRN);
+        Rxnckryr = kckryr*(1*120E-3)*RyRN/(kmckryr+RyRN);/*1.2923*/
     } else if(opts & S2814A) { // S2814A
         Rxnckryr = 0;
     }
 	double Rxnpp1ryr = kpp1ryr*PP1*RyRP*OApp1/(kmpp1ryr+RyRP);
 	double Rxnpp2ryr = kpp2ryr*PP2A*RyRP*OApp2/(kmpp2ryr+RyRP);	
 
-    double kleak = (1./3) + (10./3)*0.5*RyRratio; //testing
+    double kleak = (1./3) + (10./3)*RyRratio*0.5; //refit for wider camkii effect
     double koRyRCKII = (20./3)*(RyRratio)-(1./3);
-    double PKAratio = 0.5*PKAFactor;
+    double PKAratio = 0.5;
 	double koRyRPKA = 1.025*(PKAratio)+0.975;
 	double koRyR = koRyRCKII +koRyRPKA - 1;
 
@@ -341,8 +332,7 @@ void GpbAtrialOnal17::updateSRFlux(){
 	Jsrcarel = JSRcarelfactor* ks*Ryro*(caSr-cajI);
 	
 	double KMCAM = 0.2;
-    double temp2 = test2Factor >= 0 ? test2Factor: caMkii;
-    double camfact = 1/(1+pow((KMCAM/temp2 /*caMkii*/),5.0));
+    double camfact = 1/(1+pow((KMCAM/caMkii),5.0));//refit for wider camkii effect
     double deltakmup =0.00011;
     double plb = deltakmup*camfact;
 
@@ -355,7 +345,7 @@ void GpbAtrialOnal17::updateSRFlux(){
 	
     Jserca =Jsercafactor*VmaxSRcaP*(alpha/beta);
 
-    Jsrleak =Jsrleakfactor*kleak*5.348E-6*(caSr-cajI) *0.9; //testing
+    Jsrleak =Jsrleakfactor*kleak*5.348E-6*(caSr-cajI) *0.9; //refit for wider camkii effect
 	
 
 	double dRyRP = dt*(Rxnbasal+Rxnckryr-Rxnpp1ryr-Rxnpp2ryr);//Soltis-Saucerman
@@ -398,7 +388,7 @@ void GpbAtrialOnal17::updatecytobuff(){
    dMyoc = dt*(konmyoCa*caI*(Bmaxmyosin-Myoc-Myom)-koffmyoCa*Myoc);
    dMyom = dt*(konmyoMg*mgI*(Bmaxmyosin-Myoc-Myom)-koffmyoMg*Myom);
    dSRB = dt*(konsr*caI*(BmaxSR-SRB)-koffsr*SRB);
-	
+
    J_cabcyto = (dTnCl+dTnChc+dTnChm+dCaM+dMyoc+dMyom+dSRB)/dt;
 	
    TnCl = TnCl+dTnCl;
@@ -463,7 +453,6 @@ void GpbAtrialOnal17::updateIcal(){
 	double icajbar, icaslbar, icakbar, icanajbar, icanaslbar;
 	double df_cabjdt, df_cabsldt;
 
-	double deltatfca =tempscalar;
     double deltat = 28;
 	double deltad = 5;
 	double KMCAM = 0.2;
@@ -477,12 +466,12 @@ void GpbAtrialOnal17::updateIcal(){
     double tauf_CaMK = 1/(1+pow((KMCAM/caMkii),2.0));
 
 	d_inf = 1/(1+exp(-(vOld+9)/6)); 
-	taud = d_inf*(1-exp(-(vOld+9)/6))/(0.035*(vOld+9)); 
+    double taud = d_inf*(1-exp(-(vOld+9)/6))/(0.035*(vOld+9));
 	
 //	taud = d_inf*(1-exp(-(vOld+9)/6))/(0.035*(vOld+9)); 
 
 	f_inf = 1/(1+exp((vOld+30)/7))+0.2/(1+exp((50-vOld)/20)); 
-    tauf = 1/(0.0197*exp(-(0.0337*(vOld+25))*(0.0337*(vOld+25)))+0.02)+deltat*tauf_CaMK;
+    double tauf = 1/(0.0197*exp(-(0.0337*(vOld+25))*(0.0337*(vOld+25)))+0.02)+deltat*tauf_CaMK;
 
 //	tauf = 1/(0.0197*exp(-(0.0337*(vOld+25))*(0.0337*(vOld+25)))+0.02);
 
@@ -1006,8 +995,6 @@ void GpbAtrialOnal17::makemap()
   vars["Jserca"]=&Jserca;
   vars["Jsrcarel"]=&Jsrcarel;
   vars["Jsrleak"]=&Jsrleak;
-  vars["tauf"]=&tauf;
-  vars["taud"]=&taud;
 
   pars["IcalFactor"]=&Icalfactor;
   pars["IcabFactor"]=&Icabfactor;
@@ -1032,18 +1019,10 @@ void GpbAtrialOnal17::makemap()
   pars["InalPFactor"]=&InalPFactor;
   pars["JsrleakFactor"]=&Jsrleakfactor;
   pars["ROSFactor"]=&ROSFactor;
-  pars["RyRPFactor"]=&RyRPFactor;
-  pars["PKAFactor"]=&PKAFactor;
-  pars["OAFactor"]=&OAFactor;
-  pars["testFactor"]=&testFactor;
-  pars["test2Factor"]=&test2Factor;
-  pars["test3Factor"]=&test3Factor;
-
-  //return vars;
 }
 const char* GpbAtrialOnal17::type() const {
     return "GpbAtrialOnal17";
 }
 
-MAKE_OPTIONS_FUNCTIONS(GpbAtrialOnal17);
+MAKE_OPTIONS_FUNCTIONS(GpbAtrialOnal17)
 

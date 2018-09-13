@@ -1,11 +1,3 @@
-//######################################################
-// This file contains all function definitions for
-// Hund-Rudy dynamic model as published in Hund et al.
-// J Mol Cell Cardiol 2008.
-//
-// Copyright (C) 2011 Thomas J. Hund.
-//######################################################
-
 #include "ksan.h"
 
 //######################################################
@@ -567,7 +559,7 @@ void Ksan::makemap()
 
 const char *Ksan::type() const
 {
-    return "Canine Ventricular Myocyte (Hund-Rudy 2008)";
+    return "Mouse Sinus Node (Kharche 2011)";
 }
 
 // External stimulus.

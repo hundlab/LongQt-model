@@ -3,7 +3,10 @@
 // (central) published in Kurata et al. Biophys J.
 // 2008;95:951.
 //
-// Copyright (C) 2011 Thomas J. Hund.
+// Kurata, Yasutaka, et al. “Regional Difference in
+// Dynamical Property of Sinoatrial Node Pacemaking:
+// Role of Na+channel Current.” Biophysical Journal, vol.
+// 95, no. 2, 2008, pp. 951–77, doi:10.1529/biophysj.107.112854.
 //#########################################################
 #ifndef MODELSA_H
 #define MODELSA_H
@@ -121,14 +124,22 @@ class ControlSa : public Cell
     
     double irelFactor;
     double iupFactor;
+    double isoConc;
 
    
     double Vnsr;
     double Vjsr;
     double Vss;
 
+    //    ISO //isoproterenol
+//    MAKE_OPTIONS(ISO)
+
+//    enum Options opts;
+
 protected:
     virtual void Initialize();
+private:
+    void makemap();
 };
 
 #endif

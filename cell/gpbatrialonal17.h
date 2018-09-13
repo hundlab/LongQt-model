@@ -1,7 +1,13 @@
-// 10/29/2012
-//################################################
-// This header file contains all class definitions
-//#################################################
+//#######################################################
+// This header file contains class definition for
+// Onal model of human atrial myocytes
+//
+// Onal, Birce, et al. “Ca 2+ /Calmodulin Kinase II-Dependent
+// Regulation of Atrial Myocyte Late Na+ Current, Ca 2+ Cycling
+// and Excitability: A Mathematical Modeling Study.” American
+// Journal of Physiology - Heart and Circulatory Physiology, 2017,
+// p. ajpheart.00185.2017, doi:10.1152/ajpheart.00185.2017.
+//#######################################################
 #include "cell.h" //parent class definitions
 
 #ifndef GPBATRIALONAL17_H
@@ -219,7 +225,7 @@ MAKE_OPTIONS(S571E,S571A,S2814D,S2814A,ISO)
 	double Inakfactor;
 	double Inabfactor;
 	double Inafactor;
-	double Iclcafactor;
+    double Iclcafactor;
 	double Iclbkfactor;
 	double Inalfactor;
 	double JSRcarelfactor;
@@ -228,6 +234,10 @@ MAKE_OPTIONS(S571E,S571A,S2814D,S2814A,ISO)
     double InalPFactor;
     double Jsrleakfactor;
     double ROSFactor;
+
+    //testing
+    double testFactor;
+    //
 
 	int externalStim(double stimval);
     void makemap();

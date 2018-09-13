@@ -40,7 +40,7 @@ void TNNP04Control::Initialize() {
 	dvcut = 1.0;
         vOld = vNew =  -86.2;
         tRel=10000.0;
-        sponRelflag = 0;
+        sponRelflag = false;
 
         apTime = 0.0;
 
@@ -48,7 +48,6 @@ void TNNP04Control::Initialize() {
     	Vc = 1.64E-5; //uL
     	Vsr = 1.094E-5; //uL
 
-    	isoFlag = 0;
 //###### Concentrations #########
     	naI = 11.6; //uM
     	naO = 140.0; //uM
@@ -93,7 +92,7 @@ void TNNP04Control::Initialize() {
 	Inabfactor=1;
 	Inafactor=1;
 
-
+    opts = WT;
     makemap();
 }
 
@@ -133,7 +132,7 @@ void TNNP04Control::updateIcal(){
 	if((Gate.fca>fcaold)&&(vOld>-37.0))
 		Gate.fca=fcaold;
 	
-	if(isoFlag==1)
+    if(opts & ISO)
 	  condfact = 2.429;
 
 	iCal = Icalfactor*gcal*condfact*Gate.d*Gate.f*Gate.fca*4*(vOld*FDAY*FDAY/(RGAS*TEMP))*((caI*exp(2*vOld*FDAY/(RGAS*TEMP))-0.341*caO)/(exp(2*vOld*FDAY/(RGAS*TEMP))-1.0));
@@ -251,7 +250,7 @@ void TNNP04Control::updateIks() {
 
 	Gate.xs = xs_inf-(xs_inf-Gate.xs)*exp(-dt/tau_xs);
 
-	if(isoFlag==1)
+    if(opts & ISO)
 	  condfact = 1.8;
 
 	EKs = RGAS*TEMP/FDAY*log((kO+pKna*naO)/(kI+pKna*naI));
@@ -323,7 +322,7 @@ void TNNP04Control::updateInak() {
 	double KmNa = 40.0;
 	double condfact = 1.0;
 
-	if(isoFlag==1)
+    if(opts & ISO)
 	  condfact = 1.4;
 
 	iNak = Inakfactor*pnak*condfact*kO*naI/((kO+KmK)*(naI+KmNa)*(1+0.1245*exp(-0.1*vOld*FDAY/RGAS/TEMP)+0.0353*exp(-vOld*FDAY/RGAS/TEMP)));
@@ -379,8 +378,8 @@ void TNNP04Control::updateSRcurrents(){
 
 	}
 	if(caSrbufc>csqnth){
-	  if(sponRelflag==0){
-	    sponRelflag = 1;
+      if(sponRelflag==0){
+        sponRelflag = 1;
 	    tRel = 0.0;	
         qInfo() << "Spontaneous release at t = " << t << endl;
 	  }
@@ -389,7 +388,7 @@ void TNNP04Control::updateSRcurrents(){
 	tRel = tRel+dt;
 	
  	if(tRel>100.0)
-	   sponRelflag = 0;
+       sponRelflag = 0;
 
 	tau_g = 2; //ms
 	if(sponRelflag==1)
@@ -400,7 +399,7 @@ void TNNP04Control::updateSRcurrents(){
 	if((Gate.g>gold)&&(vOld>-37))
 		Gate.g=gold;
 
-	if(isoFlag==1)
+    if(opts & ISO)
 	  iupcondfact = 1.2;
 
 	iLeak = ileakfactor*Vleak*iupcondfact*(caSr-caI);
@@ -519,3 +518,5 @@ const char *TNNP04Control::type() const
 {
     return "Human Ventricular (Ten Tusscher 2004)";
 }
+
+MAKE_OPTIONS_FUNCTIONS(TNNP04Control)

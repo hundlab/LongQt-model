@@ -1,10 +1,11 @@
 //#######################################################
 // This header file contains class definition for
-// Hund-Rudy dynamic models of control and border
-// zone canine epicardial ventricular myocytes as 
-// published in Hund et al. J Mol Cell Cardiol. 2008.
-
-// Copyright (C) 2011 Thomas J. Hund.
+// Bondarenko model of mouse ventricular myocytes
+//
+// Bondarenko, V. E. “Computer Model of Action Potential of
+// Mouse Ventricular Myocytes.” AJP: Heart and Circulatory
+// Physiology, vol. 287, no. 3, 2004, pp. H1378–403,
+// doi:10.1152/ajpheart.00185.2003.
 //#######################################################
 
 #include "cell.h"  // Parent class declaration
@@ -47,7 +48,8 @@ class Br04 : public Cell
 	double i_Kss;	// Ito inactivation
 	double nks;	// IKs slow activation
    };
-  
+
+
   //##################################################
   // Declare functions/variables unique to Br04
   // class. All functions/variables declared in parent 
@@ -79,7 +81,8 @@ class Br04 : public Cell
     virtual void updateNai();
     virtual void updateKi();
     virtual void updateCurr();
-    virtual void updateConc();	
+    virtual void updateConc();
+    virtual double tstep(double stimt) override;
     virtual int externalStim(double stimval);
 //    virtual int tstep();
     virtual void makemap();
@@ -147,14 +150,20 @@ class Br04 : public Cell
     double caSs;  // Ca in restricted space, mM.
     
     double caTrpn_low,caTrpn_high,csqn,caJsr,caNsr;
-    double tRel, sponRelflag;
-    double isoFlag;
+    double tRel;
+    bool sponRelflag;
    
     double Vnsr;
     double Vjsr;
     double Vss;
 
     struct GateVariable gate;
+
+    //    ISO //isoproterenol
+    MAKE_OPTIONS(ISO);
+
+    enum Options opts;
+
     protected:
     virtual void Initialize();
 };

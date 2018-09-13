@@ -1,12 +1,3 @@
-//######################################################
-// This file contains all function definitions for
-// Grandi model of the human ventricular action 
-// potential as published in Grandi et al.
-// J Mol Cell Cardiol 2010.
-//
-// Copyright (C) 2012 Thomas J. Hund.
-//######################################################
-
 #include "gpbhuman.h"
 GpbVent::GpbVent()
 {

@@ -1,7 +1,12 @@
-// 10/29/2012
-//################################################
-// This header file contains all class definitions
-//#################################################
+//#######################################################
+// This header file contains class definition for
+// Grandi model of human atrial myocytes
+//
+// Grandi, E., et al. “Human Atrial Action Potential and
+// Ca2+ Model: Sinus Rhythm and Chronic Atrial Fibrillation.”
+// Circulation Research, vol. 109, no. 9, 2011, pp. 1055–66,
+// doi:10.1161/CIRCRESAHA.111.253955.
+//#######################################################
 #include "cell.h" //parent class definitions
 
 #ifndef GPBATRIAL_H

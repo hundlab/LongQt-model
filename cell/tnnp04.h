@@ -1,10 +1,11 @@
 //#######################################################
 // This header file contains class definition for
-// Hund-Rudy dynamic models of control and border
-// zone canine epicardial ventricular myocytes as 
-// published in Hund et al. J Mol Cell Cardiol. 2008.
+// Ten Tusscher Human Ventricular model
 
-// Copyright (C) 2011 Thomas J. Hund.
+// ten Tusscher, KHWJ H. W. J., et al. “A Model for Human
+// Ventricular Tissue.” American Journal of Physiology.
+// Heart and Circulatory Physiology, vol. 286, no. 4,
+// 2004, pp. H1573-89, doi:10.1152/ajpheart.00794.2003.
 //#######################################################
 
 #include "cell.h"  // Parent class declaration
@@ -80,9 +81,8 @@ class TNNP04Control : public Cell
 	double Vsr;
 
 	double tRel;
-	int sponRelflag;
+    bool sponRelflag;
 
-	int isoFlag;
 //###### Concentrations #########
     	double naI;
     	double kI;
@@ -127,6 +127,10 @@ class TNNP04Control : public Cell
 	double Inafactor;
 	
     	struct GateVariable Gate;
+        //    ISO //isoproterenol
+        MAKE_OPTIONS(ISO);
+
+        enum Options opts;
     protected:
    virtual  void Initialize();
 };

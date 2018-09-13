@@ -1,12 +1,3 @@
-//######################################################
-// This file contains all function definitions for
-// Grandi model of the human atrial action 
-// potential as published in Grandi et al.
-// Circ Res 2011.
-//
-// Copyright (C) 2012 Thomas J. Hund.
-//######################################################
-
 #include "gpbatrial.h"
 
 GpbAtrial::GpbAtrial()

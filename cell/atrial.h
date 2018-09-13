@@ -1,9 +1,12 @@
 //#######################################################
 // This header file contains class definition for
-// model of human atrial action potential as published
-// in Courtemanche et al. Am J Physiol.275:H301;1998.
-
-// Copyright (C) 2011 Thomas J. Hund.
+// Courtemanche model of human atrial myocytes
+//
+// Courtemanche, Marc, et al. “Ionic Mechanisms Underlying
+// Human Atrial Action Potential Properties: Insights from
+// a Mathematical Model.” The American Journal of Physiology,
+// vol. 275, no. 1 Pt 2, July 1998, pp. H301-21,
+// http://www.ncbi.nlm.nih.gov/pubmed/9688927.
 //#######################################################
 
 #include "cell.h"  // Parent class declaration

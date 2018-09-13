@@ -4,7 +4,13 @@
 // zone canine epicardial ventricular myocytes as 
 // published in Christensen et al. PLoS. 2009;5:
 // e1000583.
-//
+
+// Christensen, Matthew D., et al. “Oxidized Calmodulin
+// Kinase II Regulates Conduction Following Myocardial
+// Infarction: A Computational Analysis.” PLoS
+// Computational Biology, vol. 5, no. 12, 2009, p.
+// 1000583, doi:10.1371/journal.pcbi.1000583.
+
 // Copyright (C) 2011 Thomas J. Hund.
 //###################################################
 #include "cell.h"  // Parent class declaration

@@ -1,11 +1,3 @@
-//######################################################
-// This file contains all function definitions for
-// model of human atrial action potential as published
-// in Courtemanche et al. Am J Physiol.275:H301;1998.
-
-// Copyright (C) 2011 Thomas J. Hund.
-//######################################################
-
 #include "atrial.h"
 
 //######################################################

@@ -1,12 +1,3 @@
-//######################################################
-// This file contains all function definitions for
-// Grandi model of the human atrial action 
-// potential as published in Grandi et al.
-// Circ Res 2011.
-//
-// Copyright (C) 2012 Thomas J. Hund.
-//######################################################
-
 #include "gpbatrialonal17.h"
 #include <QDebug>
 
@@ -148,6 +139,8 @@ void GpbAtrialOnal17::Initialize()
     Jsrleakfactor = 1;
     ROSFactor = 0;
 
+    testFactor = 1;
+
     makemap();
 }
 
@@ -165,7 +158,7 @@ void GpbAtrialOnal17::updateCamk()
 
 
         double ros = 1*ROSFactor;          // concentration of H2O2, um
-        double kib = 246.0;        // mM-1/ms-1
+        double kib = 246.0*testFactor;        // mM-1/ms-1
         double kbi = 0.0022;       // ms-1
         double kox = 0.0002909;    // ms-1  
         double kred = 0.0000228;   // um/ms
@@ -1019,9 +1012,11 @@ void GpbAtrialOnal17::makemap()
   pars["InalPFactor"]=&InalPFactor;
   pars["JsrleakFactor"]=&Jsrleakfactor;
   pars["ROSFactor"]=&ROSFactor;
+  pars["testFactor"]=&testFactor;
 }
 const char* GpbAtrialOnal17::type() const {
     return "GpbAtrialOnal17";
+//    return "Human Atrial (Onal 2017)";
 }
 
 MAKE_OPTIONS_FUNCTIONS(GpbAtrialOnal17)

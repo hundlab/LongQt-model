@@ -1,10 +1,12 @@
 //#######################################################
 // This header file contains class definition for
-// Hund-Rudy dynamic models of control and border
-// zone canine epicardial ventricular myocytes as 
-// published in Hund et al. J Mol Cell Cardiol. 2008.
+// Kharche San
 
-// Copyright (C) 2011 Thomas J. Hund.
+// Kharche, Sanjay, et al. “A Mathematical Model of Action
+// Potentials of Mouse Sinoatrial Node Cells with Molecular Bases.”
+// American Journal of Physiology-Heart and Circulatory Physiology,
+// vol. 301, no. 3, Sept. 2011, pp. H945–63,
+// doi:10.1152/ajpheart.00143.2010.
 //#######################################################
 
 #include "cell.h"  // Parent class declaration

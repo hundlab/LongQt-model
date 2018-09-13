@@ -1,7 +1,11 @@
-// 5/5/2000
-//################################################
-// This header file contains all class definitions
-//#################################################
+//#######################################################
+// This header file contains class definition for
+// Grandi model of human ventricular myocytes
+//
+// Grandi, Eleonora, et al. A Novel Computational Model
+// of the Human Ventricular Action Potential and Ca Transient.
+// 2009, doi:10.1016/j.yjmcc.2009.09.019.
+//#######################################################
 #include "cell.h" //parent class definitions
 
 #ifndef GPBMODEL_H

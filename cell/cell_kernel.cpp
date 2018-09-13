@@ -3,7 +3,6 @@
 // for simulation of excitable cell activity.
 //
 // Copyright (C) 2011 Thomas J. Hund.
-// Updated 11/21/2012
 //####################################################
 
 #include "cell_kernel.h"
@@ -224,4 +223,24 @@ int CellKernel::removeConflicts(int opt)
         finalOpt |= first; //add the first cOpt from conflicts back
     }
     return finalOpt;
+}
+
+vector<string> CellKernel::split(string s, char delim) {
+    vector<string> v;
+    size_t prev_pos = 0;
+    size_t pos = s.find(delim,prev_pos);
+    std::string token;
+    while(pos != std::string::npos) {
+        token = s.substr(prev_pos, pos-prev_pos);
+        if(token != "") {
+            v.push_back(token);
+        }
+        prev_pos = pos+1;
+        pos = s.find(delim,prev_pos);
+    }
+    token = s.substr(prev_pos);
+    if(token != "") {
+        v.push_back(token);
+    }
+    return v;
 }

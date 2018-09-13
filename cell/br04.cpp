@@ -1,19 +1,7 @@
-//######################################################
-// This file contains all function definitions for
-// Hund-Rudy dynamic model as published in Hund et al.
-// J Mol Cell Cardiol 2008.
-//
-// Copyright (C) 2011 Thomas J. Hund.
-//######################################################
-
 #include "br04.h"
 
 #include <QDebug>
 
-//######################################################
-// Constructor for control canine epicardial
-// ventricular model.
-//######################################################
 Br04::Br04()
 {
     this->Initialize();
@@ -32,7 +20,7 @@ void Br04::Initialize() {
  	dt=0.0005;
         vOld = vNew =  -88.66157024;
         tRel=10000.0;
-        sponRelflag = 0;
+        sponRelflag = false;
 
         apTime = 0.0;
 
@@ -118,6 +106,7 @@ void Br04::Initialize() {
 	J_up = 2.08266461e-05;
 	J_xfer = -8.416376862e-15;
 
+    opts = WT;
     this->makemap();
 }
 Br04 *Br04::clone() {
@@ -166,7 +155,7 @@ void Br04::updateIlca() {
         I3 = I3 + dI3;
         C1 = 1-O-C2-C3-C4-I1-I2-I3;
 
-        if(isoFlag==1)
+        if(opts & ISO)
            condfact = 2.429;
 
         iCal = condfact*gcal*O*(vOld-Eca);
@@ -260,7 +249,7 @@ void Br04::updateIks() {
         nksinf = alpha_n/(alpha_n+beta_n);
         gate.nks = nksinf-(nksinf-gate.nks)*exp(-dt/taunks);
 
-        if(isoFlag==1)
+        if(opts & ISO)
           condfact = 1.8;
 
         iKs = condfact*gks*gate.nks*gate.nks*(vOld-EK);
@@ -409,7 +398,7 @@ void Br04::updateInak() {
         sigma = (1.0/7.0)*(exp(naO/67.3)-1.0);
         fNak = 1.0/(1.0+0.1245*exp(-0.1*vOld*FDAY/RGAS/TEMP)+0.0365*sigma*exp(-vOld*FDAY/(RGAS*TEMP)));
 
-        if(isoFlag==1)
+        if(opts & ISO)
            condfact=1.4;
 
         iNak = condfact*(inakmax*fNak/(1+pow((KmNai/naI),1.5)))*(kO/(kO+KmKo));
@@ -482,7 +471,7 @@ void Br04::updateCaFlux() {
 
         dPO2 = dt*(pow((caSs*1000.0),3.0)*PO1*kb_open-kb_close*PO2);
         dPC2 = dt*(kc_open*PO1-kc_close*PC2);
-        if(isoFlag==1)
+        if(opts & ISO)
           irelcondfact = 2.429;
 
         dPRyr = dt*(-0.04*PRyr-0.1*(iCal/(irelcondfact*7.0))*exp(-1.0*(vOld)/30.0));
@@ -491,12 +480,12 @@ void Br04::updateCaFlux() {
         PO2 = PO2 + dPO2;
         PC2 = PC2 + dPC2;
 
-        if(sponRelflag==1)
+        if(sponRelflag)
           dPRyr = dt*(-0.04*PRyr);
 
         PRyr = PRyr + dPRyr;
 
-	if(csqn>csqnth){
+        if(csqn>csqnth) {
           if(sponRelflag==0){
             sponRelflag = 1;
             tRel = 0.0;
@@ -512,7 +501,7 @@ void Br04::updateCaFlux() {
 
         PC1 = 1-PC2-PO1-PO2;
 
-        if(isoFlag==1)
+        if(opts & ISO)
           iupcondfact = 1.2;
 
         J_rel = v1*(PO1+PO2)*(caJsr-caSs)*PRyr;
@@ -604,41 +593,7 @@ int Br04::externalStim(double stimval) {
     iTot = iTot + stimval;
     return 1;
 }
-/*
-int Br04::tstep(){
 
-        t = t+dt;
-
-//using the dynamic time step
-        if(caSs>0.08)
-                dt=0.0000005; //0.008
-        else if(caSs>0.07)
-                dt=0.000001; //0.008
-        else if(caSs>0.06)
-                dt=0.000005; //0.008
-        else if(caSs>0.05)
-                dt=0.00001; //0.008
-        else if(caSs>0.045)
-                dt=0.00001; //0.008
-        else if(caSs>0.04)
-                dt=0.00005; //0.008
-        else if(caSs>0.03)
-                dt=0.0001; //0.008
-        else if(caSs>0.025)
-                dt=0.00025; //0.008
-        else if(dVdt>=0.5)
-                dt=0.0005; //0.008
-        else if(dVdt>=0.1)
-                dt=0.0005;  //0.008
-        else
-                dt=0.0005;  //0.008
-
-        if(t>tMax)
-                return 0;
-        else
-                return 1;
-};
-*/
 void Br04::updateCurr()
 {
 
@@ -679,6 +634,35 @@ void Br04:: updateConc()
    updateCaNsr();  // [Ca]subspace 
    updateKi();   // [K]i
    updateNai();  // [Na]i
+}
+
+double Br04::tstep(double stimt)
+{
+    t += dt;
+//using the dynamic time step
+    if(caSs>0.08)
+            dt=0.0000005; //0.008
+    else if(caSs>0.07)
+            dt=0.000001; //0.008
+    else if(caSs>0.06)
+            dt=0.000005; //0.008
+    else if(caSs>0.05)
+            dt=0.00001; //0.008
+    else if(caSs>0.045)
+            dt=0.00001; //0.008
+    else if(caSs>0.04)
+            dt=0.00005; //0.008
+    else if(caSs>0.03)
+            dt=0.0001; //0.008
+    else if(caSs>0.025)
+            dt=0.00025; //0.008
+    else if(dVdt>=0.5)
+            dt=0.0005; //0.008
+    else if(dVdt>=0.1)
+            dt=0.0005;  //0.008
+    else
+            dt=0.0005;  //0.008
+    return t;
 }
 
 
@@ -757,6 +741,7 @@ void Br04::makemap()
 
 const char *Br04::type() const
 {
-    return "Canine Border Zone Epicardial (Hund-Rudy 08)";
+    return "Mouse Ventricular (Bondarenko 2004)";
 };
 
+MAKE_OPTIONS_FUNCTIONS(Br04)

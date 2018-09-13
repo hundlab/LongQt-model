@@ -1,15 +1,4 @@
-//##########################################################
-// Class definitions for rabbit sinoatrial node cell models
-// (central and peripheral) published in Kurata et al. 
-// Biophys J. 2008;95:951.
-//
-// Copyright (C) 2011 Thomas J. Hund.
-//##########################################################
 #include "kurata08.h"
-//######################################################
-// Constructor for centrol rabbit sinoatrial node
-// cell model.
-//######################################################
 ControlSa::ControlSa() :Cell()
 {
     this->Initialize();
@@ -37,13 +26,15 @@ void ControlSa::Initialize() {
     Vss=0.021936E-6;
     Vnsr= 0.0255097E-6;//uL
     Vjsr= 0.0026389E-6;//uL
+
+    isoConc = 1;
     
     icalFactor = 1;
     icattFactor = 1;
     ikrFactor = 1;
     iksFactor = 1;
     itoFactor = 1;
-//    itrekFactor = 1;
+    itrekFactor = 1;
     isusFactor = 1;
     ikachFactor = 1;
     istFactor = 1;
@@ -102,263 +93,15 @@ void ControlSa::Initialize() {
 	iRel=iUp=iTr=iDiff=0.0;
 
 	iCait=iCart=0.0;
-    
-    // add to vars map declared/defined in cell.h and cell.cpp
-    vars["naI"]=&naI;
-    vars["kI"]=&kI;
-    vars["caI"]=&caI;
-    vars["caR"]=&caR;
-    vars["caJsr"]=&caJsr;
-    vars["caNsr"]=&caNsr;
-    vars["trpnCa"]=&trpnCa;
-    vars["trpnMg"]=&trpnMg;
-    vars["trpnMgmg"]=&trpnMgmg;
-    vars["cmdnI"]=&cmdnI;
-    vars["cmdnR"]=&cmdnR;
-    vars["csqn"]=&csqn;
-    vars["iRel"]=&iRel;
-    vars["iUp"]=&iUp;
-    vars["iTr"]=&iTr;
-    vars["iDiff"]=&iDiff;
-    vars["iSt"]=&iSt;
-    vars["Gate.qa"]=&Gate.qa;
-    vars["Gate.qi"]=&Gate.qi;
-    vars["iNab"]=&iNab;
-    vars["iCal"]=&iCal;
-    vars["Gate.d"]=&Gate.d;
-    vars["Gate.f"]=&Gate.f;
-    vars["Gate.fca"]=&Gate.fca;
-    vars["iCatt"]=&iCatt;
-    vars["Gate.dt"]=&Gate.dt;
-    vars["Gate.ft"]=&Gate.ft;
-    vars["iNak"]=&iNak;
-    vars["iNaca"]=&iNaca;
-    vars["iTo"]=&iTo;
-//    vars["iTrek"]=&iTrek;
-    vars["iSus"]=&iSus;
-    vars["Gate.q"]=&Gate.q;
-    vars["Gate.r"]=&Gate.r;
-    vars["iKs"]=&iKs;
-    vars["Gate.n"]=&Gate.n;
-    vars["iKr"]=&iKr;
-    vars["Gate.paf"]=&Gate.paf;
-    vars["Gate.pas"]=&Gate.pas;
-    vars["Gate.pi"]=&Gate.pi;
-    vars["iKach"]=&iKach;
-    vars["iH"]=&iH;
-    vars["iHna"]=&iHna;
-    vars["iHk"]=&iHk;
-    vars["Gate.y"]=&Gate.y;
-//    vars["iCait"]=&iCait;
-//    vars["iCart"]=&iCart;
-    
-    pars["Vnsr"] = &Vnsr;
-    pars["Vjsr"] = &Vjsr;
-    pars["Vss"] = &Vss;
-    pars["naO"] = &naO;
-    pars["kO"] = &kO;
-    pars["caO"] = &caO;
-    pars["icalFactor"] = &icalFactor;
-    pars["icattFactor"] = &icattFactor;
-    pars["ikrFactor"] = &ikrFactor;
-    pars["iksFactor"] = &iksFactor;
-    pars["itoFactor"] = &itoFactor;
-//    pars["itrekFactor"] = &itrekFactor;
-    pars["isusFactor"] = &isusFactor;
-    pars["ikachFactor"] = &ikachFactor;
-    pars["istFactor"] = &istFactor;
-    pars["inabFactor"] = &inabFactor;
-    pars["inakFactor"] = &inakFactor;
-    pars["inacaFactor"] = &inacaFactor;
-    pars["ihFactor"] = &ihFactor;
-    pars["iupFactor"] = &iupFactor;
-    pars["irelFactor"] = &irelFactor;
 
-    
+//    opts = WT;
 };
-//############################################
-//Constructor for deep copy
-//############################################
+
 ControlSa::ControlSa(const ControlSa& toCopy ) : Cell(toCopy)
 {
-    //##### Assign default parameters ##################
-    dt=dt;
-    dtmin = toCopy.dtmin;
-    dtmed = toCopy.dtmed;
-    dtmax = toCopy.dtmax;
-    dvcut = toCopy.dvcut;
-    apTime = toCopy.apTime;
-     
-    naO = toCopy.naO;
-    caO = toCopy.caO;
-    kO = toCopy.kO;
-    
-    cellRadius= toCopy.cellRadius;  //0.0004cm
-    cellLength= toCopy.cellLength;  //0.007cm
-    Rcg = toCopy.Rcg;
-    
-    Vcell= toCopy.Vcell;
-    ACap= toCopy.ACap;
-    Vmyo= toCopy.Vmyo; //uL
-    Vss= toCopy.Vss;
-    Vnsr= toCopy.Vnsr;//uL
-    Vjsr= toCopy.Vjsr;//uL
-    
-    icalFactor = toCopy.icalFactor;
-    icattFactor = toCopy.icattFactor;
-    ikrFactor = toCopy.ikrFactor;
-    iksFactor = toCopy.iksFactor;
-    itoFactor = toCopy.itoFactor;
-//    itrekFactor = toCopy.itrekFactor;
-    isusFactor = toCopy.isusFactor;
-    ikachFactor = toCopy.ikachFactor;
-    istFactor = toCopy.istFactor;
-    inabFactor = toCopy.inabFactor;
-    inakFactor = toCopy.inakFactor;
-    inacaFactor = toCopy.inacaFactor;
-    ihFactor = toCopy.ihFactor;
-    iupFactor = toCopy.iupFactor;
-    irelFactor = toCopy.irelFactor;
-    
-    //##### Initialize variables ##################
-    dVdt= toCopy.dVdt;
-    dVdtmax= toCopy.dVdtmax;
-    t= toCopy.t;
-    dt = toCopy.dt;
-    dtmin = toCopy.dtmin;
-    vOld = toCopy.vOld;
-    vNew = toCopy.vNew;
-
-	caI = toCopy.caI;// kurata, min. diastolic Ca2+
-  	caR = toCopy.caR; //ditto
-  	caJsr = toCopy.caJsr; // from kurata
-  	caNsr = toCopy.caNsr; //ditto
-  	kI = toCopy.kI;
-  	naI = toCopy.naI;   //ditto
-
-  	Gate.d= toCopy.Gate.d; //L-type Ca-current gates
-  	Gate.f= toCopy.Gate.f;
-  	Gate.fca= toCopy.Gate.fca;
-
- 	Gate.dt= toCopy.Gate.dt;   //T-type Ca-current gates
-  	Gate.ft= toCopy.Gate.ft;
-  	Gate.paf= toCopy.Gate.paf;  //IKr gates
-  	Gate.pas= toCopy.Gate.pas;
-  	Gate.pi= toCopy.Gate.pi;
-
-  	Gate.n= toCopy.Gate.n;//0.0;  //IKs gate
-
-  	Gate.q = toCopy.Gate.q; //Ito
-  	Gate.r = toCopy.Gate.r; //Ito and Isus
-
-  	Gate.qa = toCopy.Gate.qa;  //Ist
-  	Gate.qi = toCopy.Gate.qi;
-
-  	Gate.y = toCopy.Gate.y;  //Ih
-
-	csqn = toCopy.csqn;//only for kurata buffering equations
-  	cmdnI = toCopy.cmdnI;  //only for kurata buffering equations
-  	cmdnR = toCopy.cmdnR;
-  	trpnCa = toCopy.trpnCa;
-  	trpnMg = toCopy.trpnMg;
-  	trpnMgmg = toCopy.trpnMgmg;
-
-	iSt= toCopy.iSt;
-    iNab= toCopy.iNab;
-	iCal= toCopy.iCal;
-    iCatt= toCopy.iCatt;
-	iKs= toCopy.iKs;
-    iKr= toCopy.iKr;
-    iTo= toCopy.iTo;
-    iSus= toCopy.iSus;
-    iKach= toCopy.iKach;
-	iNak= toCopy.iNak;
-    iNaca= toCopy.iNaca;
-    iHna= toCopy.iHna;
-    iHk= toCopy.iHk;
-	iRel= toCopy.iRel;
-    iUp= toCopy.iUp;
-    iTr= toCopy.iTr;
-    iDiff= toCopy.iDiff;
-
-	iCait=iCart=0.0;
-    
-    // add to vars map declared/defined in cell.h and cell.cpp
-    vars["naI"]=&naI;
-    vars["kI"]=&kI;
-    vars["caI"]=&caI;
-    vars["caR"]=&caR;
-    vars["caJsr"]=&caJsr;
-    vars["caNsr"]=&caNsr;
-    vars["trpnCa"]=&trpnCa;
-    vars["trpnMg"]=&trpnMg;
-    vars["trpnMgmg"]=&trpnMgmg;
-    vars["cmdnI"]=&cmdnI;
-    vars["cmdnR"]=&cmdnR;
-    vars["csqn"]=&csqn;
-    vars["iRel"]=&iRel;
-    vars["iUp"]=&iUp;
-    vars["iTr"]=&iTr;
-    vars["iDiff"]=&iDiff;
-    vars["iSt"]=&iSt;
-    vars["Gate.qa"]=&Gate.qa;
-    vars["Gate.qi"]=&Gate.qi;
-    vars["iNab"]=&iNab;
-    vars["iCal"]=&iCal;
-    vars["Gate.d"]=&Gate.d;
-    vars["Gate.f"]=&Gate.f;
-    vars["Gate.fca"]=&Gate.fca;
-    vars["iCatt"]=&iCatt;
-    vars["Gate.dt"]=&Gate.dt;
-    vars["Gate.ft"]=&Gate.ft;
-    vars["iNak"]=&iNak;
-    vars["iNaca"]=&iNaca;
-    vars["iTo"]=&iTo;
-//    vars["iTrek"]=&iTrek;
-    vars["iSus"]=&iSus;
-    vars["Gate.q"]=&Gate.q;
-    vars["Gate.r"]=&Gate.r;
-    vars["iKs"]=&iKs;
-    vars["Gate.n"]=&Gate.n;
-    vars["iKr"]=&iKr;
-    vars["Gate.paf"]=&Gate.paf;
-    vars["Gate.pas"]=&Gate.pas;
-    vars["Gate.pi"]=&Gate.pi;
-    vars["iKach"]=&iKach;
-    vars["iH"]=&iH;
-    vars["iHna"]=&iHna;
-    vars["iHk"]=&iHk;
-    vars["Gate.y"]=&Gate.y;
-//    vars["iCait"]=&iCait;
-//    vars["iCart"]=&iCart;
-    
-    pars["Vnsr"] = &Vnsr;
-    pars["Vjsr"] = &Vjsr;
-    pars["Vss"] = &Vss;
-    pars["naO"] = &naO;
-    pars["kO"] = &kO;
-    pars["caO"] = &caO;
-    pars["icalFactor"] = &icalFactor;
-    pars["icattFactor"] = &icattFactor;
-    pars["ikrFactor"] = &ikrFactor;
-    pars["iksFactor"] = &iksFactor;
-    pars["itoFactor"] = &itoFactor;
-//    pars["itrekFactor"] = &itrekFactor;
-    pars["isusFactor"] = &isusFactor;
-    pars["ikachFactor"] = &ikachFactor;
-    pars["istFactor"] = &istFactor;
-    pars["inabFactor"] = &inabFactor;
-    pars["inakFactor"] = &inakFactor;
-    pars["inacaFactor"] = &inacaFactor;
-    pars["ihFactor"] = &ihFactor;
-    pars["iupFactor"] = &iupFactor;
-    pars["irelFactor"] = &irelFactor;
-
-    
+    this->Initialize();
+    CellKernel::copyVarPar(toCopy);
 };
-//######################################################
-// Destructor for sinus node model.
-//#####################################################
 ControlSa::~ControlSa()
 {
 };
@@ -423,9 +166,13 @@ void ControlSa::updateIkr()
 
         double gkr = ikrFactor*0.025*pow(kO,0.59); //nS/pF
         double ek = (RGAS*TEMP/FDAY)*log(kO/kI); //mV
-        double isofact;
+        double isofact = 1;
 
+//        if(opts & ISO) {
+//            pafinf = pasinf = 1/(1+exp(-(vOld+33.2)/10.6));
+//        } else {
         pafinf = pasinf = 1/(1+exp(-(vOld+23.2)/10.6));  //+23.2 or 33.2 for iso
+//        }
         //Zhang et al.
         //pafinf = pasinf = 1/(1+exp(-(vOld+14.2)/10.6));  //+23.2 or 33.2 for iso
         taupaf = 0.84655354/(0.0372*exp(vOld/15.9)+0.00096*exp(-vOld/22.5));
@@ -441,7 +188,9 @@ void ControlSa::updateIkr()
         Gate.pi=piinf-(piinf-Gate.pi)*exp(-dt/taupi);
 
         //from Demir et al. AJP Heart 1999
-        isofact=1.0;//0.62*(1+2.6129*(cAmp/(cAmp+9.0)))-0.025;
+//        if(opts & ISO) {
+//            isofact=0.62*(1+2.6129*(cAmp/(cAmp+9.0)))-0.025;
+//        }
         iKr = gkr*isofact*(0.6*Gate.paf+0.4*Gate.pas)*Gate.pi*(vOld-ek);
 };
 //Slowly activating delayed rectifier K+ current
@@ -518,10 +267,12 @@ void ControlSa::updateIst()
 	
 	double gSt = istFactor*0.0075;
         double est = 37.4;  //mV
-        double isofact;  //effect of iso on conductance
-        double vhalf;
+        double isofact = 0;  //effect of iso on conductance
+        double vhalf = -57.0;
 
-        vhalf = -57.0;//-15.0*isoConc/(0.00226+isoConc);
+//        if(opts & ISO) {
+//            vhalf = -15.0*isoConc/(0.00226+isoConc);
+//        }
         alphaqa = 1/(0.15*exp(-vOld/11.0)+0.2*exp(-vOld/700.0));
         betaqa = 1/(16.0*exp(vOld/8.0)+15.0*exp(vOld/50.0));
         qainf = 1/(1+exp(-(vOld-vhalf)/5.0));
@@ -535,7 +286,9 @@ void ControlSa::updateIst()
         Gate.qa=qainf-(qainf-Gate.qa)*exp(-dt/tauqa);
         Gate.qi=qiinf-(qiinf-Gate.qi)*exp(-dt/tauqi);
 
-        isofact=0.0;//0.964*isoConc/(0.00226+isoConc);
+//        if(opts & ISO) {
+//            isofact=0.964*isoConc/(0.00226+isoConc);
+//        }
         iSt = gSt*(1+isofact)*Gate.qa*Gate.qi*(vOld-est);
 };
 //Na+ background current
@@ -626,9 +379,11 @@ void ControlSa::updateIup()
         double kmup=0.0006; //0.0006 mM^M
 //        double kmcamk=0.15;
 //        double deltaiup=.75;
-        double isofact;
+        double isofact = 0;
 
-        isofact = 0.0;//0.85*pow(isoConc,0.934)/(pow(isoConc,0.934)+0.0052);
+//        if(opts & ISO) {
+//            isofact = 0.85*pow(isoConc,0.934)/(pow(isoConc,0.934)+0.0052);
+//        }
         iUp=iUpbar*(1+isofact)*caI/(caI+kmup);  
 
 };
@@ -772,7 +527,83 @@ int ControlSa::externalStim(double stimval)
 
 }
 
+void ControlSa::makemap()
+{
+    // add to vars map declared/defined in cell.h and cell.cpp
+    vars["naI"]=&naI;
+    vars["kI"]=&kI;
+    vars["caI"]=&caI;
+    vars["caR"]=&caR;
+    vars["caJsr"]=&caJsr;
+    vars["caNsr"]=&caNsr;
+    vars["trpnCa"]=&trpnCa;
+    vars["trpnMg"]=&trpnMg;
+    vars["trpnMgmg"]=&trpnMgmg;
+    vars["cmdnI"]=&cmdnI;
+    vars["cmdnR"]=&cmdnR;
+    vars["csqn"]=&csqn;
+    vars["iRel"]=&iRel;
+    vars["iUp"]=&iUp;
+    vars["iTr"]=&iTr;
+    vars["iDiff"]=&iDiff;
+    vars["iSt"]=&iSt;
+    vars["Gate.qa"]=&Gate.qa;
+    vars["Gate.qi"]=&Gate.qi;
+    vars["iNab"]=&iNab;
+    vars["iCal"]=&iCal;
+    vars["Gate.d"]=&Gate.d;
+    vars["Gate.f"]=&Gate.f;
+    vars["Gate.fca"]=&Gate.fca;
+    vars["iCatt"]=&iCatt;
+    vars["Gate.dt"]=&Gate.dt;
+    vars["Gate.ft"]=&Gate.ft;
+    vars["iNak"]=&iNak;
+    vars["iNaca"]=&iNaca;
+    vars["iTo"]=&iTo;
+//    vars["iTrek"]=&iTrek;
+    vars["iSus"]=&iSus;
+    vars["Gate.q"]=&Gate.q;
+    vars["Gate.r"]=&Gate.r;
+    vars["iKs"]=&iKs;
+    vars["Gate.n"]=&Gate.n;
+    vars["iKr"]=&iKr;
+    vars["Gate.paf"]=&Gate.paf;
+    vars["Gate.pas"]=&Gate.pas;
+    vars["Gate.pi"]=&Gate.pi;
+    vars["iKach"]=&iKach;
+    vars["iH"]=&iH;
+    vars["iHna"]=&iHna;
+    vars["iHk"]=&iHk;
+    vars["Gate.y"]=&Gate.y;
+//    vars["iCait"]=&iCait;
+//    vars["iCart"]=&iCart;
+
+    pars["Vnsr"] = &Vnsr;
+    pars["Vjsr"] = &Vjsr;
+    pars["Vss"] = &Vss;
+    pars["naO"] = &naO;
+    pars["kO"] = &kO;
+    pars["caO"] = &caO;
+    pars["icalFactor"] = &icalFactor;
+    pars["icattFactor"] = &icattFactor;
+    pars["ikrFactor"] = &ikrFactor;
+    pars["iksFactor"] = &iksFactor;
+    pars["itoFactor"] = &itoFactor;
+//    pars["itrekFactor"] = &itrekFactor;
+    pars["isusFactor"] = &isusFactor;
+    pars["ikachFactor"] = &ikachFactor;
+    pars["istFactor"] = &istFactor;
+    pars["inabFactor"] = &inabFactor;
+    pars["inakFactor"] = &inakFactor;
+    pars["inacaFactor"] = &inacaFactor;
+    pars["ihFactor"] = &ihFactor;
+    pars["iupFactor"] = &iupFactor;
+    pars["irelFactor"] = &irelFactor;
+}
+
 const char *ControlSa::type() const
 {
     return "Rabbit Sinus Node (Kurata 2008)";
 }
+
+//MAKE_OPTIONS_FUNCTIONS(ControlSa)

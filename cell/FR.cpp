@@ -1,20 +1,3 @@
-/* The Luo-Rudy Dynamic (LRd) Model of the Mammalian Ventricular Myocyte */
-/* Gregory Faber */
-/* This code requires a C++ compiler */
-/* Detailed list of equations and model description are provided in */
-
-/*  Circ Res 1991;68:1501-1526      */ 
-/*  Circ Res 1994;74:1071-1096      */
-/*  Circ Res 1994;74:1097-1113      */
-/*  Circ Res 1995;77:140-152        */
-/*  Biophys J 1995;68:949-964       */
-/*  Cardiovasc Res 1997;35:256-272  */
-/*  Circulation 1999;99:2466-2474   */
-/*  Cardiovas Res 1999;42:530-542   */
-/*  Nature 1999;400:566-569         */
-/*  Circulation 2000;101:1192-1198  */
-/*  Biophy J 2000;78:2392-2404      */
-
 //
 //  Created by Shana Bee on 2/17/17.
 //  Copyright © 2017 Shana Bee. All rights reserved.

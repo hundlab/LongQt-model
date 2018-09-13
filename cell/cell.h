@@ -4,7 +4,6 @@
 // functions for input and output. 
 //
 // Copyright (C) 2011 Thomas J. Hund.
-// Updated 11/21/2012
 // Email thomas.hund@osumc.edu
 //#################################################
 

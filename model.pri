@@ -4,7 +4,6 @@ SOURCES += $$PWD/measure.cpp\
 $$PWD/measurewave.cpp\
 $$PWD/measuremanager.cpp\
 $$PWD/gridmeasuremanager.cpp\
-$$PWD/cell/gpbatrialRyr.cpp\
 $$PWD/cell/hrd09_bz.cpp\
 $$PWD/cell/cell.cpp\
 $$PWD/cell/cell_kernel.cpp\
@@ -15,9 +14,7 @@ $$PWD/cell/gpbatrial.cpp\
 $$PWD/cell/gridCell.cpp\
 $$PWD/cell/gpbhuman.cpp\
 $$PWD/cell/ksan.cpp\
-$$PWD/cell/gpbatrialWT.cpp\
-$$PWD/cell/gpbatrialSE.cpp\
-$$PWD/cell/gpbatrialonal17.cc\
+$$PWD/cell/gpbatrialonal17.cpp\
 $$PWD/cell/atrial.cpp\
 $$PWD/cell/br04.cpp\
 $$PWD/cell/OHaraRudy.cpp\
@@ -54,11 +51,8 @@ $$PWD/cell/cell.h\
 $$PWD/cell/kurata08.h\
 $$PWD/cell/tnnp04.h\
 $$PWD/cell/cell_kernel.h\
-$$PWD/cell/gpbatrialRyr.h\
 $$PWD/cell/gpbhuman.h\
 $$PWD/cell/ksan.h\
-$$PWD/cell/gpbatrialWT.h\
-$$PWD/cell/gpbatrialSE.h\
 $$PWD/cell/gpbatrialonal17.h\
 $$PWD/cell/atrial.h\
 $$PWD/cell/br04.h\

@@ -10,7 +10,7 @@
 
 using namespace std;
 
-class CellPvars {
+class PvarsCell {
     public:
         //Types
         enum Distribution {
@@ -37,11 +37,11 @@ class CellPvars {
             virtual string str(string name);
         };
 
-        virtual ~CellPvars();
+        virtual ~PvarsCell();
         typedef std::map<string,IonChanParam*>::const_iterator const_iterator;
 
         //Functions
-        virtual CellPvars* clone() = 0;
+        virtual PvarsCell* clone() = 0;
 
         virtual void setIonChanParams() = 0;
         virtual void calcIonChanParams() = 0;

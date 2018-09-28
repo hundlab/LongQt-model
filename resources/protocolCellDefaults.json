@@ -1,0 +1,35 @@
+{"Default": {
+  "bcl": 1000,
+  "numstims": 500,
+  "paceflag": true,
+  "stimdur": 0.5,
+  "stimval": -80,
+  "tMax": 500000,
+  "writetime": 495000
+  },
+ "GpbAtrialOnal17": {
+  "stimdur": 5,
+  "stimval": -12.5
+},
+ "Human Atrial (Grandi 2011)": {
+  "stimdur": 5,
+  "stimval": -12.5
+},
+ "Human Ventricular (Ten Tusscher 2004)": {
+    "stimdur": 1,
+  "stimval": -60
+},
+ "Mammalian Ventricular (Faber-Rudy 2000)": {"bcl": 300,
+  "numstims": 20,
+  "stimdur": 0.5,
+  "tMax": 1000,
+  "writetime": 0},
+ "Rabbit Sinus Node (Kurata 2008)": {
+    "paceflag": false,
+  "stimdur": 1,
+  "stimval": -60
+},
+ "gridCell": {
+  "stimdur": 5,
+  "stimval": -12.5
+}}

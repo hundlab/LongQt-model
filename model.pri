@@ -1,4 +1,5 @@
 INCLUDEPATH += $$PWD $$PWD/cell $$PWD/structure $$PWD/protocol
+#RESOURCES += LongQt-model.qrc
 
 SOURCES += $$PWD/measure.cpp\
 $$PWD/measurewave.cpp\
@@ -30,14 +31,14 @@ $$PWD/protocol/gridProtocol.cpp\
 $$PWD/protocol/protocol.cpp\
 $$PWD/cellutils.cpp\
 $$PWD/settingsIO.cpp\
-$$PWD/cellpvars.cpp\
 $$PWD/pvarsgrid.cpp\
 $$PWD/pvarscurrentclamp.cpp\
 $$PWD/pvarsvoltageclamp.cpp\
 $$PWD/protocol/currentClampProtocol.cpp\
 $$PWD/protocol/voltageClampProtocol.cpp \
     $$PWD/cell/inexcitablecell.cpp \
-    $$PWD/runsim.cpp
+    $$PWD/runsim.cpp \
+    $$PWD/pvarscell.cpp
 
 HEADERS  += $$PWD/measuremanager.h\
 $$PWD/gridmeasuremanager.h\
@@ -69,11 +70,11 @@ $$PWD/structure/fiber.h\
 $$PWD/protocol/voltageClampProtocol.h\
 $$PWD/protocol/currentClampProtocol.h\
 $$PWD/settingsIO.h\
-$$PWD/cellpvars.h\
 $$PWD/pvarsgrid.h\
 $$PWD/pvarscurrentclamp.h\
 $$PWD/pvarsvoltageclamp.h\
 $$PWD/protocol/protocol.h\
 $$PWD/protocol/gridProtocol.h \
     $$PWD/cell/inexcitablecell.h \
-    $$PWD/runsim.h
+    $$PWD/runsim.h \
+    $$PWD/pvarscell.h

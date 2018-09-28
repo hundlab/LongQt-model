@@ -9,7 +9,7 @@ PvarsVoltageClamp::PvarsVoltageClamp(const PvarsVoltageClamp& o) {
     }
 }
 
-CellPvars* PvarsVoltageClamp::clone() {
+PvarsCell* PvarsVoltageClamp::clone() {
     return new PvarsVoltageClamp(*this);
 }
 void PvarsVoltageClamp::protocol(Protocol* proto) {

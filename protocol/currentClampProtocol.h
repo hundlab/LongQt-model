@@ -27,7 +27,7 @@ class CurrentClamp : public Protocol {
     virtual shared_ptr<Cell> cell() const override;
     virtual void cell(shared_ptr<Cell> cell) override;
 
-    virtual CellPvars& pvars() override;
+    virtual PvarsCell& pvars() override;
 
     virtual MeasureManager& measureMgr() override;
 

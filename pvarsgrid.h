@@ -2,14 +2,14 @@
 #define PVARSGRID_H
 
 #include "grid.h"
-#include "cellpvars.h"
+#include "pvarscell.h"
 #include <map>
 #include <set>
 
-class PvarsGrid : public CellPvars {
+class PvarsGrid : public PvarsCell {
     public:
         //Types
-        struct MIonChanParam : CellPvars::IonChanParam {
+        struct MIonChanParam : PvarsCell::IonChanParam {
             int maxDist = 0;
             double maxVal = 100;
             set<pair<int,int>> startCells; //row,col of start cells
@@ -25,7 +25,7 @@ class PvarsGrid : public CellPvars {
         PvarsGrid(Grid* grid);
         PvarsGrid(const PvarsGrid&);
         virtual ~PvarsGrid() = default;
-        virtual CellPvars* clone();
+        virtual PvarsCell* clone();
         void setGrid(Grid* grid);
 
         virtual void setIonChanParams();

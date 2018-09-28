@@ -50,7 +50,7 @@ void CurrentClamp::cell(shared_ptr<Cell> cell) {
     this->__cell = cell;
 }
 
-CellPvars& CurrentClamp::pvars() {
+PvarsCell& CurrentClamp::pvars() {
     return *this->__pvars;
 }
 

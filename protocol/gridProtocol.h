@@ -37,7 +37,7 @@ class GridProtocol : public CurrentClamp {
 
         GridMeasureManager& gridMeasureMgr();
 
-        virtual CellPvars& pvars() override;
+        virtual PvarsCell& pvars() override;
 
         virtual MeasureManager& measureMgr() override;
 

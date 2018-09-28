@@ -38,7 +38,7 @@ void VoltageClamp::cell(shared_ptr<Cell> cell) {
     this->__cell = cell;
 }
 
-CellPvars &VoltageClamp::pvars() {
+PvarsCell &VoltageClamp::pvars() {
     return *this->__pvars;
 }
 

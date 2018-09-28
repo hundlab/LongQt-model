@@ -9,7 +9,7 @@ PvarsCurrentClamp::PvarsCurrentClamp(const PvarsCurrentClamp& o) {
     }
 }
 
-CellPvars* PvarsCurrentClamp::clone() {
+PvarsCell* PvarsCurrentClamp::clone() {
     return new PvarsCurrentClamp(*this);
 }
 void PvarsCurrentClamp::protocol(Protocol* proto) {

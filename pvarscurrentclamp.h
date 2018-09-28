@@ -2,9 +2,9 @@
 #define PVARSCURRENTCLAMP_H
 
 #include "protocol.h"
-#include "cellpvars.h"
+#include "pvarscell.h"
 
-class PvarsCurrentClamp : public CellPvars {
+class PvarsCurrentClamp : public PvarsCell {
     public:
         //Types
         struct TIonChanParam : IonChanParam {
@@ -19,7 +19,7 @@ class PvarsCurrentClamp : public CellPvars {
         PvarsCurrentClamp(Protocol* proto);
         PvarsCurrentClamp(const PvarsCurrentClamp&);
         virtual ~PvarsCurrentClamp() = default;
-        virtual CellPvars* clone();
+        virtual PvarsCell* clone();
         void protocol(Protocol *proto);
 
         virtual void setIonChanParams();

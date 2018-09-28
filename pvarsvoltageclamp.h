@@ -2,9 +2,9 @@
 #define PVARSVOLTAGECLAMP_H
 
 #include "protocol.h"
-#include "cellpvars.h"
+#include "pvarscell.h"
 
-class PvarsVoltageClamp : public CellPvars {
+class PvarsVoltageClamp : public PvarsCell {
     public:
         //Types
         struct SIonChanParam : IonChanParam {
@@ -19,7 +19,7 @@ class PvarsVoltageClamp : public CellPvars {
         PvarsVoltageClamp(Protocol* proto);
         PvarsVoltageClamp(const PvarsVoltageClamp&);
         virtual ~PvarsVoltageClamp() = default;
-        virtual CellPvars* clone();
+        virtual PvarsCell* clone();
         void protocol(Protocol *proto);
 
         virtual void setIonChanParams();

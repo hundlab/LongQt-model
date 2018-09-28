@@ -7,8 +7,8 @@
 
 #include "cell_kernel.h"
 
+#include <typeinfo>
 #include <QDebug>
-
 
 void CellKernel::Initialize() {
     //##### Assign default parameters ##################
@@ -135,7 +135,18 @@ set<string> CellKernel::getConstants() {
         toReturn.insert(it->first);
     }
     return toReturn;
-};
+}
+
+//const char* CellKernel::name() const
+//{
+//#if !defined(_WIN32) && !defined(_WIN64)
+//    #include <cxxabi.h>
+//    int status;
+//    return abi::__cxa_demangle(typeid(*this).name(),0,0,&status);
+//#else
+//    return typeid(*this).name();
+//#endif
+//}
 
 void CellKernel::copyVarPar(const CellKernel& toCopy) {
     for(auto it : vars) {

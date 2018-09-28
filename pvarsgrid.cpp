@@ -10,7 +10,7 @@ PvarsGrid::PvarsGrid(const PvarsGrid& o) {
     }
 }
 
-CellPvars* PvarsGrid::clone() {
+PvarsCell* PvarsGrid::clone() {
     return new PvarsGrid(*this);
 }
 
@@ -194,16 +194,16 @@ void PvarsGrid::calcIonChanParam(MIonChanParam* param) {
     while(current.size() > 0 && i <= param->maxDist) {
         for(const pair<int,int>& e: this->current) {
             switch(param->dist) {
-                case CellPvars::Distribution::none:
+                case PvarsCell::Distribution::none:
                     val = param->val[0]+param->val[1]*i;
                     break;
-                case CellPvars::Distribution::normal:
+                case PvarsCell::Distribution::normal:
                     {
                         normal_distribution<double> distribution(param->val[0],param->val[1]);
                         val = distribution(generator);
                         break;
                     }
-                case CellPvars::Distribution::lognormal:
+                case PvarsCell::Distribution::lognormal:
                     {
                         lognormal_distribution<double> logdistribution(param->val[0], param->val[1]);
                         val = logdistribution(generator);

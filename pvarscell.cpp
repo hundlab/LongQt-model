@@ -1,30 +1,30 @@
-#include "cellpvars.h"
+#include "pvarscell.h"
 
-CellPvars::~CellPvars() {
+PvarsCell::~PvarsCell() {
 //    for(auto pvar : pvars) {
 //        delete pvar.second;
 //    }
 }
 
-void CellPvars::erase(string elem) {
+void PvarsCell::erase(string elem) {
     this->pvars.erase(elem);
 }
-CellPvars::IonChanParam* CellPvars::at(string elem) {
+PvarsCell::IonChanParam* PvarsCell::at(string elem) {
     return this->pvars.at(elem);
 }
-CellPvars::const_iterator CellPvars::begin() const {
+PvarsCell::const_iterator PvarsCell::begin() const {
     return this->pvars.begin();
 }
-CellPvars::const_iterator CellPvars::end() const {
+PvarsCell::const_iterator PvarsCell::end() const {
     return this->pvars.end();
 }
-int CellPvars::size() const {
+int PvarsCell::size() const {
     return this->pvars.size();
 }
-void CellPvars::clear() {
+void PvarsCell::clear() {
     this->pvars.clear();
 }
-string CellPvars::IonChanParam::str(string name) {
+string PvarsCell::IonChanParam::str(string name) {
     string info = name;
     string var1Text;
     string var2Text;

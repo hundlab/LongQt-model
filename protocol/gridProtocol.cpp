@@ -223,7 +223,7 @@ list<string> GridProtocol::cellOptions() {
     return {""};
 }
 
-CellPvars& GridProtocol::pvars() {
+PvarsCell& GridProtocol::pvars() {
     return *this->__pvars;
 }
 

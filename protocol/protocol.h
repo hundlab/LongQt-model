@@ -22,7 +22,7 @@
 
 #include "measuremanager.h"
 #include "cellutils.h"
-#include "cellpvars.h"
+#include "pvarscell.h"
 
 using namespace std;
 
@@ -68,7 +68,7 @@ class Protocol :  public std::enable_shared_from_this<Protocol>
         virtual shared_ptr<Cell> cell() const = 0;
         virtual list<string> cellOptions();
 
-        virtual CellPvars& pvars() = 0;
+        virtual PvarsCell& pvars() = 0;
 
         virtual MeasureManager& measureMgr() = 0;
 

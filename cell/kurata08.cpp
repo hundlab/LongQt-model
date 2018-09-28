@@ -1,4 +1,10 @@
 #include "kurata08.h"
+#include <QDebug>
+
+//######################################################
+// Constructor for centrol rabbit sinoatrial node
+// cell model.
+//######################################################
 ControlSa::ControlSa() :Cell()
 {
     this->Initialize();
@@ -88,13 +94,13 @@ void ControlSa::Initialize() {
 
 	iSt=iNab=0.0;
 	iCal=iCatt=0.0;
-	iKs=iKr=iTo=iSus=iKach=0.0;
+    iKs=iKr=iTo=iSus=iKach=iTrek=0.0;
 	iNak=iNaca=iHna=iHk=0.0;
 	iRel=iUp=iTr=iDiff=0.0;
 
 	iCait=iCart=0.0;
 
-//    opts = WT;
+    opts = WT;
 };
 
 ControlSa::ControlSa(const ControlSa& toCopy ) : Cell(toCopy)
@@ -492,15 +498,17 @@ void ControlSa::updateCurr()
    updateIks();    // Slow delayed rectifier current
    updateIkr();    // Rapid delayed rectifier current
    updateI4ap();    // Transient outward K current
-//    updateItrek();    // Transient outward K current
+   if(opts & TREK) {
+        updateItrek();    // Transient outward K current
+   }
    updateIkach();    // Transient outward K current
    updateIh();    // Transient outward K current
 
    iNat=iHna+iSt+iNab+3*iNak+3*iNaca;
    iCart=iCal+iCatt-2*iNaca;
    iCat=iCart;
-//   iKt=iTo+iKr+iKs+iHk+iKach+iSus+iTrek-2*iNak;
-    iKt=iTo+iKr+iKs+iHk+iKach+iSus-2*iNak;
+   iKt=iTo+iKr+iKs+iHk+iKach+iSus+iTrek-2*iNak;
+//iKt=iTo+iKr+iKs+iHk+iKach+iSus-2*iNak;
    iTotold=iTot;
    iTot=iNat+iCait+iKt+iCart;
 
@@ -560,7 +568,7 @@ void ControlSa::makemap()
     vars["iNak"]=&iNak;
     vars["iNaca"]=&iNaca;
     vars["iTo"]=&iTo;
-//    vars["iTrek"]=&iTrek;
+    vars["iTrek"]=&iTrek;
     vars["iSus"]=&iSus;
     vars["Gate.q"]=&Gate.q;
     vars["Gate.r"]=&Gate.r;
@@ -589,7 +597,7 @@ void ControlSa::makemap()
     pars["ikrFactor"] = &ikrFactor;
     pars["iksFactor"] = &iksFactor;
     pars["itoFactor"] = &itoFactor;
-//    pars["itrekFactor"] = &itrekFactor;
+    pars["itrekFactor"] = &itrekFactor;
     pars["isusFactor"] = &isusFactor;
     pars["ikachFactor"] = &ikachFactor;
     pars["istFactor"] = &istFactor;
@@ -606,4 +614,4 @@ const char *ControlSa::type() const
     return "Rabbit Sinus Node (Kurata 2008)";
 }
 
-//MAKE_OPTIONS_FUNCTIONS(ControlSa)
+MAKE_OPTIONS_FUNCTIONS(ControlSa)

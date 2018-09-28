@@ -132,9 +132,10 @@ class ControlSa : public Cell
     double Vss;
 
     //    ISO //isoproterenol
-//    MAKE_OPTIONS(ISO)
+    //    TREK //include the trek channel
+    MAKE_OPTIONS(TREK)//,ISO
 
-//    enum Options opts;
+    enum Options opts;
 
 protected:
     virtual void Initialize();

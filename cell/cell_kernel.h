@@ -73,13 +73,12 @@ class CellKernel : public std::enable_shared_from_this<CellKernel>
     double TEMP;
     double FDAY;
     
-    //##### Declare maps for vars/params ##############
-    map<string, double*> vars;  // map of state vars
-    map<string, double*> pars;  // map of params
     virtual double var(string name);
     virtual bool setVar(string name, double val);
+    virtual bool hasVar(string name);
     virtual double par(string name);
     virtual bool setPar(string name, double val);
+    virtual bool hasPar(string name);
     virtual set<string> getVariables();
     virtual set<string> getConstants();
     virtual const char* type() const = 0;
@@ -94,6 +93,9 @@ class CellKernel : public std::enable_shared_from_this<CellKernel>
     list<list<int>> conflicts; //list of conflicting options
 
 protected:
+    map<string, double*> vars;  // map of state vars
+    map<string, double*> pars;  // map of params
+
     vector<string> split(string s, char delim);
     void copyVarPar(const CellKernel& toCopy);
     virtual void Initialize();

@@ -17,7 +17,7 @@ void PvarsVoltageClamp::protocol(Protocol* proto) {
 }
 void PvarsVoltageClamp::setIonChanParams() {
     for(auto& pvar : *this->__pvars) {
-        *proto->cell()->pars.at(pvar.first) = pvar.second->paramVal;
+        proto->cell()->setPar(pvar.first, pvar.second->paramVal);
     }
 }
 void PvarsVoltageClamp::calcIonChanParams() {

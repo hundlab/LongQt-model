@@ -109,6 +109,11 @@ bool CellKernel::setVar(string name, double val) {
     }
     return true;
 }
+
+bool CellKernel::hasVar(string name)
+{
+    return vars.count(name) > 0;
+}
 double CellKernel::par(string name) {
     return *pars.at(name);
 }
@@ -120,6 +125,11 @@ bool CellKernel::setPar(string name, double val) {
         return false;
     }
     return true;
+}
+
+bool CellKernel::hasPar(string name)
+{
+    return pars.count(name) > 0;
 }
 set<string> CellKernel::getVariables() {
     set<string> toReturn;

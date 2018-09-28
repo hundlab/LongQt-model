@@ -1,0 +1,71 @@
+LongQt-model, a library for running simulations of heart cells.
+Copyright (C) 2016, Thomas J. Hund
+
+    This program is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with this program.  If not, see <http://www.gnu.org/licenses/>.
+
+Papers describing the models:
+
+Faber, Gregory M., and Yoram Rudy. “Action Potential and Contractility Changes
+    [Na+](i) Overloaded Cardiac Myocytes: A Simulation Study.” Biophysical Journal,
+    vol. 78, no. 5, Elsevier, 2000, pp. 2392–404,
+    doi:10.1016/S0006-3495(00)76783-X.
+Kharche, Sanjay, et al. “A Mathematical Model of Action Potentials of Mouse
+    Sinoatrial Node Cells with Molecular Bases.” American Journal of
+    Physiology-Heart and Circulatory Physiology, vol. 301, no. 3, Sept. 2011, pp.
+    H945–63, doi:10.1152/ajpheart.00143.2010.
+Bondarenko, V. E. “Computer Model of Action Potential of Mouse Ventricular
+    Myocytes.” AJP: Heart and Circulatory Physiology, vol. 287, no. 3, 2004, pp.
+    H1378–403, doi:10.1152/ajpheart.00185.2003.
+Christensen, Matthew D., et al. “Oxidized Calmodulin Kinase II Regulates
+    Conduction Following Myocardial Infarction: A Computational Analysis.” PLoS
+    Computational Biology, vol. 5, no. 12, 2009, p. 1000583,
+    doi:10.1371/journal.pcbi.1000583.
+Hund, Thomas J., and Yoram Rudy. “Rate Dependence and Regulation of Action
+    Potential and Calcium Transient in a Canine Cardiac Ventricular Cell Model.”
+    Circulation, vol. 110, no. 20, 2004, pp. 3168–74,
+    doi:10.1161/01.CIR.0000147231.69595.D3.
+Courtemanche, Marc, et al. “Ionic Mechanisms Underlying Human Atrial Action
+    Potential Properties: Insights from a Mathematical Model.” The American Journal
+    of Physiology, vol. 275, no. 1 Pt 2, July 1998, pp. H301-21,
+    http://www.ncbi.nlm.nih.gov/pubmed/9688927.
+Onal, Birce, et al. “Ca 2+ /Calmodulin Kinase II-Dependent Regulation of Atrial
+    Myocyte Late Na+ Current, Ca 2+ Cycling and Excitability: A Mathematical
+    Modeling Study.” American Journal of Physiology - Heart and Circulatory
+    Physiology, 2017, p. ajpheart.00185.2017, doi:10.1152/ajpheart.00185.2017.
+Grandi, E., et al. “Human Atrial Action Potential and Ca2+ Model: Sinus Rhythm
+    and Chronic Atrial Fibrillation.” Circulation Research, vol. 109, no. 9, 2011,
+    pp. 1055–66, doi:10.1161/CIRCRESAHA.111.253955.
+Ten Tusscher, KHWJ H. W. J., et al. “A Model for Human Ventricular Tissue.”
+    American Journal of Physiology. Heart and Circulatory Physiology, vol. 286, no.
+    4, 2004, pp. H1573-89, doi:10.1152/ajpheart.00794.2003.
+Kurata, Yasutaka, et al. “Regional Difference in Dynamical Property of
+    Sinoatrial Node Pacemaking: Role of Na+channel Current.” Biophysical Journal,
+    vol. 95, no. 2, 2008, pp. 951–77, doi:10.1529/biophysj.107.112854.
+Hund, Thomas J., et al. “Role of Activated CaMKII in Abnormal Calcium
+    Homeostasis and INaremodeling after Myocardial Infarction: Insights from
+    Mathematical Modeling.” Journal of Molecular and Cellular Cardiology, vol. 45,
+    no. 3, 2008, pp. 420–28, doi:10.1016/j.yjmcc.2008.06.007.
+Grandi, Eleonora, et al. A Novel Computational Model of the Human Ventricular
+    Action Potential and Ca Transient. 2009, doi:10.1016/j.yjmcc.2009.09.019.
+Lowe, John S., et al. “Voltage-Gated Nav Channel Targeting in the Heart
+    Requires an Ankyrin-G Dependent Cellular Pathway.” The Journal of Cell Biology,
+    vol. 180, no. 1, Rockefeller University Press, Jan. 2008, pp. 173–86,
+    doi:10.1083/jcb.200710107.
+O ’hara, Thomas, et al. “Simulation of the Undiseased Human Cardiac Ventricular
+    Action Potential: Model Formulation and Experimental Validation.” PLoS Comput
+    Biol, vol. 7, no. 5, American Heart Association, 2011, pp. 1002061–302,
+    doi:10.1371/journal.pcbi.1002061.
+Luo, C. H., and Y. Rudy. “Original Contributions A Model of the Ventricular
+    Cardiac Action Potential.” Circulation Research, vol. 68, no. 6, 1991, pp.
+    1501–26, doi:10.1161/01.RES.68.6.1501.

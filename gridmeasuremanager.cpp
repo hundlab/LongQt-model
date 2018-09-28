@@ -67,7 +67,7 @@ void GridMeasureManager::setupMeasures(string filenameTemplate) {
         auto pos = measures.insert({node,{}}).first;
         for(auto& sel: variableSelection) {
             if((*this->grid)(node)!= NULL
-                &&(*this->grid)(node)->cell->vars.count(sel.first) > 0) {
+                &&(*this->grid)(node)->cell->hasVar(sel.first)) {
                 pos->second.insert({sel.first,
                     this->getMeasure(sel.first,sel.second)});
             }
@@ -100,9 +100,9 @@ void GridMeasureManager::measure(double time) {
     for(auto& pos: this->measures) {
         bool writeCell = false;
         for(auto& meas: pos.second) {
-            double* val = (*this->grid)(pos.first)->
-                cell->vars.at(meas.first);
-            if(meas.second->measure(time, *val)&&meas.first=="vOld") {
+            double val = (*this->grid)(pos.first)->
+                cell->var(meas.first);
+            if(meas.second->measure(time, val)&&meas.first=="vOld") {
                 writeCell = true;
             }
         }

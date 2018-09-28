@@ -18,7 +18,7 @@ void PvarsCurrentClamp::protocol(Protocol* proto) {
 void PvarsCurrentClamp::setIonChanParams() {
     int trial = proto->trial();
     for(auto& pvar : *this->__pvars) {
-        *proto->cell()->pars.at(pvar.first) = pvar.second->trials.at(trial);
+        proto->cell()->setPar(pvar.first, pvar.second->trials.at(trial));
     }
 }
 void PvarsCurrentClamp::calcIonChanParams() {

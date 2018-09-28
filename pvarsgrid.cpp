@@ -19,13 +19,10 @@ void PvarsGrid::setGrid(Grid* grid) {
 }
 
 void PvarsGrid::setIonChanParams() {
-    shared_ptr<Cell> cell = 0;
     for(auto& pvar : *this->__pvars) {
         for(auto& oneCell : pvar.second->cells) {
-            cell = (*this->grid)(oneCell.first)->cell;
-            try {
-                *cell->pars.at(pvar.first) = oneCell.second;
-            } catch(std::out_of_range&) {}
+            (*this->grid)(oneCell.first)->
+                    cell->setPar(pvar.first, oneCell.second);
         }
     }
 }

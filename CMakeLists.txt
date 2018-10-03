@@ -31,3 +31,22 @@ if(${BUILD_QT_STATIC})
 else()
 	target_link_libraries(LongQt-model Qt5::Core Qt5::Concurrent)
 endif()
+
+install(TARGETS LongQt-model
+    DESTINATION ${INSTALL_LOC}
+    LIBRARY DESTINATION ${INSTALL_LOC}
+    ARCHIVE DESTINATION ${INSTALL_LOC}
+    )
+install(FILES LongQt-model.cmake LongQt-modelConfig.cmake DESTINATION ${INSTALL_LOC})
+foreach(inc_dir ${modellib_includes})
+    install(DIRECTORY ${inc_dir}
+        DESTINATION ${INSTALL_LOC}
+        FILES_MATCHING PATTERN "*.h"
+        PATTERN ".git" EXCLUDE
+        PATTERN "tests" EXCLUDE
+        PATTERN "CMakeFiles" EXCLUDE
+        PATTERN "resources" EXCLUDE
+        PATTERN "LongQt-model_autogen" EXCLUDE
+        )
+endforeach()
+

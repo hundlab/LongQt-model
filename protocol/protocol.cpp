@@ -221,8 +221,8 @@ bool Protocol::writepars(QXmlStreamWriter& xml) {
     return 0;
 }
 void Protocol::trial(unsigned int current_trial) {
+    if(current_trial >= numtrials) return;
     __trial = current_trial;
-    //	assign_cell_pars(pnames,pvals,trial);   // Assign cell pars
 }
 
 unsigned int Protocol::trial() const {

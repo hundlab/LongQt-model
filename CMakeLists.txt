@@ -6,10 +6,13 @@ project(LongQt-model)
 #Release Debug
 set(CMAKE_BUILD_TYPE Release)
 
-find_package(Qt5Core)
-find_package(Qt5Concurrent)
-include("${CMAKE_CURRENT_LIST_DIR}/LongQt-model.cmake")
+find_package(Qt5 COMPONENTS Core Concurrent REQUIRED)
+include("${CMAKE_CURRENT_LIST_DIR}/src/LongQt-model.cmake")
 set(CMAKE_AUTOMOC ON)
+
+if(NOT INSTALL_LOC)
+    set(INSTALL_LOC "./")
+endif()
 
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
 
@@ -37,16 +40,9 @@ install(TARGETS LongQt-model
     LIBRARY DESTINATION ${INSTALL_LOC}
     ARCHIVE DESTINATION ${INSTALL_LOC}
     )
-install(FILES LongQt-model.cmake LongQt-modelConfig.cmake DESTINATION ${INSTALL_LOC})
-foreach(inc_dir ${modellib_includes})
-    install(DIRECTORY ${inc_dir}
-        DESTINATION ${INSTALL_LOC}
-        FILES_MATCHING PATTERN "*.h"
-        PATTERN ".git" EXCLUDE
-        PATTERN "tests" EXCLUDE
-        PATTERN "CMakeFiles" EXCLUDE
-        PATTERN "resources" EXCLUDE
-        PATTERN "LongQt-model_autogen" EXCLUDE
-        )
-endforeach()
-
+install(FILES  LongQt-modelConfig.cmake DESTINATION ${INSTALL_LOC})
+install(DIRECTORY ${modellib_src}
+    DESTINATION ${INSTALL_LOC}/include
+    FILES_MATCHING PATTERN "*.h"
+    PATTERN "LongQt-model.cmake"
+    )

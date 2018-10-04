@@ -1,3 +1,4 @@
+set(modellib_src "${CMAKE_CURRENT_LIST_DIR}/")
 set(modellib_includes
     "${CMAKE_CURRENT_LIST_DIR}/"
     "${CMAKE_CURRENT_LIST_DIR}/cell"

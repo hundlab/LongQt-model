@@ -1,21 +1,37 @@
+
+get_filename_component(PACKAGE_PREFIX_DIR "${CMAKE_CURRENT_LIST_DIR}" ABSOLUTE)
+set(modellib_LIBRARY "${PACKAGE_PREFIX_DIR}/")
+include("${PACKAGE_PREFIX_DIR}/include/LongQt-model.cmake")
+
+
+set(modellib_includes ${modellib_includes} PARENT_SCOPE)
+#set(modellib_sources ${modellib_sources} PARENT_SCOPE)
+set(modellib_headers ${modellib_headers} PARENT_SCOPE)
+set(modellib_src ${modellib_src} PARENT_SCOPE)
+
+set(modellib_FOUND TRUE)
+
+
+
+
+
 # modellib_FOUND
 # modellib_VERSION
 # modellib_INCLUDE_DIR
 # modellib_LIBRARY
 
 #recursively get subdirectories
-MACRO(SUBDIRLIST result curdir)
-  FILE(GLOB children RELATIVE ${curdir} ${curdir}/*)
-  SET(dirlist "")
-  FOREACH(child ${children})
-    IF(IS_DIRECTORY ${curdir}/${child})
-      LIST(APPEND dirlist ${curdir}/${child})
-    ENDIF()
-  ENDFOREACH()
-  SET(${result} ${dirlist})
-ENDMACRO()
-
-get_filename_component(PACKAGE_PREFIX_DIR "${CMAKE_CURRENT_LIST_DIR}" ABSOLUTE)
+#MACRO(SUBDIRLIST result curdir)
+#  FILE(GLOB children RELATIVE ${curdir} ${curdir}/*)
+#  SET(dirlist "")
+#  FOREACH(child ${children})
+#    IF(IS_DIRECTORY ${curdir}/${child})
+#      LIST(APPEND dirlist ${curdir}/${child})
+#    ENDIF()
+#  ENDFOREACH()
+#  SET(${result} ${dirlist})
+#ENDMACRO()
+#
 
 #set(modellib_VERSION 1.1)
 #set(CMAKE_PREFIX_PATH "C:/Qt/Static/5.9.3/lib/cmake/Qt5Core")
@@ -23,15 +39,7 @@ get_filename_component(PACKAGE_PREFIX_DIR "${CMAKE_CURRENT_LIST_DIR}" ABSOLUTE)
 #SUBDIRLIST(modellib_INCLUDE_DIR "${PACKAGE_PREFIX_DIR}/")
 #list(APPEND modellib_INCLUDE_DIR "${PACKAGE_PREFIX_DIR}/include")
 #list(APPEND modellib_INCLUDE_DIR ${Qt5Core_INCLUDE_DIRS})
-set(modellib_LIBRARY "${PACKAGE_PREFIX_DIR}/")
 #message(${modellib_INCLUDE_DIR})
-include("${PACKAGE_PREFIX_DIR}/LongQt-model.cmake")
-
-set(modellib_FOUND TRUE)
-
-set(modellib_includes ${modellib_includes} PARENT_SCOPE)
-set(modellib_sources ${modellib_sources} PARENT_SCOPE)
-set(modellib_headers ${modellib_headers} PARENT_SCOPE)
 
 #notes to self when building with qt
 #set(CMAKE_AUTOMOC ON)

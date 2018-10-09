@@ -1,15 +1,20 @@
 
 get_filename_component(PACKAGE_PREFIX_DIR "${CMAKE_CURRENT_LIST_DIR}" ABSOLUTE)
-set(modellib_LIBRARY "${PACKAGE_PREFIX_DIR}/")
-include("${PACKAGE_PREFIX_DIR}/include/LongQt-model.cmake")
 
+include(${PACKAGE_PREFIX_DIR}/LongQt-model.cmake)
 
-set(modellib_includes ${modellib_includes} PARENT_SCOPE)
-#set(modellib_sources ${modellib_sources} PARENT_SCOPE)
-set(modellib_headers ${modellib_headers} PARENT_SCOPE)
-set(modellib_src ${modellib_src} PARENT_SCOPE)
-
-set(modellib_FOUND TRUE)
+#set(PN LongQt-model)
+#
+#set(${PN}_LIBRARIES "${PACKAGE_PREFIX_DIR}/lib/")
+#include("${PACKAGE_PREFIX_DIR}/include/LongQt-model.cmake")
+#
+#
+#set(${PN}_INCLUDE_DIRS ${modellib_includes})
+##set(modellib_sources ${modellib_sources} PARENT_SCOPE)
+#set(${PN}_headers ${modellib_headers} PARENT_SCOPE)
+#set(${PN}_src ${modellib_src} PARENT_SCOPE)
+#
+#set(${PN}_FOUND TRUE)
 
 
 

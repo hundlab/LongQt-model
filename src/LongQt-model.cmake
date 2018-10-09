@@ -1,9 +1,9 @@
 set(modellib_src "${CMAKE_CURRENT_LIST_DIR}/")
 set(modellib_includes
-    "${CMAKE_CURRENT_LIST_DIR}/"
-    "${CMAKE_CURRENT_LIST_DIR}/cell"
-    "${CMAKE_CURRENT_LIST_DIR}/structure"
-    "${CMAKE_CURRENT_LIST_DIR}/protocol"
+    "/"
+    "/cell"
+    "/structure"
+    "/protocol"
 )
 
 set(modellib_sources

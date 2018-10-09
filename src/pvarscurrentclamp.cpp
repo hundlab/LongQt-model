@@ -17,7 +17,7 @@ void PvarsCurrentClamp::protocol(Protocol* proto) {
 }
 void PvarsCurrentClamp::setIonChanParams() {
     int trial = proto->trial();
-    if(trial >= this->__pvars->begin()->second->trials.size()) {
+    if(this->__pvars->size() > 0 && trial >= this->__pvars->begin()->second->trials.size()) {
         qWarning("PvarsCurrentClamp: too many trials, recalculating");
         this->calcIonChanParams();
     }

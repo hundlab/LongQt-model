@@ -11,6 +11,7 @@
 
 #ifndef GPBATRIAL_H
 #define GPBATRIAL_H
+namespace LongQt {
 
 
 //####################################
@@ -226,4 +227,6 @@ struct GateVariable {
     protected:
     virtual void Initialize();
 };
+} //LongQt
+
 #endif

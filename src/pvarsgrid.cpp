@@ -1,5 +1,7 @@
 #include "pvarsgrid.h"
 #include <QDebug>
+using namespace LongQt;
+using namespace std;
 
 PvarsGrid::PvarsGrid(Grid* grid): grid(grid) {}
 

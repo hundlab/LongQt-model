@@ -10,7 +10,7 @@
 #include "hrd09.h"
 
 #include <QDebug>
-
+using namespace LongQt;
 //######################################################
 // Constructor for control canine epicardial
 // ventricular model.

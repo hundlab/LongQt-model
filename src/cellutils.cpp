@@ -26,6 +26,9 @@
 #include <QDebug>
 #include <stdio.h>
 #include <stdarg.h>
+using namespace LongQt;
+using namespace std;
+
 /*
  * cell map this is how new instances of cells are created
  * if you are adding a new cell to longqt add it here

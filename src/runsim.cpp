@@ -1,6 +1,8 @@
 #include "runsim.h"
 #include <QThreadPool>
 #include <QtConcurrent>
+using namespace LongQt;
+using namespace std;
 
 RunSim::RunSim() {}
 

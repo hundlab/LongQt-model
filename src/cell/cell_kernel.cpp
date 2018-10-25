@@ -9,6 +9,8 @@
 
 #include <typeinfo>
 #include <QDebug>
+using namespace LongQt;
+using namespace std;
 
 void CellKernel::Initialize() {
     //##### Assign default parameters ##################

@@ -1,4 +1,6 @@
 #include "grid.h"
+using namespace LongQt;
+using namespace std;
 
 Grid::Grid(){}
 Grid::Grid(const Grid& other) {

@@ -1,5 +1,5 @@
 #include "atrial.h"
-
+using namespace LongQt;
 //######################################################
 // Constructor for control human
 // atrial model.

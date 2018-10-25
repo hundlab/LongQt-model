@@ -1,6 +1,6 @@
 #include "gpbatrialonal17.h"
 #include <QDebug>
-
+using namespace LongQt;
 
 GpbAtrialOnal17::GpbAtrialOnal17()
 {

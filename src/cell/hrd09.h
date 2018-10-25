@@ -19,10 +19,10 @@
 #include <vector>
 #include <fstream>
 #include <iostream>
-using namespace std;
 
 #ifndef MODEL_H
 #define MODEL_H
+namespace LongQt {
 
 //######################################################
 //Define class for normal canine ventricular cell.
@@ -207,5 +207,6 @@ class HRD09BorderZone : public HRD09Control
   protected:
     virtual void Initialize();
 };
+} //LongQt
 
 #endif

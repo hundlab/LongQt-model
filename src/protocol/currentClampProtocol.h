@@ -15,6 +15,7 @@
 #include <vector>
 #include "pvarscurrentclamp.h"
 #include "hrd09.h"
+namespace LongQt {
 
 class CurrentClamp : public Protocol {
   public:
@@ -24,8 +25,8 @@ class CurrentClamp : public Protocol {
     CurrentClamp& operator=(const CurrentClamp& toCopy);
     virtual ~CurrentClamp();
 
-    virtual shared_ptr<Cell> cell() const override;
-    virtual void cell(shared_ptr<Cell> cell) override;
+    virtual std::shared_ptr<Cell> cell() const override;
+    virtual void cell(std::shared_ptr<Cell> cell) override;
 
     virtual PvarsCell& pvars() override;
 
@@ -48,11 +49,13 @@ class CurrentClamp : public Protocol {
     void CCcopy(const CurrentClamp& toCopy);
     void mkmap();
 
-    shared_ptr<Cell> __cell = make_shared<HRD09Control>();        // pointer to cell class
-    unique_ptr<PvarsCurrentClamp> __pvars
-        = unique_ptr<PvarsCurrentClamp>(new PvarsCurrentClamp(this));
-    unique_ptr<MeasureManager> __measureMgr; // set of measure class for measuring SV props.
+    std::shared_ptr<Cell> __cell = std::make_shared<HRD09Control>();        // pointer to cell class
+    std::unique_ptr<PvarsCurrentClamp> __pvars
+        = std::unique_ptr<PvarsCurrentClamp>(new PvarsCurrentClamp(this));
+    std::unique_ptr<MeasureManager> __measureMgr; // set of measure class for measuring SV props.
 
 
 };
+} //LongQt
+
 #endif

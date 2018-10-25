@@ -14,6 +14,7 @@
 #include "hrd09.h"
 #include "protocol.h"
 #include "pvarsvoltageclamp.h"
+namespace LongQt {
 
 class VoltageClamp : public Protocol {
   public:
@@ -22,8 +23,8 @@ class VoltageClamp : public Protocol {
     VoltageClamp* clone();
     VoltageClamp& operator=(const VoltageClamp& toCopy);
 
-    virtual shared_ptr<Cell> cell() const override;
-    virtual void cell(shared_ptr<Cell> cell) override;
+    virtual std::shared_ptr<Cell> cell() const override;
+    virtual void cell(std::shared_ptr<Cell> cell) override;
 
     virtual PvarsCell& pvars() override;
 
@@ -43,11 +44,13 @@ class VoltageClamp : public Protocol {
     void CCcopy(const VoltageClamp& toCopy);
     void mkmap();
 
-    shared_ptr<Cell> __cell = make_shared<HRD09Control>();        // pointer to cell class
-    unique_ptr<PvarsVoltageClamp> __pvars
-        = unique_ptr<PvarsVoltageClamp>(new PvarsVoltageClamp(this));
-    unique_ptr<MeasureManager> __measureMgr; // set of measure class for measuring SV props.
+    std::shared_ptr<Cell> __cell = std::make_shared<HRD09Control>();        // pointer to cell class
+    std::unique_ptr<PvarsVoltageClamp> __pvars
+        = std::unique_ptr<PvarsVoltageClamp>(new PvarsVoltageClamp(this));
+    std::unique_ptr<MeasureManager> __measureMgr; // set of measure class for measuring SV props.
 
 
 };
+} //LongQt
+
 #endif

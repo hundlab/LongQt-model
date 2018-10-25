@@ -18,6 +18,8 @@
 #include "gridCell.h"
 #include "cellutils.h"
 #include "inexcitablecell.h"
+using namespace LongQt;
+using namespace std;
 
 GridCell::GridCell() {
     this->Initialize();

@@ -8,7 +8,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include "FR.h"
-
+using namespace LongQt;
 //Constructor
 FR::FR()
 {

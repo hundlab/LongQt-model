@@ -1,5 +1,5 @@
 #include "gpbatrial.h"
-
+using namespace LongQt;
 GpbAtrial::GpbAtrial()
 {
     this->Initialize();

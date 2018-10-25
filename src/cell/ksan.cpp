@@ -1,5 +1,5 @@
 #include "ksan.h"
-
+using namespace LongQt;
 //######################################################
 // Constructor for control canine epicardial
 // ventricular model.

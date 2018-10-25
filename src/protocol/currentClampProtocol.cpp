@@ -1,6 +1,8 @@
 #include "currentClampProtocol.h"
 #include "cellutils.h"
 #include "pvarscurrentclamp.h"
+using namespace LongQt;
+using namespace std;
 
 CurrentClamp::CurrentClamp()  : Protocol() {
     __measureMgr.reset(new MeasureManager(cell()));

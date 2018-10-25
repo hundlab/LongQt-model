@@ -10,6 +10,7 @@
 
 #ifndef GPBMODEL_H
 #define GPBMODEL_H
+namespace LongQt {
 
 //####################################
 // subclass of Cell
@@ -188,4 +189,6 @@ struct GateVariable {
     protected:
     virtual void Initialize();
 };
+} //LongQt
+
 #endif

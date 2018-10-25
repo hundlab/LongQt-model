@@ -15,12 +15,11 @@
 #include <vector>
 #include <fstream>
 #include <iostream>
-using namespace std;
 
 #ifndef ATRIAL_H
 #define ATRIAL_H
 
-
+namespace LongQt {
 //######################################################
 //Define class for normal human atrial cell.
 //######################################################
@@ -149,5 +148,5 @@ class Courtemanche98 : public Cell
     protected:
     virtual void Initialize();
 };
-
+} //LongQt
 #endif

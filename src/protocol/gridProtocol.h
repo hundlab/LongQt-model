@@ -12,6 +12,7 @@
 #include "grid.h"
 #include "gridmeasuremanager.h"
 #include "pvarsgrid.h"
+namespace LongQt {
 
 class GridProtocol : public CurrentClamp {
     public:
@@ -23,15 +24,15 @@ class GridProtocol : public CurrentClamp {
         virtual void setupTrial() override;
         virtual bool runTrial() override;
         int stim();
-        map<string, CellUtils::CellInitializer>& getCellMap();
-        set<pair<int,int>>& getStimNodes();
+        std::map<std::string, CellUtils::CellInitializer>& getCellMap();
+        std::set<std::pair<int,int>>& getStimNodes();
         virtual bool writepars(QXmlStreamWriter& xml);
         virtual int readpars(QXmlStreamReader& xml);
 
-        virtual shared_ptr<Cell> cell() const override;
-        virtual void cell(shared_ptr<Cell> cell) override;
-        virtual bool cell(const string& type) override;
-        virtual list<string> cellOptions() override;
+        virtual std::shared_ptr<Cell> cell() const override;
+        virtual void cell(std::shared_ptr<Cell> cell) override;
+        virtual bool cell(const std::string& type) override;
+        virtual std::list<std::string> cellOptions() override;
 
         Grid& getGrid();
 
@@ -44,8 +45,8 @@ class GridProtocol : public CurrentClamp {
         void setStim2(bool enable);
         bool getStim2();
 
-        set<pair<int,int>> stimNodes;
-        set<pair<int,int>> stimNodes2;
+        std::set<std::pair<int,int>> stimNodes;
+        std::set<std::pair<int,int>> stimNodes2;
         double stimval2, stimdur2, bcl2, stimt2;
 
         const char* type() const override;
@@ -54,15 +55,17 @@ class GridProtocol : public CurrentClamp {
         void CCcopy(const GridProtocol& toCopy);
         void mkmap();
         bool stim2 = false;
-        string setToString(set<pair<int,int>>& nodes);
-        set<pair<int,int>> stringToSet(string nodesList);
+        std::string setToString(std::set<std::pair<int,int>>& nodes);
+        std::set<std::pair<int,int>> stringToSet(std::string nodesList);
         Grid* grid;
         void swapStims();
-        set<shared_ptr<Node>> __stimN;
-        set<shared_ptr<Node>> __stimN2;
-        shared_ptr<GridCell> __cell = make_shared<GridCell>();        // pointer to cell class
-        unique_ptr<PvarsGrid> __pvars;
-        unique_ptr<GridMeasureManager> __measureMgr; // set of measure class for measuring SV props.
+        std::set<std::shared_ptr<Node>> __stimN;
+        std::set<std::shared_ptr<Node>> __stimN2;
+        std::shared_ptr<GridCell> __cell = std::make_shared<GridCell>();        // pointer to cell class
+        std::unique_ptr<PvarsGrid> __pvars;
+        std::unique_ptr<GridMeasureManager> __measureMgr; // set of measure class for measuring SV props.
 
 };
+} //LongQt
+
 #endif

@@ -1,5 +1,7 @@
 #include "fiber.h"
 #include "tridag.h"
+using namespace LongQt;
+using namespace std;
 
 Fiber::Fiber(int size) {
     unsigned int i = static_cast<int>(nodes.size());

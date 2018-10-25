@@ -23,14 +23,13 @@
 #include "measuremanager.h"
 #include "cellutils.h"
 #include "pvarscell.h"
-
-using namespace std;
+namespace LongQt {
 
 struct GetSetRef {
-    function<string(void)> get;
-    function<void(const string&)> set;
-    string type;
-    GetSetRef Initialize(string type, function<string(void)> get, function<void(const string&)> set) {
+    std::function<std::string(void)> get;
+    std::function<void(const std::string&)> set;
+    std::string type;
+    GetSetRef Initialize(std::string type, std::function<std::string(void)> get, std::function<void(const std::string&)> set) {
         this->type = type;
         this->get = get;
         this->set = set;
@@ -59,14 +58,14 @@ class Protocol :  public std::enable_shared_from_this<Protocol>
         virtual unsigned int trial() const;
         virtual bool runTrial() = 0;
         virtual void setupTrial();
-        void setDataDir(string location = "", string basedir = "", string appendtxt = "");
+        void setDataDir(std::string location = "", std::string basedir = "", std::string appendtxt = "");
         void mkDirs();
-        string getDataDir();
+        std::string getDataDir();
 
-        virtual bool cell(const string& type);
-        virtual void cell(shared_ptr<Cell> cell) = 0;
-        virtual shared_ptr<Cell> cell() const = 0;
-        virtual list<string> cellOptions();
+        virtual bool cell(const std::string& type);
+        virtual void cell(std::shared_ptr<Cell> cell) = 0;
+        virtual std::shared_ptr<Cell> cell() const = 0;
+        virtual std::list<std::string> cellOptions();
 
         virtual PvarsCell& pvars() = 0;
 
@@ -87,7 +86,7 @@ class Protocol :  public std::enable_shared_from_this<Protocol>
         int writestd;
         double tMax;
 
-        string readfile,savefile,dvarfile,pvarfile, measfile, simvarfile,
+        std::string readfile,savefile,dvarfile,pvarfile, measfile, simvarfile,
                propertyoutfile, dvarsoutfile, finalpropertyoutfile,
                finaldvarsoutfile, cellStateFile;
 
@@ -95,27 +94,28 @@ class Protocol :  public std::enable_shared_from_this<Protocol>
         QDir datadir;
         QDir cellStateDir;
 
-        void setRunBefore(function<void(Protocol&)>);
-        function<void(Protocol&)> getRunBefore();
-        void setRunDuring(function<void(Protocol&)>);
-        function<void(Protocol&)> getRunDuring();
+        void setRunBefore(std::function<void(Protocol&)>);
+        std::function<void(Protocol&)> getRunBefore();
+        void setRunDuring(std::function<void(Protocol&)>);
+        std::function<void(Protocol&)> getRunDuring();
         int numruns = 0;
         double firstRun = 0;
         double runEvery = 0;
-        void setRunAfter(function<void(Protocol&)>);
-        function<void(Protocol&)> getRunAfter();
+        void setRunAfter(std::function<void(Protocol&)>);
+        std::function<void(Protocol&)> getRunAfter();
 
         //##### Declare maps for vars/params ##############
-        map<string, GetSetRef> pars;
+        std::map<std::string, GetSetRef> pars;
 
 protected:
         void copy(const Protocol& toCopy);
         int __trial;
-        function<void(Protocol&)> runBefore;
-        function<void(Protocol&)> runDuring;
-        function<void(Protocol&)> runAfter;
+        std::function<void(Protocol&)> runBefore;
+        std::function<void(Protocol&)> runDuring;
+        std::function<void(Protocol&)> runAfter;
 private:
         void mkmap();
 };
+} //LongQt
 
 #endif

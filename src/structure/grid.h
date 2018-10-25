@@ -16,11 +16,12 @@
 
 #include "fiber.h"
 #include "cellutils.h"
+namespace LongQt {
 
 struct CellInfo {
 	//necessary
     CellInfo(int row=-1, int col=-1, double dx=0.01, double dy=0.01, int np=1,
-        shared_ptr<Cell> cell=0, array<double,4> c={NAN,NAN,NAN,NAN},
+        std::shared_ptr<Cell> cell=0, std::array<double,4> c={NAN,NAN,NAN,NAN},
         bool c_perc=false) {
         this->row = row;
         this->col = col;
@@ -38,8 +39,8 @@ struct CellInfo {
     double dy = 0.01;
     int np = 1;
 	//if cell == NULL then cell will not be changed
-    shared_ptr<Cell> cell = 0;
-    array<double,4> c = {{NAN,NAN,NAN,NAN}};
+    std::shared_ptr<Cell> cell = 0;
+    std::array<double,4> c = {{NAN,NAN,NAN,NAN}};
 	bool c_perc = false;
 };
 
@@ -64,13 +65,13 @@ class Grid {
     virtual void removeRows(unsigned int num, int position = 0);
     virtual void removeColumn(int pos);
     virtual void removeColumns(unsigned int num, int position = 0);
-    virtual void setCellTypes(list<CellInfo>& cells);
+    virtual void setCellTypes(std::list<CellInfo>& cells);
     virtual void setCellTypes(const CellInfo& singleCell);
     virtual int rowCount() const;
     virtual int columnCount() const;
-    virtual pair<int,int> findNode(const shared_ptr<Node> toFind);
-    virtual shared_ptr<Node> operator()(const pair<int,int>& p);
-    virtual shared_ptr<Node> operator()(const int row, const int col);
+    virtual std::pair<int,int> findNode(const std::shared_ptr<Node> toFind);
+    virtual std::shared_ptr<Node> operator()(const std::pair<int,int>& p);
+    virtual std::shared_ptr<Node> operator()(const int row, const int col);
 	virtual void reset();
 	virtual void updateB(CellInfo node, CellUtils::Side s);
     void updateNodePositions();
@@ -80,7 +81,9 @@ class Grid {
     virtual iterator begin();
     virtual iterator end();
 
-    vector<Fiber> rows;
-    vector<Fiber> columns;
+    std::vector<Fiber> rows;
+    std::vector<Fiber> columns;
 };
+} //LongQt
+
 #endif

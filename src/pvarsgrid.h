@@ -5,6 +5,7 @@
 #include "pvarscell.h"
 #include <map>
 #include <set>
+namespace LongQt {
 
 class PvarsGrid : public PvarsCell {
     public:
@@ -12,10 +13,10 @@ class PvarsGrid : public PvarsCell {
         struct MIonChanParam : PvarsCell::IonChanParam {
             int maxDist = 0;
             double maxVal = 100;
-            set<pair<int,int>> startCells; //row,col of start cells
-            map<pair<int,int>,double> cells; //map from row,col -> value
+            std::set<std::pair<int,int>> startCells; //row,col of start cells
+            std::map<std::pair<int,int>,double> cells; //map from row,col -> value
 
-            virtual string str(string name) override;
+            virtual std::string str(std::string name) override;
             MIonChanParam() = default;
             MIonChanParam(const IonChanParam& other): IonChanParam(other) {};
             virtual ~MIonChanParam() = default;
@@ -35,22 +36,24 @@ class PvarsGrid : public PvarsCell {
         virtual void readPvars(QXmlStreamReader& xml);
         void handlePvars(QXmlStreamReader& xml);
         void handlePvar(QXmlStreamReader& xml);
-        pair<pair<int,int>,double> handleCell(QXmlStreamReader& xml, bool& start);
+        std::pair<std::pair<int,int>,double> handleCell(QXmlStreamReader& xml, bool& start);
 
-        virtual void insert(string,IonChanParam);
-        void setMaxDistAndVal(string varname, int maxDist, double maxVal);
-        void setStartCells(string varname, set<pair<int,int>> startCells);
+        virtual void insert(std::string,IonChanParam);
+        void setMaxDistAndVal(std::string varname, int maxDist, double maxVal);
+        void setStartCells(std::string varname, std::set<std::pair<int,int>> startCells);
 
     private:
-        map<string,MIonChanParam*>* __pvars =
-            (reinterpret_cast<map<string,MIonChanParam*>*>(&this->pvars));
+        std::map<std::string,MIonChanParam*>* __pvars =
+            (reinterpret_cast<std::map<std::string,MIonChanParam*>*>(&this->pvars));
         Grid* grid;
 
         void calcIonChanParam(MIonChanParam* param);
         void getNext();
-        void add(pair<int,int> e, set<pair<int,int>>& next);
+        void add(std::pair<int,int> e, std::set<std::pair<int,int>>& next);
 
-        set<pair<int,int>> current;
-        set<pair<int,int>> visited;
+        std::set<std::pair<int,int>> current;
+        std::set<std::pair<int,int>> visited;
 };
+} //LongQt
+
 #endif

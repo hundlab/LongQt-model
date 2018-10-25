@@ -14,11 +14,11 @@
 #include <vector>
 #include <fstream>
 #include <iostream>
-using namespace std;
 
 #ifndef MODEL_TNNP
 #define MODEL_TNNP
 
+namespace LongQt {
 
 class TNNP04Control : public Cell
 {
@@ -134,5 +134,6 @@ class TNNP04Control : public Cell
     protected:
    virtual  void Initialize();
 };
+} //LongQt
 
 #endif

@@ -1,4 +1,6 @@
 #include "gridmeasuremanager.h"
+using namespace LongQt;
+using namespace std;
 
 GridMeasureManager::GridMeasureManager(shared_ptr<GridCell> cell):
 MeasureManager(cell) {

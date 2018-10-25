@@ -17,16 +17,16 @@
 #include <set>
 #include <iostream>
 #include <fstream>
-
-using namespace std;
+namespace LongQt {
 
 class IOBase {
     public:
     protected:
-        virtual bool write(set<string> selection, map<string, double*> map, ofstream* ofile);
-        virtual bool setOutputfile(string filename, set<string> set, ofstream* ofile);
-	virtual void closeFile(ofstream* ofile);
+        virtual bool write(std::set<std::string> selection, std::map<std::string, double*> map, std::ofstream* ofile);
+        virtual bool setOutputfile(std::string filename, std::set<std::string> set, std::ofstream* ofile);
+    virtual void closeFile(std::ofstream* ofile);
 };
 
+} //LongQt
 
 #endif

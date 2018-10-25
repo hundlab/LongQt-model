@@ -1,4 +1,6 @@
 #include "pvarsvoltageclamp.h"
+using namespace LongQt;
+using namespace std;
 
 PvarsVoltageClamp::PvarsVoltageClamp(Protocol *proto): proto(proto) {}
 

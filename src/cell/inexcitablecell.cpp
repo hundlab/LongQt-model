@@ -1,5 +1,5 @@
 #include "inexcitablecell.h"
-
+using namespace LongQt;
 InexcitableCell::InexcitableCell()
 {
     this->Initialize();

@@ -4,7 +4,7 @@
 #
 #-------------------------------------------------
 
-QT       = core
+QT       = core concurrent
 
 TARGET = LongQt-model
 TEMPLATE = lib

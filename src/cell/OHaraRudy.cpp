@@ -1,7 +1,7 @@
 #include <math.h>
-using namespace std;
 #include "OHaraRudy.h"
-
+using namespace std;
+using namespace LongQt;
 OHaraRudy::OHaraRudy() {
 	this->Initialize();
 };

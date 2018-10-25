@@ -8,7 +8,7 @@
 #include <QXmlStreamReader>
 #include <QXmlStreamWriter>
 
-using namespace std;
+namespace LongQt {
 
 class PvarsCell {
     public:
@@ -29,16 +29,16 @@ class PvarsCell {
             IonChanParam(const IonChanParam&) = default;
             virtual ~IonChanParam() {}
             Distribution dist;
-            array<double,2> val;
+            std::array<double,2> val;
             /*  what these values are depends on dist
              *  for none: val[0] = starting value, val[1] = increment amount
              *  for normal & lognormal: val[0] = mean, val[1] = standard deviation
              */
-            virtual string str(string name);
+            virtual std::string str(std::string name);
         };
 
         virtual ~PvarsCell();
-        typedef std::map<string,IonChanParam*>::const_iterator const_iterator;
+        typedef std::map<std::string,IonChanParam*>::const_iterator const_iterator;
 
         //Functions
         virtual PvarsCell* clone() = 0;
@@ -49,17 +49,19 @@ class PvarsCell {
         virtual void writePvars(QXmlStreamWriter& xml) = 0;
         virtual void readPvars(QXmlStreamReader& xml) = 0;
 
-        virtual void insert(string,IonChanParam) = 0;
-        virtual void erase(string);
+        virtual void insert(std::string,IonChanParam) = 0;
+        virtual void erase(std::string);
         virtual int size() const;
         virtual void clear();
-        virtual IonChanParam* at(string);
+        virtual IonChanParam* at(std::string);
         virtual const_iterator begin() const;
         virtual const_iterator end() const;
 
     protected:
-        default_random_engine generator =
-                default_random_engine(std::random_device{}());
-        map<string,IonChanParam*> pvars;
+        std::default_random_engine generator =
+                std::default_random_engine(std::random_device{}());
+        std::map<std::string,IonChanParam*> pvars;
 };
+} //LongQt
+
 #endif

@@ -12,6 +12,8 @@
 #include <iomanip>
 #include <sstream>
 
+using namespace LongQt;
+using namespace std;
 //#############################################################
 // Measure class constructor and destructor
 //#############################################################

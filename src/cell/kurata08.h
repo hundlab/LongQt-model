@@ -12,6 +12,7 @@
 #define MODELSA_H
 
 #include "cell.h"  // Parent class declaration
+namespace LongQt {
 
 //######################################################
 //Define class for central rabbit SAN cell.
@@ -142,5 +143,6 @@ protected:
 private:
     void makemap();
 };
+} //LongQt
 
 #endif

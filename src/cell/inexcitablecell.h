@@ -2,6 +2,7 @@
 #define INEXCITABLECELL_H
 
 #include "cell.h"
+namespace LongQt {
 
 class InexcitableCell : public Cell {
 public:
@@ -19,5 +20,6 @@ public:
 protected:
     virtual void Initialize();
 };
+} //LongQt
 
 #endif // INEXCITABLECELL_H

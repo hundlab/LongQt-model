@@ -21,8 +21,7 @@
 
 #include "iobase.h"
 
-using namespace std;
-
+namespace LongQt {
 
 //######################################################
 //Define class for parent cell.
@@ -73,30 +72,30 @@ class CellKernel : public std::enable_shared_from_this<CellKernel>
     double TEMP;
     double FDAY;
     
-    virtual double var(string name);
-    virtual bool setVar(string name, double val);
-    virtual bool hasVar(string name);
-    virtual double par(string name);
-    virtual bool setPar(string name, double val);
-    virtual bool hasPar(string name);
-    virtual set<string> getVariables();
-    virtual set<string> getConstants();
+    virtual double var(std::string name);
+    virtual bool setVar(std::string name, double val);
+    virtual bool hasVar(std::string name);
+    virtual double par(std::string name);
+    virtual bool setPar(std::string name, double val);
+    virtual bool hasPar(std::string name);
+    virtual std::set<std::string> getVariables();
+    virtual std::set<std::string> getConstants();
     virtual const char* type() const = 0;
     void reset();
     //class options eg ISO
-    virtual map<string,int> optionsMap() const;
+    virtual std::map<std::string,int> optionsMap() const;
     virtual int option() const;
-    virtual string optionStr() const;
-    virtual void setOption(string opt);
+    virtual std::string optionStr() const;
+    virtual void setOption(std::string opt);
     virtual void setOption(int opt);
     virtual int removeConflicts(int opt);
-    list<list<int>> conflicts; //list of conflicting options
+    std::list<std::list<int>> conflicts; //list of conflicting options
 
 protected:
-    map<string, double*> vars;  // map of state vars
-    map<string, double*> pars;  // map of params
+    std::map<std::string, double*> vars;  // map of state vars
+    std::map<std::string, double*> pars;  // map of params
 
-    vector<string> split(string s, char delim);
+    std::vector<std::string> split(std::string s, char delim);
     void copyVarPar(const CellKernel& toCopy);
     virtual void Initialize();
 private:
@@ -112,10 +111,10 @@ private:
 #define NUM_ARGS(...) EXPAND(_GET_NTH_ARG(__VA_ARGS__,9,8,7,6,5,4,3,2,1,0))
 
 #define CLASS_FUNCTIONS \
-virtual map<string,int> optionsMap() const;\
+virtual std::map<std::string,int> optionsMap() const;\
 virtual int option() const;\
-virtual string optionStr() const;\
-virtual void setOption(string opt);\
+virtual std::string optionStr() const;\
+virtual void setOption(std::string opt);\
 virtual void setOption(int opt);
 
 #define REVERSE_1(a) a
@@ -157,7 +156,7 @@ virtual void setOption(int opt);
 #define MP_STR_10(str,...) {#str, 1 << 9}, EXPAND(MP_STR_9(__VA_ARGS__))
 
 
-#define _MAKE_MAP1(N, ...) map<string,int> optsMap = {EXPAND(MP_STR_ ## N(__VA_ARGS__))};
+#define _MAKE_MAP1(N, ...) std::map<std::string,int> optsMap = {EXPAND(MP_STR_ ## N(__VA_ARGS__))};
 #define _MAKE_MAP(N, ...) _MAKE_MAP1(N, __VA_ARGS__)
 
 #define _MAKE_ENUM1(N, ...) enum Options {EXPAND(EN_STR_ ## N(__VA_ARGS__))}; CLASS_FUNCTIONS
@@ -179,7 +178,7 @@ inline CLASS_NAME::Options& operator&= (CLASS_NAME::Options& a, CLASS_NAME::Opti
 inline CLASS_NAME::Options& operator^= (CLASS_NAME::Options& a, CLASS_NAME::Options b) { return (CLASS_NAME::Options&)((int&)a ^= (int)b); }
 
 #define OPTIONS_FUNCTIONS(CLASS_NAME) \
-map<string, int> CLASS_NAME::optionsMap() const\
+std::map<std::string, int> CLASS_NAME::optionsMap() const\
 {\
     return optsMap;\
 }\
@@ -187,9 +186,9 @@ int CLASS_NAME::option() const\
 {\
     return opts;\
 }\
-string CLASS_NAME::optionStr() const\
+std::string CLASS_NAME::optionStr() const\
 {\
-    string str = "";\
+    std::string str = "";\
     bool first = true;\
     for (auto& it: optsMap) {\
         if (it.second & this->opts) {\
@@ -203,7 +202,7 @@ string CLASS_NAME::optionStr() const\
     }\
     return str != "" ? str: "WT";\
 }\
-void CLASS_NAME::setOption(string opt)\
+void CLASS_NAME::setOption(std::string opt)\
 {\
     Options o = WT;\
     auto splits = CellKernel::split(opt,'|');\
@@ -222,4 +221,6 @@ void CLASS_NAME::setOption(int opt)\
 }
 
 #define MAKE_OPTIONS_FUNCTIONS(CLASS_NAME) OPERATORS(CLASS_NAME) OPTIONS_FUNCTIONS(CLASS_NAME)
+} //LongQt
+
 #endif

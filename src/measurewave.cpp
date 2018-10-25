@@ -1,4 +1,6 @@
 #include "measurewave.h"
+using namespace LongQt;
+using namespace std;
 
 MeasureWave::MeasureWave(set<string> selected, double percrepol):
     Measure(selected),

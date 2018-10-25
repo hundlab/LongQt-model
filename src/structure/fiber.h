@@ -6,6 +6,7 @@
 
 #include "node.h"
 #include <memory>
+namespace LongQt {
 
 class Fiber {
   public:
@@ -13,11 +14,11 @@ class Fiber {
     Fiber(const Fiber&);
     ~Fiber();
 
-    typedef std::vector<shared_ptr<Node>>::const_iterator const_iterator;
+    typedef std::vector<std::shared_ptr<Node>>::const_iterator const_iterator;
 
     virtual void updateVm(const double& dt);
-    virtual shared_ptr<Node> operator[](int pos);
-    virtual shared_ptr<Node> at(int pos);
+    virtual std::shared_ptr<Node> operator[](int pos);
+    virtual std::shared_ptr<Node> at(int pos);
     virtual int size() const;
 	virtual inline void diffuse(int node);
 	virtual inline void diffuseBottom(int node);
@@ -26,8 +27,9 @@ class Fiber {
     virtual const_iterator begin() const;
     virtual const_iterator end() const;
 
-    vector<shared_ptr<Node>> nodes;
-    vector<double> B; //coefficients for tridag solver.
+    std::vector<std::shared_ptr<Node>> nodes;
+    std::vector<double> B; //coefficients for tridag solver.
 };
+} //LongQt
 
 #endif

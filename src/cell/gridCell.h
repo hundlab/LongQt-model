@@ -15,6 +15,7 @@
 
 #include <list>
 #include <set>
+namespace LongQt {
 
 class GridCell: public Cell {
     public:
@@ -30,30 +31,30 @@ class GridCell: public Cell {
         virtual double updateV();
         virtual int externalStim(double stimval); //stimulates every cell
         virtual double tstep(double stimt);
-        virtual set<string> getVariables();
-        virtual set<string> getConstants();
+        virtual std::set<std::string> getVariables();
+        virtual std::set<std::string> getConstants();
 
         //cell io functions
-        virtual void setGridfile(string name);
-        virtual string gridfile();
+        virtual void setGridfile(std::string name);
+        virtual std::string gridfile();
         virtual bool writeGridfile(QXmlStreamWriter& xml);
-        virtual bool writeGridfile(string fileName ="");
+        virtual bool writeGridfile(std::string fileName ="");
         virtual bool readGridfile(QXmlStreamReader& xml);
-        virtual bool readGridfile(string filename);
-        virtual bool setOutputfileConstants(string filename);
-        virtual bool setOuputfileVariables(string filename);
-        virtual bool setConstantSelection(set<string> new_selection);
-        virtual bool setVariableSelection(set<string> new_selection);
+        virtual bool readGridfile(std::string filename);
+        virtual bool setOutputfileConstants(std::string filename);
+        virtual bool setOuputfileVariables(std::string filename);
+        virtual bool setConstantSelection(std::set<std::string> new_selection);
+        virtual bool setVariableSelection(std::set<std::string> new_selection);
         virtual void writeConstants();
         virtual void writeVariables();
         virtual void closeFiles();
-        virtual bool readCellState(string filename);
-        virtual bool writeCellState(string filename);
+        virtual bool readCellState(std::string filename);
+        virtual bool writeCellState(std::string filename);
         virtual const char* type() const;
 
     private:
-        bool handleNode(QXmlStreamReader& xml, list<CellInfo>& cells, CellInfo& info);
-        bool handleRow(QXmlStreamReader& xml, list<CellInfo>& cells, CellInfo& info);
+        bool handleNode(QXmlStreamReader& xml, std::list<CellInfo>& cells, CellInfo& info);
+        bool handleRow(QXmlStreamReader& xml, std::list<CellInfo>& cells, CellInfo& info);
         bool handleGrid(QXmlStreamReader& xml);
 
         Grid grid;
@@ -61,10 +62,12 @@ class GridCell: public Cell {
         double dy;
         double np; //1
         int tcount;//0
-        string gridfileName;
+        std::string gridfileName;
 
         void makeMap();
     protected:
         virtual void Initialize();
 };
+} //LongQt
+
 #endif

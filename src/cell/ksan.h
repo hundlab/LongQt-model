@@ -15,11 +15,11 @@
 #include <vector>
 #include <fstream>
 #include <iostream>
-using namespace std;
 
 #ifndef KMODEL_H
 #define KMODEL_H
   
+namespace LongQt {
 
 //######################################################
 //Define class for normal canine ventricular cell.
@@ -146,5 +146,6 @@ class Ksan : public Cell
 protected:
     virtual void Initialize();
 };
+} //LongQt
 
 #endif

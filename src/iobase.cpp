@@ -10,6 +10,9 @@
 #include <QDebug>
 
 #include "iobase.h"
+using namespace LongQt;
+using namespace std;
+
 bool IOBase::setOutputfile(string filename, set<string> set, ofstream* ofile) {
     ifstream test;
     bool exists;

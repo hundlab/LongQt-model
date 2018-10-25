@@ -1,4 +1,5 @@
 #include "OHaraRudyEpi.h"
+using namespace LongQt;
 
 OHaraRudyEpi::OHaraRudyEpi() {
 	this->Initialize();

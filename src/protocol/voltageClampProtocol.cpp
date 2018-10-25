@@ -1,5 +1,7 @@
 #include "voltageClampProtocol.h"
 #include "pvarsvoltageclamp.h"
+using namespace LongQt;
+using namespace std;
 
 VoltageClamp::VoltageClamp()  : Protocol(){
     __measureMgr.reset(new MeasureManager(cell()));

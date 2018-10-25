@@ -12,6 +12,7 @@
 
 #ifndef GPBATRIALONAL17_H
 #define GPBATRIALONAL17_H
+namespace LongQt {
 
 //####################################
 // subclass of Cell
@@ -246,4 +247,6 @@ MAKE_OPTIONS(S571E,S571A,S2814D,S2814A,ISO)
     virtual const char* type() const;
 
 };
+} //LongQt
+
 #endif

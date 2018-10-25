@@ -9,6 +9,7 @@
 #include "inexcitablecell.h"
 #include <memory>
 #include <array>
+namespace LongQt {
 
 class Grid;
 
@@ -19,7 +20,7 @@ struct Node : public std::enable_shared_from_this<Node> {
 
     void setCondConst(double dx, CellUtils::Side s, bool perc = true, double val = 1);
 //	void updateV(double dt);
-    shared_ptr<Cell> cell = make_shared<InexcitableCell>();
+    std::shared_ptr<Cell> cell = std::make_shared<InexcitableCell>();
     double rd = 1.5; // gap junctional disk resistance.
     double getCondConst(CellUtils::Side s);
 //## default value cannot be deterimined by constructor
@@ -33,7 +34,7 @@ struct Node : public std::enable_shared_from_this<Node> {
     double d3 = 0; //off-diagonal for tridag solver
     double r = 0; //right side of eqn for tridag solver
     double vNew = 0; //vOld(t+1) for tridag solver
-    string nodeType ="";
+    std::string nodeType ="";
     int row = -1;
     int col = -1;
     void setParent(Grid* par,int row = -1, int col = -1);
@@ -43,7 +44,9 @@ struct Node : public std::enable_shared_from_this<Node> {
 private:
     void setCondConstDirect(CellUtils::Side s, double val);
     Grid* parent;
-    pair<int, int> calcNeighborPos(CellUtils::Side s);
+    std::pair<int, int> calcNeighborPos(CellUtils::Side s);
     double calcCondConst(double dx, CellUtils::Side s, double val);
 };
+} //LongQt
+
 #endif

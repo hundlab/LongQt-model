@@ -9,6 +9,7 @@
 #include "tnnp04.h"
 
 #include <QDebug>
+using namespace LongQt;
 
 //######################################################
 // Constructor

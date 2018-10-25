@@ -21,8 +21,8 @@
   #define strcasecmp _stricmp
   #define strncasecmp _strnicmp
 #endif
+namespace LongQt {
 
-using namespace std;
 class Protocol;
 /*
  * This is equivalent to a simple static class which holds functions
@@ -30,7 +30,7 @@ class Protocol;
  */
 namespace CellUtils {
     //declare CellInitializer function type
-    typedef function<shared_ptr<Cell>(void)> CellInitializer;
+    typedef std::function<std::shared_ptr<Cell>(void)> CellInitializer;
 
     /*
      * cell map this is how new instances of cells are created
@@ -38,23 +38,23 @@ namespace CellUtils {
      * cellutils.cpp and add it to protocolCellDefualts map
      * declaration found below definition found in cellutils.cpp
      */
-    extern const map<string, CellInitializer> cellMap;
+    extern const std::map<std::string, CellInitializer> cellMap;
 
     /*
      * this map is used to setup default simulations in longqt add your new cell to 
      * this map to give it a meaningful default simulation. We typically pace to 
      * study-state ~500,000 ms and output values for the last 5,000 ms
      */
-    extern const map<string, list<pair<string,string>>> protocolCellDefaults;
+    extern const std::map<std::string, std::list<std::pair<std::string,std::string>>> protocolCellDefaults;
 
     //declare the ProtocolIntializer type
-    typedef function<shared_ptr<Protocol>(void)> ProtocolInitializer;
+    typedef std::function<std::shared_ptr<Protocol>(void)> ProtocolInitializer;
 
     /*
      * map of known protocols used to create new instances of protocols in
      * longqt
      */
-    extern const map<string, ProtocolInitializer> protoMap;
+    extern const std::map<std::string, ProtocolInitializer> protoMap;
 
     /*
      * Side provides a consistent system for numbering sides in 2D grids
@@ -112,9 +112,9 @@ namespace CellUtils {
     }
 
     //trim whitespace from beginning and end of a string
-    inline string trim(string str)
+    inline std::string trim(std::string str)
     {
-        string toFind = " \t\n\v\f\r";
+        std::string toFind = " \t\n\v\f\r";
         str.erase(0, str.find_first_not_of(toFind));
         str.erase(str.find_last_not_of(toFind)+1);
         return str;
@@ -123,7 +123,7 @@ namespace CellUtils {
      * b:true -> "true"
      * b:false-> "false"
      */
-    inline string to_string(const bool& b) {
+    inline std::string to_string(const bool& b) {
         return b ? "true" : "false";
     }
 
@@ -131,10 +131,12 @@ namespace CellUtils {
      * s:"true" -> true
      * s:"false" -> false
      */
-    inline bool stob(const string& s) {
+    inline bool stob(const std::string& s) {
         return (strcasecmp("true",trim(s).c_str()) == 0);
     }
 
     std::string strprintf(const char * format, ...);
 } //CellUtils
+} //LongQt
+
 #endif

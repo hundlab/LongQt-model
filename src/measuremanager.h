@@ -10,56 +10,59 @@
 #include <string>
 #include <memory>
 #include <QFile>
+namespace LongQt {
 
 class MeasureManager {
     public:
-        MeasureManager(shared_ptr<Cell> cell);
+        MeasureManager(std::shared_ptr<Cell> cell);
         virtual ~MeasureManager();
         virtual MeasureManager* clone();
 
         virtual bool writeMVarsFile(QXmlStreamWriter& xml);
         virtual bool readMvarsFile(QXmlStreamReader& xml);
 
-        shared_ptr<Cell> cell();
-        void cell(shared_ptr<Cell> cell);
-        map<string,set<string>> selection();
-        void selection(map<string,set<string>> sel);
+        std::shared_ptr<Cell> cell();
+        void cell(std::shared_ptr<Cell> cell);
+        std::map<std::string,std::set<std::string>> selection();
+        void selection(std::map<std::string,std::set<std::string>> sel);
         double percrepol();
         void percrepol(double percrepol);
-        shared_ptr<Measure> getMeasure(string varname, set<string> selection);
+        std::shared_ptr<Measure> getMeasure(std::string varname, std::set<std::string> selection);
 
-        virtual void addMeasure(string var,set<string> selection = {});
-        virtual void removeMeasure(string var);
-        virtual void setupMeasures(string filename);
+        virtual void addMeasure(std::string var,std::set<std::string> selection = {});
+        virtual void removeMeasure(std::string var);
+        virtual void setupMeasures(std::string filename);
         virtual void measure(double time);
         virtual void write(QFile* file = 0);
-        virtual void writeLast(string filename);
+        virtual void writeLast(std::string filename);
         virtual void clear();
         virtual void close();
         virtual void resetMeasures();
 
-        const map<string,string> varsMeas = {
+        const std::map<std::string,std::string> varsMeas = {
             {"vOld","MeasureWave"},
             {"caI","MeasureWave"}
         };
-        const map<string,function<Measure*(set<string> selection)>> varMeasCreator =
-            {{"MeasureWave", [this](set<string> selection)
+        const std::map<std::string,std::function<Measure*(std::set<std::string> selection)>> varMeasCreator =
+            {{"MeasureWave", [this](std::set<std::string> selection)
                 {return (Measure*)new MeasureWave(selection,this->__percrepol);}}
             };
 
     protected:
         MeasureManager(const MeasureManager&);
 
-        map<string,set<string>> variableSelection;
+        std::map<std::string,std::set<std::string>> variableSelection;
 
     private:
         void removeBad();
         void copy(const MeasureManager& other);
 
-        shared_ptr<Cell> __cell = 0;
-        string last = "";
+        std::shared_ptr<Cell> __cell = 0;
+        std::string last = "";
         double __percrepol = 50;
-        unique_ptr<QFile> ofile;
-        map<string,shared_ptr<Measure>> measures;
+        std::unique_ptr<QFile> ofile;
+        std::map<std::string,std::shared_ptr<Measure>> measures;
 };
+} //LongQt
+
 #endif

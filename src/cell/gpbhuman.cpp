@@ -1,4 +1,5 @@
 #include "gpbhuman.h"
+using namespace LongQt;
 GpbVent::GpbVent()
 {
     this->Initialize();

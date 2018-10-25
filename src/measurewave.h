@@ -16,8 +16,7 @@
 #include <set>
 #include <limits>
 #include "measure.h"
-
-using namespace std;
+namespace LongQt {
 
 class MeasureWave: public Measure
 {
@@ -33,8 +32,8 @@ class MeasureWave: public Measure
 
         //		string varname;
 
-        set<string> variables();
-        map<string,double> variablesMap();
+        std::set<std::string> variables();
+        std::map<std::string,double> variablesMap();
 
         void percrepol(double val);
         double percrepol() const;
@@ -64,5 +63,6 @@ class MeasureWave: public Measure
     private:
         void copy(const MeasureWave& toCopy);
 };
+} //LongQt
 
 #endif

@@ -12,36 +12,39 @@
 #include <string>
 #include <utility>
 #include <memory>
+namespace LongQt {
 
 class GridMeasureManager: public MeasureManager {
     public:
-        GridMeasureManager(shared_ptr<GridCell> cell);
+        GridMeasureManager(std::shared_ptr<GridCell> cell);
         virtual ~GridMeasureManager() = default;
         virtual GridMeasureManager* clone();
 
-        void dataNodes(set<pair<int,int>> nodes);
-        set<pair<int,int>> dataNodes();
-        void cell(shared_ptr<GridCell> cell);
+        void dataNodes(std::set<std::pair<int,int>> nodes);
+        std::set<std::pair<int,int>> dataNodes();
+        void cell(std::shared_ptr<GridCell> cell);
 
         virtual bool writeMVarsFile(QXmlStreamWriter& xml);
         virtual bool readMvarsFile(QXmlStreamReader& xml);
 
-        virtual void setupMeasures(string filename);
+        virtual void setupMeasures(std::string filename);
         virtual void measure(double time);
         virtual void write(QFile* file = 0);
-        virtual void writeSingleCell(pair<int,int> node, QFile* file = 0);
-        virtual void writeLast(string filename);
-        virtual std::string nameString(pair<int,int> node) const;
+        virtual void writeSingleCell(std::pair<int,int> node, QFile* file = 0);
+        virtual void writeLast(std::string filename);
+        virtual std::string nameString(std::pair<int,int> node) const;
         virtual void close();
         virtual void clear();
-        virtual void resetMeasures(pair<int,int> node);
+        virtual void resetMeasures(std::pair<int,int> node);
 
     private:
         GridMeasureManager(const GridMeasureManager&);
-        set<pair<int,int>> __dataNodes;
-        map<pair<int,int>,shared_ptr<QFile>> ofiles;
-        map<pair<int,int>,string> lasts;
-        map<pair<int,int>,map<string,shared_ptr<Measure>>> measures;
+        std::set<std::pair<int,int>> __dataNodes;
+        std::map<std::pair<int,int>,std::shared_ptr<QFile>> ofiles;
+        std::map<std::pair<int,int>,std::string> lasts;
+        std::map<std::pair<int,int>,std::map<std::string,std::shared_ptr<Measure>>> measures;
         Grid* grid = 0;
 };
+} //LongQt
+
 #endif

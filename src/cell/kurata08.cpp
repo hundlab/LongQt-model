@@ -1,6 +1,6 @@
 #include "kurata08.h"
 #include <QDebug>
-
+using namespace LongQt;
 //######################################################
 // Constructor for centrol rabbit sinoatrial node
 // cell model.

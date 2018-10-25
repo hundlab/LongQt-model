@@ -2,6 +2,7 @@
 #define MODEL_OHARARUDY_M_H
 
 #include "OHaraRudy.h"  // Parent class declaration
+namespace LongQt {
 
 class OHaraRudyM : public OHaraRudy
 {
@@ -16,4 +17,6 @@ class OHaraRudyM : public OHaraRudy
     protected:
 		virtual void Initialize();
 };
+} //LongQt
+
 #endif

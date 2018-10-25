@@ -27,7 +27,7 @@
 #include <vector>
 #include <fstream>
 #include <iostream>
-using namespace std;
+namespace LongQt {
 
 //#define bcl 300   // Basic Cycle Length (ms)
 //#define beats 20   // Number of Beats
@@ -383,5 +383,6 @@ virtual void makemap();
 virtual const char* type() const;
 
 };
+} //LongQt
 
 #endif

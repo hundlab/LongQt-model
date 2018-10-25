@@ -1,7 +1,7 @@
 #include "br04.h"
 
 #include <QDebug>
-
+using namespace LongQt;
 Br04::Br04()
 {
     this->Initialize();

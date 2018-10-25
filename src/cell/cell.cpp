@@ -11,6 +11,8 @@
 #include <sstream>
 #include <QFile>
 #include <QDebug>
+using namespace LongQt;
+using namespace std;
 
 bool Cell::setOuputfileVariables(string filename) {
     return setOutputfile(filename, this->varsSelection, &varsofile);

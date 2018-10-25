@@ -51,6 +51,7 @@
 #define MODEL_OHARARUDY_H
 
 #include "cell.h"  // Parent class declaration
+namespace LongQt {
 
 class OHaraRudy : public Cell
 {
@@ -186,4 +187,6 @@ class OHaraRudy : public Cell
     protected:
 		virtual void Initialize();
 };
+} //LongQt
+
 #endif

@@ -1,4 +1,5 @@
 #include "OHaraRudyEndo.h"
+using namespace LongQt;
 
 OHaraRudyEndo::OHaraRudyEndo() {
 	this->Initialize();

@@ -1,4 +1,6 @@
 #include "pvarscurrentclamp.h"
+using namespace LongQt;
+using namespace std;
 
 PvarsCurrentClamp::PvarsCurrentClamp(Protocol *proto): proto(proto) {}
 

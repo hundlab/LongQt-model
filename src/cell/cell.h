@@ -23,8 +23,7 @@
 #include "iobase.h"
 #include "cell_kernel.h"
 
-using namespace std;
-
+namespace LongQt {
 
 //######################################################
 //Define class for parent cell.
@@ -44,25 +43,27 @@ public:
     virtual ~Cell() {}
     virtual Cell* clone() = 0;
 
-    virtual bool setOutputfileConstants(string filename);
-    virtual bool setOuputfileVariables(string filename);
-    virtual bool setConstantSelection(set<string> new_selection);
-    virtual bool setVariableSelection(set<string> new_selection);
-    virtual set<string> getConstantSelection();
-    virtual set<string> getVariableSelection();
+    virtual bool setOutputfileConstants(std::string filename);
+    virtual bool setOuputfileVariables(std::string filename);
+    virtual bool setConstantSelection(std::set<std::string> new_selection);
+    virtual bool setVariableSelection(std::set<std::string> new_selection);
+    virtual std::set<std::string> getConstantSelection();
+    virtual std::set<std::string> getVariableSelection();
     virtual void writeConstants();
     virtual void writeVariables();
     virtual void closeFiles();
-    virtual bool writeCellState(string file);
+    virtual bool writeCellState(std::string file);
     virtual bool writeCellState(QXmlStreamWriter& xml);
-    virtual bool readCellState(string file);
+    virtual bool readCellState(std::string file);
     virtual bool readCellState(QXmlStreamReader& xml);
 protected:
-    virtual bool setSelection(map<string, double*> map, set<string>* old_selection, set<string> new_selection, ofstream* ofile);
-    ofstream parsofile;
-    ofstream varsofile;
-    set<string> parsSelection;
-    set<string> varsSelection;
+    virtual bool setSelection(std::map<std::string, double*> map, std::set<std::string>* old_selection, std::set<std::string> new_selection, std::ofstream* ofile);
+    std::ofstream parsofile;
+    std::ofstream varsofile;
+    std::set<std::string> parsSelection;
+    std::set<std::string> varsSelection;
 
 };
+} //LongQt
+
 #endif

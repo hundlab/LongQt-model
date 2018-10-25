@@ -1,4 +1,5 @@
 #include "OHaraRudyM.h"
+using namespace LongQt;
 
 OHaraRudyM::OHaraRudyM() {
 	this->Initialize();

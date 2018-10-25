@@ -3,6 +3,8 @@
 #include <QFile>
 #include <QDebug>
 #include <QDir>
+using namespace LongQt;
+using namespace std;
 
 SettingsIO* SettingsIO::__instance = 0;
 

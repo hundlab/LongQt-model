@@ -10,6 +10,8 @@
 
 #include <QFile>
 #include <QDebug>
+using namespace LongQt;
+using namespace std;
 
 GridProtocol::GridProtocol() : CurrentClamp() {
     __measureMgr.reset(new GridMeasureManager(this->__cell));

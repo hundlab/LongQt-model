@@ -14,12 +14,12 @@
 #include <vector>
 #include <fstream>
 #include <iostream>
-using namespace std;
 
 #ifndef MODEL_BR
 #define MODEL_BR
 
-  
+namespace LongQt {
+
 //######################################################
 //Define class for normal canine ventricular cell.
 //######################################################
@@ -167,5 +167,6 @@ class Br04 : public Cell
     protected:
     virtual void Initialize();
 };
+} //LongQt
 
 #endif

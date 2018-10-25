@@ -8,7 +8,7 @@
 //####################################################
 
 #include "hrd09.h"
-
+using namespace LongQt;
 //######################################################
 // Constructor for canine infarct border zone epicardial
 // ventricular model.

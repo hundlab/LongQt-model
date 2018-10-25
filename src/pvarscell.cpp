@@ -1,4 +1,6 @@
 #include "pvarscell.h"
+using namespace LongQt;
+using namespace std;
 
 PvarsCell::~PvarsCell() {
 //    for(auto pvar : pvars) {

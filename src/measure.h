@@ -17,12 +17,12 @@
 #include <limits>
 #include <cmath>
 
-using namespace std;
+namespace LongQt {
 
 class Measure
 {
     public:
-        Measure(set<string> selected = {});
+        Measure(std::set<std::string> selected = {});
         Measure(const Measure& toCopy);
         Measure(Measure&& toCopy);
         virtual ~Measure() = default;
@@ -34,19 +34,19 @@ class Measure
 
         //		string varname;
 
-        set<string> variables();
-        map<string,double> variablesMap();
+        std::set<std::string> variables();
+        std::map<std::string,double> variablesMap();
 
-        set<string> selection();
-        void selection(set<string> new_selection);
+        std::set<std::string> selection();
+        void selection(std::set<std::string> new_selection);
         //		void restoreLast();
-        virtual string getNameString(string name) const;
-        virtual string getValueString() const;
+        virtual std::string getNameString(std::string name) const;
+        virtual std::string getValueString() const;
     protected:
         virtual void calcMeasure(double time, double var);
         virtual void updateOld(double time, double var);
 
-        map<string, double* const> varmap = // map for refing properties that can be measured.
+        std::map<std::string, double* const> varmap = // map for refing properties that can be measured.
         {{"peak",&peak},{"min",&min},{"maxderiv",&maxderiv},
         {"mint",&mint},{"derivt",&derivt},{"maxt",&maxt}};
 
@@ -76,9 +76,10 @@ class Measure
 //        bool ddrflag = false;
         bool returnflag = false;
 
-        set<string> __selection; // map for refing properties that will be output.
+        std::set<std::string> __selection; // map for refing properties that will be output.
     private:
         void copy(const Measure& toCopy);
 };
+} //LongQt
 
 #endif

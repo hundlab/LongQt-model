@@ -1,6 +1,8 @@
 #include "measuremanager.h"
 #include "cellutils.h"
 #include <QDebug>
+using namespace LongQt;
+using namespace std;
 
 MeasureManager::MeasureManager(shared_ptr<Cell> cell): __cell(cell) {};
 

@@ -26,6 +26,8 @@
 #define strcasecmp _stricmp
 #define strncasecmp _strnicmp
 #endif
+using namespace LongQt;
+using namespace std;
 
 //######################################################
 // Default Constructor

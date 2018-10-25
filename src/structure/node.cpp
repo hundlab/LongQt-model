@@ -1,5 +1,7 @@
 #include "node.h"
 #include "grid.h"
+using namespace LongQt;
+using namespace std;
 
 Node::Node(const Node& other) : std::enable_shared_from_this<Node>(other) {
 	rd = other.rd;

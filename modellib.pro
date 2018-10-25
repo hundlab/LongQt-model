@@ -13,7 +13,7 @@ QMAKE_MAC_SDK = macosx10.12
 
 CONFIG += c++11 staticlib
 
-include(model.pri)
+include(./src/model.pri)
 
 linux {
     debug {

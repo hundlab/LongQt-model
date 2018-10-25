@@ -9,7 +9,12 @@
 #include <inexcitablecell.h>
 
 using namespace testing;
+//----------------------------------- Protocol
 
+//----------------------------------- CurrentClamp
+//----------------------------------- VoltageClamp
+
+//----------------------------------- Grid
 TEST(gridprotocol, cell)
 {
     auto protocol = GridProtocol();
@@ -30,5 +35,10 @@ TEST(gridprotocol, cell)
     EXPECT_FALSE(cell_ref == protocol.cell());
     EXPECT_TRUE(cell2 == protocol.cell());
     EXPECT_EQ(cell_ref.use_count(),1);
+}
+TEST(gridprotocol, misc){
+    auto protocol = GridProtocol();
+    auto grid = protocol.getGrid();
+
 }
 #endif

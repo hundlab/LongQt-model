@@ -1,7 +1,8 @@
-include(gtest_dependency.pri)
-include(../model.pri)
 
-QT       = core
+include(gtest_dependency.pri)
+include(../src/model.pri)
+
+QT       = core concurrent
 
 TEMPLATE = app
 CONFIG += console c++11

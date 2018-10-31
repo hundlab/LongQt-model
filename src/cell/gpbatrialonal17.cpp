@@ -1015,8 +1015,8 @@ void GpbAtrialOnal17::makemap()
   pars["testFactor"]=&testFactor;
 }
 const char* GpbAtrialOnal17::type() const {
-    return "GpbAtrialOnal17";
-//    return "Human Atrial (Onal 2017)";
+//    return "GpbAtrialOnal17";
+    return "Human Atrial (Onal 2017)";
 }
 
 MAKE_OPTIONS_FUNCTIONS(GpbAtrialOnal17)

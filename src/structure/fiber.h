@@ -4,7 +4,7 @@
 #ifndef FIBER_H
 #define FIBER_H
 
-#include "node.h"
+#include "structure/node.h"
 #include <memory>
 namespace LongQt {
 

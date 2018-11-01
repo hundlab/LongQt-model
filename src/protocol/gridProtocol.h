@@ -8,7 +8,7 @@
 
 #include <set>
 #include "currentClampProtocol.h"
-#include "node.h"
+#include "structure/node.h"
 #include "grid.h"
 #include "gridmeasuremanager.h"
 #include "pvarsgrid.h"

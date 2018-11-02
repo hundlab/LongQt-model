@@ -326,6 +326,7 @@ void GridProtocol::mkmap() {
     pars.erase("paceflag");
 }
 
+const char* GridProtocol::name = "Grid Protocol";
 const char* GridProtocol::type() const {
-    return "Grid Protocol";
+    return name;
 }

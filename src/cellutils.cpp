@@ -59,51 +59,51 @@ const map<string, CellUtils::CellInitializer> CellUtils::cellMap = {
  * this map to give it a meaningful default simulation. We typically pace to 
  * study-state ~500,000 ms and output values for the last 5,000 ms
  */
-const map<string, list<pair<string,string>>> CellUtils::protocolCellDefaults = {
-    { ControlSa().type(), {{"paceflag","false"},{"stimval","-60"},{"stimdur","1"},
-                            {"tMax","500000"},{"writetime","495000"},{"bcl","1000"},
-                            {"numstims","500"}}},
-    { HRD09Control().type(), {{"paceflag","true"},{"stimval","-80"},
-                               {"stimdur","0.5"},{"tMax","500000"},{"writetime","495000"},
-                               {"bcl","1000"},{"numstims","500"}}},
-    { GpbAtrial().type(), {{"paceflag","true"},{"stimval","-12.5"},{"stimdur","5"},
-                            {"tMax","500000"},{"writetime","495000"},{"bcl","1000"},
-                            {"numstims","500"}}},
-    { GridCell().type(), {{"paceflag","true"},{"stimval","-12.5"},{"stimdur","5"},
-                           {"tMax","500000"},{"writetime","495000"},{"bcl","1000"},
-                           {"numstims","500"}}},
-    { HRD09BorderZone().type(), {{"paceflag","true"},{"stimval","-80"},
-                                  {"stimdur","0.5"},{"tMax","500000"},{"writetime","495000"},
-                                  {"bcl","1000"},{"numstims","500"}}},
-    { TNNP04Control().type(), {{"paceflag","true"},{"stimval","-60"},
-                                {"stimdur","1"},{"tMax","500000"},{"writetime","495000"},{"bcl","1000"},
-                                {"numstims","500"}}},
-    { OHaraRudyEndo().type(), {{"paceflag","true"},{"stimval","-80"},
-                                {"stimdur","0.5"},{"tMax","500000"},{"writetime","495000"},{"bcl","1000"},
-                                {"numstims","500"}}},
-    { OHaraRudyEpi().type(), {{"paceflag","true"},{"stimval","-80"},
-                               {"stimdur","0.5"},{"tMax","500000"},{"writetime","495000"},{"bcl","1000"},
-                               {"numstims","500"}}},
-    { OHaraRudyM().type(), {{"paceflag","true"},{"stimval","-80"},
-                             {"stimdur","0.5"},{"tMax","500000"},{"writetime","495000"},{"bcl","1000"},
-                             {"numstims","500"}}},
-    { GpbAtrialOnal17().type(), {{"paceflag","true"},{"stimval","-12.5"},{"stimdur","5"},{"tMax","500000"},{"writetime","495000"},{"bcl","1000"},{"numstims","500"}}},
-    { FR().type(), {{"paceflag","true"},{"stimval","-80"},{"stimdur","0.5"},{"tMax","1000"},{"writetime","0"},{"bcl","300"},{"numstims","20"}}}
+const map<pair<string,string>, map<string,string>> CellUtils::protocolCellDefaults = {
+    { {CurrentClamp::name,""}, {{"paceflag","true"},{"stimval","-60"},{"stimdur","5"},
+      {"tMax","500000"},{"writetime","495000"},{"bcl","1000"}, {"numstims","500"}}
+    },
+    { {CurrentClamp::name,ControlSa().type()}, {{"paceflag","false"},{"stimdur","1"}}},
+    { {CurrentClamp::name,HRD09Control().type()}, {{"stimval","-80"},{"stimdur","0.5"}}},
+    { {CurrentClamp::name,GpbAtrial().type()}, {{"stimval","-12.5"}}},
+    { {CurrentClamp::name,HRD09BorderZone().type()}, {{"stimval","-80"},{"stimdur","0.5"}}},
+    { {CurrentClamp::name,TNNP04Control().type()}, {{"stimdur","1"}}},
+    { {CurrentClamp::name,OHaraRudyEndo().type()}, {{"stimval","-80"},{"stimdur","0.5"}}},
+    { {CurrentClamp::name,OHaraRudyEpi().type()}, {{"stimval","-80"},{"stimdur","0.5"}}},
+    { {CurrentClamp::name,OHaraRudyM().type()}, {{"stimval","-80"},{"stimdur","0.5"}}},
+    { {CurrentClamp::name,GpbAtrialOnal17().type()}, {{"stimval","-12.5"}}},
+    { {CurrentClamp::name,FR().type()}, {{"stimval","-80"},{"stimdur","0.5"}}},
+
+    { {VoltageClamp::name,""}, {{"writetime","0"},{"writeint","20"}}},
+
+    { {GridProtocol::name,""}, {{"stimval","-60"},{"stimdur","5"},
+      {"tMax","500000"},{"writetime","495000"},{"bcl","1000"}, {"numstims","500"},{"stimval","-80"}}},
+    { {GridProtocol::name,GridCell().type()}, {}},
 };
 
 void CellUtils::set_default_vals(Protocol &proto) {
-    const string& name = proto.cell()->type();
+    const string& proto_type = proto.type();
+    const string& cell_type = proto.cell()->type();
+    map<string,string> defaults;
+    map<string,string> vals;
     try {
-        const auto& vals = CellUtils::protocolCellDefaults.at(name);
-        for(auto& val :vals) {
-            try {
-                proto.pars.at(val.first).set(val.second);
-            } catch(bad_function_call) {
-            } catch(out_of_range) {
-                qDebug("CellUtils: default %s not in proto pars", val.first.c_str());
-            };
-        }
-    } catch(out_of_range) {}
+        defaults = CellUtils::protocolCellDefaults.at({proto_type,""});
+    } catch(out_of_range) {
+        qDebug("CellUtils: no entry for (%s,%s) in cell defaults", proto_type.c_str(), "Default");
+    }
+    try {
+        vals = CellUtils::protocolCellDefaults.at({proto_type,cell_type});
+        vals.insert(defaults.begin(),defaults.end());
+    } catch(out_of_range) {
+        qDebug("CellUtils: no entry for (%s,%s) in cell defaults", proto_type.c_str(), cell_type.c_str());
+    }
+    for(auto& val :vals) {
+        try {
+            proto.pars.at(val.first).set(val.second);
+        } catch(out_of_range) {
+            qDebug("CellUtils: default %s not in %s pars", val.first.c_str(), proto_type.c_str());
+        };
+    }
 }
 
 /*
@@ -111,9 +111,9 @@ void CellUtils::set_default_vals(Protocol &proto) {
  * longqt
  */
 const map<string, CellUtils::ProtocolInitializer> CellUtils::protoMap = {
-    {CurrentClamp().type(), [] () {return make_shared<CurrentClamp>();}},
-    {VoltageClamp().type(), [] () {return make_shared<VoltageClamp>();}},
-    {GridProtocol().type(), [] () {return make_shared<GridProtocol>();}}
+    {CurrentClamp::name, [] () {return make_shared<CurrentClamp>();}},
+    {VoltageClamp::name, [] () {return make_shared<VoltageClamp>();}},
+    {GridProtocol::name, [] () {return make_shared<GridProtocol>();}}
 };
 
 std::string CellUtils::strprintf(const char * format, ...) {
@@ -133,13 +133,13 @@ std::string CellUtils::strprintf(const char * format, ...) {
 CellUtils::Side CellUtils::flipSide(CellUtils::Side s)
 {
     switch(s) {
-    case CellUtils::Side::top:
-        return CellUtils::Side::bottom;
-    case CellUtils::Side::bottom:
-        return CellUtils::Side::top;
-    case CellUtils::Side::left:
-        return CellUtils::Side::right;
-    case CellUtils::Side::right:
-        return CellUtils::Side::left;
+    case Side::top:
+        return Side::bottom;
+    case Side::bottom:
+        return Side::top;
+    case Side::left:
+        return Side::right;
+    case Side::right:
+        return Side::left;
     }
 }

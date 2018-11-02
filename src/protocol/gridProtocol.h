@@ -49,6 +49,7 @@ class GridProtocol : public CurrentClamp {
         std::set<std::pair<int,int>> stimNodes2;
         double stimval2, stimdur2, bcl2, stimt2;
 
+        const static char* name;
         const char* type() const override;
 
     private:

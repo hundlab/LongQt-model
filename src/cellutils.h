@@ -44,8 +44,9 @@ namespace CellUtils {
      * this map is used to setup default simulations in longqt add your new cell to 
      * this map to give it a meaningful default simulation. We typically pace to 
      * study-state ~500,000 ms and output values for the last 5,000 ms
+     * (protocol name, cell name) -> {(property name: property value)}
      */
-    extern const std::map<std::string, std::list<std::pair<std::string,std::string>>> protocolCellDefaults;
+    extern const std::map<std::pair<std::string,std::string>, std::map<std::string,std::string>> protocolCellDefaults;
 
     //declare the ProtocolIntializer type
     typedef std::function<std::shared_ptr<Protocol>(void)> ProtocolInitializer;

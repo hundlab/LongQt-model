@@ -217,6 +217,8 @@ void CurrentClamp::mkmap() {
                 numtrials = temp;
                 this->pvars().calcIonChanParams();});
 }
+
+const char* CurrentClamp::name = "Current Clamp Protocol";
 const char* CurrentClamp::type() const {
-    return "Current Clamp Protocol";
+    return name;
 }

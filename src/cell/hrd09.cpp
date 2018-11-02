@@ -800,9 +800,9 @@ void HRD09Control::makemap()
   vars["caJsr"]=&caJsr;
   vars["caNsr"]=&caNsr;
   vars["trpn"]=&trpn;
-  vars["cmdn"]=&cmdn;
+  vars["CaM"]=&cmdn;
   vars["csqn"]=&csqn;
-  vars["CaM"]=&caM;
+  vars["CaMKII"]=&caM;
   vars["fBound"]=&fBound;
 //  vars["fBlock"]=&fBlock;
   vars["fI"]=&fI;

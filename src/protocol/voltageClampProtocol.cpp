@@ -190,6 +190,8 @@ void VoltageClamp::mkmap() {
 
 
 }
+const char* VoltageClamp::name = "Voltage Clamp Protocol";
 const char* VoltageClamp::type() const {
-    return "Voltage Clamp Protocol";
+    return name;
 }
+

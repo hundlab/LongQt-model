@@ -625,8 +625,8 @@ void OHaraRudy::makemap()
 	vars["JdiffNa"]=&JdiffNa;
 	vars["JdiffK"]=&JdiffK;
 	vars["Jleak"]=&Jleak;
-	vars["CaMKa"]=&CaMKa;
-	vars["CaMKb"]=&CaMKb;
+    vars["CaMKIIa"]=&CaMKa;
+    vars["CaMKIIb"]=&CaMKb;
  
 	vars["naI"]=&naI;
 	vars["nass"]=&nass;
@@ -701,11 +701,11 @@ void OHaraRudy::makemap()
 
 
 		//CaMK paramaters
-	pars["aCaMK"]=&aCaMK;
-	pars["bCaMK"]=&bCaMK;
+    pars["aCaMKII"]=&aCaMK;
+    pars["bCaMKII"]=&bCaMK;
 	pars["CaMKo"]=&CaMKo;
 	pars["KmCaM"]=&KmCaM;
-	pars["KmCaMK"]=&KmCaMK;
+    pars["KmCaMKII"]=&KmCaMK;
     pars["IcalFactor"] = &IcalFactor;
 
 };

@@ -30,6 +30,7 @@ class GridProtocol : public CurrentClamp {
         virtual int readpars(QXmlStreamReader& xml);
 
         virtual std::shared_ptr<Cell> cell() const override;
+        std::shared_ptr<GridCell> gridCell() const;
         virtual void cell(std::shared_ptr<Cell> cell) override;
         virtual bool cell(const std::string& type) override;
         virtual std::list<std::string> cellOptions() override;

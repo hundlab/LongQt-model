@@ -204,6 +204,11 @@ shared_ptr<Cell> GridProtocol::cell() const
     return __cell;
 }
 
+std::shared_ptr<GridCell> GridProtocol::gridCell() const
+{
+    return __cell;
+}
+
 void GridProtocol::cell(shared_ptr<Cell> cell) {
     if(!cell || string(cell->type()) != "gridCell") {
         return;

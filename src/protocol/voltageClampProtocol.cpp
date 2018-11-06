@@ -1,14 +1,13 @@
 #include "voltageClampProtocol.h"
 #include "pvarsvoltageclamp.h"
+#include <algorithm>
 using namespace LongQt;
 using namespace std;
 
 VoltageClamp::VoltageClamp()  : Protocol(){
     __measureMgr.reset(new MeasureManager(cell()));
-    v1 = v2 = v3 = v4 = v5 = 0;
-    t1 = t2 = t3 = t4 = t5 = 0;
+    clampsHint = 0;
     this->mkmap();
-
     CellUtils::set_default_vals(*this);
 }
 //overriden deep copy funtion
@@ -24,6 +23,35 @@ VoltageClamp& VoltageClamp::operator=(const VoltageClamp& toCopy) {
     this->copy(toCopy);
     this->CCcopy(toCopy);
     return *this;
+}
+
+bool VoltageClamp::writepars(QXmlStreamWriter &xml)
+{
+    bool toReturn = true;
+    xml.writeStartElement("clamps");
+    for(auto clamp : __clamps) {
+        xml.writeStartElement("clamp");
+        xml.writeAttribute("time",QString::number(clamp.first));
+        xml.writeCharacters(QString::number(clamp.second));
+        xml.writeEndElement();
+    }
+    xml.writeEndElement();
+    toReturn &= Protocol::writepars(xml);
+    return toReturn;
+}
+
+int VoltageClamp::readpars(QXmlStreamReader &xml)
+{
+    if(!CellUtils::readNext(xml, "clamps")) return 1;
+    vector<pair<double,double>> clamps;
+    while(!xml.atEnd() && xml.readNextStartElement()){
+        double time = xml.attributes().value("time").toDouble();
+        xml.readNext();
+        double voltage = xml.text().toDouble();
+        clamps.push_back({time,voltage});
+        xml.readNext();
+    }
+    this->clamps(clamps);
 }
 shared_ptr<Cell> VoltageClamp::cell() const
 {
@@ -49,16 +77,7 @@ void VoltageClamp::CCcopy(const VoltageClamp& toCopy) {
     this->mkmap();
 
     __cell.reset(toCopy.cell()->clone());
-    v1 = toCopy.v1;
-    v2= toCopy.v2;
-    v3 = toCopy.v3;
-    v4 = toCopy.v4;
-    v5 = toCopy.v5;
-    t1 = toCopy.t1;
-    t2 = toCopy.t2;
-    t3 = toCopy.t3;
-    t4 = toCopy.t4;
-    t5 = toCopy.t5;
+    __clamps = toCopy.__clamps;
     __pvars = unique_ptr<PvarsVoltageClamp>(new PvarsVoltageClamp(*toCopy.__pvars));
     __pvars->protocol(this);
     __measureMgr.reset(toCopy.__measureMgr->clone());
@@ -68,17 +87,15 @@ void VoltageClamp::CCcopy(const VoltageClamp& toCopy) {
 // External stimulus.
 int VoltageClamp::clamp()
 {
-    if(__cell->t >= t5 && t5 != 0) {
-        vM = __cell->vOld = v5;
-    } else if(__cell->t >= t4 && t4 != 0) {
-        vM = __cell->vOld = v4;
-    } else if(__cell->t >= t3 && t3 != 0) {
-        vM = __cell->vOld = v3;
-    } else if(__cell->t >= t2 && t2 != 0) {
-        vM = __cell->vOld = v2;
-    } else if(__cell->t >= t1) {
-        vM = __cell->vOld = v1;
+    double t = __cell->t;
+    if(__clamps.empty() || t < __clamps[0].first)
+        return 1;
+    int pos = clampsHint;
+    while(pos < __clamps.size() && __clamps[pos].first <= t) {
+        clampsHint = pos;
+        pos += 1;
     }
+    vM = __cell->vOld = __clamps[clampsHint].second;
     return 1;
 };
 
@@ -158,14 +175,10 @@ bool VoltageClamp::runTrial() {
     return true;
 }
 void VoltageClamp::readInCellState(bool read) {
+    //BROKEN
     if(read) {
         __cell->readCellState(cellStateDir.absolutePath().toStdString()+"/"+cellStateFile+".xml");
         this->tMax += this->__cell->t;
-        this->t1 += this->__cell->t;
-        this->t2 += this->__cell->t;
-        this->t3 += this->__cell->t;
-        this->t4 += this->__cell->t;
-        this->t5 += this->__cell->t;
     }
 }
 
@@ -173,22 +186,47 @@ MeasureManager &VoltageClamp::measureMgr()
 {
     return *this->__measureMgr;
 }
+
+int VoltageClamp::insertClamp(double time, double voltage)
+{
+    pair<double,double> p = {time, voltage};
+    auto pos = std::lower_bound(__clamps.begin(), __clamps.end(), p,
+        [] (pair<double, double> f, pair<double, double> s) { return f.first < s.first;}
+    );
+    int posInt = pos-__clamps.begin();
+    __clamps.insert(pos,p);
+    return posInt;
+}
+
+void VoltageClamp::changeClampVoltage(int pos, double voltage)
+{
+    if(pos >= __clamps.size() || pos < 0)
+        return;
+    __clamps[pos] = {__clamps[pos].first,voltage};
+}
+void VoltageClamp::removeClamp(int pos)
+{
+    if(pos >= __clamps.size() || pos < 0)
+        return;
+    __clamps.erase(__clamps.begin()+pos);
+}
+
+const std::vector<pair<double, double> >& VoltageClamp::clamps()
+{
+    return __clamps;
+}
+
+void VoltageClamp::clamps(vector<pair<double, double> > clamps)
+{
+    __clamps = clamps;
+    std::sort(__clamps.begin(),__clamps.end(),
+        [] (pair<double, double> f, pair<double, double> s) { return f.first < s.first;}
+        );
+}
 void VoltageClamp::mkmap() {
     pars.erase("numtrials");
     pars.erase("meastime");
     GetSetRef toInsert;
-    pars["v1"] = toInsert.Initialize("double",[this] () {return std::to_string(v1);},[this] (const string& value) {v1 = std::stod(value);});
-    pars["v2"] = toInsert.Initialize("double",[this] () {return std::to_string(v2);},[this] (const string& value) {v2 = std::stod(value);});
-    pars["v3"] = toInsert.Initialize("double",[this] () {return std::to_string(v3);},[this] (const string& value) {v3 = std::stod(value);});
-    pars["v4"] = toInsert.Initialize("double",[this] () {return std::to_string(v4);},[this] (const string& value) {v4 = std::stod(value);});
-    pars["v5"] = toInsert.Initialize("double",[this] () {return std::to_string(v5);},[this] (const string& value) {v5 = std::stod(value);});
-    pars["t1"] = toInsert.Initialize("double",[this] () {return std::to_string(t1);},[this] (const string& value) {t1 = std::stod(value);});
-    pars["t2"] = toInsert.Initialize("double",[this] () {return std::to_string(t2);},[this] (const string& value) {t2 = std::stod(value);});
-    pars["t3"] = toInsert.Initialize("double",[this] () {return std::to_string(t3);},[this] (const string& value) {t3 = std::stod(value);});
-    pars["t4"] = toInsert.Initialize("double",[this] () {return std::to_string(t4);},[this] (const string& value) {t4 = std::stod(value);});
-    pars["t5"] = toInsert.Initialize("double",[this] () {return std::to_string(t5);},[this] (const string& value) {t5 = std::stod(value);});
-
-
 }
 const char* VoltageClamp::name = "Voltage Clamp Protocol";
 const char* VoltageClamp::type() const {

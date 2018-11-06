@@ -23,6 +23,9 @@ class VoltageClamp : public Protocol {
     VoltageClamp* clone();
     VoltageClamp& operator=(const VoltageClamp& toCopy);
 
+    virtual bool writepars(QXmlStreamWriter& xml);
+    virtual int readpars(QXmlStreamReader& xml);
+
     virtual std::shared_ptr<Cell> cell() const override;
     virtual void cell(std::shared_ptr<Cell> cell) override;
 
@@ -34,14 +37,19 @@ class VoltageClamp : public Protocol {
 
     virtual MeasureManager& measureMgr() override;
 
-    double v1, v2, v3, v4, v5;
-    double t1, t2, t3, t4, t5;
+    int insertClamp(double time, double voltage);
+    void changeClampVoltage(int pos, double voltage);
+    void removeClamp(int pos);
+    const std::vector<std::pair<double, double> > &clamps();
+    void clamps(std::vector<std::pair<double,double>> clamps);
 
     const static char* name;
     const char* type() const override;
 
   private:
-	int clamp();
+    int clampsHint;
+    std::vector<std::pair<double,double>> __clamps;
+    int clamp();
     void CCcopy(const VoltageClamp& toCopy);
     void mkmap();
 

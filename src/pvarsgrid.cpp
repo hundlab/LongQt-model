@@ -5,19 +5,11 @@ using namespace std;
 
 PvarsGrid::PvarsGrid(Grid* grid): grid(grid) {}
 
-PvarsGrid::PvarsGrid(const PvarsGrid& o) {
-    this->grid = o.grid;
+PvarsGrid::PvarsGrid(const PvarsGrid& o, Grid* grid) {
+    this->grid = grid;
     for(auto pvar: *(o.__pvars)) {
         this->__pvars->insert({pvar.first,new MIonChanParam(*pvar.second)});
     }
-}
-
-PvarsCell* PvarsGrid::clone() {
-    return new PvarsGrid(*this);
-}
-
-void PvarsGrid::setGrid(Grid* grid) {
-    this->grid = grid;
 }
 
 void PvarsGrid::setIonChanParams() {

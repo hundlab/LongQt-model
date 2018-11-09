@@ -21,7 +21,6 @@ class GridProtocol : public CurrentClamp {
         GridProtocol* clone();
         GridProtocol& operator=(const GridProtocol& toCopy);
 
-        virtual void setupTrial() override;
         virtual bool runTrial() override;
         int stim();
         std::map<std::string, CellUtils::CellInitializer>& getCellMap();
@@ -53,6 +52,8 @@ class GridProtocol : public CurrentClamp {
         const static char* name;
         const char* type() const override;
 
+    protected:
+        virtual void setupTrial() override;
     private:
         void CCcopy(const GridProtocol& toCopy);
         void mkmap();

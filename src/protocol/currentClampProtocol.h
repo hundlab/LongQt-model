@@ -32,9 +32,7 @@ class CurrentClamp : public Protocol {
 
     virtual MeasureManager& measureMgr() override;
 
-    virtual void setupTrial() override;
     virtual bool runTrial() override;
-    void readInCellState(bool read) override;
 
     double bcl,stimval,stimdur,stimt,stimbegin,stimend;
     int numstims;   //variables for pacing.
@@ -45,6 +43,9 @@ class CurrentClamp : public Protocol {
 
   protected:
     virtual int stim();
+    virtual void readInCellState(bool read) override;
+    virtual void setupTrial() override;
+
     double stimcounter;
   private:
     void CCcopy(const CurrentClamp& toCopy);

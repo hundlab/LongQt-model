@@ -4,19 +4,13 @@ using namespace std;
 
 PvarsCurrentClamp::PvarsCurrentClamp(Protocol *proto): proto(proto) {}
 
-PvarsCurrentClamp::PvarsCurrentClamp(const PvarsCurrentClamp& o) {
-    this->proto = o.proto;
+PvarsCurrentClamp::PvarsCurrentClamp(const PvarsCurrentClamp& o, Protocol* proto) {
+    this->proto = proto;
     for(auto pvar: *(o.__pvars)) {
         this->__pvars->insert({pvar.first,new TIonChanParam(*pvar.second)});
     }
 }
 
-PvarsCell* PvarsCurrentClamp::clone() {
-    return new PvarsCurrentClamp(*this);
-}
-void PvarsCurrentClamp::protocol(Protocol* proto) {
-    this->proto = proto;
-}
 void PvarsCurrentClamp::setIonChanParams() {
     int trial = proto->trial();
     if(this->__pvars->size() > 0 && trial >= this->__pvars->begin()->second->trials.size()) {
@@ -34,7 +28,7 @@ void PvarsCurrentClamp::calcIonChanParams() {
 }
 void PvarsCurrentClamp::calcIonChanParam(TIonChanParam* param) {
     param->trials.clear();
-    int numtrials = std::stoi(proto->pars["numtrials"].get());
+    int numtrials = std::stoi(proto->parsStr("numtrials"));
     for(int i = 0; i < numtrials; i++) {
         double val = 0;
         switch(param->dist) {

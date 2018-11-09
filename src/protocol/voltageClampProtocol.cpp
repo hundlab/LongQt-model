@@ -51,6 +51,7 @@ int VoltageClamp::readpars(QXmlStreamReader &xml)
         clamps.push_back({time,voltage});
         xml.readNext();
     }
+    this->Protocol::readpars(xml);
     this->clamps(clamps);
 }
 shared_ptr<Cell> VoltageClamp::cell() const
@@ -59,10 +60,7 @@ shared_ptr<Cell> VoltageClamp::cell() const
 }
 
 void VoltageClamp::cell(shared_ptr<Cell> cell) {
-    if(__measureMgr) {
-        __measureMgr->clear();
-        __measureMgr->cell(cell);
-    }
+    __measureMgr.reset(new MeasureManager(cell));
     if(__pvars)
         pvars().clear();
     this->__cell = cell;
@@ -76,27 +74,25 @@ PvarsCell &VoltageClamp::pvars() {
 void VoltageClamp::CCcopy(const VoltageClamp& toCopy) {
     this->mkmap();
 
+    clampsHint = 0;
     __cell.reset(toCopy.cell()->clone());
     __clamps = toCopy.__clamps;
-    __pvars = unique_ptr<PvarsVoltageClamp>(new PvarsVoltageClamp(*toCopy.__pvars));
-    __pvars->protocol(this);
-    __measureMgr.reset(toCopy.__measureMgr->clone());
-    __measureMgr->cell(cell());
+    __pvars.reset(new PvarsVoltageClamp(*toCopy.__pvars, this));
+    __measureMgr.reset(new MeasureManager(*toCopy.__measureMgr, cell()));
 }
 
 // External stimulus.
-int VoltageClamp::clamp()
+void VoltageClamp::clamp(double& vM)
 {
     double t = __cell->t;
     if(__clamps.empty() || t < __clamps[0].first)
-        return 1;
+        return;
     int pos = clampsHint;
     while(pos < __clamps.size() && __clamps[pos].first <= t) {
         clampsHint = pos;
         pos += 1;
     }
     vM = __cell->vOld = __clamps[clampsHint].second;
-    return 1;
 };
 
 void VoltageClamp::setupTrial() {
@@ -108,10 +104,10 @@ void VoltageClamp::setupTrial() {
     __cell->setConstantSelection(temp);
     temp.clear();
 
-    time = __cell->t = 0.0;      // reset time
+    __cell->t = 0.0;      // reset time
     this->readInCellState(this->readCellState);
     this->pvars().setIonChanParams();
-    doneflag=1;     // reset doneflag
+    runflag=true;     // reset doneflag
 
     this->__measureMgr->setupMeasures(
         CellUtils::strprintf((getDataDir()+"/"+propertyoutfile).c_str(),__trial));
@@ -127,11 +123,12 @@ bool VoltageClamp::runTrial() {
     //###############################################################
     // Every time step, currents, concentrations, and Vm are calculated.
     //###############################################################
+    const double& time = __cell->t;
     int pCount = 0;
     int numrunsLeft = this->numruns;
     double nextRunT = this->firstRun + this->runEvery;
 
-    while(int(doneflag)&&(time<tMax)){
+    while(runflag&&(time<tMax)){
         if(numrunsLeft > 0 && time >= nextRunT) {
             this->runDuring(*this);
             --numrunsLeft;
@@ -139,21 +136,20 @@ bool VoltageClamp::runTrial() {
         }
 
         //what should stimt be made to be??
-        time = __cell->tstep(0.0);    // Update time
+        __cell->tstep(0.0);    // Update time
         __cell->updateCurr();    // Update membrane currents
 
         __cell->updateConc();   // Update ion concentrations
-        vM=__cell->updateV();     // Update transmembrane potential
+        double vM=__cell->updateV();     // Update transmembrane potential
 
-        clamp();
+        clamp(vM);
 
         //##### Output select variables to file  ####################
         if(int(measflag)==1&&__cell->t>meastime){
             this->__measureMgr->measure(time);
         }
-        if (int(writeflag)==1&&time>writetime&&pCount%int(writeint)==0) {
+        if (writeflag && time>writetime && (pCount%writeint==0)) {
             __cell->writeVariables();
-            //                douts[mvnames.size()+(trial+1)*(mvnames.size()+1)].writevals(datamap,writefile,'a');
         }
         __cell->setV(vM); //Overwrite vOld with new value
         pCount++;
@@ -224,8 +220,8 @@ void VoltageClamp::clamps(vector<pair<double, double> > clamps)
         );
 }
 void VoltageClamp::mkmap() {
-    pars.erase("numtrials");
-    pars.erase("meastime");
+    __pars.erase("numtrials");
+    __pars.erase("meastime");
     GetSetRef toInsert;
 }
 const char* VoltageClamp::name = "Voltage Clamp Protocol";

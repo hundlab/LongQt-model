@@ -12,30 +12,15 @@ MeasureManager::~MeasureManager() {
     }
 }
 
-MeasureManager::MeasureManager(const MeasureManager& o) {
+MeasureManager::MeasureManager(const MeasureManager& o, std::shared_ptr<Cell> cell) : __cell(cell) {
     this->copy(o);
 }
 
-MeasureManager* MeasureManager::clone() {
-    return new MeasureManager(*this);
-}
-
-shared_ptr<Cell> MeasureManager::cell() {
-    return this->__cell;
-}
 void MeasureManager::copy(const MeasureManager& o) {
     __cell = o.__cell;
     variableSelection = o.variableSelection;
     __percrepol = o.__percrepol;
     last = o.last;
-}
-
-void MeasureManager::cell(shared_ptr<Cell> cell) {
-    if(cell->type() != __cell->type()) {
-        this->variableSelection.clear();
-        this->measures.clear();
-    }
-    this->__cell = cell;
 }
 
 map<string,set<string>> MeasureManager::selection() {
@@ -149,12 +134,6 @@ void MeasureManager::write(QFile* file) {
     if(ofile.write("\n")==-1) {
         qWarning("MeasureManager: File cound not be written to");
     }
-}
-
-void MeasureManager::clear() {
-    __percrepol = 50;
-    variableSelection.clear();
-    measures.clear();
 }
 
 void MeasureManager::close() {

@@ -31,7 +31,6 @@ class VoltageClamp : public Protocol {
 
     virtual PvarsCell& pvars() override;
 
-	virtual void setupTrial() override;
     virtual bool runTrial() override;
 	void readInCellState(bool read) override;
 
@@ -40,16 +39,19 @@ class VoltageClamp : public Protocol {
     int insertClamp(double time, double voltage);
     void changeClampVoltage(int pos, double voltage);
     void removeClamp(int pos);
-    const std::vector<std::pair<double, double> > &clamps();
+    const std::vector<std::pair<double, double>> &clamps();
     void clamps(std::vector<std::pair<double,double>> clamps);
 
     const static char* name;
     const char* type() const override;
 
+  protected:
+    virtual void setupTrial() override;
+
   private:
     int clampsHint;
     std::vector<std::pair<double,double>> __clamps;
-    int clamp();
+    void clamp(double& vM);
     void CCcopy(const VoltageClamp& toCopy);
     void mkmap();
 

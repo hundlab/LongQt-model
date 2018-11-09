@@ -99,7 +99,7 @@ void CellUtils::set_default_vals(Protocol &proto) {
     }
     for(auto& val :vals) {
         try {
-            proto.pars.at(val.first).set(val.second);
+            proto.parsStr(val.first,val.second);
         } catch(out_of_range) {
             qDebug("CellUtils: default %s not in %s pars", val.first.c_str(), proto_type.c_str());
         };

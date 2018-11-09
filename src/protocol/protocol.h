@@ -51,13 +51,10 @@ class Protocol :  public std::enable_shared_from_this<Protocol>
         virtual int runSim();
         virtual int readpars(QXmlStreamReader& xml);
         virtual bool writepars(QXmlStreamWriter& xml); //write the contents of pars to a file
-        virtual void readInCellState(bool read);
-        virtual void writeOutCellState(bool write);
 
         virtual void trial(unsigned int current_trial);
         virtual unsigned int trial() const;
         virtual bool runTrial() = 0;
-        virtual void setupTrial();
         void setDataDir(std::string location = "", std::string basedir = "", std::string appendtxt = "");
         void mkDirs();
         std::string getDataDir();
@@ -73,17 +70,14 @@ class Protocol :  public std::enable_shared_from_this<Protocol>
 
 
         //##### Declare class variables ##############
-        double vM;         // membrane potential, mV
-        double time;       // time, ms
+
         virtual const char* type() const = 0;
         //##### Declare class params ##############
         double meastime,writetime;
-        double writeint;
-        double doneflag;
+        int writeint;
         bool writeflag,measflag;
         bool writeCellState, readCellState;
         int numtrials;
-        int writestd;
         double tMax;
 
         std::string readfile,savefile,dvarfile,pvarfile, measfile, simvarfile,
@@ -95,24 +89,33 @@ class Protocol :  public std::enable_shared_from_this<Protocol>
         QDir cellStateDir;
 
         void setRunBefore(std::function<void(Protocol&)>);
-        std::function<void(Protocol&)> getRunBefore();
-        void setRunDuring(std::function<void(Protocol&)>);
-        std::function<void(Protocol&)> getRunDuring();
+        void setRunDuring(std::function<void(Protocol&)>, double firstRun = -1, double runEvery = -1, int numruns = -1);
+        void setRunAfter(std::function<void(Protocol&)>);
         int numruns = 0;
         double firstRun = 0;
         double runEvery = 0;
-        void setRunAfter(std::function<void(Protocol&)>);
-        std::function<void(Protocol&)> getRunAfter();
 
-        //##### Declare maps for vars/params ##############
-        std::map<std::string, GetSetRef> pars;
+        std::string parsStr(std::string name);
+        void parsStr(std::string name, std::string val);
+        std::string parsType(std::string name);
+        std::list<std::pair<std::string,std::string>> parsList();
+
 
 protected:
         void copy(const Protocol& toCopy);
+
+        std::map<std::string, GetSetRef> __pars;
+
+        virtual void readInCellState(bool read);
+        virtual void writeOutCellState(bool write);
+        virtual void setupTrial();
+
         int __trial;
         std::function<void(Protocol&)> runBefore;
         std::function<void(Protocol&)> runDuring;
         std::function<void(Protocol&)> runAfter;
+
+        bool runflag; //fix to bool
 private:
         void mkmap();
 };

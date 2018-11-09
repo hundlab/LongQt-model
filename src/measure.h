@@ -17,6 +17,9 @@
 #include <limits>
 #include <cmath>
 
+#define INF std::numeric_limits<double>::infinity()
+#define Q_NAN std::numeric_limits<double>::quiet_NaN()
+
 namespace LongQt {
 
 class Measure
@@ -52,16 +55,16 @@ class Measure
 
         //		map<string, double> lastMap;
 
-        double varold = NAN;
+        double varold = Q_NAN;
 //        double vartakeoff=-100; //var value at point of max deflection.
-        double told = NAN;
+        double told = Q_NAN;
 //        double durtime1;
         double derivold = 0; //dv/dt from prev. time step
         double derivt = 0;   // time of max deriv.
-        double peak = std::numeric_limits<double>::min();      // max var value
-        double maxt = NAN;    //time of max value.
-        double min = std::numeric_limits<double>::max();       // min var value
-        double mint = NAN;    //time of min value.
+        double peak = -INF;      // max var value
+        double maxt = Q_NAN;    //time of max value.
+        double min = INF;       // min var value
+        double mint = Q_NAN;    //time of min value.
         double maxderiv = 0;
         double deriv = 0;
         //		double maxderiv1;
@@ -81,5 +84,6 @@ class Measure
         void copy(const Measure& toCopy);
 };
 } //LongQt
-
+#undef INF
+#undef Q_NAN
 #endif

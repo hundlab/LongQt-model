@@ -24,10 +24,8 @@ class PvarsGrid : public PvarsCell {
 
         //Functions
         PvarsGrid(Grid* grid);
-        PvarsGrid(const PvarsGrid&);
+        PvarsGrid(const PvarsGrid&, Grid *grid);
         virtual ~PvarsGrid() = default;
-        virtual PvarsCell* clone();
-        void setGrid(Grid* grid);
 
         virtual void setIonChanParams();
         virtual void calcIonChanParams();

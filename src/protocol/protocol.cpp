@@ -35,7 +35,7 @@ using namespace std;
 Protocol::Protocol()
 {
     //##### Assign default parameters ##################
-    doneflag = 1;       // set to 0 to end simulation
+    runflag = true;       // set to 0 to end simulation
 
     tMax = 10000;   // max simulation time, ms
 
@@ -45,7 +45,6 @@ Protocol::Protocol()
 
     __trial = 0;
 
-    writestd = 0;
     writeflag = 1;      // 1 to write data to file during sim
     dvarfile = "dvars.txt";  // File with SV to write.
     writetime = 0;      // time to start writing.
@@ -71,10 +70,6 @@ Protocol::Protocol()
 
 
     //##### Initialize variables ##################
-    time=0.0;
-    vM =  -88.0;
-    //type = "Cell";  // class name
-
     this->runBefore = ([] (Protocol&) {});
     this->runDuring = [] (Protocol&) {};
     this->runAfter = [] (Protocol&) {};
@@ -115,7 +110,7 @@ void Protocol::copy(const Protocol& toCopy) {
     datadir = toCopy.datadir;
     cellStateDir = toCopy.cellStateDir;
 
-    doneflag = toCopy.doneflag;       // set to 0 to end simulation
+    runflag = toCopy.runflag;       // set to 0 to end simulation
 
     tMax = toCopy.tMax;   // max simulation time, ms
 
@@ -123,8 +118,6 @@ void Protocol::copy(const Protocol& toCopy) {
     savefile = toCopy.savefile; // File to save final SV
 
     __trial = toCopy.__trial;
-    writestd = toCopy.writestd;
-    writeflag = toCopy.writeflag;      // 1 to write data to file during sim
     dvarfile = toCopy.dvarfile;  // File with SV to write.
     writetime = toCopy.writetime;      // time to start writing.
     writeint = toCopy.writeint;     // interval for writing.
@@ -147,9 +140,6 @@ void Protocol::copy(const Protocol& toCopy) {
     readCellState = toCopy.readCellState;
 
     //##### Initialize variables ##################
-    time= toCopy.time;
-    vM = toCopy.vM;
-
     numruns = toCopy.numruns;
     firstRun = toCopy.firstRun;
     runEvery = toCopy.runEvery;
@@ -199,7 +189,7 @@ int Protocol::readpars(QXmlStreamReader& xml) {
     for(int i = 0; i <2; ++i) {
         for(auto& pair: readValues) {
             try {
-                pars.at(pair.first).set(pair.second);
+                __pars.at(pair.first).set(pair.second);
             } catch (const std::out_of_range&) {
                 if(i == 1)
                     qWarning("Protocol: %s not in pars", name.c_str());
@@ -213,7 +203,7 @@ int Protocol::readpars(QXmlStreamReader& xml) {
 //############################################################
 bool Protocol::writepars(QXmlStreamWriter& xml) {
     xml.writeStartElement("pars");
-    for(auto it = pars.begin(); it != pars.end(); it++){
+    for(auto it = __pars.begin(); it != __pars.end(); it++){
         xml.writeStartElement("par");
         xml.writeAttribute("name",it->first.c_str());
         xml.writeCharacters(it->second.get().c_str());
@@ -223,7 +213,7 @@ bool Protocol::writepars(QXmlStreamWriter& xml) {
     return 0;
 }
 void Protocol::trial(unsigned int current_trial) {
-    if(current_trial >= numtrials) return;
+    if(current_trial < 0 || current_trial >= numtrials) return;
     __trial = current_trial;
 }
 
@@ -244,27 +234,50 @@ bool Protocol::cell(const string& type) {
     }
 }
 
-/*void Protocol::cell(shared_ptr<Cell> cell) {
-    if(measureMgr) {
-        measureMgr().clear();
-        measureMgr().cell(cell);
-    }
-
-    pvars().clear();
-    this->__cell.reset(cell);
-}
-
-shared_ptr<Cell> Protocol::cell() const
-{
-    return __cell.get();
-}*/
-
 list<string> Protocol::cellOptions() {
     list<string> options;
     for(auto& cellOpt : CellUtils::cellMap) {
         options.push_back(cellOpt.first);
     }
     return options;
+}
+
+string Protocol::parsStr(string name)
+{
+    try {
+        return __pars.at(name).get();
+    } catch(std::out_of_range) {
+        qDebug("Protocol: Par ", name, " not in pars");
+    }
+    return "";
+}
+
+void Protocol::parsStr(string name, string val)
+{
+    try {
+        __pars.at(name).set(val);
+    } catch(std::out_of_range) {
+        qDebug("Protocol: Par ", name, " not in pars");
+    }
+}
+
+string Protocol::parsType(string name)
+{
+    try {
+        return __pars.at(name).type;
+    } catch(std::out_of_range) {
+        qDebug("Protocol: Par ", name, " not in pars");
+    }
+    return "";
+}
+
+list<pair<string, string>> Protocol::parsList()
+{
+    list<pair<string,string>> parsL;
+    for(auto& par: __pars) {
+        parsL.push_back({par.first,par.second.type});
+    }
+    return parsL;
 }
 
 void Protocol::readInCellState(bool read) {
@@ -305,41 +318,39 @@ string Protocol::getDataDir() {
 
 void Protocol::mkmap() {
     GetSetRef toInsert;
-    pars["tMax"] = toInsert.Initialize("double",[this] () {return std::to_string(tMax);},[this] (const string& value) {tMax = std::stod(value);});
-    pars["numtrials"]= toInsert.Initialize("int", [this] () {return std::to_string(numtrials);}, [this] (const string& value) {numtrials = std::stoi(value);});
-    pars["writeint"]= toInsert.Initialize("int", [this] () {return std::to_string(writeint);}, [this] (const string& value) {writeint = std::stoi(value);});
-    pars["writetime"]= toInsert.Initialize("double", [this] () {return std::to_string(writetime);}, [this] (const string& value) {writetime = std::stod(value);});
-    pars["meastime"]= toInsert.Initialize("double", [this] () {return std::to_string(meastime);}, [this] (const string& value) {meastime = std::stod(value);});
-    pars["writeCellState"]= toInsert.Initialize("bool", [this] () {return CellUtils::to_string(writeCellState);}, [this] (const string& value) {writeCellState = CellUtils::stob(value);});
-    pars["readCellState"]= toInsert.Initialize("bool", [this] () {return CellUtils::to_string(readCellState);}, [this] (const string& value) {readCellState = CellUtils::stob(value);});
-    pars["datadir"]= toInsert.Initialize("directory", [this] () {return getDataDir();}, [this] (const string& value) {setDataDir(value);});
-    pars["cellStateDir"]= toInsert.Initialize("directory", [this] () {return cellStateDir.absolutePath().toStdString();}, [this] (const string& value) {cellStateDir.setPath(QString(value.c_str()));});
+    __pars["tMax"] = toInsert.Initialize("double",[this] () {return std::to_string(tMax);},[this] (const string& value) {tMax = std::stod(value);});
+    __pars["numtrials"]= toInsert.Initialize("int", [this] () {return std::to_string(numtrials);}, [this] (const string& value) {numtrials = std::stoi(value);});
+    __pars["writeint"]= toInsert.Initialize("int", [this] () {return std::to_string(writeint);}, [this] (const string& value) {writeint = std::stoi(value);});
+    __pars["writetime"]= toInsert.Initialize("double", [this] () {return std::to_string(writetime);}, [this] (const string& value) {writetime = std::stod(value);});
+    __pars["meastime"]= toInsert.Initialize("double", [this] () {return std::to_string(meastime);}, [this] (const string& value) {meastime = std::stod(value);});
+    __pars["writeCellState"]= toInsert.Initialize("bool", [this] () {return CellUtils::to_string(writeCellState);}, [this] (const string& value) {writeCellState = CellUtils::stob(value);});
+    __pars["readCellState"]= toInsert.Initialize("bool", [this] () {return CellUtils::to_string(readCellState);}, [this] (const string& value) {readCellState = CellUtils::stob(value);});
+    __pars["datadir"]= toInsert.Initialize("directory", [this] () {return getDataDir();}, [this] (const string& value) {setDataDir(value);});
+    __pars["cellStateDir"]= toInsert.Initialize("directory", [this] () {return cellStateDir.absolutePath().toStdString();}, [this] (const string& value) {cellStateDir.setPath(QString(value.c_str()));});
     //	pars["pvarfile"]= toInsert.Initialize("file", [this] () {return pvarfile;}, [this] (const string& value) {pvarfile = value;});
     //	pars["dvarfile"]= toInsert.Initialize("file", [this] () {return dvarfile;}, [this] (const string& value) {dvarfile = value;});
     //	pars["measfile"]= toInsert.Initialize("file", [this] () {return measfile;}, [this] (const string& value) {measfile = value;});
-    pars["simvarfile"]= toInsert.Initialize("file", [this] () {return simvarfile;}, [this] (const string& value) {simvarfile = value;});
-    pars["cellStateFile"]= toInsert.Initialize("file", [this] () {return cellStateFile;}, [this] (const string& value) {cellStateFile = value;});
-    pars["celltype"]= toInsert.Initialize("cell", [this] () {return cell()->type();}, [this] (const string& value) {this->cell(value);});
-    pars["cell_option"] = toInsert.Initialize("cell_option", [this] () {return cell()->optionStr();}, [this] (const string& value) {this->cell()->setOption(value);});
+    __pars["simvarfile"]= toInsert.Initialize("file", [this] () {return simvarfile;}, [this] (const string& value) {simvarfile = value;});
+    __pars["cellStateFile"]= toInsert.Initialize("file", [this] () {return cellStateFile;}, [this] (const string& value) {cellStateFile = value;});
+    __pars["celltype"]= toInsert.Initialize("cell", [this] () {return cell()->type();}, [this] (const string& value) {this->cell(value);});
+    __pars["cell_option"] = toInsert.Initialize("cell_option", [this] () {return cell()->optionStr();}, [this] (const string& value) {this->cell()->setOption(value);});
 }
 
 void Protocol::setRunBefore(function<void(Protocol&)> p) {
     this->runBefore = p;
 }
-function<void(Protocol&)> Protocol::getRunBefore() {
-    return this->runBefore;
-}
-void Protocol::setRunDuring(function<void(Protocol&)> p) {
+void Protocol::setRunDuring(function<void(Protocol&)> p,  double firstRun, double runEvery, int numruns) {
     this->runDuring = p;
-}
-function<void(Protocol&)> Protocol::getRunDuring() {
-    return this->runAfter;
+    if(firstRun >= 0) {
+        this->firstRun = firstRun;
+    }
+    if(runEvery >= 0) {
+        this->runEvery = runEvery;
+    }
+    if(numruns >= 0) {
+        this->numruns = numruns;
+    }
 }
 void Protocol::setRunAfter(function<void(Protocol&)> p) {
     this->runAfter = p;
 }
-function<void(Protocol&)> Protocol::getRunAfter() {
-    return this->runAfter;
-}
-
-

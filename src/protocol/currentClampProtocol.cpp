@@ -43,10 +43,7 @@ shared_ptr<Cell> CurrentClamp::cell() const
 }
 
 void CurrentClamp::cell(shared_ptr<Cell> cell) {
-    if(__measureMgr) {
-        __measureMgr->clear();
-        __measureMgr->cell(cell);
-    }
+    __measureMgr.reset(new MeasureManager(cell));
     if(__pvars)
         pvars().clear();
     this->__cell = cell;
@@ -72,10 +69,8 @@ void CurrentClamp::CCcopy(const CurrentClamp& toCopy) {
     stimflag = toCopy.stimflag;
     stimcounter = toCopy.stimcounter;
     paceflag = toCopy.paceflag;   // 1 to pace cell.
-    __pvars = unique_ptr<PvarsCurrentClamp>(new PvarsCurrentClamp(*toCopy.__pvars));
-    __pvars->protocol(this);
-    __measureMgr.reset(toCopy.__measureMgr->clone());
-    __measureMgr->cell(cell());
+    __pvars.reset(new PvarsCurrentClamp(*toCopy.__pvars, this));
+    __measureMgr.reset(new MeasureManager(*toCopy.__measureMgr, cell()));
 }
 
 // External stimulus.
@@ -128,14 +123,14 @@ void CurrentClamp::setupTrial() {
     }
     __cell->setConstantSelection(temp);
     temp.clear();
-    time = __cell->t = 0.0;      // reset time
+    __cell->t = 0.0;      // reset time
     stimbegin = stimt;
     stimend = stimt+stimdur;
 //    stimt = 0;
     stimcounter = 0;
     this->readInCellState(this->readCellState);
     this->__pvars->setIonChanParams();
-    doneflag=1;     // reset doneflag
+    runflag=true;     // reset doneflag
     __cell->setOuputfileVariables(
         CellUtils::strprintf((getDataDir()+"/"+dvarsoutfile).c_str(),__trial));
     this->__measureMgr->setupMeasures(
@@ -151,27 +146,28 @@ bool CurrentClamp::runTrial() {
     //###############################################################
     int pCount = 0;
     int numrunsLeft = this->numruns;
+    const double& time = __cell->t;
     double nextRunT = this->firstRun + this->runEvery;
 
-    while(int(doneflag)&&(time<tMax)){
+    while(runflag&&(time<tMax)){
         if(numrunsLeft > 0 && time >= nextRunT) {
             this->runDuring(*this);
             --numrunsLeft;
             nextRunT += this->runEvery;
         }
-        time = __cell->tstep(stimt);    // Update time
+        __cell->tstep(stimt);    // Update time
         __cell->updateCurr();    // Update membrane currents
         if(int(paceflag)==1)  // Apply stimulus
             stim();
 
         __cell->updateConc();   // Update ion concentrations
-        vM=__cell->updateV();     // Update transmembrane potential
+        double vM=__cell->updateV();     // Update transmembrane potential
 
         //##### Output select variables to file  ####################
         if(int(measflag)==1&&__cell->t>meastime){
             this->__measureMgr->measure(time);
        }
-        if (int(writeflag)==1&&time>writetime&&pCount%int(writeint)==0) {
+        if (writeflag && time>writetime &&pCount%writeint==0) {
             __cell->writeVariables();
         }
         __cell->setV(vM); //Overwrite vOld with new value
@@ -204,13 +200,13 @@ void CurrentClamp::readInCellState(bool read) {
 
 void CurrentClamp::mkmap() {
     GetSetRef toInsert;
-    pars["stimdur"]= toInsert.Initialize("double", [this] () {return std::to_string(stimdur);}, [this] (const string& value) {stimdur = std::stod(value);});
-    pars["stimt"]= toInsert.Initialize("double", [this] () {return std::to_string(stimt);}, [this] (const string& value) {stimt = std::stod(value);});
-    pars["stimval"]= toInsert.Initialize("double", [this] () {return std::to_string(stimval);}, [this] (const string& value) {stimval = std::stod(value);});
-    pars["bcl"] = toInsert.Initialize("double", [this] () {return std::to_string(bcl);}, [this] (const string& value) {bcl = std::stod(value);});
-    pars["numstims"]= toInsert.Initialize("int", [this] () {return std::to_string(numstims);}, [this] (const string& value) {numstims = std::stoi(value);});
-    pars["paceflag"]= toInsert.Initialize("bool", [this] () {return CellUtils::to_string(paceflag);}, [this] (const string& value) {paceflag = CellUtils::stob(value);});
-    pars["numtrials"]= toInsert.Initialize("int", [this] () {return std::to_string(numtrials);},
+    __pars["stimdur"]= toInsert.Initialize("double", [this] () {return std::to_string(stimdur);}, [this] (const string& value) {stimdur = std::stod(value);});
+    __pars["stimt"]= toInsert.Initialize("double", [this] () {return std::to_string(stimt);}, [this] (const string& value) {stimt = std::stod(value);});
+    __pars["stimval"]= toInsert.Initialize("double", [this] () {return std::to_string(stimval);}, [this] (const string& value) {stimval = std::stod(value);});
+    __pars["bcl"] = toInsert.Initialize("double", [this] () {return std::to_string(bcl);}, [this] (const string& value) {bcl = std::stod(value);});
+    __pars["numstims"]= toInsert.Initialize("int", [this] () {return std::to_string(numstims);}, [this] (const string& value) {numstims = std::stoi(value);});
+    __pars["paceflag"]= toInsert.Initialize("bool", [this] () {return CellUtils::to_string(paceflag);}, [this] (const string& value) {paceflag = CellUtils::stob(value);});
+    __pars["numtrials"]= toInsert.Initialize("int", [this] () {return std::to_string(numtrials);},
             [this] (const string& value) {
                 auto temp = std::stoi(value);
                 if(temp == numtrials) return;

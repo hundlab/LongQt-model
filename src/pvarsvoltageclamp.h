@@ -18,10 +18,8 @@ class PvarsVoltageClamp : public PvarsCell {
 
         //Functions
         PvarsVoltageClamp(Protocol* proto);
-        PvarsVoltageClamp(const PvarsVoltageClamp&);
+        PvarsVoltageClamp(const PvarsVoltageClamp&, Protocol* proto);
         virtual ~PvarsVoltageClamp() = default;
-        virtual PvarsCell* clone();
-        void protocol(Protocol *proto);
 
         virtual void setIonChanParams();
         virtual void calcIonChanParams();

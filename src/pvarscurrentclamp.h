@@ -18,23 +18,22 @@ class PvarsCurrentClamp : public PvarsCell {
 
         //Functions
         PvarsCurrentClamp(Protocol* proto);
-        PvarsCurrentClamp(const PvarsCurrentClamp&);
+        PvarsCurrentClamp(const PvarsCurrentClamp&, Protocol *proto);
         virtual ~PvarsCurrentClamp() = default;
-        virtual PvarsCell* clone();
-        void protocol(Protocol *proto);
 
         virtual void setIonChanParams();
         virtual void calcIonChanParams();
 
         virtual void writePvars(QXmlStreamWriter& xml);
         virtual void readPvars(QXmlStreamReader& xml);
-        void handlePvars(QXmlStreamReader& xml);
-        void handlePvar(QXmlStreamReader& xml);
-        std::pair<int,double> handleTrial(QXmlStreamReader& xml);
 
         virtual void insert(std::string,IonChanParam);
 
     private:
+        void handlePvars(QXmlStreamReader& xml);
+        void handlePvar(QXmlStreamReader& xml);
+        std::pair<int,double> handleTrial(QXmlStreamReader& xml);
+
         void calcIonChanParam(TIonChanParam* param);
 
         std::map<std::string,TIonChanParam*>* __pvars =

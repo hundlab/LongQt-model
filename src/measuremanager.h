@@ -15,14 +15,12 @@ namespace LongQt {
 class MeasureManager {
     public:
         MeasureManager(std::shared_ptr<Cell> cell);
+        MeasureManager(const MeasureManager&, std::shared_ptr<Cell> cell);
         virtual ~MeasureManager();
-        virtual MeasureManager* clone();
 
         virtual bool writeMVarsFile(QXmlStreamWriter& xml);
         virtual bool readMvarsFile(QXmlStreamReader& xml);
 
-        std::shared_ptr<Cell> cell();
-        void cell(std::shared_ptr<Cell> cell);
         std::map<std::string,std::set<std::string>> selection();
         void selection(std::map<std::string,std::set<std::string>> sel);
         double percrepol();
@@ -35,7 +33,6 @@ class MeasureManager {
         virtual void measure(double time);
         virtual void write(QFile* file = 0);
         virtual void writeLast(std::string filename);
-        virtual void clear();
         virtual void close();
         virtual void resetMeasures();
 
@@ -49,8 +46,6 @@ class MeasureManager {
             };
 
     protected:
-        MeasureManager(const MeasureManager&);
-
         std::map<std::string,std::set<std::string>> variableSelection;
 
     private:

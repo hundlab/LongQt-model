@@ -4,19 +4,13 @@ using namespace std;
 
 PvarsVoltageClamp::PvarsVoltageClamp(Protocol *proto): proto(proto) {}
 
-PvarsVoltageClamp::PvarsVoltageClamp(const PvarsVoltageClamp& o) {
-    this->proto = o.proto;
+PvarsVoltageClamp::PvarsVoltageClamp(const PvarsVoltageClamp& o, Protocol* proto) {
+    this->proto = proto;
     for(auto pvar: *(o.__pvars)) {
         this->__pvars->insert({pvar.first,new SIonChanParam(*pvar.second)});
     }
 }
 
-PvarsCell* PvarsVoltageClamp::clone() {
-    return new PvarsVoltageClamp(*this);
-}
-void PvarsVoltageClamp::protocol(Protocol* proto) {
-    this->proto = proto;
-}
 void PvarsVoltageClamp::setIonChanParams() {
     for(auto& pvar : *this->__pvars) {
         proto->cell()->setPar(pvar.first, pvar.second->paramVal);

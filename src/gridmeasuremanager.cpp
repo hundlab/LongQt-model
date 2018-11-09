@@ -7,19 +7,9 @@ MeasureManager(cell) {
     this->grid = cell->getGrid();
 }
 
-GridMeasureManager::GridMeasureManager(const GridMeasureManager& o):
-MeasureManager(o) {
+GridMeasureManager::GridMeasureManager(const GridMeasureManager& o, shared_ptr<GridCell> cell):
+MeasureManager(o, cell), grid(cell->getGrid()) {
     __dataNodes = o.__dataNodes;
-    grid = o.grid;
-}
-
-GridMeasureManager* GridMeasureManager::clone() {
-    return new GridMeasureManager(*this);
-}
-
-void GridMeasureManager::cell(shared_ptr<GridCell> cell) {
-    this->grid = cell->getGrid();
-    this->MeasureManager::cell(cell);
 }
 
 void GridMeasureManager::dataNodes(set<pair<int,int>> nodes) {
@@ -175,12 +165,6 @@ void GridMeasureManager::writeLast(string filename) {
         }
         lastFile.close();
     }
-}
-
-void GridMeasureManager::clear() {
-    this->percrepol(50);
-    variableSelection.clear();
-    measures.clear();
 }
 
 void GridMeasureManager::resetMeasures(pair<int,int> node) {

@@ -16,6 +16,9 @@
 #include <set>
 #include <limits>
 #include "measure.h"
+#define INF std::numeric_limits<double>::infinity()
+#define Q_NAN std::numeric_limits<double>::quiet_NaN()
+
 namespace LongQt {
 
 class MeasureWave: public Measure
@@ -41,17 +44,17 @@ class MeasureWave: public Measure
     protected:
 
         virtual void calcMeasure(double time,double var);  //measures props related to var; returns 1 when ready for output.
-        double vartakeoff = NAN; //var value at point of max deflection.
-        double durtime1 = NAN;
-        double amp = NAN;
-        double ddr = NAN;      //diastolic depol. rate
+        double vartakeoff = Q_NAN; //var value at point of max deflection.
+        double durtime1 = Q_NAN;
+        double amp = Q_NAN;
+        double ddr = Q_NAN;      //diastolic depol. rate
         //		double maxderiv1;
         //		double maxderiv2;
-        double derivt1 = NAN;  // time of prev. cycle max deriv.
-        double deriv2ndt = NAN;  // time of max 2nd deriv.
+        double derivt1 = Q_NAN;  // time of prev. cycle max deriv.
+        double deriv2ndt = Q_NAN;  // time of max 2nd deriv.
         double maxderiv2nd = 0;
         double cl = 0;
-        double dur = NAN;   //duration
+        double dur = Q_NAN;   //duration
         double __percrepol = 50;   //specify percent repolarization
         double repol = -25;           // repol var val for duration measure.
         bool minflag = false;
@@ -64,5 +67,6 @@ class MeasureWave: public Measure
         void copy(const MeasureWave& toCopy);
 };
 } //LongQt
-
+#undef INF
+#undef Q_NAN
 #endif

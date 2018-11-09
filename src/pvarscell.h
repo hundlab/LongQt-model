@@ -41,8 +41,6 @@ class PvarsCell {
         typedef std::map<std::string,IonChanParam*>::const_iterator const_iterator;
 
         //Functions
-        virtual PvarsCell* clone() = 0;
-
         virtual void setIonChanParams() = 0;
         virtual void calcIonChanParams() = 0;
 

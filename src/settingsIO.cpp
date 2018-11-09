@@ -46,76 +46,67 @@ void SettingsIO::writeSettingsStr(QString* text, shared_ptr<Protocol> proto) {
     this->write(proto, xml);
 }
 
-bool SettingsIO::readProtoType(shared_ptr<Protocol>& proto,  QXmlStreamReader& xml) {
+bool SettingsIO::protoChanged() const
+{
+    return __protoChanged;
+}
+
+shared_ptr<Protocol> SettingsIO::readProtoType(shared_ptr<Protocol> proto,  QXmlStreamReader& xml) {
+    shared_ptr<Protocol> new_proto = proto;
+    __protoChanged = false;
     if(CellUtils::readNext(xml, "protocolType")) {
         xml.readNext();
         QString type = xml.text().toString();
-        if(!proto|| proto->type() != type) {
-            if(!allowProtoChange) {
-                qWarning("SettingsIO: Changing protocol type is disabled");
-                throw std::invalid_argument("SettingsIO: Changing protocol type is disabled");
-                return false;
-            }
+        if(!proto || proto->type() != type) {
             try {
-                QString datadir = proto ? proto->getDataDir().c_str() : "";
-                proto = CellUtils::protoMap.at(type.toStdString())();
-                proto->setDataDir(datadir.toStdString());
-                emit ProtocolChanged(proto);
+                string datadir = proto ? proto->getDataDir() : "";
+                new_proto = CellUtils::protoMap.at(type.toStdString())();
+                new_proto->setDataDir(datadir);
+                __protoChanged = true;
             } catch (const std::out_of_range&) {
                 qWarning("SettingsIO: %s not in protocol map", type.toStdString().c_str());
-                return true;
+                return 0;
             }
         }
     } else {
         qWarning("SettingsIO: Settings file does not contain protocol type");
-        return false;
     }
-    return true;
+    return new_proto;
 }
 
-void SettingsIO::read(shared_ptr<Protocol> proto, QXmlStreamReader& xml) {
+shared_ptr<Protocol> SettingsIO::read(shared_ptr<Protocol> proto, QXmlStreamReader& xml) {
     try {
-        this->readProtoType(proto,xml);
-        proto->readpars(xml);
-        /*
-           try {
-           if(proto->pars.at("writeCellState").get() == "true") {
-           QDir fileDir(fileName);
-           fileDir.cdUp();
-           proto->pars.at("cellStateDir").set(fileDir.path().toStdString());
-           proto->pars.at("readCellState").set("true");
-           proto->pars.at("writeCellState").set("false");
-           }
-           } catch(const std::out_of_range& e) {
-           qDebug("SimvarMenu: par not in proto: %s", e.what());
-           }*/
-        //    proto->datadir = working_dir.absolutePath().toStdString();
-        proto->measureMgr().readMvarsFile(xml);
-        this->readdvars(proto, xml);
-        proto->pvars().readPvars(xml);
+        auto new_proto = this->readProtoType(proto,xml);
+        if(!new_proto) {
+            return 0;
+        }
+        new_proto->readpars(xml);
+        new_proto->measureMgr().readMvarsFile(xml);
+        this->readdvars(new_proto, xml);
+        new_proto->pvars().readPvars(xml);
+        return new_proto;
     } catch (const std::invalid_argument&) {
-        return;
+        return 0;
     }
-
-    this->lastProto = proto;
 }
 
-void SettingsIO::readSettings(QString filename, shared_ptr<Protocol> proto) {
+shared_ptr<Protocol> SettingsIO::readSettings(QString filename, shared_ptr<Protocol> proto) {
     QFile ifile(filename);
 
     if(!ifile.open(QIODevice::ReadOnly)){
-        qCritical() << "SettingsIO: Error opening " << filename;
-        return;
+        qWarning() << "SettingsIO: Error opening " << filename;
+        return proto;
     }
     QXmlStreamReader xml(&ifile);
 
-    this->read(proto, xml);
+    auto new_proto = this->read(proto, xml);
 
     ifile.close();
+    return new_proto;
 }
-void SettingsIO::readSettingsStr(QString text, shared_ptr<Protocol> proto) {
+shared_ptr<Protocol> SettingsIO::readSettingsStr(QString text, shared_ptr<Protocol> proto) {
     QXmlStreamReader xml(text);
-    this->read(proto, xml);
+    return this->read(proto, xml);
 }
 void SettingsIO::writedvars(shared_ptr<Protocol> proto, QXmlStreamWriter& xml) {
     set<string> selection = proto->cell()->getVariableSelection();

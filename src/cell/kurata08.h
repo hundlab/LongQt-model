@@ -17,20 +17,20 @@ namespace LongQt {
 //######################################################
 //Define class for central rabbit SAN cell.
 //######################################################
-class ControlSa : public Cell
+class Kurata08 : public Cell
 {
   public:
-    ControlSa();
-    ControlSa(const ControlSa& toCopy);
-    ~ControlSa();
+    Kurata08();
+    Kurata08(const Kurata08& toCopy);
+    ~Kurata08();
 
-  virtual ControlSa* clone() override;
+  virtual Kurata08* clone() override;
 
 /*########################*/
 /*    DEFINE STRUCTS      */
 /*########################*/
 
-    struct GateVariableSa {  //Ion channel gates.
+    struct {  //Ion channel gates.
         double qa;	// Ist activation
         double qi;	// Ist inactivation
         double d;       // ICa activation
@@ -45,7 +45,7 @@ class ControlSa : public Cell
         double q;       // Ito activation
         double r;       // Ito/Isus inactivation
         double y;       // Ih activation
-   };
+   } Gate;
 
   //##################################################
   // Declare functions/variables unique to Central SAN
@@ -103,8 +103,6 @@ class ControlSa : public Cell
     double caJsr,caNsr;
     double iRel,iUp,iTr;     // Ca uptake, leak and translocation in SR
     double trpnCa,trpnMg,trpnMgmg,cmdnI,cmdnR,csqn;  // buffers
-
-    struct GateVariableSa Gate;
 
     //##### Declare additional class params ##############
     double naO,kO,caO;  // Fixed extracellular ion concentrations

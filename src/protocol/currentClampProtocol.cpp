@@ -167,7 +167,8 @@ bool CurrentClamp::runTrial() {
         if(int(measflag)==1&&__cell->t>meastime){
             this->__measureMgr->measure(time);
        }
-        if (writeflag && time>writetime &&pCount%writeint==0) {
+
+        if (writeflag && time>writetime && (pCount%writeint==0)) {
             __cell->writeVariables();
         }
         __cell->setV(vM); //Overwrite vOld with new value

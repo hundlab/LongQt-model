@@ -99,7 +99,7 @@ class Protocol :  public std::enable_shared_from_this<Protocol>
         void parsStr(std::string name, std::string val);
         std::string parsType(std::string name);
         std::list<std::pair<std::string,std::string>> parsList();
-
+        bool hasPar(std::string name);
 
 protected:
         void copy(const Protocol& toCopy);

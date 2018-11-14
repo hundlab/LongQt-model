@@ -5,12 +5,12 @@ using namespace LongQt;
 // Constructor for centrol rabbit sinoatrial node
 // cell model.
 //######################################################
-ControlSa::ControlSa() :Cell()
+Kurata08::Kurata08() :Cell()
 {
     this->Initialize();
 }
 
-void ControlSa::Initialize() {
+void Kurata08::Initialize() {
     //##### Assign default parameters ##################
     dt=dtmin = 0.005;
     dtmed = 0.05;
@@ -103,20 +103,20 @@ void ControlSa::Initialize() {
     opts = WT;
 };
 
-ControlSa::ControlSa(const ControlSa& toCopy ) : Cell(toCopy)
+Kurata08::Kurata08(const Kurata08& toCopy ) : Cell(toCopy)
 {
     this->Initialize();
     CellKernel::copyVarPar(toCopy);
 };
-ControlSa::~ControlSa()
+Kurata08::~Kurata08()
 {
 };
 //overriden deep copy funtion
-ControlSa *ControlSa::clone(){
-    return new ControlSa(*this);
+Kurata08 *Kurata08::clone(){
+    return new Kurata08(*this);
 };
 //L-type Ca2+ current
-void ControlSa::updateIcal()
+void Kurata08::updateIcal()
 {
         double dinf,finf,fcainf,taud,tauf,taufca;//ddinf,fdinf,taudd,taufd,
         double alphad, betad;
@@ -146,7 +146,7 @@ void ControlSa::updateIcal()
         iCal = gCal*Gate.d*Gate.f*Gate.fca*(vOld-ecal);
 };
 //T-type Ca2+ current
-void ControlSa::updateIcatt()
+void Kurata08::updateIcatt()
 {
         double dtinf,ftinf,taudt,tauft;
 	
@@ -166,7 +166,7 @@ void ControlSa::updateIcatt()
 
 };
 //Rapidly activating delayed rectifier K+ current
-void ControlSa::updateIkr()
+void Kurata08::updateIkr()
 {
         double pafinf, pasinf, piinf, taupaf, taupas,taupi;
 
@@ -200,7 +200,7 @@ void ControlSa::updateIkr()
         iKr = gkr*isofact*(0.6*Gate.paf+0.4*Gate.pas)*Gate.pi*(vOld-ek);
 };
 //Slowly activating delayed rectifier K+ current
-void ControlSa::updateIks()
+void Kurata08::updateIks()
 {
         double ninf, taun;
         double alphan, betan;
@@ -218,7 +218,7 @@ void ControlSa::updateIks()
 
         iKs = gKs*(vOld-eks)*Gate.n*Gate.n;
 };
-void ControlSa::updateI4ap()
+void Kurata08::updateI4ap()
 {
         double qinf,rinf,tauq,taur;
 	
@@ -240,7 +240,7 @@ void ControlSa::updateI4ap()
         iTo = gTo*Gate.q*Gate.r*(vOld-ek);
         iSus = gSus*Gate.r*(vOld-ek);
 };
-void ControlSa::updateItrek()
+void Kurata08::updateItrek()
 {
     //neuro TREK-1
 //    double gK2P = itrekFactor*.040716*10.5; //nS/pF
@@ -259,14 +259,14 @@ void ControlSa::updateItrek()
     iTrek = gk*aa*(vOld-EK);  //apex vs. septum??? TJH
     
 }
-void ControlSa::updateIkach()
+void Kurata08::updateIkach()
 {
         double gkach = ikachFactor*0.0011*pow(kO,0.41);
 
         iKach = gkach*(kI-kO*exp(-vOld*FDAY/(RGAS*TEMP)));
 };
 //Sustained inward current
-void ControlSa::updateIst()
+void Kurata08::updateIst()
 {
         double qainf, qiinf, tauqa, tauqi;
         double alphaqa,betaqa,alphaqi,betaqi;
@@ -298,7 +298,7 @@ void ControlSa::updateIst()
         iSt = gSt*(1+isofact)*Gate.qa*Gate.qi*(vOld-est);
 };
 //Na+ background current
-void ControlSa::updateInab()
+void Kurata08::updateInab()
 {
 	double gNab = inabFactor*0.0054;  // nS/pF
         double ena = (RGAS*TEMP/FDAY)*log(naO/naI); //mV;
@@ -306,7 +306,7 @@ void ControlSa::updateInab()
         iNab = gNab*(vOld-ena);
 };
 //Na+-K+ pump
-void ControlSa::updateInak()
+void Kurata08::updateInak()
 {
         double iNakmax = inakFactor*3.6;
 	double kmnai = 14.0;
@@ -315,7 +315,7 @@ void ControlSa::updateInak()
 
         iNak=iNakmax/(1+pow((kmko/kO),1.2))*1/(1+pow((kmnai/naI),1.3))*1/(1+exp(-(vOld-ena+120.0)/30.0));
 };
-void ControlSa::updateInaca()
+void Kurata08::updateInaca()
 {
         double di,dout;
         double k43,k12,k14,k41,k34,k21,k23,k32;
@@ -354,7 +354,7 @@ void ControlSa::updateInaca()
         iNaca = kNaca*(k21*x2-k12*x1)/(x1+x2+x3+x4);
 };
 //Hyperpolarization activated current
-void ControlSa::updateIh()
+void Kurata08::updateIh()
 {
         double yinf, tauy;
 	double alphay, betay;
@@ -379,7 +379,7 @@ void ControlSa::updateIh()
 	iH = iHna+iHk;
 };
 //Uptake from myoplasm into NSR^M
-void ControlSa::updateIup()
+void Kurata08::updateIup()
 {
 	double iUpbar = iupFactor*0.01;
         double kmup=0.0006; //0.0006 mM^M
@@ -394,14 +394,14 @@ void ControlSa::updateIup()
 
 };
 //Transfer from NSR to JSR^M
-void ControlSa::updateItr()
+void Kurata08::updateItr()
 {       
 	double tautr=60.0;  //60.0ms^M
         
         iTr=(caNsr-caJsr)/tautr;
 };
 //Ca2+ release from JSR into subspace
-void ControlSa::updateIrel()
+void Kurata08::updateIrel()
 {       
 	double iRelbar = irelFactor*1.25;
         double kmrel = 0.0012; //mM
@@ -410,28 +410,28 @@ void ControlSa::updateIrel()
         //iRel = iRelbar*0.5*(caJsr-caR);^M
 };
 //Ca2+ diffusion from subspace into bulk myoplasm
-void ControlSa::updateIdiff()
+void Kurata08::updateIdiff()
 {
 	double tauDiff = 0.01;
 
         iDiff = (caR-caI)/tauDiff;
 };
 // Na concentration in myoplasm
-void ControlSa::updateNai()
+void Kurata08::updateNai()
 {
         double dnai;
         dnai=dt*(-iNat*ACap/((Vmyo+Vss)*FDAY));
         naI=naI+dnai;
 };
 // K concentration in myoplasm
-void ControlSa::updateKi()
+void Kurata08::updateKi()
 {
         double dki;
         dki=dt*(-iKt*ACap/((Vmyo+Vss)*FDAY));
         kI=kI+dki;
 };
 //Bulk Ca2+
-void ControlSa::updateCai()
+void Kurata08::updateCai()
 {
         double dcai;//,beta;
         double dcmdni,dtrpnca,dtrpnmg,dtrpnmgmg;
@@ -456,7 +456,7 @@ void ControlSa::updateCai()
         trpnMgmg=trpnMgmg+dtrpnmgmg;
 };
 //Subspace Ca2+
-void ControlSa::updateCar()
+void Kurata08::updateCar()
 {
         double beta,dcar;
 //        double dcmdnr;
@@ -470,7 +470,7 @@ void ControlSa::updateCar()
         caR=caR+dcar*beta;
         cmdnR=cmdnbar*(caR/(caR+kmcmdn));
 };
-void ControlSa::updateCasr()
+void Kurata08::updateCasr()
 {
         double dcajsr,dcansr,beta;
 //        double dcsqn;
@@ -487,7 +487,7 @@ void ControlSa::updateCasr()
         dcansr=dt*(iUp-iTr*Vjsr/Vnsr);
         caNsr=caNsr+dcansr;
 };
-void ControlSa::updateCurr()
+void Kurata08::updateCurr()
 {
    updateIst();   // Sustained inward current
    updateInak();   // Na-K pump
@@ -513,7 +513,7 @@ void ControlSa::updateCurr()
    iTot=iNat+iCait+iKt+iCart;
 
 };
-void ControlSa::updateConc()
+void Kurata08::updateConc()
 {
    updateIup();
    updateItr();
@@ -526,7 +526,7 @@ void ControlSa::updateConc()
    updateNai();
 };
 // External stimulus.
-int ControlSa::externalStim(double stimval)
+int Kurata08::externalStim(double stimval)
 {
     iKt = iKt + stimval;
     iTot = iTot + stimval;
@@ -535,7 +535,7 @@ int ControlSa::externalStim(double stimval)
 
 }
 
-void ControlSa::makemap()
+void Kurata08::makemap()
 {
     // add to vars map declared/defined in cell.h and cell.cpp
     vars["naI"]=&naI;
@@ -609,9 +609,9 @@ void ControlSa::makemap()
     pars["irelFactor"] = &irelFactor;
 }
 
-const char *ControlSa::type() const
+const char *Kurata08::type() const
 {
     return "Rabbit Sinus Node (Kurata 2008)";
 }
 
-MAKE_OPTIONS_FUNCTIONS(ControlSa)
+MAKE_OPTIONS_FUNCTIONS(Kurata08)

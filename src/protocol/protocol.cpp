@@ -121,6 +121,7 @@ void Protocol::copy(const Protocol& toCopy) {
     dvarfile = toCopy.dvarfile;  // File with SV to write.
     writetime = toCopy.writetime;      // time to start writing.
     writeint = toCopy.writeint;     // interval for writing.
+    writeflag = toCopy.writeflag;
 
     pvarfile = toCopy.pvarfile; // File to specify cell params
     simvarfile = toCopy.simvarfile;  // File to specify sim params
@@ -278,6 +279,11 @@ list<pair<string, string>> Protocol::parsList()
         parsL.push_back({par.first,par.second.type});
     }
     return parsL;
+}
+
+bool Protocol::hasPar(string name)
+{
+    return this->__pars.count(name) > 0;
 }
 
 void Protocol::readInCellState(bool read) {

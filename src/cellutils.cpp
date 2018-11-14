@@ -35,7 +35,7 @@ using namespace std;
  * and also add it to the protocolCellDefualts map below
  */
 const map<string, CellUtils::CellInitializer> CellUtils::cellMap = {
-    { ControlSa().type(), [] () {return make_shared<ControlSa>(); }},
+    { Kurata08().type(), [] () {return make_shared<Kurata08>(); }},
     { GpbAtrial().type(), [] () {return make_shared<GpbAtrial>();}},
     { HRD09Control().type(), [] () {return make_shared<HRD09Control>();}},
     { HRD09BorderZone().type(), [] () {return make_shared<HRD09BorderZone>();}},
@@ -47,11 +47,9 @@ const map<string, CellUtils::CellInitializer> CellUtils::cellMap = {
     { FR().type(), [] () {return make_shared<FR>();}},
     { Ksan().type(), [] () {return make_shared<Ksan>();}},
 
-            { GpbVent().type(), [] () {return make_shared<GpbVent>();}},
-            { Br04().type(), [] () {return make_shared<Br04>();}},
-            { Courtemanche98().type(), [] () {return make_shared<Courtemanche98>();}},
-//            { GpbAtrialWT().type(), [] () {return make_shared<GpbAtrialWT>();}},
-//            { GpbAtrialSE().type(), [] () {return make_shared<GpbAtrialSE>();}},
+    { GpbVent().type(), [] () {return make_shared<GpbVent>();}},
+    { Br04().type(), [] () {return make_shared<Br04>();}},
+    { Courtemanche98().type(), [] () {return make_shared<Courtemanche98>();}},
 };
 
 /*
@@ -63,7 +61,7 @@ const map<pair<string,string>, map<string,string>> CellUtils::protocolCellDefaul
     { {CurrentClamp::name,""}, {{"paceflag","true"},{"stimval","-60"},{"stimdur","5"},
       {"tMax","500000"},{"writetime","495000"},{"bcl","1000"}, {"numstims","500"}}
     },
-    { {CurrentClamp::name,ControlSa().type()}, {{"paceflag","false"},{"stimdur","1"}}},
+    { {CurrentClamp::name,Kurata08().type()}, {{"paceflag","false"},{"stimdur","1"}}},
     { {CurrentClamp::name,HRD09Control().type()}, {{"stimval","-80"},{"stimdur","0.5"}}},
     { {CurrentClamp::name,GpbAtrial().type()}, {{"stimval","-12.5"}}},
     { {CurrentClamp::name,HRD09BorderZone().type()}, {{"stimval","-80"},{"stimdur","0.5"}}},
@@ -73,6 +71,7 @@ const map<pair<string,string>, map<string,string>> CellUtils::protocolCellDefaul
     { {CurrentClamp::name,OHaraRudyM().type()}, {{"stimval","-80"},{"stimdur","0.5"}}},
     { {CurrentClamp::name,GpbAtrialOnal17().type()}, {{"stimval","-12.5"}}},
     { {CurrentClamp::name,FR().type()}, {{"stimval","-80"},{"stimdur","0.5"}}},
+    { {CurrentClamp::name,Br04().type()}, {{"stimval","-60"},{"stimdur","0.5"}}},
 
     { {VoltageClamp::name,""}, {{"writetime","0"},{"writeint","20"}}},
 
@@ -93,10 +92,10 @@ void CellUtils::set_default_vals(Protocol &proto) {
     }
     try {
         vals = CellUtils::protocolCellDefaults.at({proto_type,cell_type});
-        vals.insert(defaults.begin(),defaults.end());
     } catch(out_of_range) {
-        qDebug("CellUtils: no entry for (%s,%s) in cell defaults", proto_type.c_str(), cell_type.c_str());
+        qDebug("CellUtils: no entry for (%s, %s) in cell defaults", proto_type.c_str(), cell_type.c_str());
     }
+    vals.insert(defaults.begin(),defaults.end());
     for(auto& val :vals) {
         try {
             proto.parsStr(val.first,val.second);

@@ -69,6 +69,10 @@ bool RunSim::progress()
 }
 
 void RunSim::run() {
+//    for(auto& p: vector) {
+//        p->runTrial();
+//    }
+//    return;
     next = QtConcurrent::map(vector,[] (shared_ptr<Protocol> p) {
             if(p != NULL) {
                 p->runTrial();

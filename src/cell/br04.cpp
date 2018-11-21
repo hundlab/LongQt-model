@@ -1,6 +1,5 @@
 #include "br04.h"
 
-#include <QDebug>
 using namespace LongQt;
 Br04::Br04()
 {
@@ -239,7 +238,18 @@ void Br04::updateIkr() {
     iKr = IkrFactor*OK*gkr*(vOld-RGAS*TEMP/FDAY*log((0.98*kO+0.02*naO)/(0.98*kI+0.02*naI)));
 };
 
-void Br04::updateIna(){
+void Br04::updateItrek() {
+    //TREK-1 with more rectification
+    double gk = ItrekFactor*.03011;
+    double EK = RGAS*TEMP/FDAY*log(kO/kI);
+
+    double aa = 1/(1+exp(-(vOld-65)/52)); //from Kim J Physiol 1992
+
+    iTrek = gk*aa*(vOld-EK);  //apex vs. septum??? TJH
+
+}
+
+void Br04::updateIna() {
     double alpha_Na11, alpha_Na12, alpha_Na13;
     double alpha_Na2, alpha_Na3, alpha_Na4, alpha_Na5;
     double beta_Na11, beta_Na12, beta_Na13;
@@ -396,7 +406,7 @@ void Br04::updateCaFlux() {
         if(sponRelflag==0){
             sponRelflag = 1;
             tRel = 0.0;
-            qInfo() << "Spontaneous release at t = " << t;
+            Logger::getInstance()->write("Br04: Spontaneous release at t = {}", t);
         }
         PO1 = 0.6;
         PRyr = 1.0;
@@ -499,31 +509,33 @@ int Br04::externalStim(double stimval) {
 
 void Br04::updateCurr()
 {
+    updateIlca();   // L-type Ca current
+    updateIcab();   // Background Ca current
+    updateIpca();   // Sarcolemmal Ca pump
+    updateIto_f();    // Transient outward K current
+    updateIto_s();    // Transient outward K current
+    updateIk1();    // Time-independent K current
+    updateIks();    // Slow delayed rectifier current
+    updateIkur();    // Slow delayed rectifier current
+    updateIkss();    // Slow delayed rectifier current
+    updateIkr();    // Rapid delayed rectifier current
+    if(opts & TREK)
+        updateItrek();    // Transient outward K current
+    updateInak();   // Na-K pump
+    updateInaca();  // Na-Ca exchanger
+    updateIclca();  // Na-Ca exchanger
+    updateIna();    // Fast Na current
+    updateInab();   // Late Na current
+/*    if(opts & INS)
+        updateIns();*/    // Plateau K current
 
-   updateIlca();   // L-type Ca current
-   updateIcab();   // Background Ca current
-   updateIpca();   // Sarcolemmal Ca pump
-   updateIto_f();    // Transient outward K current
-   updateIto_s();    // Transient outward K current
-   updateIk1();    // Time-independent K current
-   updateIks();    // Slow delayed rectifier current
-   updateIkur();    // Slow delayed rectifier current
-   updateIkss();    // Slow delayed rectifier current
-   updateIkr();    // Rapid delayed rectifier current
-   updateInak();   // Na-K pump
-   updateInaca();  // Na-Ca exchanger
-   updateIclca();  // Na-Ca exchanger
-   updateIna();    // Fast Na current
-   updateInab();   // Late Na current
-   updateIns();    // Plateau K current
- 
-	 
-   iNat=iNa+iNab+3*iNak+3*iNaca+iNsna; 
-   iCait=iCab-2*iNaca+iPca;
-   iCasst=iCal;
-   iCat=iCait+iCasst;  
-   iKt=iTo_f+iTo_s+iK1+iKs+iKss+iKur+iKr-2*iNak+iNsk;
-   iTot=iNat+iCat+iKt; 
+
+    iNat=iNa+iNab+3*iNak+3*iNaca+iNsna;
+    iCait=iCab-2*iNaca+iPca;
+    iCasst=iCal;
+    iCat=iCait+iCasst;
+    iKt=iTo_f+iTo_s+iK1+iKs+iKss+iKur+iKr-2*iNak+iNsk+iTrek;
+    iTot=iNat+iCat+iKt;
 }
 
 
@@ -592,6 +604,7 @@ void Br04::makemap()
     vars["iKur"]=&iKur;
     vars["iKss"]=&iKss;
     vars["iKr"]=&iKr;
+    vars["iTrek"]=&iTrek;
     vars["iNak"]=&iNak;
     vars["iNaca"]=&iNaca;
     vars["iClca"]=&iClca;
@@ -648,6 +661,7 @@ void Br04::makemap()
     pars["IkurFactor"] = &IkurFactor;
     pars["IkssFactor"] = &IkssFactor;
     pars["IkrFactor"] = &IkrFactor;
+    pars["ItrekFactor"] = &ItrekFactor;
     pars["InaFactor"] = &InaFactor;
     pars["InabFactor"] = &InabFactor;
     pars["InakFactor"] = &InakFactor;

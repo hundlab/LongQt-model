@@ -7,9 +7,8 @@
 // Email thomas.hund@osumc.edu
 //#################################################
 
-#include <QDebug>
-
 #include "iobase.h"
+#include "logger.h"
 using namespace LongQt;
 using namespace std;
 
@@ -26,7 +25,7 @@ bool IOBase::setOutputfile(string filename, set<string> set, ofstream* ofile) {
     ofile->precision(10);
     ofile->open(filename,ios_base::app);
     if(!ofile->good()) {
-        qCritical() << "Error Opening " << filename.c_str();
+        Logger::getInstance()->write<std::runtime_error>("IOBase: Error Opening {}", filename);
         return false;
     } else if(!exists) {
         for(it = set.begin(); it != set.end(); it++) {

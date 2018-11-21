@@ -59,8 +59,7 @@ MeasureManager &CurrentClamp::measureMgr() {
 
 void CurrentClamp::CCcopy(const CurrentClamp& toCopy) {
     this->mkmap();
-    auto test = toCopy.cell()->clone();
-    __cell.reset(test);
+    __cell.reset(toCopy.cell()->clone());
     stimdur = toCopy.stimdur;  // stim duration, ms
     stimt = toCopy.stimt;    // time of first stim, ms
     stimval = toCopy.stimval;  // stim current amplitude, uA/uF
@@ -70,7 +69,7 @@ void CurrentClamp::CCcopy(const CurrentClamp& toCopy) {
     stimcounter = toCopy.stimcounter;
     paceflag = toCopy.paceflag;   // 1 to pace cell.
     __pvars.reset(new PvarsCurrentClamp(*toCopy.__pvars, this));
-    __measureMgr.reset(new MeasureManager(*toCopy.__measureMgr, cell()));
+    __measureMgr.reset(new MeasureManager(*toCopy.__measureMgr, __cell));
 }
 
 // External stimulus.
@@ -132,9 +131,9 @@ void CurrentClamp::setupTrial() {
     this->__pvars->setIonChanParams();
     runflag=true;     // reset doneflag
     __cell->setOuputfileVariables(
-        CellUtils::strprintf((getDataDir()+"/"+dvarsoutfile).c_str(),__trial));
+        CellUtils::strprintf(getDataDir()+"/"+dvarsoutfile,__trial));
     this->__measureMgr->setupMeasures(
-        CellUtils::strprintf((getDataDir()+"/"+propertyoutfile).c_str(),__trial));
+        CellUtils::strprintf(getDataDir()+"/"+propertyoutfile,__trial));
 }
 
 bool CurrentClamp::runTrial() {
@@ -164,7 +163,7 @@ bool CurrentClamp::runTrial() {
         double vM=__cell->updateV();     // Update transmembrane potential
 
         //##### Output select variables to file  ####################
-        if(int(measflag)==1&&__cell->t>meastime){
+        if(measflag == 1 && __cell->t>meastime){
             this->__measureMgr->measure(time);
        }
 
@@ -177,11 +176,11 @@ bool CurrentClamp::runTrial() {
 
     // Output final (ss) property values for each trial
     this->__measureMgr->writeLast(CellUtils::strprintf(
-        (getDataDir()+"/"+finalpropertyoutfile).c_str(),__trial));
+        getDataDir()+"/"+finalpropertyoutfile,__trial));
 
     // Output parameter values for each trial
     __cell->setOutputfileConstants(CellUtils::strprintf(
-        (getDataDir()+"/"+finaldvarsoutfile).c_str(),__trial));
+        getDataDir()+"/"+finaldvarsoutfile,__trial));
     __cell->writeConstants();
     this->__measureMgr->close();
     __cell->closeFiles();

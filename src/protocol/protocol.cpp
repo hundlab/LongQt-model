@@ -12,10 +12,10 @@
 #include "protocol.h"
 #include "hrd09.h"
 #include "cellutils.h"
+#include "logger.h"
 #include <QXmlStreamWriter>
 #include <QXmlStreamReader>
 #include <QFile>
-#include <QDebug>
 #include <QDate>
 #include <QTime>
 #include <QStandardPaths>
@@ -60,7 +60,7 @@ Protocol::Protocol()
     cellStateFile = "cellstate.xml";//"dss%d_state.dat";
 
 
-    measflag = 1;       // 1 to track SV props during sim
+    measflag = true;       // 1 to track SV props during sim
     measfile = "mvars.txt"; // File containing property names to track
     meastime = 0;       // time to start tracking props
 
@@ -193,7 +193,7 @@ int Protocol::readpars(QXmlStreamReader& xml) {
                 __pars.at(pair.first).set(pair.second);
             } catch (const std::out_of_range&) {
                 if(i == 1)
-                    qWarning("Protocol: %s not in pars", name.c_str());
+                    Logger::getInstance()->write("Protocol: {} not in pars", name);
             }
         }
     }
@@ -214,7 +214,11 @@ bool Protocol::writepars(QXmlStreamWriter& xml) {
     return 0;
 }
 void Protocol::trial(unsigned int current_trial) {
-    if(current_trial < 0 || current_trial >= numtrials) return;
+    if(current_trial < 0 || current_trial >= numtrials) {
+        Logger::getInstance()->write<std::out_of_range>("Protocol: Cannot set trial to {}, max numtrials is {}",
+               current_trial,numtrials);
+        return;
+    }
     __trial = current_trial;
 }
 
@@ -230,7 +234,7 @@ bool Protocol::cell(const string& type) {
         this->cell((CellUtils::cellMap.at(type))());
         return true;
     } catch(const std::out_of_range&) {
-        qDebug("Protocol: %s is not a valid cell type",type.c_str());
+        Logger::getInstance()->write<std::out_of_range>("Protocol: {} is not a valid cell type",type);
         return false;
     }
 }
@@ -247,8 +251,8 @@ string Protocol::parsStr(string name)
 {
     try {
         return __pars.at(name).get();
-    } catch(std::out_of_range) {
-        qDebug("Protocol: Par ", name, " not in pars");
+    } catch(std::out_of_range&) {
+        Logger::getInstance()->write<std::out_of_range>("Protocol: Par {} not in pars", name);
     }
     return "";
 }
@@ -258,7 +262,7 @@ void Protocol::parsStr(string name, string val)
     try {
         __pars.at(name).set(val);
     } catch(std::out_of_range) {
-        qDebug("Protocol: Par ", name, " not in pars");
+        Logger::getInstance()->write("Protocol: Par {} not in pars", name);
     }
 }
 
@@ -266,8 +270,8 @@ string Protocol::parsType(string name)
 {
     try {
         return __pars.at(name).type;
-    } catch(std::out_of_range) {
-        qDebug("Protocol: Par ", name, " not in pars");
+    } catch(std::out_of_range e) {
+        Logger::getInstance()->write<std::out_of_range>("Protocol: Par {} not in pars", name);
     }
     return "";
 }

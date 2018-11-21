@@ -1,4 +1,5 @@
 #include "gridmeasuremanager.h"
+#include "logger.h"
 using namespace LongQt;
 using namespace std;
 
@@ -64,15 +65,15 @@ void GridMeasureManager::setupMeasures(string filenameTemplate) {
                     this->getMeasure(sel.first,sel.second)});
             }
         }
-        QString filename = CellUtils::strprintf(filenameTemplate.c_str(),
+        QString filename = CellUtils::strprintf(filenameTemplate,
             node.first,node.second).c_str();
         this->ofiles[node].reset(new QFile(filename));
         auto ofile = this->ofiles[node];
         if(!ofile->open(QIODevice::WriteOnly | QIODevice::Text)) {
-            qWarning("MeasureManager: File could not be opened for writing.");
+            Logger::getInstance()->write<std::runtime_error>("MeasureManager: File could not be opened for writing");
         }
         if(ofile->write((this->nameString(node)+"\n").c_str())==-1) {
-            qWarning("MeasureManager: File cound not be written to");
+            Logger::getInstance()->write<std::runtime_error>("MeasureManager: File cound not be written to");
         }
     }
 }
@@ -106,7 +107,7 @@ void GridMeasureManager::measure(double time) {
 }
 void GridMeasureManager::write(QFile* file) {
     if(!file->isOpen()) {
-        qWarning("MeasureManager: Measure file must be open to be written");
+        Logger::getInstance()->write<std::runtime_error>("MeasureManager: Measure file must be open to be written");
         return;
     }
     for(auto& pos: measures) {
@@ -116,12 +117,12 @@ void GridMeasureManager::write(QFile* file) {
             string valStr = meas.second->getValueString();
             this->lasts[pos.first] += valStr;
             if(ofile.write(valStr.c_str())==-1) {
-                qWarning("MeasureManager: File cound not be written to");
+                Logger::getInstance()->write<std::runtime_error>("MeasureManager: File cound not be written to");
             }
         }
         lasts[pos.first] += "\n";
         if(ofile.write("\n")==-1) {
-            qWarning("MeasureManager: File cound not be written to");
+            Logger::getInstance()->write<std::runtime_error>("MeasureManager: File cound not be written to");
         }
     }
 }
@@ -129,7 +130,7 @@ void GridMeasureManager::write(QFile* file) {
 void GridMeasureManager::writeSingleCell(pair<int,int> node, QFile* file) {
     QFile& ofile = file? *file: *this->ofiles[node];
     if(!ofile.isOpen()) {
-        qWarning("MeasureManager: Measure file must be open to be written");
+        Logger::getInstance()->write<std::runtime_error>("MeasureManager: Measure file must be open to be written");
         return;
     }
     auto& last = this->lasts[node];
@@ -138,29 +139,29 @@ void GridMeasureManager::writeSingleCell(pair<int,int> node, QFile* file) {
         string valStr = meas.second->getValueString();
         last += valStr;
         if(ofiles[node]->write(valStr.c_str())==-1) {
-            qWarning("MeasureManager: File cound not be written to");
+            Logger::getInstance()->write<std::runtime_error>("MeasureManager: File cound not be written to");
         }
     }
     last += "\n";
     if(ofiles[node]->write("\n")==-1) {
-        qWarning("MeasureManager: File cound not be written to");
+        Logger::getInstance()->write<std::runtime_error>("MeasureManager: File cound not be written to");
     }
 }
 
 void GridMeasureManager::writeLast(string filename) {
     for(auto& pos: this->measures) {
-        QFile lastFile(CellUtils::strprintf(filename.c_str(),pos.first.first,pos.first.second).c_str());
+        QFile lastFile(CellUtils::strprintf(filename,pos.first.first,pos.first.second).c_str());
         if (!lastFile.open(QIODevice::WriteOnly | QIODevice::Text)) {
-            qWarning("MeasureManager: File could not be opened for writing.");
+            Logger::getInstance()->write<std::runtime_error>("MeasureManager: File could not be opened for writing.");
         }
         if(lastFile.write((this->nameString(pos.first)+"\n").c_str())==-1) {
-            qWarning("MeasureManager: Last file cound not be written to");
+            Logger::getInstance()->write<std::runtime_error>("MeasureManager: Last file cound not be written to");
         }
         if(this->lasts[pos.first] == "") {
             this->writeSingleCell(pos.first,&lastFile);
         } else {
             if(lastFile.write(lasts[pos.first].c_str())==-1) {
-                qWarning("MeasureManager: Last file cound not be written to");
+                Logger::getInstance()->write<std::runtime_error>("MeasureManager: Last file cound not be written to");
             }
         }
         lastFile.close();

@@ -12,7 +12,7 @@
 #include <QXmlStreamWriter>
 #include <QXmlStreamReader>
 #include <QFile>
-#include <QDebug>
+#include <logger.h>
 //#include <QtConcurrent>
 
 #include "gridCell.h"
@@ -49,7 +49,7 @@ bool GridCell::setOutputfileConstants(string filename) {
     for(auto& row : grid.rows) {
         int cc = 0;
         for(auto& column : row) {
-            toReturn &= column->cell->setOutputfileConstants(CellUtils::strprintf(filename.c_str(),rc,cc));
+            toReturn &= column->cell->setOutputfileConstants(CellUtils::strprintf(filename,rc,cc));
             cc++;
         }
         rc++;
@@ -62,7 +62,7 @@ bool GridCell::setOuputfileVariables(string filename) {
     for(auto& row : grid.rows) {
         int cc = 0;
         for(auto& column : row) {
-            toReturn &= column->cell->setOuputfileVariables(CellUtils::strprintf(filename.c_str(),rc,cc));
+            toReturn &= column->cell->setOuputfileVariables(CellUtils::strprintf(filename,rc,cc));
             ++cc;
         }
         ++rc;
@@ -262,7 +262,7 @@ bool GridCell::writeGridfile(string fileName) {
     QFile ofile(fileName.c_str());
 
     if(!ofile.open(QIODevice::Append)){
-        qCritical() << "Error opening " << fileName.c_str();
+        Logger::getInstance()->write<std::runtime_error>("GridCell: Error opening {}", fileName);
         return false;
     }
 
@@ -329,7 +329,7 @@ bool GridCell::handleNode(QXmlStreamReader& xml, list<CellInfo>& cells, CellInfo
             info.cell = cellMap.at(cell_type)();
         } catch(const std::out_of_range&) {
             success = false;
-            qWarning("%s not a valid cell type", cell_type.c_str());
+            Logger::getInstance()->write("{} not a valid cell type", cell_type);
             info.cell = cellMap.at(inexcitable)();
         }
         xml.skipCurrentElement();
@@ -364,7 +364,7 @@ bool GridCell::handleNode(QXmlStreamReader& xml, list<CellInfo>& cells, CellInfo
         try {
             success &= handlers.at(xml.name().toString())(xml);
         } catch(const std::out_of_range&) {
-            qWarning("GridCell: xml type %s not recognized",qUtf8Printable(xml.name().toString()));
+            Logger::getInstance()->write("GridCell: xml type {} not recognized",qUtf8Printable(xml.name().toString()));
         }
     }
     cells.push_back(info);
@@ -373,7 +373,7 @@ bool GridCell::handleNode(QXmlStreamReader& xml, list<CellInfo>& cells, CellInfo
 bool GridCell::readGridfile(string filename) {
     QFile ifile(filename.c_str());
     if(!ifile.open(QIODevice::ReadOnly|QIODevice::Text)){
-        qCritical() << "Error opening " << filename.c_str();
+        Logger::getInstance()->write<std::runtime_error>("GridCell: Error opening {}", filename);
         return false;
     }
     QXmlStreamReader xml(&ifile);
@@ -383,7 +383,7 @@ bool GridCell::readCellState(string file) {
     QFile ifile(file.c_str());
 
     if(!ifile.open(QIODevice::ReadOnly)){
-        qCritical() << "Error opening " << file.c_str();
+        Logger::getInstance()->write<std::runtime_error>("Error opening {}", file);
         return false;
     }
     QXmlStreamReader xml(&ifile);
@@ -394,7 +394,7 @@ bool GridCell::readCellState(string file) {
         int col = xml.attributes().value("col").toInt();
         shared_ptr<Node> n = this->grid(row,col);
         if(!n) {
-            qWarning("Warning: (%i,%i) not a cell in grid",col,row);	
+            Logger::getInstance()->write("Warning: ({},{}) not a cell in grid",col,row);
             xml.skipCurrentElement();
             continue;
         }
@@ -409,7 +409,7 @@ bool GridCell::writeCellState(string file) {
     string name;
 
     if(!ofile.open(QIODevice::WriteOnly|QIODevice::Text)){
-        qCritical() << "Error opening " << file.c_str();
+        Logger::getInstance()->write<std::runtime_error>("Error opening {}", file);
         return false;
     }
     QXmlStreamWriter xml(&ofile);

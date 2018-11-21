@@ -60,9 +60,7 @@ void PvarsVoltageClamp::writePvars(QXmlStreamWriter& xml) {
 
 void PvarsVoltageClamp::readPvars(QXmlStreamReader& xml) {
     this->clear();
-    while(!xml.atEnd() && xml.name() != "pvars") {
-        xml.readNext();
-    }
+    if(!CellUtils::readNext(xml, "pvars")) return;
     this->handlePvars(xml);
 }
 
@@ -95,6 +93,7 @@ void PvarsVoltageClamp::handlePvar(QXmlStreamReader& xml) {
         } else if(xml.name()=="cell") {
             xml.readNext();
             pvar.second->paramVal = xml.text().toDouble();
+            xml.skipCurrentElement();
         }
         else {
             xml.skipCurrentElement();

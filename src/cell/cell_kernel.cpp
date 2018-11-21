@@ -6,9 +6,9 @@
 //####################################################
 
 #include "cell_kernel.h"
+#include "cellutils.h"
 
 #include <typeinfo>
-#include <QDebug>
 using namespace LongQt;
 using namespace std;
 
@@ -106,7 +106,7 @@ bool CellKernel::setVar(string name, double val) {
     try {
         *vars.at(name) = val;
     } catch(out_of_range&) {
-        qDebug("%s not in cell vars", name.c_str());
+        Logger::getInstance()->write<out_of_range>("{} not in cell vars", name);
         return false;
     }
     return true;
@@ -123,7 +123,7 @@ bool CellKernel::setPar(string name, double val) {
     try {
         *pars.at(name) = val;
     } catch(out_of_range&) {
-        qDebug("%s not in cell pars", name.c_str());
+        Logger::getInstance()->write<out_of_range>("{} not in cell pars", name);
         return false;
     }
     return true;
@@ -165,14 +165,14 @@ void CellKernel::copyVarPar(const CellKernel& toCopy) {
         try {
             *it.second = *toCopy.vars.at(it.first);
         } catch(const std::out_of_range&) {
-            qDebug("%s not in cell vars", it.first.c_str());
+            Logger::getInstance()->write("{} not in cell vars", it.first);
         }
     }
     for(auto it : pars) {
         try {
             *it.second = *toCopy.pars.at(it.first);
         } catch(const std::out_of_range&) {
-            qDebug("%s not in cell pars", it.first.c_str());
+            Logger::getInstance()->write("{} not in cell pars", it.first);
         }
     }
     this->setOption(toCopy.option());

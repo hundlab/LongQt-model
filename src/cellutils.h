@@ -12,8 +12,11 @@
 #include <stdarg.h>
 #include <memory>
 #include <functional>
+#include <sstream>
 
-#include "cell.h"
+#include <QXmlStreamReader>
+#include <QString>
+
 
 #if defined(_WIN32) || defined(_WIN64)
   #define snprintf _snprintf
@@ -24,6 +27,7 @@
 namespace LongQt {
 
 class Protocol;
+class Cell;
 /*
  * This is equivalent to a simple static class which holds functions
  * and variables which are not class specific
@@ -76,50 +80,19 @@ namespace CellUtils {
      *	True if it is found
      *	False if eof or error
      */
-    inline bool readNext(QXmlStreamReader& xml, QString name) {
-        if(xml.name() == name && xml.tokenType() == QXmlStreamReader::StartElement) {
-            return true;
-        }
-        while(!xml.atEnd()) {
-            QXmlStreamReader::TokenType t = xml.readNext();
-            if(xml.name() == name && t == QXmlStreamReader::StartElement) {
-                return true;
-            } else if(xml.name() == name && t == QXmlStreamReader::EndElement) {
-                return false;
-            }
-        }
-        return false;
-    }
+    inline bool readNext(QXmlStreamReader& xml, QString name);
+
     /*
      * reads until xml tree is one level higher
      * returns:
      *	True if it is found
      *	False if eof or error
      */
-    inline bool readUpLevel(QXmlStreamReader& xml) {
-        int depth = 1;
-        while(!xml.atEnd()) {
-            QXmlStreamReader::TokenType t = xml.readNext();
-            if(t == QXmlStreamReader::StartElement) {
-                ++depth;
-            } else if(t == QXmlStreamReader::EndElement) {
-                --depth;
-            }
-            if(depth < 1) {
-                return true;
-            }
-        }
-        return false;
-    }
+    inline bool readUpLevel(QXmlStreamReader& xml);
 
     //trim whitespace from beginning and end of a string
-    inline std::string trim(std::string str)
-    {
-        std::string toFind = " \t\n\v\f\r";
-        str.erase(0, str.find_first_not_of(toFind));
-        str.erase(str.find_last_not_of(toFind)+1);
-        return str;
-    }
+    inline std::string trim(std::string str);
+
     /* maps a bool to string
      * b:true -> "true"
      * b:false-> "false"
@@ -136,8 +109,30 @@ namespace CellUtils {
         return (strcasecmp("true",trim(s).c_str()) == 0);
     }
 
-    std::string strprintf(const char * format, ...);
+    /*
+     * Create formated string, similar to python with {}
+     * denoting placeholder
+     */
+    template<typename T>
+    inline std::string strprintf(const std::string& format, T v);
+
+    template<typename... Args>
+    inline std::string strprintf(const std::string& format, Args... args);
+
+    /* Helper functions
+     */
+    namespace detials {
+
+    inline void strprintf_helper(const std::string&, size_t, std::stringstream&) {}
+
+    template<typename T>
+    inline void strprintf_helper(const std::string &format, size_t pos, std::stringstream &ss, T v);
+
+    template<typename T, typename... Args>
+    inline void strprintf_helper(const std::string &format, size_t pos, std::stringstream &ss, T v, Args... args);
+    }
 } //CellUtils
 } //LongQt
 
+#include "cellutils.hpp"
 #endif

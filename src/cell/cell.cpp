@@ -8,9 +8,9 @@
 
 #include "cell.h"
 #include "cellutils.h"
+#include "logger.h"
 #include <sstream>
 #include <QFile>
-#include <QDebug>
 using namespace LongQt;
 using namespace std;
 
@@ -80,7 +80,7 @@ bool Cell::writeCellState(string file) {
 	string name;
 
 	if(!ofile.open(QIODevice::WriteOnly|QIODevice::Text)){
-        qCritical() << "Error opening " << file.c_str();
+        Logger::getInstance()->write<std::runtime_error>("Cell: Error opening {}", file);
 		return 1;
 	}
 	QXmlStreamWriter xml(&ofile);
@@ -120,7 +120,7 @@ bool Cell::readCellState(string file) {
 	QFile ifile(file.c_str());
 
 	if(!ifile.open(QIODevice::ReadOnly)){
-        qCritical() << "Error opening " << file.c_str();
+       Logger::getInstance()->write<std::runtime_error>("Cell: Error opening {}", file);
 		return false;
 	}
 	QXmlStreamReader xml(&ifile);
@@ -133,9 +133,8 @@ bool Cell::readCellState(QXmlStreamReader& xml) {
 	if(!CellUtils::readNext(xml, "cell")) return false;
 	QString type = xml.attributes().value("type").toString();
 	if(type != this->type()) {
-		qCritical("Error: cell state file is for %s but cell is of type %s"
-				,type.toStdString().c_str(),this->type());
-		qCritical("Aborting read cell state");
+        Logger::getInstance()->write<std::logic_error>("Cell: cell state file is for {} but cell is of type {}"
+                ,type.toStdString(),this->type());
 	}
 	if(!CellUtils::readNext(xml, "pars")) return false;
 	while(!xml.atEnd() && xml.readNextStartElement()){
@@ -146,8 +145,8 @@ bool Cell::readCellState(QXmlStreamReader& xml) {
 		if(ok) {
 			try {
 				*(this->pars.at(name)) = val;
-			} catch (const std::out_of_range&) {
-				qWarning("Warning: %s not in cell pars",name.c_str());	
+            } catch (const std::out_of_range&) {
+                Logger::getInstance()->write("Cell: {} not in cell pars",name);
 			}
 		}
 		xml.readNext();
@@ -161,8 +160,8 @@ bool Cell::readCellState(QXmlStreamReader& xml) {
 		if(ok) {
 			try {
 				*(this->vars.at(name)) = val;
-			} catch (const std::out_of_range&) {
-				qWarning("Warning: %s not in cell vars",name.c_str());	
+            } catch (const std::out_of_range&) {
+                Logger::getInstance()->write("Cell: {} not in cell vars",name);
 			}
 		}
 		xml.readNext();

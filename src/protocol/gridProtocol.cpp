@@ -9,7 +9,6 @@
 #include "cellutils.h"
 
 #include <QFile>
-#include <QDebug>
 using namespace LongQt;
 using namespace std;
 
@@ -99,7 +98,7 @@ void GridProtocol::setupTrial() {
     __cell->setConstantSelection(temp);
     temp.clear();
     this->__measureMgr->setupMeasures(getDataDir()+"/"+
-        CellUtils::strprintf(propertyoutfile.c_str(),__trial));
+        CellUtils::strprintf(propertyoutfile,__trial));
 
     __cell->t = 0.0;      // reset time
 
@@ -109,7 +108,7 @@ void GridProtocol::setupTrial() {
     runflag=true;     // reset doneflag
 
     __cell->setOuputfileVariables(getDataDir()+"/"
-        +CellUtils::strprintf(dvarsoutfile.c_str(),__trial));
+        +CellUtils::strprintf(dvarsoutfile,__trial));
 }
 
 bool GridProtocol::runTrial() {
@@ -155,11 +154,11 @@ bool GridProtocol::runTrial() {
 
     // Output final (ss) property values for each trial
     this->__measureMgr->writeLast(CellUtils::strprintf(
-        (getDataDir()+"/"+finalpropertyoutfile).c_str(),__trial));
+        getDataDir()+"/"+finalpropertyoutfile,__trial));
 
     // Output parameter values for each trial
     __cell->setOutputfileConstants(getDataDir()+"/"+CellUtils::strprintf(
-        finaldvarsoutfile.c_str(),__trial));
+        finaldvarsoutfile,__trial));
     __cell->writeConstants();
     this->__measureMgr->close();
     __cell->closeFiles();

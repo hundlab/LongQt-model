@@ -38,7 +38,8 @@ $$PWD/protocol/currentClampProtocol.cpp\
 $$PWD/protocol/voltageClampProtocol.cpp \
     $$PWD/cell/inexcitablecell.cpp \
     $$PWD/runsim.cpp \
-    $$PWD/pvarscell.cpp
+    $$PWD/pvarscell.cpp \
+    $$PWD/logger.cpp
 
 HEADERS  += $$PWD/measuremanager.h\
 $$PWD/gridmeasuremanager.h\
@@ -77,4 +78,7 @@ $$PWD/protocol/protocol.h\
 $$PWD/protocol/gridProtocol.h \
     $$PWD/cell/inexcitablecell.h \
     $$PWD/runsim.h \
-    $$PWD/pvarscell.h
+    $$PWD/pvarscell.h \
+    $$PWD/logger.h \
+    $$PWD/cellutils.hpp \
+    $$PWD/cell/cell_kernel.hpp

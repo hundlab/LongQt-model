@@ -50,23 +50,23 @@ class Measure
         virtual void updateOld(double time, double var);
 
         std::map<std::string, double* const> varmap = // map for refing properties that can be measured.
-        {{"peak",&peak},{"min",&min},{"maxderiv",&maxderiv},
-        {"mint",&mint},{"derivt",&derivt},{"maxt",&maxt}};
-
-        //		map<string, double> lastMap;
+        {{"peak",&max.second},{"min",&min.second},{"maxderiv",&maxderiv.second},
+        {"mint",&min.first},{"derivt",&maxderiv.first},{"maxt",&max.first}};
 
         double varold = Q_NAN;
-//        double vartakeoff=-100; //var value at point of max deflection.
         double told = Q_NAN;
-//        double durtime1;
-        double derivold = 0; //dv/dt from prev. time step
-        double derivt = 0;   // time of max deriv.
-        double peak = -INF;      // max var value
-        double maxt = Q_NAN;    //time of max value.
-        double min = INF;       // min var value
-        double mint = Q_NAN;    //time of min value.
-        double maxderiv = 0;
+        double derivold = Q_NAN; //dv/dt from prev. time step
+
         double deriv = 0;
+        std::pair<double,double> maxderiv = {Q_NAN,-INF};   // time of max deriv.
+        std::pair<double,double> max = {Q_NAN,-INF};      // max var value
+        std::pair<double,double> min = {Q_NAN,INF};       // min var value
+
+        bool resetflag = false;
+
+        std::set<std::string> __selection; // map for refing properties that will be output.
+        //        double vartakeoff=-100; //var value at point of max deflection.
+        //        double durtime1;
         //		double maxderiv1;
         //		double maxderiv2;
 //        double maxderiv2nd = 0;
@@ -77,9 +77,6 @@ class Measure
 //        bool durflag = false;    //1 while measuring duration.
 //        bool ampflag = false;
 //        bool ddrflag = false;
-        bool returnflag = false;
-
-        std::set<std::string> __selection; // map for refing properties that will be output.
     private:
         void copy(const Measure& toCopy);
 };

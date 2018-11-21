@@ -1,7 +1,7 @@
 #include "settingsIO.h"
 #include "cellutils.h"
+#include "logger.h"
 #include <QFile>
-#include <QDebug>
 #include <QDir>
 using namespace LongQt;
 using namespace std;
@@ -33,7 +33,7 @@ void SettingsIO::writeSettings(QString filename, shared_ptr<Protocol> proto) {
     string name;
 
     if(!ofile.open(QIODevice::WriteOnly|QIODevice::Text|QIODevice::Truncate)){
-        qCritical() << "SettingsIO: Error opening " << filename;
+        Logger::getInstance()->write<std::runtime_error>("SettingsIO: Error opening {}", filename.toStdString());
         return;
     }
     QXmlStreamWriter xml(&ofile);
@@ -64,12 +64,12 @@ shared_ptr<Protocol> SettingsIO::readProtoType(shared_ptr<Protocol> proto,  QXml
                 new_proto->setDataDir(datadir);
                 __protoChanged = true;
             } catch (const std::out_of_range&) {
-                qWarning("SettingsIO: %s not in protocol map", type.toStdString().c_str());
+                Logger::getInstance()->write<std::out_of_range>("SettingsIO: {} not in protocol map", type.toStdString());
                 return 0;
             }
         }
     } else {
-        qWarning("SettingsIO: Settings file does not contain protocol type");
+        Logger::getInstance()->write("SettingsIO: Settings file does not contain protocol type");
     }
     return new_proto;
 }
@@ -94,7 +94,7 @@ shared_ptr<Protocol> SettingsIO::readSettings(QString filename, shared_ptr<Proto
     QFile ifile(filename);
 
     if(!ifile.open(QIODevice::ReadOnly)){
-        qWarning() << "SettingsIO: Error opening " << filename;
+        Logger::getInstance()->write<std::runtime_error>("SettingsIO: Error opening {}", filename.toStdString());
         return proto;
     }
     QXmlStreamReader xml(&ifile);
@@ -127,6 +127,6 @@ void SettingsIO::readdvars(shared_ptr<Protocol> proto, QXmlStreamReader& xml) {
         xml.readNext();
     }
     if(!proto->cell()->setVariableSelection(selection)) {
-        qWarning("SettingsIO: Some dvars were not vars in cell");
+        Logger::getInstance()->write("SettingsIO: Some dvars were not vars in cell");
     }
 }

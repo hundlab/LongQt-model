@@ -45,6 +45,7 @@ set(modellib_sources
     "${CMAKE_CURRENT_LIST_DIR}/protocol/voltageClampProtocol.cpp"
     "${CMAKE_CURRENT_LIST_DIR}/cell/inexcitablecell.cpp"
     "${CMAKE_CURRENT_LIST_DIR}/runsim.cpp"
+    "${CMAKE_CURRENT_LIST_DIR}/logger.cpp"
 )
 
 set(modellib_headers
@@ -60,6 +61,7 @@ set(modellib_headers
     "${CMAKE_CURRENT_LIST_DIR}/cell/kurata08.h"
     "${CMAKE_CURRENT_LIST_DIR}/cell/tnnp04.h"
     "${CMAKE_CURRENT_LIST_DIR}/cell/cell_kernel.h"
+    "${CMAKE_CURRENT_LIST_DIR}/cell/cell_kernel.hpp"
     "${CMAKE_CURRENT_LIST_DIR}/cell/gpbhuman.h"
     "${CMAKE_CURRENT_LIST_DIR}/cell/ksan.h"
     "${CMAKE_CURRENT_LIST_DIR}/cell/atrial.h"
@@ -72,6 +74,7 @@ set(modellib_headers
     "${CMAKE_CURRENT_LIST_DIR}/cell/FR.h"
     "${CMAKE_CURRENT_LIST_DIR}/iobase.h"
     "${CMAKE_CURRENT_LIST_DIR}/cellutils.h"
+    "${CMAKE_CURRENT_LIST_DIR}/cellutils.hpp"
     "${CMAKE_CURRENT_LIST_DIR}/structure/grid.h"
     "${CMAKE_CURRENT_LIST_DIR}/structure/node.h"
     "${CMAKE_CURRENT_LIST_DIR}/structure/fiber.h"
@@ -86,4 +89,5 @@ set(modellib_headers
     "${CMAKE_CURRENT_LIST_DIR}/protocol/gridProtocol.h"
     "${CMAKE_CURRENT_LIST_DIR}/cell/inexcitablecell.h"
     "${CMAKE_CURRENT_LIST_DIR}/runsim.h"
+    "${CMAKE_CURRENT_LIST_DIR}/logger.h"
 )

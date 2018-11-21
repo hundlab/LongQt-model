@@ -1,4 +1,5 @@
 #include "grid.h"
+#include "logger.h"
 using namespace LongQt;
 using namespace std;
 
@@ -156,7 +157,7 @@ shared_ptr<Node> Grid::operator()(const int row, const int col) {
     try {
         return rows.at(row).at(col);
     } catch(const std::out_of_range&) {
-        qDebug("Grid: (%i,%i) not in grid", row,col);
+        Logger::getInstance()->write<std::out_of_range>("Grid: ({}, {}) not in grid", row,col);
         return shared_ptr<Node>();
     }
 }

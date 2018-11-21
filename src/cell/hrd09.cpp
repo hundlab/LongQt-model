@@ -9,7 +9,6 @@
 
 #include "hrd09.h"
 
-#include <QDebug>
 using namespace LongQt;
 //######################################################
 // Constructor for control canine epicardial
@@ -549,7 +548,7 @@ void HRD09Control::updateIrel()
 	  if(sponRelflag==0){
 	    tRel=0.0;
 	    sponRelflag=1;
-        qInfo() << "Spontaneous release at t = " << t << endl;
+        Logger::getInstance()->write("HRD09: Spontaneous release at t = {}", t);
 	    ryRopen = irelinf = 6.0;
 	  }
 	  tRel=tRel+dt;

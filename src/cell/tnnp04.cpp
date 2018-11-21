@@ -7,8 +7,8 @@
 //######################################################
 
 #include "tnnp04.h"
+#include "cellutils.h"
 
-#include <QDebug>
 using namespace LongQt;
 
 //######################################################
@@ -382,7 +382,7 @@ void TNNP04Control::updateSRcurrents(){
       if(sponRelflag==0){
         sponRelflag = 1;
 	    tRel = 0.0;	
-        qInfo() << "Spontaneous release at t = " << t << endl;
+        Logger::getInstance()->write("TNNP04: Spontaneous release at t = {}", t);
 	  }
 	  Gate.g = 1;
 	}

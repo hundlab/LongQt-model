@@ -1,5 +1,5 @@
 #include "pvarsgrid.h"
-#include <QDebug>
+#include "logger.h"
 using namespace LongQt;
 using namespace std;
 
@@ -151,8 +151,8 @@ void PvarsGrid::setMaxDistAndVal(string varname, int maxDist, double maxVal) {
         param->maxDist = maxDist;
         param->maxVal = maxVal;
         this->calcIonChanParam(param);
-    } catch(std::out_of_range) {
-        qWarning("PvarsGrid: %s is not in pvars",varname.c_str());
+    } catch(std::out_of_range&) {
+        Logger::getInstance()->write<std::out_of_range>("PvarsGrid: {} is not in pvars", varname);
     }
 }
 void PvarsGrid::setStartCells(string varname, set<pair<int,int>> startCells) {
@@ -160,8 +160,8 @@ void PvarsGrid::setStartCells(string varname, set<pair<int,int>> startCells) {
         MIonChanParam* param = this->__pvars->at(varname);
         param->startCells = startCells;
         this->calcIonChanParam(param);
-    } catch(std::out_of_range) {
-        qWarning("PvarsGrid: %s is not in pvars",varname.c_str());
+    } catch(std::out_of_range&) {
+        Logger::getInstance()->write<std::out_of_range>("PvarsGrid: {} is not in pvars",varname);
     }
 }
 void PvarsGrid::calcIonChanParams() {

@@ -50,18 +50,17 @@ class MeasureWave: public Measure
         double ddr = Q_NAN;      //diastolic depol. rate
         //		double maxderiv1;
         //		double maxderiv2;
-        double derivt1 = Q_NAN;  // time of prev. cycle max deriv.
-        double deriv2ndt = Q_NAN;  // time of max 2nd deriv.
-        double maxderiv2nd = 0;
+        double maxderiv_prev = Q_NAN;  // time of prev. cycle max deriv.
+        std::pair<double,double> maxderiv2d = {Q_NAN,-INF};
         double cl = 0;
         double dur = Q_NAN;   //duration
         double __percrepol = 50;   //specify percent repolarization
         double repol = -25;           // repol var val for duration measure.
-        bool minflag = false;
-        bool maxflag = false;
-        bool durflag = false;    //1 while measuring duration.
-        bool ampflag = false;
-        bool ddrflag = false;
+        bool minfound = false;
+        bool maxfound = false;
+        bool inAP = false;    //1 while measuring duration.
+        bool ampfound = false;
+        bool ddrfound = false;
 
     private:
         void copy(const MeasureWave& toCopy);

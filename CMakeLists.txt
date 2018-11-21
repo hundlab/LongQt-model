@@ -76,7 +76,7 @@ install(TARGETS LongQt-model EXPORT LongQt-model
 install(FILES  LongQt-modelConfig.cmake DESTINATION ${install_cmake_dir})
 install(DIRECTORY ${modellib_src}
     DESTINATION ${install_include_dir}
-    FILES_MATCHING PATTERN "*.h"
+    FILES_MATCHING PATTERN "*.h*"
 )
 install(EXPORT LongQt-model
     DESTINATION ${install_cmake_dir})

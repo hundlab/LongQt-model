@@ -110,9 +110,9 @@ void VoltageClamp::setupTrial() {
     runflag=true;     // reset doneflag
 
     this->__measureMgr->setupMeasures(
-        CellUtils::strprintf((getDataDir()+"/"+propertyoutfile).c_str(),__trial));
+        CellUtils::strprintf(getDataDir()+"/"+propertyoutfile,__trial));
     __cell->setOuputfileVariables(
-        CellUtils::strprintf((getDataDir()+"/"+dvarsoutfile).c_str(),__trial));
+        CellUtils::strprintf(getDataDir()+"/"+dvarsoutfile,__trial));
 }
 
 bool VoltageClamp::runTrial() {
@@ -157,11 +157,11 @@ bool VoltageClamp::runTrial() {
 
     // Output final (ss) property values for each trial
     this->__measureMgr->writeLast(CellUtils::strprintf(
-        (getDataDir()+"/"+finalpropertyoutfile).c_str(),__trial));
+        getDataDir()+"/"+finalpropertyoutfile,__trial));
 
     // Output parameter values for each trial
     __cell->setOutputfileConstants(CellUtils::strprintf(
-        (getDataDir()+"/"+finaldvarsoutfile).c_str(),__trial));
+        getDataDir()+"/"+finaldvarsoutfile,__trial));
     __cell->writeConstants();
     this->__measureMgr->close();
     __cell->closeFiles();

@@ -14,7 +14,7 @@ PvarsCurrentClamp::PvarsCurrentClamp(const PvarsCurrentClamp& o, Protocol* proto
 void PvarsCurrentClamp::setIonChanParams() {
     int trial = proto->trial();
     if(this->__pvars->size() > 0 && trial >= this->__pvars->begin()->second->trials.size()) {
-        qWarning("PvarsCurrentClamp: too many trials, recalculating");
+        Logger::getInstance()->write("PvarsCurrentClamp: too many trials {} > {}, recalculating", trial, this->__pvars->begin()->second->trials.size());
         this->calcIonChanParams();
     }
     for(auto& pvar : *this->__pvars) {
@@ -114,7 +114,7 @@ void PvarsCurrentClamp::handlePvar(QXmlStreamReader& xml) {
                 if(pvar.second->trials.size() == (unsigned int)p.first) {
                     pvar.second->trials.push_back(p.second);
                 } else {
-                    qWarning("CurrentClamp: Trials in xml are not in order");
+                    Logger::getInstance()->write("CurrentClamp: Trials in xml are not in order");
                 }
             }
         }

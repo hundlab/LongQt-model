@@ -21,9 +21,9 @@
 #include "currentClampProtocol.h"
 
 #include "protocol.h"
+#include "logger.h"
 
 #include <QFile>
-#include <QDebug>
 #include <stdio.h>
 #include <stdarg.h>
 using namespace LongQt;
@@ -87,20 +87,20 @@ void CellUtils::set_default_vals(Protocol &proto) {
     map<string,string> vals;
     try {
         defaults = CellUtils::protocolCellDefaults.at({proto_type,""});
-    } catch(out_of_range) {
-        qDebug("CellUtils: no entry for (%s,%s) in cell defaults", proto_type.c_str(), "Default");
+    } catch(out_of_range&) {
+        Logger::getInstance()->write("CellUtils: no entry for ({}, Default) in cell defaults", proto_type);
     }
     try {
         vals = CellUtils::protocolCellDefaults.at({proto_type,cell_type});
-    } catch(out_of_range) {
-        qDebug("CellUtils: no entry for (%s, %s) in cell defaults", proto_type.c_str(), cell_type.c_str());
+    } catch(out_of_range&) {
+        Logger::getInstance()->write("CellUtils: no entry for ({}, {}) in cell defaults", proto_type, cell_type);
     }
     vals.insert(defaults.begin(),defaults.end());
     for(auto& val :vals) {
         try {
             proto.parsStr(val.first,val.second);
-        } catch(out_of_range) {
-            qDebug("CellUtils: default %s not in %s pars", val.first.c_str(), proto_type.c_str());
+        } catch(out_of_range&) {
+            Logger::getInstance()->write("CellUtils: default {} not in {} pars", val.first, proto_type);
         };
     }
 }
@@ -115,22 +115,7 @@ const map<string, CellUtils::ProtocolInitializer> CellUtils::protoMap = {
     {GridProtocol::name, [] () {return make_shared<GridProtocol>();}}
 };
 
-std::string CellUtils::strprintf(const char * format, ...) {
-    va_list argsLen,args;
-    va_start(args, format);
-    va_copy(argsLen,args);
-    int numbytes = vsnprintf((char*)NULL, 0, format, argsLen);
-    char* cstr = new char[(numbytes+1)*sizeof(char)];
-    vsnprintf(cstr, numbytes+1, format, args);
-    std::string str(cstr);
-    va_end(args);
-    delete[] cstr;
-    return str;
-}
-
-
-CellUtils::Side CellUtils::flipSide(CellUtils::Side s)
-{
+CellUtils::Side CellUtils::flipSide(CellUtils::Side s) {
     switch(s) {
     case Side::top:
         return Side::bottom;

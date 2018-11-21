@@ -14,10 +14,12 @@
 
 using namespace LongQt;
 using namespace std;
+
+#define INF std::numeric_limits<double>::infinity()
+#define Q_NAN std::numeric_limits<double>::quiet_NaN()
 //#############################################################
 // Measure class constructor and destructor
 //#############################################################
-
 Measure::Measure(set<string> selected)
 {
     for(auto& select: selected) {
@@ -52,15 +54,13 @@ map<string,double> Measure::variablesMap() {
 }
 
 void Measure::copy(const Measure& toCopy) {
-    peak= toCopy.peak;
-    min= toCopy.min;
+    max = toCopy.max;
     told = toCopy.told;
-    mint = toCopy.mint;
-    maxt = toCopy.maxt;
+    min = toCopy.min;
     varold = toCopy.varold;
     derivold = toCopy.derivold;
-    derivt = toCopy.derivt;
-    returnflag = toCopy.returnflag;
+    maxderiv = toCopy.maxderiv;
+    resetflag = toCopy.resetflag;
     __selection = toCopy.__selection;
 };
 
@@ -71,32 +71,29 @@ void Measure::copy(const Measure& toCopy) {
 bool Measure::measure(double time, double var) {
     this->calcMeasure(time,var);
     this->updateOld(time, var);
-    return this->returnflag;
+    return this->resetflag;
 }
 
 void Measure::calcMeasure(double time, double var)
 {
 //    if(minflag&&abs(var)>peak){          // Track value and time of peak
-    if(var>peak) {
-        peak=var;
-        maxt=time;
+    if(var>max.second) {
+        max= {time, var};
     }
 
-    if(var<min){                        // Track value and time of min
-        min=var;
-        mint=time;
+    if(var<min.second){                        // Track value and time of min
+        min= {time, var};
     }
     if(std::isnan(told)) {
         return;
     }
 
-    returnflag = false;  //default for return...set to 1 when props ready for output
+    resetflag = false;  //default for return...set to 1 when props ready for output
 
     deriv=(var-varold)/(time-told);
 
-    if(deriv>maxderiv){             // Track value and time of max 1st deriv
-        maxderiv=deriv;
-        derivt=time;
+    if(deriv>maxderiv.second){             // Track value and time of max 1st deriv
+        maxderiv= {time,deriv};
     }
 };
 
@@ -109,13 +106,13 @@ void Measure::updateOld(double time, double var) {
 
 void Measure::reset()
 {
-    peak=-100.0;
-    min=100.0;
-    maxderiv=0.0;
+    max.second=-INF;
+    min.second=INF;
+    maxderiv.second=-INF;
 //    maxderiv2nd=0.0;
     //told is still valid after reset
 //    told = 0.0;
-    returnflag = false;
+    resetflag = false;
 };
 string Measure::getNameString(string name) const {
     string nameStr = "";
@@ -143,3 +140,5 @@ void Measure::selection(set<string> new_selection) {
         }
     }
 }
+#undef INF
+#undef Q_NAN

@@ -219,7 +219,7 @@ struct GateVariable {
 	virtual void updateIclca();
 	virtual void updateIclbk();
  //##################
-    int externalStim(double stimval);
+    void externalStim(double stimval);
     virtual void makemap();
     virtual const char* type() const;
     struct GateVariable Gate;

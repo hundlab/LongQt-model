@@ -77,7 +77,7 @@ class Kurata08 : public Cell
     virtual void updateCai();
     virtual void updateCurr();
     virtual void updateConc();
-    virtual int externalStim(double stimval);
+    virtual void externalStim(double stimval);
     virtual const char* type() const;
     
     //##### Declare additional class variables ##############
@@ -114,7 +114,7 @@ class Kurata08 : public Cell
     double iksFactor;   // Slowly activating delayed rectifier K current
     double ikrFactor;   // Rapidly activating delayed rectifier K current
     double itoFactor;   // Transient outward K+ current
-    double itrekFactor;   // Transient outward K+ current
+    double itrekFactor;   // Two-pore K+ channel
     double isusFactor;  // Sustained 4-AP sensitive K+ current
     double ikachFactor;  // Muscarinic K+ current
     double inakFactor;          // Na-K pump

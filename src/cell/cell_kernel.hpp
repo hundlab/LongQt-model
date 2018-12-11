@@ -1,6 +1,8 @@
 #ifndef CELL_KERNEL_HPP
 #define CELL_KERNEL_HPP
 
+#include<cellutils_core.h>
+
 namespace LongQt {
 //Macro to create a flag enum with a map of its values used by subclasses to create
 //Options enum
@@ -104,12 +106,12 @@ std::string CLASS_NAME::optionStr() const\
 void CLASS_NAME::setOption(std::string opt)\
 {\
     Options o = WT;\
-    auto splits = CellKernel::split(opt,'|');\
+    auto splits = CellUtils::split(opt,'|');\
     for(auto& sp: splits) {\
         try {\
             o |= static_cast<Options>(this->optsMap.at(sp));\
         } catch(std::out_of_range&) {\
-            Logger::getInstance()->write<std::out_of_range>("CellKernel: Cell Option %s does not exist", sp.c_str());\
+            Logger::getInstance()->write<std::out_of_range>("CellKernel: Cell Option {} does not exist", sp);\
         }\
     }\
     this->setOption(o);\

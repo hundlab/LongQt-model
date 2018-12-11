@@ -240,7 +240,7 @@ MAKE_OPTIONS(S571E,S571A,S2814D,S2814A,ISO)
     double testFactor;
     //
 
-	int externalStim(double stimval);
+    void externalStim(double stimval);
     void makemap();
     struct GateVariable Gate;
     enum Options opts;

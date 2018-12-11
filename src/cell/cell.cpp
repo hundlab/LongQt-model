@@ -23,19 +23,19 @@ bool Cell::setOutputfileConstants(string filename) {
 };
 
 void Cell::writeVariables() {
-    write(varsSelection, this->vars, &varsofile);
+    write(varsSelection, this->__vars, &varsofile);
 };
 
 void Cell::writeConstants() {
-    write(parsSelection, this->pars, &parsofile);
+    write(parsSelection, this->__pars, &parsofile);
 };
 
 bool Cell::setConstantSelection(set<string> selection) {
-    return setSelection(this->pars, &this->parsSelection, selection, &parsofile);
+    return setSelection(this->__pars, &this->parsSelection, selection, &parsofile);
 };
 
 bool Cell::setVariableSelection(set<string> selection) {
-    return setSelection(this->vars, &this->varsSelection, selection, &varsofile);
+    return setSelection(this->__vars, &this->varsSelection, selection, &varsofile);
 };
 
 set<string> Cell::getConstantSelection() {
@@ -96,7 +96,7 @@ bool Cell::writeCellState(QXmlStreamWriter& xml) {
 	xml.writeAttribute("type", this->type());
 
 	xml.writeStartElement("pars");
-	for(auto& par : this->pars){
+	for(auto& par : this->__pars){
 		xml.writeStartElement("par");
 		xml.writeAttribute("name",par.first.c_str());
 		xml.writeCharacters(QString::number(*par.second));
@@ -105,7 +105,7 @@ bool Cell::writeCellState(QXmlStreamWriter& xml) {
 	xml.writeEndElement();
 
 	xml.writeStartElement("vars");
-	for(auto& var : this->vars){
+	for(auto& var : this->__vars){
 		xml.writeStartElement("var");
 		xml.writeAttribute("name",var.first.c_str());
 		xml.writeCharacters(QString::number(*var.second));
@@ -144,7 +144,7 @@ bool Cell::readCellState(QXmlStreamReader& xml) {
 		double val = xml.text().toDouble(&ok);
 		if(ok) {
 			try {
-				*(this->pars.at(name)) = val;
+				*(this->__pars.at(name)) = val;
             } catch (const std::out_of_range&) {
                 Logger::getInstance()->write("Cell: {} not in cell pars",name);
 			}
@@ -159,7 +159,7 @@ bool Cell::readCellState(QXmlStreamReader& xml) {
 		double val = xml.text().toDouble(&ok);
 		if(ok) {
 			try {
-				*(this->vars.at(name)) = val;
+				*(this->__vars.at(name)) = val;
             } catch (const std::out_of_range&) {
                 Logger::getInstance()->write("Cell: {} not in cell vars",name);
 			}

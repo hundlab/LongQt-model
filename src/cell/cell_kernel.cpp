@@ -27,10 +27,10 @@ void CellKernel::Initialize() {
     FDAY = 96487.0;
 
     //##### Initialize variables ##################
-    dVdt=dVdtmax=0.0;
+    dVdt=/*dVdtmax=*/0.0;
     t=0.0;
     dt=dtmin;
-    vOld = vNew =  -88.0;
+    vOld = /*vNew =*/  -88.0;
     iTot = iTotold = 0.000000000001;
     iNat = iKt = iCat = 0.0;
     this->mkmap();
@@ -58,17 +58,17 @@ CellKernel::~CellKernel() {
 // Transmembrane potential 
 double CellKernel::updateV()
 {
-  vNew=vOld-iTot*dt;
+  double vNew=vOld-iTot*dt;
   
   dVdt=(vNew-vOld)/dt;
-  if(dVdt>dVdtmax)
-    dVdtmax=dVdt;
+//  if(dVdt>dVdtmax)
+//    dVdtmax=dVdt;
   return vNew;
 };
 
 void CellKernel::setV(double v)
 {
-  vNew=v;	
+//  vNew=v;
   vOld=v;
 };
 
@@ -94,17 +94,16 @@ double CellKernel::tstep(double stimt)
 };
 
 // External stimulus.
-int CellKernel::externalStim(double stimval)
+void CellKernel::externalStim(double stimval)
 {
     iTot = iTot+stimval;   // If [ion] change, also should add stimval to specific ion total (e.g. iKt)
-    return 1;
 }
 double CellKernel::var(string name) {
-    return *vars.at(name);
+    return *__vars.at(name);
 }
 bool CellKernel::setVar(string name, double val) {
     try {
-        *vars.at(name) = val;
+        *__vars.at(name) = val;
     } catch(out_of_range&) {
         Logger::getInstance()->write<out_of_range>("{} not in cell vars", name);
         return false;
@@ -114,14 +113,14 @@ bool CellKernel::setVar(string name, double val) {
 
 bool CellKernel::hasVar(string name)
 {
-    return vars.count(name) > 0;
+    return __vars.count(name) > 0;
 }
 double CellKernel::par(string name) {
-    return *pars.at(name);
+    return *__pars.at(name);
 }
 bool CellKernel::setPar(string name, double val) {
     try {
-        *pars.at(name) = val;
+        *__pars.at(name) = val;
     } catch(out_of_range&) {
         Logger::getInstance()->write<out_of_range>("{} not in cell pars", name);
         return false;
@@ -131,19 +130,19 @@ bool CellKernel::setPar(string name, double val) {
 
 bool CellKernel::hasPar(string name)
 {
-    return pars.count(name) > 0;
+    return __pars.count(name) > 0;
 }
-set<string> CellKernel::getVariables() {
+set<string> CellKernel::vars() {
     set<string> toReturn;
-    for(auto it = vars.begin(); it != vars.end(); it++) {
+    for(auto it = __vars.begin(); it != __vars.end(); it++) {
         toReturn.insert(it->first);
     }
     return toReturn;
 };
 
-set<string> CellKernel::getConstants() {
+set<string> CellKernel::pars() {
     set<string> toReturn;
-    for(auto it = pars.begin(); it != pars.end(); it++) {
+    for(auto it = __pars.begin(); it != __pars.end(); it++) {
         toReturn.insert(it->first);
     }
     return toReturn;
@@ -161,16 +160,16 @@ set<string> CellKernel::getConstants() {
 //}
 
 void CellKernel::copyVarPar(const CellKernel& toCopy) {
-    for(auto it : vars) {
+    for(auto it : __vars) {
         try {
-            *it.second = *toCopy.vars.at(it.first);
+            *it.second = *toCopy.__vars.at(it.first);
         } catch(const std::out_of_range&) {
             Logger::getInstance()->write("{} not in cell vars", it.first);
         }
     }
-    for(auto it : pars) {
+    for(auto it : __pars) {
         try {
-            *it.second = *toCopy.pars.at(it.first);
+            *it.second = *toCopy.__pars.at(it.first);
         } catch(const std::out_of_range&) {
             Logger::getInstance()->write("{} not in cell pars", it.first);
         }
@@ -179,39 +178,39 @@ void CellKernel::copyVarPar(const CellKernel& toCopy) {
 }
 void CellKernel::mkmap() {
     // make map of state vars
-    vars["vOld"]=&vOld;
-    vars["t"]=&t;
-    vars["dVdt"]=&dVdt;
-    vars["iTot"]=&iTot;
-    vars["iKt"]=&iKt;
-    vars["iNat"]=&iNat;
-    vars["iCat"]=&iCat;
+    __vars["vOld"]=&vOld;
+    __vars["t"]=&t;
+    __vars["dVdt"]=&dVdt;
+    __vars["iTot"]=&iTot;
+    __vars["iKt"]=&iKt;
+    __vars["iNat"]=&iNat;
+    __vars["iCat"]=&iCat;
     
     // make map of params
-    pars["dtmin"]=&dtmin;
-    pars["dtmed"]=&dtmed;
-    pars["dtmax"]=&dtmax;
-    pars["Cm"]=&Cm;
-    pars["Rcg"]=&Rcg;
-    pars["RGAS"]=&RGAS;
-    pars["TEMP"]=&TEMP;
-    pars["FDAY"]=&FDAY;
-    pars["cellRadius"]=&cellRadius;
-    pars["cellLength"]=&cellLength;
-    pars["Vcell"]=&Vcell;
-    pars["Vmyo"]=&Vmyo;
-    pars["AGeo"]=&AGeo;
-    pars["ACap"]=&ACap;
+    __pars["dtmin"]=&dtmin;
+    __pars["dtmed"]=&dtmed;
+    __pars["dtmax"]=&dtmax;
+    __pars["Cm"]=&Cm;
+    __pars["Rcg"]=&Rcg;
+    __pars["RGAS"]=&RGAS;
+    __pars["TEMP"]=&TEMP;
+    __pars["FDAY"]=&FDAY;
+    __pars["cellRadius"]=&cellRadius;
+    __pars["cellLength"]=&cellLength;
+    __pars["Vcell"]=&Vcell;
+    __pars["Vmyo"]=&Vmyo;
+    __pars["AGeo"]=&AGeo;
+    __pars["ACap"]=&ACap;
     
 		//add potenttially needed values to pars
-    pars["vNew"]=&vNew;
-    pars["dVdtmax"]=&dVdtmax;
+//    __pars["vNew"]=&vNew;
+//    __pars["dVdtmax"]=&dVdtmax;
 }
-void CellKernel::reset() {
+/*void CellKernel::reset() {
     int opt = this->option();
     this->Initialize();
     this->setOption(opt);
-}
+}*/
 
 map<string, int> CellKernel::optionsMap() const
 {
@@ -246,24 +245,4 @@ int CellKernel::removeConflicts(int opt)
         finalOpt |= first; //add the first cOpt from conflicts back
     }
     return finalOpt;
-}
-
-vector<string> CellKernel::split(string s, char delim) {
-    vector<string> v;
-    size_t prev_pos = 0;
-    size_t pos = s.find(delim,prev_pos);
-    std::string token;
-    while(pos != std::string::npos) {
-        token = s.substr(prev_pos, pos-prev_pos);
-        if(token != "") {
-            v.push_back(token);
-        }
-        prev_pos = pos+1;
-        pos = s.find(delim,prev_pos);
-    }
-    token = s.substr(prev_pos);
-    if(token != "") {
-        v.push_back(token);
-    }
-    return v;
 }

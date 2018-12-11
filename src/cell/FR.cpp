@@ -23,7 +23,7 @@ void FR::Initialize(){
     apTime = 0.0;
 
 	dt=dtmin=0.002;
-	vOld = vNew =  -90.0;
+    vOld =/* vNew =*/  -90.0;
     
     /* Cell Geometry */
     cellLength = 0.01;       // Length of the cell (cm)
@@ -622,79 +622,78 @@ void FR::updateConc()
 
 
 // Constant Stimulus (uA/cm^2)
-int FR::externalStim(double stimval){
+void FR::externalStim(double stimval){
 	iKt = iKt + stimval;
 	//iKt was only changed for conc_ki
     iTot = iTot + stimval;
 	boolien = 0;
-    return 1;
 }
 
 
 
 void FR::makemap(){
-    vars["iTot"]=&iTot;
+    __vars["iTot"]=&iTot;
 
     //ion concentrations
-    vars["nai"]=&nai;
+    __vars["nai"]=&nai;
  //   vars["nao"]=&nao;
  //   vars["nabm"]=&nabm;
  //   vars["dnao"]=&dnao;
-    vars["ki"]=&ki;
+    __vars["ki"]=&ki;
  //   vars["ko"]=&ko;
  //   vars["kbm"]=&kbm;
  //   vars["dko"]=&dko;
-    vars["cai"]=&cai;
+    __vars["cai"]=&cai;
  //   vars["cao"]=&cao;
  //   vars["cabm"]=&cabm;
  //   vars["dcao"]=&dcao;
-    vars["cmdn"]=&cmdn;
-    vars["trpn"]=&trpn;
-    vars["nsr"]=&nsr;
-    vars["jsr"]=&jsr;
-    vars["csqn"]=&csqn;
+    __vars["cmdn"]=&cmdn;
+    __vars["trpn"]=&trpn;
+    __vars["nsr"]=&nsr;
+    __vars["jsr"]=&jsr;
+    __vars["csqn"]=&csqn;
  //   vars["taudiff"] = &taudiff;
  //   vars["dnsr"]=&dnsr; // Change in [Ca] in the NSR (mM)
-    vars["iup"]=&iup; // Ca uptake from myo. to NSR (mM/ms)
+    __vars["iup"]=&iup; // Ca uptake from myo. to NSR (mM/ms)
 //    vars["ileak"]=&ileak; // Ca leakage from NSR to myo. (mM/ms)
 //    vars["kleak"]=&kleak; // Rate constant of Ca leakage from NSR (ms^-1)
 //    vars["kmup"]=&kmup; // Half-saturation concentration of iup (mM)
 //    vars["iupbar"]=&iupbar; // Max. current through iup channel (mM/ms)
-    vars["nsrbar"]=&nsrbar; // Max. [Ca] in NSR (mM)
+    __vars["nsrbar"]=&nsrbar; // Max. [Ca] in NSR (mM)
 
     //sodium current
-    vars["ina"]=&ina;    // Fast Na Current (uA/uF)
+    __vars["ina"]=&ina;    // Fast Na Current (uA/uF)
  //   vars["gna"]=&gna;    // Max. Conductance of the Na Channel (mS/uF)
 //    vars["ena"]=&ena;    // Reversal Potential of Na (mV)
-    vars["am"]=&am;     // Na alpha-m rate constant (ms^-1)
-    vars["bm"]=&bm;     // Na beta-m rate constant (ms^-1)
-    vars["ah"]=&ah;     // Na alpha-h rate constant (ms^-1)
-    vars["bh"]=&bh;     // Na beta-h rate constant (ms^-1)
-    vars["aj"]=&aj;     // Na alpha-j rate constant (ms^-1)
-    vars["bj"]=&bj;     // Na beta-j rate constant (ms^-1)
-    vars["m"]=&m;      // Na activation
-    vars["h"]=&h;      // Na inactivation
-    vars["j"]=&j;      // Na inactivation
+    __vars["am"]=&am;     // Na alpha-m rate constant (ms^-1)
+    __vars["bm"]=&bm;     // Na beta-m rate constant (ms^-1)
+    __vars["ah"]=&ah;     // Na alpha-h rate constant (ms^-1)
+    __vars["bh"]=&bh;     // Na beta-h rate constant (ms^-1)
+    __vars["aj"]=&aj;     // Na alpha-j rate constant (ms^-1)
+    __vars["bj"]=&bj;     // Na beta-j rate constant (ms^-1)
+    __vars["m"]=&m;      // Na activation
+    __vars["h"]=&h;      // Na inactivation
+    __vars["j"]=&j;      // Na inactivation
 
     //l-type ca
-    vars["ilca"]=&ilca; // Ca current through L-type Ca channel (uA/uF)
-    vars["ilcana"]=&ilcana; // Na current through L-type Ca channel (uA/uF)
-    vars["ilcak"]=&ilcak;
-    vars["ilcatot"]=&ilcatot;
+    __vars["ilca"]=&ilca; // Ca current through L-type Ca channel (uA/uF)
+    __vars["ilcana"]=&ilcana; // Na current through L-type Ca channel (uA/uF)
+    __vars["ilcak"]=&ilcak;
+    __vars["ilcatot"]=&ilcatot;
  //   vars["ibarca"]=&ibarca;  // Max. Ca current through Ca channel (uA/uF)
  //   vars["ibarna"]=&ibarna;  // Max. Na current through Ca channel (uA/uF)
   //  vars["ibark"]=&ibark;   // Max. K current through Ca channel (uA/uF)
-    vars["d"]=&d;       // Voltage dependant activation gate
+    __vars["d"]=&d;       // Voltage dependant activation gate
  //   vars["dss"]=&dss;     // Steady-state value of activation gate d
-    vars["taud"]=&taud;    // Time constant of gate d (ms^-1)
-    vars["f"]=&f;       // Voltage dependant inactivation gate
+    __vars["taud"]=&taud;    // Time constant of gate d (ms^-1)
+    __vars["f"]=&f;       // Voltage dependant inactivation gate
  //   vars["fss"]=&fss;     // Steady-state value of inactivation gate f
-    vars["tauf"]=&tauf;    // Time constant of gate f (ms^-1)
-    vars["fca"]=&fca;     // Ca dependant inactivation gate
+    __vars["tauf"]=&tauf;    // Time constant of gate f (ms^-1)
+    __vars["fca"]=&fca;     // Ca dependant inactivation gate
  //   vars["kmca"]=&kmca;     // Half-saturation concentration of Ca channel (mM)
  //   vars["pca"]=&pca;     // Permiability of membrane to Ca (cm/s)
-    vars["gacai"]=&gacai;         // Activity coefficient of Ca
-    vars["gacao"]=&gacao;     // Activity coefficient of Ca
+    __vars["gacai"]=&gacai;         // Activity coefficient of Ca
+    __vars["gacao"]=&gacao;     // Activity coefficient of Ca
  //   vars["pna"]=&pna; // Permiability of membrane to Na (cm/s)
  //   vars["ganai"]=&ganai;      // Activity coefficient of Na
  //   vars["ganao"]=&ganao;      // Activity coefficient of Na
@@ -703,53 +702,53 @@ void FR::makemap(){
  //   vars["gako"]=&gako;       // Activity coefficient of K
 
     /* Current through T-type Ca Channel */
-    vars["icat"]=&icat;    // Ca current through T-type Ca channel (uA/uF)
+    __vars["icat"]=&icat;    // Ca current through T-type Ca channel (uA/uF)
  //   vars["gcat"]=&gcat;    // Max. Conductance of the T-type Ca channel (mS/uF)
  //   vars["eca"]=&eca;     // Reversal Potential of the T-type Ca channel (mV)
-    vars["b"]=&b;       // Voltage dependant activation gate
+    __vars["b"]=&b;       // Voltage dependant activation gate
  //   vars["bss"]=&bss;     // Steady-state value of activation gate b
-    vars["taub"]=&taub;    // Time constant of gate b (ms^-1)
-    vars["g"]=&g;       // Voltage dependant inactivation gate
+    __vars["taub"]=&taub;    // Time constant of gate b (ms^-1)
+    __vars["g"]=&g;       // Voltage dependant inactivation gate
  //   vars["gss"]=&gss;     // Steady-state value of inactivation gate g
-    vars["taug"]=&taug;    // Time constant of gate g (ms^-1)
+    __vars["taug"]=&taug;    // Time constant of gate g (ms^-1)
 
     /* Rapidly Activating Potassium Current */
-    vars["ikr"]=&ikr;   // Rapidly Activating K Current (uA/uF)
-    vars["gkr"]=&gkr;   // Channel Conductance of Rapidly Activating K Current (mS/uF)
-    vars["ekr"]=&ekr;   // Reversal Potential of Rapidly Activating K Current (mV)
-    vars["xr"]=&xr;    // Rapidly Activating K time-dependant activation
+    __vars["ikr"]=&ikr;   // Rapidly Activating K Current (uA/uF)
+    __vars["gkr"]=&gkr;   // Channel Conductance of Rapidly Activating K Current (mS/uF)
+    __vars["ekr"]=&ekr;   // Reversal Potential of Rapidly Activating K Current (mV)
+    __vars["xr"]=&xr;    // Rapidly Activating K time-dependant activation
  //   vars["xrss"]=&xrss;  // Steady-state value of inactivation gate xr
-    vars["tauxr"]=&tauxr; // Time constant of gate xr (ms^-1)
-    vars["r"]=&r;     // K time-independant inactivation
+    __vars["tauxr"]=&tauxr; // Time constant of gate xr (ms^-1)
+    __vars["r"]=&r;     // K time-independant inactivation
 
     /* Slowly Activating Potassium Current */
-    vars["iks"]=&iks;   // Slowly Activating K Current (uA/uF)
+    __vars["iks"]=&iks;   // Slowly Activating K Current (uA/uF)
  //   vars["gks"]=&gks;   // Channel Conductance of Slowly Activating K Current (mS/uF)
  //   vars["eks"]=&eks;   // Reversal Potential of Slowly Activating K Current (mV)
-    vars["xs1"]=&xs1;    // Slowly Activating K time-dependant activation
+    __vars["xs1"]=&xs1;    // Slowly Activating K time-dependant activation
  //   vars["xs1ss"]=&xs1ss;  // Steady-state value of inactivation gate xs1
-    vars["tauxs1"]=&tauxs1; // Time constant of gate xs1 (ms^-1)
-    vars["xs2"]=&xs2;    // Slowly Activating K time-dependant activation
+    __vars["tauxs1"]=&tauxs1; // Time constant of gate xs1 (ms^-1)
+    __vars["xs2"]=&xs2;    // Slowly Activating K time-dependant activation
 //    vars["xs2ss"]=&xs2ss;  // Steady-state value of inactivation gate xs2
-    vars["tauxs2"]=&tauxs2; // Time constant of gate xs2 (ms^-1)
+    __vars["tauxs2"]=&tauxs2; // Time constant of gate xs2 (ms^-1)
 //    vars["prnak"]=&prnak;  // Na/K Permiability Ratio
 
     /* Potassium Current (time-independant) */
-    vars["iki"]=&iki;    // Time-independant K current (uA/uF)
+    __vars["iki"]=&iki;    // Time-independant K current (uA/uF)
   //  vars["gki"]=&gki;    // Channel Conductance of Time Independant K Current (mS/uF)
  //   vars["eki"]=&eki;    // Reversal Potential of Time Independant K Current (mV)
-    vars["aki"]=&aki;    // K alpha-ki rate constant (ms^-1)
-    vars["bki"]=&bki;    // K beta-ki rate constant (ms^-1)
-    vars["kin"]=&kin;    // K inactivation
+    __vars["aki"]=&aki;    // K alpha-ki rate constant (ms^-1)
+    __vars["bki"]=&bki;    // K beta-ki rate constant (ms^-1)
+    __vars["kin"]=&kin;    // K inactivation
 
     /* Plateau Potassium Current */
-    vars["ikp"]=&ikp;    // Plateau K current (uA/uF)
+    __vars["ikp"]=&ikp;    // Plateau K current (uA/uF)
  //   vars["gkp"]=&gkp;    // Channel Conductance of Plateau K Current (mS/uF)
   //  vars["ekp"]=&ekp;    // Reversal Potential of Plateau K Current (mV)
-    vars["kp"]=&kp;     // K plateau factor
+    __vars["kp"]=&kp;     // K plateau factor
 
     /* Na-Activated K Channel */
-    vars["ikna"]=&ikna;   // Na activated K channel
+    __vars["ikna"]=&ikna;   // Na activated K channel
   //  vars["pona"]=&pona;   // Open probability dependant on Nai
   //  vars["pov"]=&pov;    // Open probability dependant on Voltage
  //   vars["ekna"]=&ekna;   // Reversal potential
@@ -758,40 +757,40 @@ void FR::makemap(){
  //   vars["kdkna"]=&kdkna;       // Dissociation constant for Na dependance(mM)
 
     /* ATP-Sensitive K Channel */
-    vars["ikatp"]=&ikatp;    // ATP-sensitive K current (uA/uF)
+    __vars["ikatp"]=&ikatp;    // ATP-sensitive K current (uA/uF)
  //   vars["ekatp"]=&ekatp;    // K reversal potential (mV)
  //   vars["gkbaratp"]=&gkbaratp; // Conductance of the ATP-sensitive K channel (mS/uF)
  //   vars["gkatp"]=&gkatp;    // Maximum conductance of the ATP-sensitive K channel (mS/uF)
  //   vars["patp"]=&patp;     // Percentage availibility of open channels
  //   vars["natp"]=&natp;          // K dependence of ATP-sensitive K current
-    vars["atpi"]=&atpi;             // Intracellular ATP concentraion (mM)
-    vars["hatp"]=&hatp;             // Hill coefficient
+    __vars["atpi"]=&atpi;             // Intracellular ATP concentraion (mM)
+    __vars["hatp"]=&hatp;             // Hill coefficient
  //   vars["katp"]=&katp;         // Half-maximal saturation point of ATP-sensitive K current (mM)
 
     /* Ito Transient Outward Current (Dumaine et al. Circ Res 1999;85:803-809) */
-    vars["ito"]=&ito;	  // Transient outward current
+    __vars["ito"]=&ito;	  // Transient outward current
  //   vars["gitodv"]=&gitodv;	  // Maximum conductance of Ito
  //   vars["ekdv"]=&ekdv;	  // Reversal Potential of Ito
-    vars["rvdv"]=&rvdv;      // Time independant voltage dependence of Ito
-    vars["zdv"]=&zdv;       // Ito activation
-    vars["azdv"]=&azdv;      // Ito alpha-z rate constant
-    vars["bzdv"]=&bzdv;      // Ito beta-z rate constant
-    vars["tauzdv"]=&tauzdv;	  // Time constant of z gate
+    __vars["rvdv"]=&rvdv;      // Time independant voltage dependence of Ito
+    __vars["zdv"]=&zdv;       // Ito activation
+    __vars["azdv"]=&azdv;      // Ito alpha-z rate constant
+    __vars["bzdv"]=&bzdv;      // Ito beta-z rate constant
+    __vars["tauzdv"]=&tauzdv;	  // Time constant of z gate
  //   vars["zssdv"]=&zssdv;     // Steady-state value of z gate
-    vars["ydv"]=&ydv;       // Ito inactivation
-    vars["aydv"]=&aydv;      // Ito alpha-y rate constant
-    vars["bydv"]=&bydv;      // Ito beta-y rate constant
-    vars["tauydv"]=&tauydv;	  // Time constant of y gate
+    __vars["ydv"]=&ydv;       // Ito inactivation
+    __vars["aydv"]=&aydv;      // Ito alpha-y rate constant
+    __vars["bydv"]=&bydv;      // Ito beta-y rate constant
+    __vars["tauydv"]=&tauydv;	  // Time constant of y gate
  //   vars["yssdv"]=&yssdv;     // Steady-state value of y gate
 
     /* Sodium-Calcium Exchanger V-S */
-    vars["inaca"]=&inaca;               // NaCa exchanger current (uA/uF)
+    __vars["inaca"]=&inaca;               // NaCa exchanger current (uA/uF)
  //   vars["c1"]=&c1;   // Scaling factor for inaca (uA/uF)
  //   vars["c2"]=&c2;   // Half-saturation concentration of NaCa exhanger (mM)
  //   vars["gammas"]=&gammas;  // Position of energy barrier controlling voltage dependance of inaca
 
     /* Sodium-Potassium Pump */
-    vars["inak"]=&inak;    // NaK pump current (uA/uF)
+    __vars["inak"]=&inak;    // NaK pump current (uA/uF)
   //  vars["fnak"]=&fnak;    // Voltage-dependance parameter of inak
   //  vars["sigma"]=&sigma;   // [Na]o dependance factor of fnak
    // vars["ibarnak"]=&ibarnak;   // Max. current through Na-K pump (uA/uF)
@@ -799,53 +798,53 @@ void FR::makemap(){
   //  vars["kmko"]=&kmko;    // Half-saturation concentration of NaK pump (mM)
 
     /* Nonspecific Ca-activated Current */
-    vars["insna"]=&insna;     // Non-specific Na current (uA/uF)
-    vars["insk"]=&insk;      // Non-specific K current (uA/uF)
+    __vars["insna"]=&insna;     // Non-specific Na current (uA/uF)
+    __vars["insk"]=&insk;      // Non-specific K current (uA/uF)
   //  vars["ibarnsna"]=&ibarnsna;  // Max. Na current through NSCa channel (uA/uF)
   //  vars["ibarnsk"]=&ibarnsk;   // Max. K current through NSCa channel (uA/uF)
   //  vars["pnsca"]=&pnsca;  // Permiability of channel to Na and K (cm/s)
   //  vars["kmnsca"]=&kmnsca;      // Half-saturation concentration of NSCa channel (mM)
 
     /* Sarcolemmal Ca Pump */
-    vars["ipca"]=&ipca;                 // Sarcolemmal Ca pump current (uA/uF)
+    __vars["ipca"]=&ipca;                 // Sarcolemmal Ca pump current (uA/uF)
   //  vars["ibarpca"]=&ibarpca; // Max. Ca current through sarcolemmal Ca pump (uA/uF)
   //  vars["kmpca"]=&kmpca; // Half-saturation concentration of sarcolemmal Ca pump (mM)
 
     /* Ca Background Current */
-    vars["icab"]=&icab;  // Ca background current (uA/uF)
+    __vars["icab"]=&icab;  // Ca background current (uA/uF)
   //  vars["gcab"]=&gcab;  // Max. conductance of Ca background (mS/uF)
   //  vars["ecan"]=&ecan;  // Nernst potential for Ca (mV)
 
     /* Na Background Current */
-    vars["inab"]=&inab;  // Na background current (uA/uF)
+    __vars["inab"]=&inab;  // Na background current (uA/uF)
  //   vars["gnab"]=&gnab;  // Max. conductance of Na background (mS/uF)
 //    vars["enan"]=&enan;  // Nernst potential for Na (mV)
 
-    pars["Vnsr"] = &Vnsr;
-    pars["Vjsr"] = &Vjsr;
-    pars["zk"] = &zk;
-    pars["zna"]= &zna;
-    pars["zca"] = &zca;
-    pars["nao"] = &nao;
-    pars["ko"] = &ko;
-    pars["cao"] = &cao;
-    pars["gacai"] = &gacai;
-    pars["gacao"] = &gacao;
-    pars["icalFactor"] = &icalFactor;
-    pars["icattFactor"] = &icattFactor;
-    pars["ikrFactor"] = &ikrFactor;
-    pars["iksFactor"] = &iksFactor;
-    pars["itoFactor"] = &itoFactor;
-    pars["isusFactor"] = &isusFactor; //atp sensitive potassium current
+    __pars["Vnsr"] = &Vnsr;
+    __pars["Vjsr"] = &Vjsr;
+    __pars["zk"] = &zk;
+    __pars["zna"]= &zna;
+    __pars["zca"] = &zca;
+    __pars["nao"] = &nao;
+    __pars["ko"] = &ko;
+    __pars["cao"] = &cao;
+    __pars["gacai"] = &gacai;
+    __pars["gacao"] = &gacao;
+    __pars["icalFactor"] = &icalFactor;
+    __pars["icattFactor"] = &icattFactor;
+    __pars["ikrFactor"] = &ikrFactor;
+    __pars["iksFactor"] = &iksFactor;
+    __pars["itoFactor"] = &itoFactor;
+    __pars["isusFactor"] = &isusFactor; //atp sensitive potassium current
     //pars["ikachFactor"] = &ikachFactor;
    // pars["istFactor"] = &istFactor;
-    pars["inabFactor"] = &inabFactor;
-    pars["inakFactor"] = &inakFactor;
-    pars["inacaFactor"] = &inacaFactor;
-    pars["ikiFactor"] = &ikiFactor;
+    __pars["inabFactor"] = &inabFactor;
+    __pars["inakFactor"] = &inakFactor;
+    __pars["inacaFactor"] = &inacaFactor;
+    __pars["ikiFactor"] = &ikiFactor;
  //   pars["ihFactor"] = &ihFactor;
-    pars["iupFactor"] = &iupFactor;
-    pars["irelFactor"] = &irelFactor;
+    __pars["iupFactor"] = &iupFactor;
+    __pars["irelFactor"] = &irelFactor;
 
     };
 const char* FR::type() const {

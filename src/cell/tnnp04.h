@@ -72,7 +72,7 @@ class TNNP04Control : public Cell
 	virtual void updateIna();
 	virtual void updateCurr();
 	virtual void updateConc();
-	virtual int externalStim(double stimval);
+    virtual void externalStim(double stimval);
 	virtual void makemap();
     virtual const char* type() const;
  

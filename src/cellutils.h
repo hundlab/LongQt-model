@@ -17,13 +17,8 @@
 #include <QXmlStreamReader>
 #include <QString>
 
+#include <cellutils_core.h>
 
-#if defined(_WIN32) || defined(_WIN64)
-  #define snprintf _snprintf
-  #define vsnprintf _vsnprintf
-  #define strcasecmp _stricmp
-  #define strncasecmp _strnicmp
-#endif
 namespace LongQt {
 
 class Protocol;
@@ -61,78 +56,8 @@ namespace CellUtils {
      */
     extern const std::map<std::string, ProtocolInitializer> protoMap;
 
-    /*
-     * Side provides a consistent system for numbering sides in 2D grids
-     */
-    enum Side {
-        top = 0,
-        right = 1,
-        bottom = 2,
-        left = 3
-    };
-
-    Side flipSide(Side s);
-
     void set_default_vals(Protocol& proto);
-
-    /*reads in until the next StartElement with name name
-     *returns:
-     *	True if it is found
-     *	False if eof or error
-     */
-    inline bool readNext(QXmlStreamReader& xml, QString name);
-
-    /*
-     * reads until xml tree is one level higher
-     * returns:
-     *	True if it is found
-     *	False if eof or error
-     */
-    inline bool readUpLevel(QXmlStreamReader& xml);
-
-    //trim whitespace from beginning and end of a string
-    inline std::string trim(std::string str);
-
-    /* maps a bool to string
-     * b:true -> "true"
-     * b:false-> "false"
-     */
-    inline std::string to_string(const bool& b) {
-        return b ? "true" : "false";
-    }
-
-    /* maps a string to a bool
-     * s:"true" -> true
-     * s:"false" -> false
-     */
-    inline bool stob(const std::string& s) {
-        return (strcasecmp("true",trim(s).c_str()) == 0);
-    }
-
-    /*
-     * Create formated string, similar to python with {}
-     * denoting placeholder
-     */
-    template<typename T>
-    inline std::string strprintf(const std::string& format, T v);
-
-    template<typename... Args>
-    inline std::string strprintf(const std::string& format, Args... args);
-
-    /* Helper functions
-     */
-    namespace detials {
-
-    inline void strprintf_helper(const std::string&, size_t, std::stringstream&) {}
-
-    template<typename T>
-    inline void strprintf_helper(const std::string &format, size_t pos, std::stringstream &ss, T v);
-
-    template<typename T, typename... Args>
-    inline void strprintf_helper(const std::string &format, size_t pos, std::stringstream &ss, T v, Args... args);
-    }
 } //CellUtils
 } //LongQt
 
-#include "cellutils.hpp"
 #endif

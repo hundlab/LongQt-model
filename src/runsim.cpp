@@ -69,6 +69,8 @@ bool RunSim::progress()
 }
 
 void RunSim::run() {
+    if(!this->finished())
+        return;
 //    for(auto& p: vector) {
 //        p->runTrial();
 //    }

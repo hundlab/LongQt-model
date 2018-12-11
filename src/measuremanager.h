@@ -2,7 +2,7 @@
 #define MEASUREMANAGER_H
 
 #include "measure.h"
-#include "measurewave.h"
+#include "measurevoltage.h"
 #include "cell.h"
 #include <map>
 #include <set>
@@ -37,12 +37,11 @@ class MeasureManager {
         virtual void resetMeasures();
 
         const std::map<std::string,std::string> varsMeas = {
-            {"vOld","MeasureWave"},
-            {"caI","MeasureWave"}
+            {"vOld","MeasureVoltage"},
         };
         const std::map<std::string,std::function<Measure*(std::set<std::string> selection)>> varMeasCreator =
-            {{"MeasureWave", [this](std::set<std::string> selection)
-                {return (Measure*)new MeasureWave(selection,this->__percrepol);}}
+            {{"MeasureVoltage", [this](std::set<std::string> selection)
+                {return (Measure*)new MeasureVoltage(selection,this->__percrepol);}}
             };
 
     protected:

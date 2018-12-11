@@ -33,14 +33,14 @@ HRD09Control::~HRD09Control()
 
 //##### Initialize variables ##################
 void HRD09Control::Initialize() {
-        dVdt=dVdtmax=5.434230843e-10;//check
+        dVdt=/*dVdtmax=*/5.434230843e-10;//check
         Cm = 1.0; //uF/cm2  must be defined for fiber...default = 1.
 	t=0.0;//check
         dt=dtmin = 0.005;
    	dtmed = 0.01;
    	dtmax = 0.1;
    	dvcut = 1.0;
-        vOld = vNew = -87.21621716; //check
+        vOld /*= vNew */= -87.21621716; //check
         tRel=10000.0;
         sponRelflag = 0;
 
@@ -248,6 +248,21 @@ void HRD09Control::updateIclb()
 	iClb=Iclbfactor*gclb*(vOld-ecl);
 	
 };
+
+void HRD09Control::updateItrek()
+{
+    //TREK-1 with more rectification
+    //ref 10.1161/JAHA.115.002865 hund
+    double gk = ItrekFactor*.03011;
+    double prna = TestFactor*0.01833;//from iks
+    double prk = 1;
+    double EK = RGAS*TEMP/FDAY*log((prk*kO+prna*naO)/(prk*kI+prna*naI));
+
+    double aa = 1/(1+exp(-(vOld-65)/52)); //from Kim J Gen Physiol 1992
+
+    iTrek = prna/(prna+prk) * gk*aa*(vOld-EK);  //apex vs. septum??? TJH
+    iTrek_na = prk/(prna+prk) * gk*aa*(vOld-EK);  //apex vs. septum??? TJH
+}
 
 // Slow delayed rectifier K current
 void HRD09Control::updateIks()
@@ -748,11 +763,14 @@ void HRD09Control::updateCurr()
    updateIk1();    // Time-independent K current
    updateIkp();    // Plateau K current
    updateIto();    // Transient outward K current
+   if(opts & TREK) {
+        updateItrek();    // Transient outward K current
+   }
    updateIto2();   // Ca-dep transient outward Cl current
 
-   iNat=iNa+3*iNak+3*iNaca+3*iNacar+iNal;
+   iNat=iNa+3*iNak+3*iNaca+3*iNacar+iNal+iTrek_na;
    iCat=iCa+iCab+iPca-2*iNaca-2*iNacar;
-   iKt=iKs+iKr+iK1+iTo+iKp-2*iNak;
+   iKt=iKs+iKr+iK1+iTo+iKp-2*iNak+iTrek;
    iClt=iTo2+iClb;
    
    iTotold=iTot;
@@ -776,103 +794,107 @@ void HRD09Control::updateConc()
 
 
 // External stimulus.
-int HRD09Control::externalStim(double stimval)
+void HRD09Control::externalStim(double stimval)
 {
     iKt = iKt + 0.5*stimval;
     iClt = iClt + 0.5*stimval;
     iTot = iTot + stimval;
-  
-  return 1;
 };
 
 // Create map for easy retrieval of variable values.
 void HRD09Control::makemap()
 {
-  vars["vOld"]=&vOld;
-  vars["t"]=&t;
-  vars["dVdt"]=&dVdt;
-  vars["naI"]=&naI;
-  vars["kI"]=&kI;
-  vars["clI"]=&clI;
-  vars["caI"]=&caI;
-  vars["caR"]=&caR;
-  vars["caJsr"]=&caJsr;
-  vars["caNsr"]=&caNsr;
-  vars["trpn"]=&trpn;
-  vars["CaM"]=&cmdn;
-  vars["csqn"]=&csqn;
-  vars["CaMKII"]=&caM;
-  vars["fBound"]=&fBound;
+  __vars["vOld"]=&vOld;
+  __vars["t"]=&t;
+  __vars["dVdt"]=&dVdt;
+  __vars["naI"]=&naI;
+  __vars["kI"]=&kI;
+  __vars["clI"]=&clI;
+  __vars["caI"]=&caI;
+  __vars["caR"]=&caR;
+  __vars["caJsr"]=&caJsr;
+  __vars["caNsr"]=&caNsr;
+  __vars["trpn"]=&trpn;
+  __vars["CaM"]=&cmdn;
+  __vars["csqn"]=&csqn;
+  __vars["CaMKII"]=&caM;
+  __vars["fBound"]=&fBound;
 //  vars["fBlock"]=&fBlock;
-  vars["fI"]=&fI;
-  vars["fOx"]=&fOx;
-  vars["fOxP"]=&fOxP;
-  vars["fPhos"]=&fPhos;
-  vars["iRel"]=&iRel;
-  vars["ryRopen"]=&ryRopen;
-  vars["iUp"]=&iUp;
-  vars["iLeak"]=&iLeak;
-  vars["iTr"]=&iTr;
-  vars["iDiff"]=&iDiff;
-  vars["iCa"]=&iCa;
-  vars["Gate.d"]=&Gate.d;
-  vars["Gate.f"]=&Gate.f;
-  vars["Gate.fca"]=&Gate.fca;
-  vars["Gate.fca2"]=&Gate.fca2;
-  vars["iCab"]=&iCab;
-  vars["iPca"]=&iPca;
-  vars["iNa"]=&iNa;
-  vars["Gate.m"]=&Gate.m;
-  vars["Gate.h"]=&Gate.h;
-  vars["Gate.j"]=&Gate.j;
-  vars["iNal"]=&iNal;
-  vars["Gate.ml"]=&Gate.ml;
-  vars["Gate.hl"]=&Gate.hl;
-  vars["iNak"]=&iNak;
-  vars["iNaca"]=&iNaca;
-  vars["iNacar"]=&iNacar;
-  vars["iTo"]=&iTo;
-  vars["Gate.a"]=&Gate.a;
-  vars["Gate.i"]=&Gate.i;
-  vars["Gate.i2"]=&Gate.i2;
-  vars["iTo2"]=&iTo2;
-  vars["Gate.aa"]=&Gate.aa;
-  vars["iKs"]=&iKs;
-  vars["Gate.xs"]=&Gate.xs;
-  vars["Gate.xs2"]=&Gate.xs2;
-  vars["iKr"]=&iKr;
-  vars["Gate.xr"]=&Gate.xr;
-  vars["iK1"]=&iK1;
-  vars["iKp"]=&iKp;
-  vars["iCat"]=&iCat;
-  vars["iNat"]=&iNat; //not initialized
-  vars["iKt"]=&iKt; //not initialized
-  vars["iClt"]=&iClt; //not initialized
+  __vars["fI"]=&fI;
+  __vars["fOx"]=&fOx;
+  __vars["fOxP"]=&fOxP;
+  __vars["fPhos"]=&fPhos;
+  __vars["iRel"]=&iRel;
+  __vars["ryRopen"]=&ryRopen;
+  __vars["iUp"]=&iUp;
+  __vars["iLeak"]=&iLeak;
+  __vars["iTr"]=&iTr;
+  __vars["iDiff"]=&iDiff;
+  __vars["iCa"]=&iCa;
+  __vars["Gate.d"]=&Gate.d;
+  __vars["Gate.f"]=&Gate.f;
+  __vars["Gate.fca"]=&Gate.fca;
+  __vars["Gate.fca2"]=&Gate.fca2;
+  __vars["iCab"]=&iCab;
+  __vars["iPca"]=&iPca;
+  __vars["iNa"]=&iNa;
+  __vars["Gate.m"]=&Gate.m;
+  __vars["Gate.h"]=&Gate.h;
+  __vars["Gate.j"]=&Gate.j;
+  __vars["iNal"]=&iNal;
+  __vars["Gate.ml"]=&Gate.ml;
+  __vars["Gate.hl"]=&Gate.hl;
+  __vars["iNak"]=&iNak;
+  __vars["iNaca"]=&iNaca;
+  __vars["iNacar"]=&iNacar;
+  __vars["iTo"]=&iTo;
+  __vars["Gate.a"]=&Gate.a;
+  __vars["Gate.i"]=&Gate.i;
+  __vars["Gate.i2"]=&Gate.i2;
+  __vars["iTo2"]=&iTo2;
+  __vars["Gate.aa"]=&Gate.aa;
+  __vars["iKs"]=&iKs;
+  __vars["Gate.xs"]=&Gate.xs;
+  __vars["Gate.xs2"]=&Gate.xs2;
+  __vars["iKr"]=&iKr;
+  __vars["Gate.xr"]=&Gate.xr;
+  __vars["iK1"]=&iK1;
+  __vars["iKp"]=&iKp;
+  __vars["iCat"]=&iCat;
+  __vars["iNat"]=&iNat; //not initialized
+  __vars["iKt"]=&iKt; //not initialized
+  __vars["iClt"]=&iClt; //not initialized
+  __vars["iTrek"]=&iTrek;
 
-  pars["InaFactor"] = &Inafactor;
-  pars["InakFactor"] = &Inakfactor;
-  pars["InalFactor"] = &Inalfactor;
-  pars["InacaFactorss"] = &Inacafactorss;
-  pars["InacaFactorbulk"] = &Inacafactorbulk;
-  pars["IcabFactor"] = &Icabfactor;
-  pars["IclbFactor"] = &Iclbfactor;
-  pars["InaclFactor"] = &Inaclfactor;
-  pars["IlcaFactor"] = &Ilcafactor;
-  pars["IpcaFactor"] = &Ipcafactor;
-  pars["IksFactor"] = &Iksfactor;
-  pars["IkrFactor"] = &Ikrfactor;
-  pars["IkclFactor"] = &Ikclfactor;
-  pars["Ik1Factor"] = &Ik1factor;
-  pars["IkpFactor"] = &Ikpfactor;
-  pars["ItoFactor"] = &Itofactor;
-  pars["Ito2Factor"] = &Ito2factor;
-  pars["IrelFactor"] = &Irelfactor;
-  pars["ItrFactor"] = &Itrfactor;
-  pars["IupFactor"] = &Iupfactor;
-  pars["IleakFactor"] = &Ileakfactor;
+  __pars["InaFactor"] = &Inafactor;
+  __pars["InakFactor"] = &Inakfactor;
+  __pars["InalFactor"] = &Inalfactor;
+  __pars["InacaFactorss"] = &Inacafactorss;
+  __pars["InacaFactorbulk"] = &Inacafactorbulk;
+  __pars["IcabFactor"] = &Icabfactor;
+  __pars["IclbFactor"] = &Iclbfactor;
+  __pars["InaclFactor"] = &Inaclfactor;
+  __pars["IlcaFactor"] = &Ilcafactor;
+  __pars["IpcaFactor"] = &Ipcafactor;
+  __pars["IksFactor"] = &Iksfactor;
+  __pars["IkrFactor"] = &Ikrfactor;
+  __pars["IkclFactor"] = &Ikclfactor;
+  __pars["Ik1Factor"] = &Ik1factor;
+  __pars["IkpFactor"] = &Ikpfactor;
+  __pars["ItoFactor"] = &Itofactor;
+  __pars["Ito2Factor"] = &Ito2factor;
+  __pars["IrelFactor"] = &Irelfactor;
+  __pars["ItrFactor"] = &Itrfactor;
+  __pars["IupFactor"] = &Iupfactor;
+  __pars["IleakFactor"] = &Ileakfactor;
+  __pars["ItrekFactor"] = &ItrekFactor;
+  __pars["TestFactor"] = &TestFactor;
+  __pars["Test2Factor"] = &Test2Factor;
 }
 
 const char *HRD09Control::type() const
 {
     return "Canine Ventricular (Hund-Rudy 2009)";
 };
+
+MAKE_OPTIONS_FUNCTIONS(HRD09Control)

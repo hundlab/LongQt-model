@@ -41,11 +41,11 @@ class CellKernel : public std::enable_shared_from_this<CellKernel>
     virtual void updateCurr() = 0;
     virtual void updateConc() = 0;
     virtual double tstep(double stimt);
-    virtual int externalStim(double stimval);
+    virtual void externalStim(double stimval);
 
     //##### Declare class variables ##############
     double vOld;    // Transmembrane potential from previous iteration
-    double vNew;    // new Transmembrane potential in calculation
+//    double vNew;    // new Transmembrane potential in calculation
     double t;       // time, ms
     double dt;	  // Time increment
     double iNat;  // Total transmembrane sodium current.
@@ -63,7 +63,7 @@ class CellKernel : public std::enable_shared_from_this<CellKernel>
     double Rcg;    // Ratio of capacitive to geometric area.
     double cellRadius, cellLength;
     double dVdt;
-    double dVdtmax;
+//    double dVdtmax;
     double Rmyo = 150; //Myoplasmic resistivity.
     
     double dtmin,dtmed,dtmax,dvcut;
@@ -79,24 +79,24 @@ class CellKernel : public std::enable_shared_from_this<CellKernel>
     virtual double par(std::string name);
     virtual bool setPar(std::string name, double val);
     virtual bool hasPar(std::string name);
-    virtual std::set<std::string> getVariables();
-    virtual std::set<std::string> getConstants();
+    virtual std::set<std::string> vars();
+    virtual std::set<std::string> pars();
     virtual const char* type() const = 0;
-    void reset();
+//    void reset();
     //class options eg ISO
     virtual std::map<std::string,int> optionsMap() const;
     virtual int option() const;
     virtual std::string optionStr() const;
     virtual void setOption(std::string opt);
     virtual void setOption(int opt);
-    virtual int removeConflicts(int opt);
-    std::list<std::list<int>> conflicts; //list of conflicting options
 
 protected:
-    std::map<std::string, double*> vars;  // map of state vars
-    std::map<std::string, double*> pars;  // map of params
+    std::map<std::string, double*> __vars;  // map of state vars
+    std::map<std::string, double*> __pars;  // map of params
 
-    std::vector<std::string> split(std::string s, char delim);
+    std::list<std::list<int>> conflicts; //list of conflicting options
+
+    virtual int removeConflicts(int opt);
     void copyVarPar(const CellKernel& toCopy);
     virtual void Initialize();
 private:

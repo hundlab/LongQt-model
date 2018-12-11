@@ -33,13 +33,13 @@ void TNNP04Control::Initialize() {
         TEMP = 310.0;
         FDAY=96485.3415;
 
-        dVdt=dVdtmax=-7.293176907E-7;
+        dVdt=/*dVdtmax=*/-7.293176907E-7;
         t=0.0;
         dt=dtmin=0.005;
 	dtmed=0.01;
         dtmax=0.1;
 	dvcut = 1.0;
-        vOld = vNew =  -86.2;
+        vOld = /*vNew =*/  -86.2;
         tRel=10000.0;
         sponRelflag = false;
 
@@ -456,63 +456,62 @@ void TNNP04Control::updateConc(){
 
 
 
-int TNNP04Control::externalStim(double stimval)
+void TNNP04Control::externalStim(double stimval)
 {
     iKt = iKt + stimval;
     iTot = iTot + stimval;
-    return 1;
-};
+}
 
 void TNNP04Control::makemap()
 {
-  vars["vOld"]=&vOld;
-  vars["t"]=&t;
-  vars["dVdt"]=&dVdt;
-  vars["caI"]=&caI;
-  vars["caSr"]=&caSr;
-  vars["naI"]=&naI;
-  vars["kI"]=&kI;
-  vars["iCal"]=&iCal;
-  vars["iCab"]=&iCab;
-  vars["iPca"]=&iPca;
-  vars["iTo"]=&iTo;
-  vars["iK1"]=&iK1;
-  vars["iKs"]=&iKs;
-  vars["iKr"]=&iKr;
-  vars["ipK"]=&ipK;
-  vars["iNak"]=&iNak;
-  vars["iNaca"]=&iNaca;
-  vars["iNa"]=&iNa;
-  vars["iNab"]=&iNab;
-  vars["iUp"]=&iUp;
-  vars["iLeak"]=&iLeak;
-  vars["Gate.g"]=&Gate.g;
-  vars["Gate.d"]=&Gate.d;
-  vars["Gate.f"]=&Gate.f;
-  vars["Gate.fca"]=&Gate.fca;
-  vars["Gate.r"]=&Gate.r;
-  vars["Gate.s"]=&Gate.s;
-  vars["Gate.xs"]=&Gate.xs;
-  vars["Gate.xr1"]=&Gate.xr1;
-  vars["Gate.xr2"]=&Gate.xr2;
-  vars["Gate.m"]=&Gate.m;
-  vars["Gate.h"]=&Gate.h;
-  vars["Gate.j"]=&Gate.j;
+  __vars["vOld"]=&vOld;
+  __vars["t"]=&t;
+  __vars["dVdt"]=&dVdt;
+  __vars["caI"]=&caI;
+  __vars["caSr"]=&caSr;
+  __vars["naI"]=&naI;
+  __vars["kI"]=&kI;
+  __vars["iCal"]=&iCal;
+  __vars["iCab"]=&iCab;
+  __vars["iPca"]=&iPca;
+  __vars["iTo"]=&iTo;
+  __vars["iK1"]=&iK1;
+  __vars["iKs"]=&iKs;
+  __vars["iKr"]=&iKr;
+  __vars["ipK"]=&ipK;
+  __vars["iNak"]=&iNak;
+  __vars["iNaca"]=&iNaca;
+  __vars["iNa"]=&iNa;
+  __vars["iNab"]=&iNab;
+  __vars["iUp"]=&iUp;
+  __vars["iLeak"]=&iLeak;
+  __vars["Gate.g"]=&Gate.g;
+  __vars["Gate.d"]=&Gate.d;
+  __vars["Gate.f"]=&Gate.f;
+  __vars["Gate.fca"]=&Gate.fca;
+  __vars["Gate.r"]=&Gate.r;
+  __vars["Gate.s"]=&Gate.s;
+  __vars["Gate.xs"]=&Gate.xs;
+  __vars["Gate.xr1"]=&Gate.xr1;
+  __vars["Gate.xr2"]=&Gate.xr2;
+  __vars["Gate.m"]=&Gate.m;
+  __vars["Gate.h"]=&Gate.h;
+  __vars["Gate.j"]=&Gate.j;
 
-  pars["iRelFactor"]=&iRelfactor;
-  pars["ileakFactor"]=&ileakfactor;
-  pars["IcalFactor"]=&Icalfactor;
-  pars["IcabFactor"]=&Icabfactor;
-  pars["IpcaFactor"]=&Ipcafactor;
-  pars["ItoFactor"]=&Itofactor;
-  pars["IksFactor"]=&Iksfactor;
-  pars["IkrFactor"]=&Ikrfactor;
-  pars["Ik1Factor"]=&Ik1factor;
-  pars["IpkFactor"]=&Ipkfactor;
-  pars["InacaFactor"]=&Inacafactor;
-  pars["InakFactor"]=&Inakfactor;
-  pars["InabFactor"]=&Inabfactor;
-  pars["InaFactor"]=&Inafactor;
+  __pars["iRelFactor"]=&iRelfactor;
+  __pars["ileakFactor"]=&ileakfactor;
+  __pars["IcalFactor"]=&Icalfactor;
+  __pars["IcabFactor"]=&Icabfactor;
+  __pars["IpcaFactor"]=&Ipcafactor;
+  __pars["ItoFactor"]=&Itofactor;
+  __pars["IksFactor"]=&Iksfactor;
+  __pars["IkrFactor"]=&Ikrfactor;
+  __pars["Ik1Factor"]=&Ik1factor;
+  __pars["IpkFactor"]=&Ipkfactor;
+  __pars["InacaFactor"]=&Inacafactor;
+  __pars["InakFactor"]=&Inakfactor;
+  __pars["InabFactor"]=&Inabfactor;
+  __pars["InaFactor"]=&Inafactor;
 }
 
 const char *TNNP04Control::type() const

@@ -39,41 +39,41 @@ class HRD09Control : public Cell
 /*    DEFINE STRUCTS	  */
 /*########################*/
 
-    struct GateVariable {  //Ion channel gates.
-	double m;	// INa activation
-	double h;	// INa inactivation
-	double j;	// INa slow inactivation
-	double ml;	// late INa activation
-	double hl;	// late INa inactivation
-	double d;	// ICa activation
-	double f;	// ICa volt-dependent inactivation
-	double fca;	// ICa Ca-dependent inactivation
-	double fca2;	// ICa slow Ca-dependent inactivation
-	double xr;	// IKr activation
-	double r;	// IKr inactivation
-	double xs;	// IKs activation
-	double xs2;	// IKs slow activation
-	double k1;	// IK1 activation
-	double kp;	// IKp activation
-	double a;	// Ito activation
-	double i;	// Ito inactivation
-	double i2;	// Ito slow inactivation
-	double aa;	// Ito2 activation
-   };
-   
-   struct RateConst {  //Rate constants for ion channel gates.
-	double am;
-	double bm;
-	double aml;
-	double bml;
-	double ah;
-	double bh;
-	double aj;
-   	double bj;
-	double ak1;
-	double bk1;
+    struct {  //Ion channel gates.
+        double m;	// INa activation
+        double h;	// INa inactivation
+        double j;	// INa slow inactivation
+        double ml;	// late INa activation
+        double hl;	// late INa inactivation
+        double d;	// ICa activation
+        double f;	// ICa volt-dependent inactivation
+        double fca;	// ICa Ca-dependent inactivation
+        double fca2;	// ICa slow Ca-dependent inactivation
+        double xr;	// IKr activation
+        double r;	// IKr inactivation
+        double xs;	// IKs activation
+        double xs2;	// IKs slow activation
+        double k1;	// IK1 activation
+        double kp;	// IKp activation
+        double a;	// Ito activation
+        double i;	// Ito inactivation
+        double i2;	// Ito slow inactivation
+        double aa;	// Ito2 activation
+    } Gate;
 
-   };
+    struct {  //Rate constants for ion channel gates.
+        double am;
+        double bm;
+        double aml;
+        double bml;
+        double ah;
+        double bh;
+        double aj;
+        double bj;
+        double ak1;
+        double bk1;
+
+   } Rate;
 
   //##################################################
   // Declare functions/variables unique to Control
@@ -107,9 +107,10 @@ class HRD09Control : public Cell
     virtual void updateCli();
     virtual void updateCai();
     virtual void updateCamk();
+    virtual void updateItrek();
     virtual void updateCurr();
     virtual void updateConc();
-    virtual int externalStim(double stimval);
+    virtual void externalStim(double stimval);
     virtual void makemap();
    virtual const char* type() const;
     //##### Declare class variables ##############
@@ -123,6 +124,9 @@ class HRD09Control : public Cell
     double iKcl;	  // K-Cl cotransporter
     double iCab;	  // Background Ca current
   
+    double iTrek = 0;     // Trek-1
+    double iTrek_na = 0;
+
     double iPca;  // Sarcolemmal Ca2+ pump
     double iKs;   // Slowly activating delayed rectifier K current
     double iKr;   // Rapidly activating delayed rectifier K current
@@ -152,9 +156,6 @@ class HRD09Control : public Cell
     double Vnsr;
     double Vjsr;
     double Vss;
- 
-    struct RateConst Rate;
-    struct GateVariable Gate;
 
     double Inafactor;
     double Inalfactor;
@@ -177,6 +178,15 @@ class HRD09Control : public Cell
     double Itrfactor;
     double Iupfactor;
     double Ileakfactor;
+    double ItrekFactor = 1;   // Two-pore K+ channel
+
+    double TestFactor = 0;
+    double Test2Factor = 1;
+
+    //    TREK //include the trek channel
+    MAKE_OPTIONS(TREK)
+
+    enum Options opts;
 
     protected:
     virtual void Initialize();

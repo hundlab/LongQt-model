@@ -21,10 +21,10 @@ GridProtocol::GridProtocol() : CurrentClamp() {
     stimdur2 = stimdur;
     bcl2 = bcl;
     stimt2 = stimt;
-    propertyoutfile = "cell_%%i_%%i_"+this->propertyoutfile;
-    finalpropertyoutfile = "cell_%%i_%%i_"+this->finalpropertyoutfile;
-    dvarsoutfile = "cell_%%i_%%i_"+this->dvarsoutfile;
-    finaldvarsoutfile = "cell_%%i_%%i_"+this->finaldvarsoutfile;
+    propertyoutfile = "cell_{{}}_{{}}_"+this->propertyoutfile;
+    finalpropertyoutfile = "cell_{{}}_{{}}_"+this->finalpropertyoutfile;
+    dvarsoutfile = "cell_{{}}_{{}}_"+this->dvarsoutfile;
+    finaldvarsoutfile = "cell_{{}}_{{}}_"+this->finaldvarsoutfile;
 
     CellUtils::set_default_vals(*this);
 }

@@ -13,12 +13,19 @@ PvarsCurrentClamp::PvarsCurrentClamp(const PvarsCurrentClamp& o, Protocol* proto
 
 void PvarsCurrentClamp::setIonChanParams() {
     int trial = proto->trial();
-    if(this->__pvars->size() > 0 && trial >= this->__pvars->begin()->second->trials.size()) {
-        Logger::getInstance()->write("PvarsCurrentClamp: too many trials {} > {}, recalculating", trial, this->__pvars->begin()->second->trials.size());
-        this->calcIonChanParams();
+    for(auto& pvar: *this->__pvars) {
+        if(trial >= pvar.second->trials.size()) {
+            Logger::getInstance()->write("PvarsCurrentClamp: too few trials calculated {} > {}, recalculating", trial, pvar.second->trials.size());
+            this->calcIonChanParams();
+            break;
+        }
     }
     for(auto& pvar : *this->__pvars) {
-        proto->cell()->setPar(pvar.first, pvar.second->trials.at(trial));
+        try {
+            proto->cell()->setPar(pvar.first, pvar.second->trials.at(trial));
+        } catch(std::out_of_range&) {
+            Logger::getInstance()->write("PvarsCurrentClamp: {} trial {} not calculated", pvar.first, trial);
+        }
     }
 }
 void PvarsCurrentClamp::calcIonChanParams() {

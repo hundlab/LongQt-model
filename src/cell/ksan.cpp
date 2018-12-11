@@ -483,77 +483,77 @@ void Ksan::updateCurr()
 
 void Ksan::makemap()
 {
-  vars["vOld"]=&vOld;
-  vars["t"]=&t;
-  vars["dVdt"]=&dVdt;
+  __vars["vOld"]=&vOld;
+  __vars["t"]=&t;
+  __vars["dVdt"]=&dVdt;
 
-  vars["naI"]=&naI;
-  vars["kI"]=&kI;
-  vars["caI"]=&caI;
-  vars["mgI"]=&caI;
+  __vars["naI"]=&naI;
+  __vars["kI"]=&kI;
+  __vars["caI"]=&caI;
+  __vars["mgI"]=&caI;
 
-  vars["Gate.dst"]=&Gate.dst;
-  vars["Gate.fst"]=&Gate.fst;
-  vars["Gate.dt"]=&Gate.dt;
-  vars["Gate.ft"]=&Gate.ft;
-  vars["Gate.ikr_act"]=&Gate.ikr_act;
-  vars["Gate.ikr_inact"]=&Gate.ikr_inact;
-  vars["Gate.ikr_inact2"]=&Gate.ikr_inact2;
-  vars["Gate.iks_act"]=&Gate.iks_act;
-  vars["Gate.fl12"]=&Gate.fl12;
-  vars["Gate.dl12"]=&Gate.dl12 ;
-  vars["Gate.fl13"]=&Gate.fl13 ;
-  vars["Gate.dl13"]=&Gate.dl13 ;
-  vars["Gate.fca"]=&Gate.fca;
-  vars["Gate.r"]=&Gate.r;
-  vars["Gate.m_ttxr"]=&Gate.m_ttxr;
-  vars["Gate.h_ttxr"]=&Gate.h_ttxr;
-  vars["Gate.j_ttxr"]=&Gate.j_ttxr;
-  vars["Gate.m_ttxs"]=&Gate.m_ttxs;
-  vars["Gate.h_ttxs"]=&Gate.h_ttxs;
-  vars["Gate.j_ttxs"]=&Gate.j_ttxs;
-  vars["Gate.y_1_2"]=&Gate.y_1_2;
-  vars["Gate.q"]=&Gate.q;
-  vars["Gate.resting"]=&Gate.resting;
-  vars["Gate.open"]=&Gate.open;
-  vars["Gate.inactivated"]=&Gate.inactivated;
-  vars["Gate.resting_inactivated"]=&Gate.resting_inactivated;
+  __vars["Gate.dst"]=&Gate.dst;
+  __vars["Gate.fst"]=&Gate.fst;
+  __vars["Gate.dt"]=&Gate.dt;
+  __vars["Gate.ft"]=&Gate.ft;
+  __vars["Gate.ikr_act"]=&Gate.ikr_act;
+  __vars["Gate.ikr_inact"]=&Gate.ikr_inact;
+  __vars["Gate.ikr_inact2"]=&Gate.ikr_inact2;
+  __vars["Gate.iks_act"]=&Gate.iks_act;
+  __vars["Gate.fl12"]=&Gate.fl12;
+  __vars["Gate.dl12"]=&Gate.dl12 ;
+  __vars["Gate.fl13"]=&Gate.fl13 ;
+  __vars["Gate.dl13"]=&Gate.dl13 ;
+  __vars["Gate.fca"]=&Gate.fca;
+  __vars["Gate.r"]=&Gate.r;
+  __vars["Gate.m_ttxr"]=&Gate.m_ttxr;
+  __vars["Gate.h_ttxr"]=&Gate.h_ttxr;
+  __vars["Gate.j_ttxr"]=&Gate.j_ttxr;
+  __vars["Gate.m_ttxs"]=&Gate.m_ttxs;
+  __vars["Gate.h_ttxs"]=&Gate.h_ttxs;
+  __vars["Gate.j_ttxs"]=&Gate.j_ttxs;
+  __vars["Gate.y_1_2"]=&Gate.y_1_2;
+  __vars["Gate.q"]=&Gate.q;
+  __vars["Gate.resting"]=&Gate.resting;
+  __vars["Gate.open"]=&Gate.open;
+  __vars["Gate.inactivated"]=&Gate.inactivated;
+  __vars["Gate.resting_inactivated"]=&Gate.resting_inactivated;
 
-  vars["Ftc"]=&Ftc;
-  vars["Ftmc"]=&Ftmc;
-  vars["Ftmm"]=&Ftmm;
-  vars["Fcms"]=&Fcms;
-  vars["Fcmi"]=&Fcmi;
-  vars["Fcq"]=&Fcq;
+  __vars["Ftc"]=&Ftc;
+  __vars["Ftmc"]=&Ftmc;
+  __vars["Ftmm"]=&Ftmm;
+  __vars["Fcms"]=&Fcms;
+  __vars["Fcmi"]=&Fcmi;
+  __vars["Fcq"]=&Fcq;
 
 
-   vars["caSub"]=&caSub;
-  vars["caJsr"]=&caJsr;
-  vars["caNsr"]=&caNsr;
+   __vars["caSub"]=&caSub;
+  __vars["caJsr"]=&caJsr;
+  __vars["caNsr"]=&caNsr;
 
-  vars["ist"]=&ist;
-  vars["ibca"]=&ibca;
-  vars["ibna"]=&ibna;
-  vars["ibk"]=&ibk;
-  vars["ik1"]=&ik1;
-  vars["icat"]=&icat;
-  vars["ikr"]=&ikr;
-  vars["iks"]=&iks;
-  vars["ical12"]=&ical12;
-  vars["ical13"]=&ical13;
-  vars["ina_ttxr"]=&ina_ttxr;
-  vars["ina_ttxs"]=&ina_ttxs;
-  vars["ih"]=&ih;
-  vars["ihk"]=&ihk;
-  vars["ihna"]=&ihna;
-  vars["inak"]=&inak;
-  vars["inaca"]=&inaca;
-  vars["isus"]=&isus;
-  vars["ito"]=&ito;
-  vars["Jrel"]=&Jrel;
-  vars["Jup"]=&Jup;
-  vars["Jtr"]=&Jtr;
-  vars["Jcadif"]=&Jcadif;
+  __vars["ist"]=&ist;
+  __vars["ibca"]=&ibca;
+  __vars["ibna"]=&ibna;
+  __vars["ibk"]=&ibk;
+  __vars["ik1"]=&ik1;
+  __vars["icat"]=&icat;
+  __vars["ikr"]=&ikr;
+  __vars["iks"]=&iks;
+  __vars["ical12"]=&ical12;
+  __vars["ical13"]=&ical13;
+  __vars["ina_ttxr"]=&ina_ttxr;
+  __vars["ina_ttxs"]=&ina_ttxs;
+  __vars["ih"]=&ih;
+  __vars["ihk"]=&ihk;
+  __vars["ihna"]=&ihna;
+  __vars["inak"]=&inak;
+  __vars["inaca"]=&inaca;
+  __vars["isus"]=&isus;
+  __vars["ito"]=&ito;
+  __vars["Jrel"]=&Jrel;
+  __vars["Jup"]=&Jup;
+  __vars["Jtr"]=&Jtr;
+  __vars["Jcadif"]=&Jcadif;
 
 }
 
@@ -563,8 +563,7 @@ const char *Ksan::type() const
 }
 
 // External stimulus.
-int Ksan::externalStim(double stimval) {
+void Ksan::externalStim(double stimval) {
     iTot = iTot + stimval;
-    return 1;
 }
 

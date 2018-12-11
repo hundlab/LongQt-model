@@ -17,13 +17,13 @@ GpbVent::~GpbVent()
 void GpbVent::Initialize() {
     Cm = 1.0; //uF/cm2
     ACap = 1.3810E-4; //capacitive area, cm2
-    dVdt=dVdtmax=0.0;
+    dVdt=/*dVdtmax=*/0.0;
     t=0.0;
     dt = dtmin = 0.005;
     dtmed = 0.005;
     dtmax = 0.005;
     dvcut = 1.0;
-    vOld=vNew=-80.9763;
+    vOld=/*vNew=*/-80.9763;
 
     apTime = 0.0;
 
@@ -602,94 +602,93 @@ void GpbVent::updateConc(){
 
 
 // External stimulus.
-int GpbVent::externalStim(double stimval) {
+void GpbVent::externalStim(double stimval) {
     iTot = iTot + stimval;
-    return 1;
 }
 
 // Create map for easy retrieval of variable values.
 void GpbVent::makemap()
 {
-  vars["vOld"]=&vOld;
-  vars["t"]=&t;
-  vars["dVdt"]=&dVdt;
-  vars["naI"]=&naI;
-  vars["kI"]=&kI;
-  vars["clI"]=&clI;
-  vars["caI"]=&caI;
-  vars["caslI"]=&caslI;
-  vars["cajI"]=&cajI;
-  vars["caSr"]=&caSr;
-  vars["najI"]=&najI;
-  vars["naslI"]=&naslI;
-  vars["mgI"]=&mgI;
-  vars["CaM"]=&CaM;
-  vars["Csqnb"]=&Csqnb;
-  vars["iCa"]=&iCa;
-  vars["iCab"]=&iCab;
-  vars["iNa"]=&iNa;
-  vars["iNak"]=&iNak;
-  vars["iNaca"]=&iNaca;
+  __vars["vOld"]=&vOld;
+  __vars["t"]=&t;
+  __vars["dVdt"]=&dVdt;
+  __vars["naI"]=&naI;
+  __vars["kI"]=&kI;
+  __vars["clI"]=&clI;
+  __vars["caI"]=&caI;
+  __vars["caslI"]=&caslI;
+  __vars["cajI"]=&cajI;
+  __vars["caSr"]=&caSr;
+  __vars["najI"]=&najI;
+  __vars["naslI"]=&naslI;
+  __vars["mgI"]=&mgI;
+  __vars["CaM"]=&CaM;
+  __vars["Csqnb"]=&Csqnb;
+  __vars["iCa"]=&iCa;
+  __vars["iCab"]=&iCab;
+  __vars["iNa"]=&iNa;
+  __vars["iNak"]=&iNak;
+  __vars["iNaca"]=&iNaca;
 
-  vars["Gate.m"]=&gate.m;
-  vars["Gate.h"]=&gate.h;
-  vars["Gate.j"]=&gate.j;
-  vars["Gate.xkr"]=&gate.xkr;
-  vars["Gate.xks"]=&gate.xks;
-  vars["Gate.xf"]=&gate.xf;
-  vars["Gate.yf"]=&gate.yf;
+  __vars["Gate.m"]=&gate.m;
+  __vars["Gate.h"]=&gate.h;
+  __vars["Gate.j"]=&gate.j;
+  __vars["Gate.xkr"]=&gate.xkr;
+  __vars["Gate.xks"]=&gate.xks;
+  __vars["Gate.xf"]=&gate.xf;
+  __vars["Gate.yf"]=&gate.yf;
 
-  vars["Gate.d"]=&gate.d;
-  vars["Gate.f"]=&gate.f;
-  vars["Gate.f_cabj"]=&gate.f_cabj;
-  vars["Gate.f_cabsl"]=&gate.f_cabsl;
-  vars["Gate.h "]=&gate.h;
+  __vars["Gate.d"]=&gate.d;
+  __vars["Gate.f"]=&gate.f;
+  __vars["Gate.f_cabj"]=&gate.f_cabj;
+  __vars["Gate.f_cabsl"]=&gate.f_cabsl;
+  __vars["Gate.h "]=&gate.h;
 
-  vars["iTos"]=&iTos;
-  vars["iTof"]=&iTof;
-  vars["iTo"]=&iTo;
-  vars["iKsjunc"]=&iKsjunc;
-  vars["iKssl"]=&iKssl;
-  vars["iKs"]=&iKs;
-  vars["iKr"]=&iKr;
+  __vars["iTos"]=&iTos;
+  __vars["iTof"]=&iTof;
+  __vars["iTo"]=&iTo;
+  __vars["iKsjunc"]=&iKsjunc;
+  __vars["iKssl"]=&iKssl;
+  __vars["iKs"]=&iKs;
+  __vars["iKr"]=&iKr;
 
-  vars["iKpjunc"]=&iKpjunc;
-  vars["iKpsl"]=&iKpsl;
-  vars["iKp"]=&iKp;
-  vars["iK1"]=&iK1;
-  vars["iNajunc"]=&iNajunc;
-  vars["iNasl"]=&iNasl;
-  vars["iNabjunc"]=&iNabjunc;
-  vars["iNabsl"]=&iNabsl;
-  vars["iNab"]=&iNab;
-  vars["iNa"]=&iNa;
-  vars["iCajunc"]=&iCajunc;
-  vars["iCasl"]=&iCasl;
-  vars["iCa"]=&iCa;
-  vars["iCaL"]=&iCaL;
-  vars["iCab"]=&iCab;
-  vars["ipCa"]=&ipCa;
-  vars["iCak"]=&iCak;
-  vars["iCanajunc"]=&iCanajunc;
-  vars["iCanasl"]=&iCanasl;
-  vars["iCana"]=&iCana;
-  vars["iNaKjunc"]=&iNaKjunc;
-  vars["iNaKsl"]=&iNaKsl;
-  vars["iNak"]=&iNak;
-  vars["iNcxjunc"]=&iNcxjunc;
-  vars["iNcxsl"]=&iNcxsl;
-  vars["iNaca"]=&iNaca;
-  vars["iClcajunc"]=&iClcajunc;
-  vars["iClcasl"]=&iClcasl;
-  vars["iClca"]=&iClca;
-  vars["iClbk"]=&iClbk;
-  vars["iClcajunc"]=&iClcajunc;
-  vars["ipCajunc"]=&ipCajunc;
-  vars["ipCasl"]=&ipCasl;
-  vars["ipCa"]=&ipCa;
-  vars["iCabjunc"]=&iCabjunc;
-  vars["iCabsl"]=&iCabsl;
-  vars["iCab"]=&iCab;
+  __vars["iKpjunc"]=&iKpjunc;
+  __vars["iKpsl"]=&iKpsl;
+  __vars["iKp"]=&iKp;
+  __vars["iK1"]=&iK1;
+  __vars["iNajunc"]=&iNajunc;
+  __vars["iNasl"]=&iNasl;
+  __vars["iNabjunc"]=&iNabjunc;
+  __vars["iNabsl"]=&iNabsl;
+  __vars["iNab"]=&iNab;
+  __vars["iNa"]=&iNa;
+  __vars["iCajunc"]=&iCajunc;
+  __vars["iCasl"]=&iCasl;
+  __vars["iCa"]=&iCa;
+  __vars["iCaL"]=&iCaL;
+  __vars["iCab"]=&iCab;
+  __vars["ipCa"]=&ipCa;
+  __vars["iCak"]=&iCak;
+  __vars["iCanajunc"]=&iCanajunc;
+  __vars["iCanasl"]=&iCanasl;
+  __vars["iCana"]=&iCana;
+  __vars["iNaKjunc"]=&iNaKjunc;
+  __vars["iNaKsl"]=&iNaKsl;
+  __vars["iNak"]=&iNak;
+  __vars["iNcxjunc"]=&iNcxjunc;
+  __vars["iNcxsl"]=&iNcxsl;
+  __vars["iNaca"]=&iNaca;
+  __vars["iClcajunc"]=&iClcajunc;
+  __vars["iClcasl"]=&iClcasl;
+  __vars["iClca"]=&iClca;
+  __vars["iClbk"]=&iClbk;
+  __vars["iClcajunc"]=&iClcajunc;
+  __vars["ipCajunc"]=&ipCajunc;
+  __vars["ipCasl"]=&ipCasl;
+  __vars["ipCa"]=&ipCa;
+  __vars["iCabjunc"]=&iCabjunc;
+  __vars["iCabsl"]=&iCabsl;
+  __vars["iCab"]=&iCab;
 
 }
 

@@ -53,10 +53,10 @@ Protocol::Protocol()
     pvarfile = "pvars.txt"; // File to specify cell params
     simvarfile = "simvars.xml";  // File to specify sim params
 
-    propertyoutfile = "dt%d.tsv";
-    dvarsoutfile = "dt%d_dvars.tsv";
-    finalpropertyoutfile = "dss%d.tsv";
-    finaldvarsoutfile = "dss%d_pvars.tsv";
+    propertyoutfile = "dt{}.tsv";
+    dvarsoutfile = "dt{}_dvars.tsv";
+    finalpropertyoutfile = "dss{}.tsv";
+    finaldvarsoutfile = "dss{}_pvars.tsv";
     cellStateFile = "cellstate.xml";//"dss%d_state.dat";
 
 
@@ -168,7 +168,7 @@ int Protocol::runSim() {
 
 void Protocol::setupTrial() {
     this->mkDirs();
-    cell()->reset();
+//    cell()->reset();
 };
 
 //#############################################################

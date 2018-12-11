@@ -9,6 +9,8 @@
 #include <inexcitablecell.h>
 
 using namespace testing;
+using namespace LongQt;
+using namespace std;
 //----------------------------------- Protocol
 
 //----------------------------------- CurrentClamp

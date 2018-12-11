@@ -3,7 +3,7 @@
 
 #include <iostream>
 #include <string>
-#include "cellutils.h"
+#include "cellutils_core.h"
 
 namespace LongQt {
 class Logger {

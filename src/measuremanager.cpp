@@ -1,6 +1,7 @@
 #include "measuremanager.h"
 #include "cellutils.h"
 #include "logger.h"
+#include "measuredefault.h"
 using namespace LongQt;
 using namespace std;
 
@@ -44,7 +45,7 @@ shared_ptr<Measure> MeasureManager::getMeasure(string varname, set<string> selec
         string measName = varsMeas.at(varname);
         return shared_ptr<Measure>(varMeasCreator.at(measName)(selection));
     }
-    return make_shared<Measure>(selection);
+    return make_shared<MeasureDefault>(selection);
 }
 
 void MeasureManager::addMeasure(string var,set<string> selection) {
@@ -155,7 +156,7 @@ void MeasureManager::resetMeasures() {
 //#############################################################
 bool MeasureManager::readMvarsFile(QXmlStreamReader& xml) {
     variableSelection.clear();
-    set<string> possible_vars = __cell->getVariables();
+    set<string> possible_vars = __cell->vars();
     if(!CellUtils::readNext(xml, "mvars")) return false;
     if(xml.readNextStartElement() && xml.name()=="percrepol") {
         xml.readNext();
@@ -197,7 +198,7 @@ bool MeasureManager::writeMVarsFile(QXmlStreamWriter& xml) {
 
 void MeasureManager::removeBad() {
     list<map<string,set<string>>::iterator> bad;
-    auto vars = __cell->getVariables();
+    auto vars = __cell->vars();
     for(auto it = this->variableSelection.begin(); it != variableSelection.end(); ++it) {
         if(vars.count(it->first) != 1) {
             bad.push_back(it);

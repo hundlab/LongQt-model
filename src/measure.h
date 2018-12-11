@@ -25,60 +25,27 @@ namespace LongQt {
 class Measure
 {
     public:
-        Measure(std::set<std::string> selected = {});
-        Measure(const Measure& toCopy);
-        Measure(Measure&& toCopy);
-        virtual ~Measure() = default;
+        Measure(std::map<std::string,double* const> varmap, std::set<std::string> selected = {});
+        Measure(const Measure&);
+        Measure(Measure&&);
 
-        Measure& operator=(const Measure& toCopy) = delete;
+        virtual bool measure(double time,double var) = 0;  //measures props related to var; returns 1 when ready for output.
+        virtual void reset() = 0;   //resets params to init vals
 
-        virtual bool measure(double time,double var);  //measures props related to var; returns 1 when ready for output.
-        virtual void reset();   //resets params to init vals
+        virtual std::set<std::string> variables();
+        virtual std::map<std::string,double> variablesMap();
 
-        //		string varname;
-
-        std::set<std::string> variables();
-        std::map<std::string,double> variablesMap();
-
-        std::set<std::string> selection();
-        void selection(std::set<std::string> new_selection);
+        virtual std::set<std::string> selection();
+        virtual void selection(std::set<std::string> new_selection);
         //		void restoreLast();
+
         virtual std::string getNameString(std::string name) const;
-        virtual std::string getValueString() const;
-    protected:
-        virtual void calcMeasure(double time, double var);
-        virtual void updateOld(double time, double var);
-
-        std::map<std::string, double* const> varmap = // map for refing properties that can be measured.
-        {{"peak",&max.second},{"min",&min.second},{"maxderiv",&maxderiv.second},
-        {"mint",&min.first},{"derivt",&maxderiv.first},{"maxt",&max.first}};
-
-        double varold = Q_NAN;
-        double told = Q_NAN;
-        double derivold = Q_NAN; //dv/dt from prev. time step
-
-        double deriv = 0;
-        std::pair<double,double> maxderiv = {Q_NAN,-INF};   // time of max deriv.
-        std::pair<double,double> max = {Q_NAN,-INF};      // max var value
-        std::pair<double,double> min = {Q_NAN,INF};       // min var value
-
-        bool resetflag = false;
+        virtual std::string getValueString();
+protected:
+        virtual void beforeOutput();
 
         std::set<std::string> __selection; // map for refing properties that will be output.
-        //        double vartakeoff=-100; //var value at point of max deflection.
-        //        double durtime1;
-        //		double maxderiv1;
-        //		double maxderiv2;
-//        double maxderiv2nd = 0;
-//        double cl = 0;
-//        double dur;   //duration
-//        double __percrepol = 50;   //specify percent repolarization
-//        double repol = -25;           // repol var val for duration measure.
-//        bool durflag = false;    //1 while measuring duration.
-//        bool ampflag = false;
-//        bool ddrflag = false;
-    private:
-        void copy(const Measure& toCopy);
+        std::map<std::string, double* const> varmap;
 };
 } //LongQt
 #undef INF

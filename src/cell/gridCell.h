@@ -29,10 +29,10 @@ class GridCell: public Cell {
         virtual void updateConc();
         virtual void updateCurr();
         virtual double updateV();
-        virtual int externalStim(double stimval); //stimulates every cell
+        virtual void externalStim(double stimval); //stimulates every cell
         virtual double tstep(double stimt);
-        virtual std::set<std::string> getVariables();
-        virtual std::set<std::string> getConstants();
+        virtual std::set<std::string> vars();
+        virtual std::set<std::string> pars();
 
         //cell io functions
         virtual void setGridfile(std::string name);

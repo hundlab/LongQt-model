@@ -31,13 +31,13 @@ HRD09BorderZone::~HRD09BorderZone()
 
 //##### Initialize variables ##################
 void HRD09BorderZone::Initialize() {
-        dVdt=dVdtmax=1.017497198e-09;
+        dVdt=/*dVdtmax=*/1.017497198e-09;
         t=0.0;
 	dt=dtmin = 0.005;
    	dtmed = 0.01;
    	dtmax = 0.1;
    	dvcut = 1.0;
-        vOld = vNew =  -86.18719757;
+        vOld = /*vNew =*/  -86.18719757;
         tRel=10000.0;
         sponRelflag = 0;
 

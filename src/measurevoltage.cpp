@@ -1,38 +1,24 @@
-#include "measurewave.h"
+#include "measurevoltage.h"
 using namespace LongQt;
 using namespace std;
 
 #define INF std::numeric_limits<double>::infinity()
 #define Q_NAN std::numeric_limits<double>::quiet_NaN()
 
-MeasureWave::MeasureWave(set<string> selected, double percrepol):
-    Measure(selected),
+MeasureVoltage::MeasureVoltage(set<string> selected, double percrepol):
+    Measure({
+        {"peak",&max.second},{"min",&min.second},{"maxderiv",&maxderiv.second},
+        {"mint",&min.first},{"derivt",&maxderiv.first},{"maxt",&max.first},{"cl",&cl},
+        {"amp",&amp},{"ddr",&ddr},{"dur",&dur},{"durtime1",&durtime1},
+        {"vartakeoff",&vartakeoff},{"deriv2ndt",&maxderiv2d.first}}, selected),
     __percrepol(percrepol)
-{
-    varmap.insert({{"cl",&cl},{"amp",&amp},{"ddr",&ddr},{"dur",&dur},
-        {"durtime1",&durtime1},{"vartakeoff",&vartakeoff},
-        {"deriv2ndt",&maxderiv2d.first}});
-    this->selection(selected);
-};
+{};
 
-MeasureWave::MeasureWave(const MeasureWave& toCopy):
-    Measure(toCopy)
+MeasureVoltage::MeasureVoltage(const MeasureVoltage& toCopy):
+    Measure(toCopy),
+    __percrepol(toCopy.__percrepol)
 {
-    this->copy(toCopy);
-};
-
-MeasureWave::MeasureWave(MeasureWave&& toCopy):
-    Measure(toCopy)
-{
-    this->copy(toCopy);
-};
-
-void MeasureWave::copy(const MeasureWave& toCopy) {
-    vartakeoff= toCopy.vartakeoff;
     repol = toCopy.repol;
-    amp = toCopy.amp;
-    maxderiv2d.second= toCopy.maxderiv2d.second;
-    cl= toCopy.cl;
     told = toCopy.told;
     varold = toCopy.varold;
     derivold = toCopy.derivold;
@@ -43,11 +29,32 @@ void MeasureWave::copy(const MeasureWave& toCopy) {
     inAP = toCopy.inAP;
     __percrepol = toCopy.__percrepol;
     resetflag = toCopy.resetflag;
-    dur = toCopy.dur;
-    __selection = toCopy.__selection;
 };
 
-void MeasureWave::calcMeasure(double time, double var) {
+MeasureVoltage::MeasureVoltage(MeasureVoltage&& toCopy):
+    Measure(toCopy),
+    __percrepol(toCopy.__percrepol)
+{
+    repol = toCopy.repol;
+    told = toCopy.told;
+    varold = toCopy.varold;
+    derivold = toCopy.derivold;
+    maxfound = toCopy.maxfound;
+    ampfound = toCopy.ampfound;
+    ddrfound = toCopy.ddrfound;
+    maxderiv_prev = toCopy.maxderiv_prev;
+    inAP = toCopy.inAP;
+    __percrepol = toCopy.__percrepol;
+    resetflag = toCopy.resetflag;
+};
+
+bool MeasureVoltage::measure(double time, double var) {
+    this->calcMeasure(time,var);
+    this->updateOld(time, var);
+    return this->resetflag;
+}
+
+void MeasureVoltage::calcMeasure(double time, double var) {
 //    if(minflag&&abs(var)>peak){          // Track value and time of peak
     if(minfound && ddrfound && !maxfound && var>max.second) {
         max={time,var};
@@ -107,8 +114,13 @@ void MeasureWave::calcMeasure(double time, double var) {
     }
 }
 
-void MeasureWave::reset()
-{
+void MeasureVoltage::updateOld(double time, double var) {
+    told=time;
+    varold=var;
+    derivold=deriv;
+}
+
+void MeasureVoltage::reset() {
     maxderiv2d.second=-INF;
     //told is still valid after reset
 //    told = 0.0;
@@ -116,14 +128,21 @@ void MeasureWave::reset()
     maxfound = false;
     ampfound = false;
     ddrfound = false;
-    this->Measure::reset();
+    max.second=-INF;
+    min.second=INF;
+    maxderiv.second=-INF;
 };
-void MeasureWave::percrepol(double val) {
+
+void MeasureVoltage::percrepol(double val) {
     this->__percrepol = val;
 }
 
-double MeasureWave::percrepol() const {
+double MeasureVoltage::percrepol() const {
     return this->__percrepol;
+}
+
+void MeasureVoltage::beforeOutput() {
+//    sd = std::sqrt(avg_2-avg*avg);
 }
 #undef INF
 #undef Q_NAN

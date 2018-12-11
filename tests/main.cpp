@@ -1,5 +1,7 @@
-#include "celltest.h"
-#include "protocoltest.h"
+#include "cell_test.h"
+#include "protocol_test.h"
+#include "cellutils_test.h"
+#include "measure_test.h"
 
 #include <gtest/gtest.h>
 

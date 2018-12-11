@@ -14,13 +14,13 @@ Courtemanche98::Courtemanche98(Courtemanche98& toCopy) : Cell(toCopy) {
 }
 void Courtemanche98::Initialize() {
         //##### Initialize variables ###################
-        dVdt=dVdtmax=5.434230843e-10;
+        dVdt=/*dVdtmax=*/5.434230843e-10;
         t=0.0;
         dt=dtmin=0.005;
         dtmed = 0.005;
         dtmax = 0.005;
         dvcut = 1.0;
-        vOld = vNew =  -81.2; //mV
+        vOld = /*vNew = */ -81.2; //mV
 
         apTime = 0.0;
 
@@ -496,59 +496,58 @@ void Courtemanche98::updateConc()
    updatecaRel();
 };
 // External stimulus.
-int Courtemanche98::externalStim(double stimval) {
+void Courtemanche98::externalStim(double stimval) {
     iTot = iTot + stimval;
-    return 1;
 }
 // Create map for easy retrieval of variable values.
 void Courtemanche98::makemap()
 {
-  vars["vOld"]=&vOld;
-  vars["t"]=&t;
-  vars["dVdt"]=&dVdt;
-  vars["naI"]=&naI;
-  vars["kI"]=&kI;
-  vars["caI"]=&caI;
-  vars["caUp"]=&caUp;
-  vars["caRel"]=&caRel;
-  vars["trpn"]=&caTrpn;
-  vars["cmdn"]=&caCmdn;
-  vars["csqn"]=&caCsqn;
-  vars["iRel"]=&iRel;
-  vars["iUp"]=&iUp;
-  vars["iLeak"]=&iUp_leak;
-  vars["iTr"]=&iTr;
-  vars["Gate.d"]=&Gate.d;
-  vars["Gate.f"]=&Gate.f;
-  vars["Gate.fCa"]=&Gate.fCa;
-  vars["Gate.u"]=&Gate.u;
-  vars["iCab"]=&iCab;
-  vars["iNab"]=&iNab;
-  vars["ipCa"]=&ipCa;
-  vars["iNa"]=&iNa;
-  vars["iCal"] = &iCal;
-  vars["Gate.v"]=&Gate.v;
-  vars["Gate.w"]=&Gate.w;
-  vars["Gate.m"]=&Gate.m;
-  vars["Gate.h"]=&Gate.h;
-  vars["Gate.j"]=&Gate.j;
-  vars["iNak"]=&iNak;
-  vars["iNaca"]=&iNaca;
-  vars["iTo"]=&iTo;
-  vars["iKur"]=&iKur;
-  vars["Gate.ua"]=&Gate.ua;
-  vars["Gate.ui"]=&Gate.ui;
-  vars["Gate.oa"]=&Gate.oa;
-  vars["Gate.oi"]=&Gate.oi;
-  vars["iKs"]=&iKs;
-  vars["Gate.xs"]=&Gate.xs;
-  vars["iKr"]=&iKr;
-  vars["Gate.xr"]=&Gate.xr;
-  vars["iK1"]=&iK1;
+  __vars["vOld"]=&vOld;
+  __vars["t"]=&t;
+  __vars["dVdt"]=&dVdt;
+  __vars["naI"]=&naI;
+  __vars["kI"]=&kI;
+  __vars["caI"]=&caI;
+  __vars["caUp"]=&caUp;
+  __vars["caRel"]=&caRel;
+  __vars["trpn"]=&caTrpn;
+  __vars["cmdn"]=&caCmdn;
+  __vars["csqn"]=&caCsqn;
+  __vars["iRel"]=&iRel;
+  __vars["iUp"]=&iUp;
+  __vars["iLeak"]=&iUp_leak;
+  __vars["iTr"]=&iTr;
+  __vars["Gate.d"]=&Gate.d;
+  __vars["Gate.f"]=&Gate.f;
+  __vars["Gate.fCa"]=&Gate.fCa;
+  __vars["Gate.u"]=&Gate.u;
+  __vars["iCab"]=&iCab;
+  __vars["iNab"]=&iNab;
+  __vars["ipCa"]=&ipCa;
+  __vars["iNa"]=&iNa;
+  __vars["iCal"] = &iCal;
+  __vars["Gate.v"]=&Gate.v;
+  __vars["Gate.w"]=&Gate.w;
+  __vars["Gate.m"]=&Gate.m;
+  __vars["Gate.h"]=&Gate.h;
+  __vars["Gate.j"]=&Gate.j;
+  __vars["iNak"]=&iNak;
+  __vars["iNaca"]=&iNaca;
+  __vars["iTo"]=&iTo;
+  __vars["iKur"]=&iKur;
+  __vars["Gate.ua"]=&Gate.ua;
+  __vars["Gate.ui"]=&Gate.ui;
+  __vars["Gate.oa"]=&Gate.oa;
+  __vars["Gate.oi"]=&Gate.oi;
+  __vars["iKs"]=&iKs;
+  __vars["Gate.xs"]=&Gate.xs;
+  __vars["iKr"]=&iKr;
+  __vars["Gate.xr"]=&Gate.xr;
+  __vars["iK1"]=&iK1;
 
-  vars["iCat"]=&iCat;
-  vars["iNat"]=&iNat;
-  vars["iKt"]=&iKt;
+  __vars["iCat"]=&iCat;
+  __vars["iNat"]=&iNat;
+  __vars["iKt"]=&iKt;
   //vars["iTot"] = &iTot;
 
 }

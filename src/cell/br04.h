@@ -84,7 +84,7 @@ class Br04 : public Cell
     virtual void updateCurr();
     virtual void updateConc();
     virtual double tstep(double stimt) override;
-    virtual int externalStim(double stimval);
+    virtual void externalStim(double stimval);
 //    virtual int tstep();
     virtual void makemap();
     virtual const char* type() const;
@@ -112,8 +112,8 @@ class Br04 : public Cell
     double iTo_s = 0;   // Transient outward K+ current, uA/uF
     double iK1 = 0.1998424643;	  // Inwardly rectifying K current, uA/uF
     double iKs = 5.639014346e-10;   // Slowly activating delayed rectifier K current, uA/uF
-    double iKur = 0.0001261730481;   // Slowly activating delayed rectifier K current, uA/uF
-    double iKss = 3.017113218e-05;   // Slowly activating delayed rectifier K current, uA/uF
+    double iKur = 0.0001261730481;   // ultrarapidly activating delayed rectifier K current, uA/uF
+    double iKss = 3.017113218e-05;   // noninactivating steady-state K current, uA/uF
     double iKr = -0.0001235205802;   // Rapidly activating delayed rectifier K current, uA/uF
     double iTrek = 0;     // Trek-1
     double iNak = 0.09827839264;          // Na-K pump, uA/uF
@@ -121,7 +121,7 @@ class Br04 : public Cell
     double iClca = -5.842015343e-08;	  // Na-Cl cotransporter, mM/ms
     double iNa = -0.001086915143;           // Fast inward Na current, uA/uF
     double iNab = -0.2262588962;           // Fast inward Na current, uA/uF
-    double iNsk = 0;//test           // Fast inward Na current, uA/uF // ?Plateau K current?
+    double iNsk = 0;           // Fast inward Na current, uA/uF // ?Plateau K current?
     double iNsna = 0;           // Fast inward Na current, uA/uF // ?Plateau K current?
     
     double iCait;
@@ -195,6 +195,8 @@ class Br04 : public Cell
     double JtrFactor = 1;
     double JtrpnFactor = 1;
 
+    double TestFactor = 1;
+    double TestFactor2 = 1;
     //    ISO //isoproterenol
     //    TREK //enable the trek channel
     //    INS //?Plateau K current?

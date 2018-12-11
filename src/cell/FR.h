@@ -376,7 +376,7 @@ virtual void calc_itr ();    // Calculates Translocation of Ca from NSR to JSR
 virtual void conc_cai ();    // Calculates new myoplasmic Ca ion concentration
 virtual void conc_cleft ();  // Calculates new cleft ion concentrationsvirtual
 
-virtual int externalStim(double stimval);
+virtual void externalStim(double stimval);
 virtual void updateCurr();
 virtual void updateConc();
 virtual void makemap();

@@ -91,7 +91,7 @@ class Ksan : public Cell
 
    virtual void makemap();
    virtual const char* type() const;
-   virtual int externalStim(double stimval);
+   virtual void externalStim(double stimval);
 
     //##### Declare class variables ##############
 

@@ -22,12 +22,10 @@ OHaraRudy *OHaraRudy::clone() {
 }
 // External stimulus.
 // default stimval -80
-int OHaraRudy::externalStim(double stimval)
+void OHaraRudy::externalStim(double stimval)
 {
 	iKt = iKt + stimval;
 	iTot = iTot + stimval;
-
-    return 1;
 }
 
 const char *OHaraRudy::type() const
@@ -600,113 +598,113 @@ void OHaraRudy::updateConc() {
 void OHaraRudy::makemap()
 {
  
-	vars["naI"]=&vOld;
-	vars["iNa"]=&INa;
-	vars["iNaL"]=&INaL;
-	vars["iTo"]=&Ito;
-	vars["iCaL"]=&ICaL;
-	vars["iCana"]=&ICaNa;
-	vars["iCaK"]=&ICaK;
-	vars["iKr"]=&IKr;
-	vars["iKs"]=&IKs;
-	vars["iK1"]=&IK1;
-	vars["iNaca_i"]=&INaCa_i;
-	vars["iNaca_ss"]=&INaCa_ss;
-	vars["iNaca"]=&INaCa;
-	vars["iNaK"]=&INaK;
-	vars["iKb"]=&IKb;
-	vars["iNab"]=&INab;
-	vars["iPca"]=&IpCa;
-	vars["iCab"]=&ICab;
-	vars["Jrel"]=&Jrel;
-	vars["Jup"]=&Jup;
-	vars["Jtr"]=&Jtr;
-	vars["Jdiff"]=&Jdiff;
-	vars["JdiffNa"]=&JdiffNa;
-	vars["JdiffK"]=&JdiffK;
-	vars["Jleak"]=&Jleak;
-    vars["CaMKIIa"]=&CaMKa;
-    vars["CaMKIIb"]=&CaMKb;
+	__vars["naI"]=&vOld;
+	__vars["iNa"]=&INa;
+	__vars["iNaL"]=&INaL;
+	__vars["iTo"]=&Ito;
+	__vars["iCaL"]=&ICaL;
+	__vars["iCana"]=&ICaNa;
+	__vars["iCaK"]=&ICaK;
+	__vars["iKr"]=&IKr;
+	__vars["iKs"]=&IKs;
+	__vars["iK1"]=&IK1;
+	__vars["iNaca_i"]=&INaCa_i;
+	__vars["iNaca_ss"]=&INaCa_ss;
+	__vars["iNaca"]=&INaCa;
+	__vars["iNaK"]=&INaK;
+	__vars["iKb"]=&IKb;
+	__vars["iNab"]=&INab;
+	__vars["iPca"]=&IpCa;
+	__vars["iCab"]=&ICab;
+	__vars["Jrel"]=&Jrel;
+	__vars["Jup"]=&Jup;
+	__vars["Jtr"]=&Jtr;
+	__vars["Jdiff"]=&Jdiff;
+	__vars["JdiffNa"]=&JdiffNa;
+	__vars["JdiffK"]=&JdiffK;
+	__vars["Jleak"]=&Jleak;
+    __vars["CaMKIIa"]=&CaMKa;
+    __vars["CaMKIIb"]=&CaMKb;
  
-	vars["naI"]=&naI;
-	vars["nass"]=&nass;
-	vars["kI"]=&kI;
-	vars["kss"]=&kss;
-	vars["cai"]=&cai;
-	vars["cass"]=&cass;
-	vars["cansr"]=&cansr;
-	vars["cajsr"]=&cajsr;
-	vars["m"]=&m;
-	vars["hf"]=&hf;
-	vars["hs"]=&hs;
-	vars["j"]=&j;
-	vars["hsp"]=&hsp;
-	vars["jp"]=&jp;
-	vars["mL"]=&mL;
-	vars["hL"]=&hL;
-	vars["hLp"]=&hLp;
-	vars["a"]=&a;
-	vars["iF"]=&iF;
-	vars["iS"]=&iS;
-	vars["ap"]=&ap;
-	vars["iFp"]=&iFp;
-	vars["iSp"]=&iSp;
-	vars["d"]=&d;
-	vars["ff"]=&ff;
-	vars["fs"]=&fs;
-	vars["fcaf"]=&fcaf;
-	vars["fcas"]=&fcas;
-	vars["jca"]=&jca;
-	vars["nca"]=&nca;
-	vars["ffp"]=&ffp;
-	vars["fcafp"]=&fcafp;
-	vars["xrf"]=&xrf;
-	vars["xrs"]=&xrs;
-	vars["xs1"]=&xs1;
-	vars["xs2"]=&xs2;
-	vars["xk1"]=&xk1;
-	vars["Jrelnp"]=&Jrelnp;
-	vars["Jrelp"]=&Jrelp;
-	vars["CaMKt"]=&CaMKt;
+	__vars["naI"]=&naI;
+	__vars["nass"]=&nass;
+	__vars["kI"]=&kI;
+	__vars["kss"]=&kss;
+	__vars["cai"]=&cai;
+	__vars["cass"]=&cass;
+	__vars["cansr"]=&cansr;
+	__vars["cajsr"]=&cajsr;
+	__vars["m"]=&m;
+	__vars["hf"]=&hf;
+	__vars["hs"]=&hs;
+	__vars["j"]=&j;
+	__vars["hsp"]=&hsp;
+	__vars["jp"]=&jp;
+	__vars["mL"]=&mL;
+	__vars["hL"]=&hL;
+	__vars["hLp"]=&hLp;
+	__vars["a"]=&a;
+	__vars["iF"]=&iF;
+	__vars["iS"]=&iS;
+	__vars["ap"]=&ap;
+	__vars["iFp"]=&iFp;
+	__vars["iSp"]=&iSp;
+	__vars["d"]=&d;
+	__vars["ff"]=&ff;
+	__vars["fs"]=&fs;
+	__vars["fcaf"]=&fcaf;
+	__vars["fcas"]=&fcas;
+	__vars["jca"]=&jca;
+	__vars["nca"]=&nca;
+	__vars["ffp"]=&ffp;
+	__vars["fcafp"]=&fcafp;
+	__vars["xrf"]=&xrf;
+	__vars["xrs"]=&xrs;
+	__vars["xs1"]=&xs1;
+	__vars["xs2"]=&xs2;
+	__vars["xk1"]=&xk1;
+	__vars["Jrelnp"]=&Jrelnp;
+	__vars["Jrelp"]=&Jrelp;
+	__vars["CaMKt"]=&CaMKt;
 
-	pars["naO"]=&naO;
-	pars["cao"]=&cao;
-	pars["kO"]=&kO;
+	__pars["naO"]=&naO;
+	__pars["cao"]=&cao;
+	__pars["kO"]=&kO;
 
 		//buffer paramaters
-	pars["BSRmax"]=&BSRmax;
-	pars["KmBSR"]=&KmBSR;
-	pars["BSLmax"]=&BSLmax;
-	pars["KmBSL"]=&KmBSL;
-	pars["cmdnmax"]=&cmdnmax;
-	pars["kmcmdn"]=&kmcmdn;
-	pars["trpnmax"]=&trpnmax;
-	pars["kmtrpn"]=&kmtrpn;
-	pars["csqnmax"]=&csqnmax;
-	pars["kmcsqn"]=&kmcsqn;
+	__pars["BSRmax"]=&BSRmax;
+	__pars["KmBSR"]=&KmBSR;
+	__pars["BSLmax"]=&BSLmax;
+	__pars["KmBSL"]=&KmBSL;
+	__pars["cmdnmax"]=&cmdnmax;
+	__pars["kmcmdn"]=&kmcmdn;
+	__pars["trpnmax"]=&trpnmax;
+	__pars["kmtrpn"]=&kmtrpn;
+	__pars["csqnmax"]=&csqnmax;
+	__pars["kmcsqn"]=&kmcsqn;
 
 		//cell geometry
-	pars["L"]=&L;
-	pars["rad"]=&rad;
-	pars["vcell"]=&vcell;
-	pars["Ageo"]=&Ageo;
+	__pars["L"]=&L;
+	__pars["rad"]=&rad;
+	__pars["vcell"]=&vcell;
+	__pars["Ageo"]=&Ageo;
 		//AGeo
-	pars["Acap"]=&Acap;
-	pars["vmyo"]=&vmyo;
-	pars["vmito"]=&vmito;
-	pars["vsr"]=&vsr;
-	pars["vnsr"]=&vnsr;
-	pars["vjsr"]=&vjsr;
-	pars["vss"]=&vss;
+	__pars["Acap"]=&Acap;
+	__pars["vmyo"]=&vmyo;
+	__pars["vmito"]=&vmito;
+	__pars["vsr"]=&vsr;
+	__pars["vnsr"]=&vnsr;
+	__pars["vjsr"]=&vjsr;
+	__pars["vss"]=&vss;
 
 
 		//CaMK paramaters
-    pars["aCaMKII"]=&aCaMK;
-    pars["bCaMKII"]=&bCaMK;
-	pars["CaMKo"]=&CaMKo;
-	pars["KmCaM"]=&KmCaM;
-    pars["KmCaMKII"]=&KmCaMK;
-    pars["IcalFactor"] = &IcalFactor;
+    __pars["aCaMKII"]=&aCaMK;
+    __pars["bCaMKII"]=&bCaMK;
+	__pars["CaMKo"]=&CaMKo;
+	__pars["KmCaM"]=&KmCaM;
+    __pars["KmCaMKII"]=&KmCaMK;
+    __pars["IcalFactor"] = &IcalFactor;
 
 };
 

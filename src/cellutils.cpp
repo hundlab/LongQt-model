@@ -127,3 +127,23 @@ CellUtils::Side CellUtils::flipSide(CellUtils::Side s) {
         return Side::left;
     }
 }
+
+vector<string> CellUtils::split(string s, char delim) {
+    vector<string> v;
+    size_t prev_pos = 0;
+    size_t pos = s.find(delim,prev_pos);
+    std::string token;
+    while(pos != std::string::npos) {
+        token = s.substr(prev_pos, pos-prev_pos);
+        if(token != "") {
+            v.push_back(token);
+        }
+        prev_pos = pos+1;
+        pos = s.find(delim,prev_pos);
+    }
+    token = s.substr(prev_pos);
+    if(token != "") {
+        v.push_back(token);
+    }
+    return v;
+}

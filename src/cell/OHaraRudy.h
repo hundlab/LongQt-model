@@ -181,7 +181,7 @@ class OHaraRudy : public Cell
 
 		virtual void updateCurr();
 		virtual void updateConc();
-		virtual int externalStim(double stimval);
+        virtual void externalStim(double stimval);
         virtual const char* type() const;
 
     protected:

@@ -69,21 +69,21 @@ bool GridCell::setOuputfileVariables(string filename) {
     }
     return toReturn;
 }
-set<string> GridCell::getVariables() {
-    set<string> toReturn = Cell::getVariables();
+set<string> GridCell::vars() {
+    set<string> toReturn = Cell::vars();
     for(auto& row : grid.rows) {
         for(auto& column : row) {
-            set<string> ivSet = column->cell->getVariables();
+            set<string> ivSet = column->cell->vars();
             toReturn.insert(ivSet.begin(), ivSet.end());
         }
     }
     return toReturn;
 }
-set<string> GridCell::getConstants() {
-    set<string> toReturn = Cell::getConstants();
+set<string> GridCell::pars() {
+    set<string> toReturn = Cell::pars();
     for(auto& row : grid.rows) {
         for(auto& column : row) {
-            set<string> ivSet = column->cell->getConstants();
+            set<string> ivSet = column->cell->pars();
             toReturn.insert(ivSet.begin(), ivSet.end());
         }
     }
@@ -164,13 +164,12 @@ void GridCell::updateCurr() {
         }
     }
 }
-int GridCell::externalStim(double stimval) {
+void GridCell::externalStim(double stimval) {
     for(auto& row: grid.rows) {
         for(auto& node: row) {
             node->cell->externalStim(stimval);
         }
     }
-    return 1;
 }
 double GridCell::tstep(double stimt)
 {
@@ -206,9 +205,9 @@ double GridCell::tstep(double stimt)
     return t;
 }
 void GridCell::makeMap() {//only aply to cells added after the change?
-    pars["dx"] = &dx;
-    pars["dy"] = &dy;
-    pars["np"] = &np;
+    __pars["dx"] = &dx;
+    __pars["dy"] = &dy;
+    __pars["np"] = &np;
 }
 
 const char *GridCell::type() const

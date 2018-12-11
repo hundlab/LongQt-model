@@ -11,7 +11,9 @@ CONFIG += thread
 TARGET = model-tester
 
 HEADERS +=     \
-    celltest.h \
-    protocoltest.h
+    cellutils_test.h \
+    cell_test.h \
+    protocol_test.h \
+    measure_test.h
 
 SOURCES +=     main.cpp

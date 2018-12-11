@@ -51,10 +51,10 @@ void Kurata08::Initialize() {
     irelFactor = 1;
     
     //##### Initialize variables ##################
-    dVdt=dVdtmax=5.434230843e-10;
+    dVdt=/*dVdtmax=*/5.434230843e-10;
     t=0.0;
     dt = dtmin;
-	vOld = vNew = -58.600291137693;
+    vOld = /*vNew =*/ -58.600291137693;
 
 	caI = 0.000312494921;// kurata, min. diastolic Ca2+
   	caR = 0.000190747410; //ditto
@@ -253,7 +253,7 @@ void Kurata08::updateItrek()
     double gk = itrekFactor*.03011;
     double EK = RGAS*TEMP/FDAY*log(kO/kI);
     
-    double aa = 1/(1+exp(-(vOld-65)/52)); //from Kim J Physiol 1992
+    double aa = 1/(1+exp(-(vOld-65)/52)); //from Kim J Gen Physiol 1992
     
     iTrek = gk*aa*(vOld-EK);  //apex vs. septum??? TJH
     
@@ -525,87 +525,84 @@ void Kurata08::updateConc()
    updateNai();
 };
 // External stimulus.
-int Kurata08::externalStim(double stimval)
+void Kurata08::externalStim(double stimval)
 {
     iKt = iKt + stimval;
     iTot = iTot + stimval;
-
-    return 1;
-
 }
 
 void Kurata08::makemap()
 {
     // add to vars map declared/defined in cell.h and cell.cpp
-    vars["naI"]=&naI;
-    vars["kI"]=&kI;
-    vars["caI"]=&caI;
-    vars["caR"]=&caR;
-    vars["caJsr"]=&caJsr;
-    vars["caNsr"]=&caNsr;
-    vars["trpnCa"]=&trpnCa;
-    vars["trpnMg"]=&trpnMg;
-    vars["trpnMgmg"]=&trpnMgmg;
-    vars["cmdnI"]=&cmdnI;
-    vars["cmdnR"]=&cmdnR;
-    vars["csqn"]=&csqn;
-    vars["iRel"]=&iRel;
-    vars["iUp"]=&iUp;
-    vars["iTr"]=&iTr;
-    vars["iDiff"]=&iDiff;
-    vars["iSt"]=&iSt;
-    vars["Gate.qa"]=&Gate.qa;
-    vars["Gate.qi"]=&Gate.qi;
-    vars["iNab"]=&iNab;
-    vars["iCal"]=&iCal;
-    vars["Gate.d"]=&Gate.d;
-    vars["Gate.f"]=&Gate.f;
-    vars["Gate.fca"]=&Gate.fca;
-    vars["iCatt"]=&iCatt;
-    vars["Gate.dt"]=&Gate.dt;
-    vars["Gate.ft"]=&Gate.ft;
-    vars["iNak"]=&iNak;
-    vars["iNaca"]=&iNaca;
-    vars["iTo"]=&iTo;
-    vars["iTrek"]=&iTrek;
-    vars["iSus"]=&iSus;
-    vars["Gate.q"]=&Gate.q;
-    vars["Gate.r"]=&Gate.r;
-    vars["iKs"]=&iKs;
-    vars["Gate.n"]=&Gate.n;
-    vars["iKr"]=&iKr;
-    vars["Gate.paf"]=&Gate.paf;
-    vars["Gate.pas"]=&Gate.pas;
-    vars["Gate.pi"]=&Gate.pi;
-    vars["iKach"]=&iKach;
-    vars["iH"]=&iH;
-    vars["iHna"]=&iHna;
-    vars["iHk"]=&iHk;
-    vars["Gate.y"]=&Gate.y;
+    __vars["naI"]=&naI;
+    __vars["kI"]=&kI;
+    __vars["caI"]=&caI;
+    __vars["caR"]=&caR;
+    __vars["caJsr"]=&caJsr;
+    __vars["caNsr"]=&caNsr;
+    __vars["trpnCa"]=&trpnCa;
+    __vars["trpnMg"]=&trpnMg;
+    __vars["trpnMgmg"]=&trpnMgmg;
+    __vars["cmdnI"]=&cmdnI;
+    __vars["cmdnR"]=&cmdnR;
+    __vars["csqn"]=&csqn;
+    __vars["iRel"]=&iRel;
+    __vars["iUp"]=&iUp;
+    __vars["iTr"]=&iTr;
+    __vars["iDiff"]=&iDiff;
+    __vars["iSt"]=&iSt;
+    __vars["Gate.qa"]=&Gate.qa;
+    __vars["Gate.qi"]=&Gate.qi;
+    __vars["iNab"]=&iNab;
+    __vars["iCal"]=&iCal;
+    __vars["Gate.d"]=&Gate.d;
+    __vars["Gate.f"]=&Gate.f;
+    __vars["Gate.fca"]=&Gate.fca;
+    __vars["iCatt"]=&iCatt;
+    __vars["Gate.dt"]=&Gate.dt;
+    __vars["Gate.ft"]=&Gate.ft;
+    __vars["iNak"]=&iNak;
+    __vars["iNaca"]=&iNaca;
+    __vars["iTo"]=&iTo;
+    __vars["iTrek"]=&iTrek;
+    __vars["iSus"]=&iSus;
+    __vars["Gate.q"]=&Gate.q;
+    __vars["Gate.r"]=&Gate.r;
+    __vars["iKs"]=&iKs;
+    __vars["Gate.n"]=&Gate.n;
+    __vars["iKr"]=&iKr;
+    __vars["Gate.paf"]=&Gate.paf;
+    __vars["Gate.pas"]=&Gate.pas;
+    __vars["Gate.pi"]=&Gate.pi;
+    __vars["iKach"]=&iKach;
+    __vars["iH"]=&iH;
+    __vars["iHna"]=&iHna;
+    __vars["iHk"]=&iHk;
+    __vars["Gate.y"]=&Gate.y;
 //    vars["iCait"]=&iCait;
 //    vars["iCart"]=&iCart;
 
-    pars["Vnsr"] = &Vnsr;
-    pars["Vjsr"] = &Vjsr;
-    pars["Vss"] = &Vss;
-    pars["naO"] = &naO;
-    pars["kO"] = &kO;
-    pars["caO"] = &caO;
-    pars["icalFactor"] = &icalFactor;
-    pars["icattFactor"] = &icattFactor;
-    pars["ikrFactor"] = &ikrFactor;
-    pars["iksFactor"] = &iksFactor;
-    pars["itoFactor"] = &itoFactor;
-    pars["itrekFactor"] = &itrekFactor;
-    pars["isusFactor"] = &isusFactor;
-    pars["ikachFactor"] = &ikachFactor;
-    pars["istFactor"] = &istFactor;
-    pars["inabFactor"] = &inabFactor;
-    pars["inakFactor"] = &inakFactor;
-    pars["inacaFactor"] = &inacaFactor;
-    pars["ihFactor"] = &ihFactor;
-    pars["iupFactor"] = &iupFactor;
-    pars["irelFactor"] = &irelFactor;
+    __pars["Vnsr"] = &Vnsr;
+    __pars["Vjsr"] = &Vjsr;
+    __pars["Vss"] = &Vss;
+    __pars["naO"] = &naO;
+    __pars["kO"] = &kO;
+    __pars["caO"] = &caO;
+    __pars["icalFactor"] = &icalFactor;
+    __pars["icattFactor"] = &icattFactor;
+    __pars["ikrFactor"] = &ikrFactor;
+    __pars["iksFactor"] = &iksFactor;
+    __pars["itoFactor"] = &itoFactor;
+    __pars["itrekFactor"] = &itrekFactor;
+    __pars["isusFactor"] = &isusFactor;
+    __pars["ikachFactor"] = &ikachFactor;
+    __pars["istFactor"] = &istFactor;
+    __pars["inabFactor"] = &inabFactor;
+    __pars["inakFactor"] = &inakFactor;
+    __pars["inacaFactor"] = &inacaFactor;
+    __pars["ihFactor"] = &ihFactor;
+    __pars["iupFactor"] = &iupFactor;
+    __pars["irelFactor"] = &irelFactor;
 }
 
 const char *Kurata08::type() const

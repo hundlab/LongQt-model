@@ -4,19 +4,18 @@
 #include "OHaraRudy.h"  // Parent class declaration
 namespace LongQt {
 
-class OHaraRudyEndo : public OHaraRudy
-{
-	public:
-		OHaraRudyEndo();
-		OHaraRudyEndo(OHaraRudyEndo& toCopy);
-		~OHaraRudyEndo();
+class OHaraRudyEndo : public OHaraRudy {
+ public:
+  OHaraRudyEndo();
+  OHaraRudyEndo(OHaraRudyEndo& toCopy);
+  ~OHaraRudyEndo();
 
-        virtual OHaraRudyEndo* clone() override;
-        virtual const char* type() const;
+  virtual OHaraRudyEndo* clone() override;
+  virtual const char* type() const;
 
-    protected:
-		virtual void Initialize();
+ protected:
+  virtual void Initialize();
 };
-} //LongQt
+}  // namespace LongQt
 
 #endif

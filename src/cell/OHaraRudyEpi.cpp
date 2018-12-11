@@ -1,27 +1,22 @@
 #include "OHaraRudyEpi.h"
 using namespace LongQt;
 
-OHaraRudyEpi::OHaraRudyEpi() {
-	this->Initialize();
-};
+OHaraRudyEpi::OHaraRudyEpi() { this->Initialize(); };
 
-OHaraRudyEpi::~OHaraRudyEpi() {};
+OHaraRudyEpi::~OHaraRudyEpi(){};
 
-OHaraRudyEpi::OHaraRudyEpi(OHaraRudyEpi& toCopy) : OHaraRudy(toCopy) {
-    this->Initialize(); 
-    CellKernel::copyVarPar(toCopy);
+OHaraRudyEpi::OHaraRudyEpi(OHaraRudyEpi &toCopy) : OHaraRudy(toCopy) {
+  this->Initialize();
+  CellKernel::copyVarPar(toCopy);
 }
 
 void OHaraRudyEpi::Initialize() {
-	celltype = OHaraRudy::epi;
-	this->makemap();
+  celltype = OHaraRudy::epi;
+  this->makemap();
 }
 
-OHaraRudyEpi *OHaraRudyEpi::clone() {
-    return new OHaraRudyEpi(*this);
-}
+OHaraRudyEpi *OHaraRudyEpi::clone() { return new OHaraRudyEpi(*this); }
 
-const char *OHaraRudyEpi::type() const
-{
-    return "Human Ventricular Epicardium (O'Hara-Rudy 2011)";
+const char *OHaraRudyEpi::type() const {
+  return "Human Ventricular Epicardium (O'Hara-Rudy 2011)";
 }

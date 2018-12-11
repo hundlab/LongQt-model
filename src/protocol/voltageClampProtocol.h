@@ -17,51 +17,51 @@
 namespace LongQt {
 
 class VoltageClamp : public Protocol {
-  public:
-    VoltageClamp();
-    VoltageClamp(const VoltageClamp& toCopy);
-    VoltageClamp* clone();
-    VoltageClamp& operator=(const VoltageClamp& toCopy);
+ public:
+  VoltageClamp();
+  VoltageClamp(const VoltageClamp& toCopy);
+  VoltageClamp* clone();
+  VoltageClamp& operator=(const VoltageClamp& toCopy);
 
-    virtual bool writepars(QXmlStreamWriter& xml);
-    virtual int readpars(QXmlStreamReader& xml);
+  virtual bool writepars(QXmlStreamWriter& xml);
+  virtual int readpars(QXmlStreamReader& xml);
 
-    virtual std::shared_ptr<Cell> cell() const override;
-    virtual void cell(std::shared_ptr<Cell> cell) override;
+  virtual std::shared_ptr<Cell> cell() const override;
+  virtual void cell(std::shared_ptr<Cell> cell) override;
 
-    virtual PvarsCell& pvars() override;
+  virtual PvarsCell& pvars() override;
 
-    virtual bool runTrial() override;
-	void readInCellState(bool read) override;
+  virtual bool runTrial() override;
+  void readInCellState(bool read) override;
 
-    virtual MeasureManager& measureMgr() override;
+  virtual MeasureManager& measureMgr() override;
 
-    int insertClamp(double time, double voltage);
-    void changeClampVoltage(int pos, double voltage);
-    void removeClamp(int pos);
-    const std::vector<std::pair<double, double>> &clamps();
-    void clamps(std::vector<std::pair<double,double>> clamps);
+  int insertClamp(double time, double voltage);
+  void changeClampVoltage(int pos, double voltage);
+  void removeClamp(int pos);
+  const std::vector<std::pair<double, double>>& clamps();
+  void clamps(std::vector<std::pair<double, double>> clamps);
 
-    const static char* name;
-    const char* type() const override;
+  const static char* name;
+  const char* type() const override;
 
-  protected:
-    virtual void setupTrial() override;
+ protected:
+  virtual void setupTrial() override;
 
-  private:
-    int clampsHint;
-    std::vector<std::pair<double,double>> __clamps;
-    void clamp(double& vM);
-    void CCcopy(const VoltageClamp& toCopy);
-    void mkmap();
+ private:
+  int clampsHint;
+  std::vector<std::pair<double, double>> __clamps;
+  void clamp(double& vM);
+  void CCcopy(const VoltageClamp& toCopy);
+  void mkmap();
 
-    std::shared_ptr<Cell> __cell = std::make_shared<HRD09Control>();        // pointer to cell class
-    std::unique_ptr<PvarsVoltageClamp> __pvars
-        = std::unique_ptr<PvarsVoltageClamp>(new PvarsVoltageClamp(this));
-    std::unique_ptr<MeasureManager> __measureMgr; // set of measure class for measuring SV props.
-
-
+  std::shared_ptr<Cell> __cell =
+      std::make_shared<HRD09Control>();  // pointer to cell class
+  std::unique_ptr<PvarsVoltageClamp> __pvars =
+      std::unique_ptr<PvarsVoltageClamp>(new PvarsVoltageClamp(this));
+  std::unique_ptr<MeasureManager>
+      __measureMgr;  // set of measure class for measuring SV props.
 };
-} //LongQt
+}  // namespace LongQt
 
 #endif

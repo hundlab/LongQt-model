@@ -8,7 +8,8 @@ set(modellib_includes
 
 set(modellib_sources
     "${CMAKE_CURRENT_LIST_DIR}/measure.cpp"
-    "${CMAKE_CURRENT_LIST_DIR}/measurewave.cpp"
+    "${CMAKE_CURRENT_LIST_DIR}/measuredefault.cpp"
+    "${CMAKE_CURRENT_LIST_DIR}/measurevoltage.cpp"
     "${CMAKE_CURRENT_LIST_DIR}/measuremanager.cpp"
     "${CMAKE_CURRENT_LIST_DIR}/gridmeasuremanager.cpp"
     "${CMAKE_CURRENT_LIST_DIR}/cell/hrd09_bz.cpp"
@@ -52,7 +53,8 @@ set(modellib_headers
     "${CMAKE_CURRENT_LIST_DIR}/measuremanager.h"
     "${CMAKE_CURRENT_LIST_DIR}/gridmeasuremanager.h"
     "${CMAKE_CURRENT_LIST_DIR}/measure.h"
-    "${CMAKE_CURRENT_LIST_DIR}/measurewave.h"
+    "${CMAKE_CURRENT_LIST_DIR}/measuredefault.h"
+    "${CMAKE_CURRENT_LIST_DIR}/measurevoltage.h"
     "${CMAKE_CURRENT_LIST_DIR}/tridag.h"
     "${CMAKE_CURRENT_LIST_DIR}/cell/gpbatrial.h"
     "${CMAKE_CURRENT_LIST_DIR}/cell/gridCell.h"

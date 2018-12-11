@@ -9,54 +9,49 @@
 // http://www.ncbi.nlm.nih.gov/pubmed/9688927.
 //#######################################################
 
-#include "cell.h"  // Parent class declaration
 #include <cmath>
-#include <map>
-#include <vector>
 #include <fstream>
 #include <iostream>
+#include <map>
+#include <vector>
+#include "cell.h"  // Parent class declaration
 
 #ifndef ATRIAL_H
 #define ATRIAL_H
 
 namespace LongQt {
 //######################################################
-//Define class for normal human atrial cell.
+// Define class for normal human atrial cell.
 //######################################################
-class Courtemanche98 : public Cell
-{
-  public:
-    Courtemanche98();
-    Courtemanche98(Courtemanche98& toCopy);
-    virtual ~Courtemanche98();
-    
-    Courtemanche98* clone() override;
+class Courtemanche98 : public Cell {
+ public:
+  Courtemanche98();
+  Courtemanche98(Courtemanche98& toCopy);
+  virtual ~Courtemanche98();
 
+  Courtemanche98* clone() override;
 
+  /*########################*/
+  /*    DEFINE STRUCTS      */
+  /*########################*/
 
-/*########################*/
-/*    DEFINE STRUCTS      */
-/*########################*/
-
-    struct GateVariable {  //Ion channel gates.
-        double d;
-        double f;
-        double fCa;
-        double u;
-        double v;
-        double w;
-        double m;
-        double h;
-        double j;
-        double ua;
-        double ui;
-        double oa;
-        double oi;
-        double xr;
-        double xs;
-   };
-
-
+  struct GateVariable {  // Ion channel gates.
+    double d;
+    double f;
+    double fCa;
+    double u;
+    double v;
+    double w;
+    double m;
+    double h;
+    double j;
+    double ua;
+    double ui;
+    double oa;
+    double oi;
+    double xr;
+    double xs;
+  };
 
   //##################################################
   // Declare functions/variables unique to Courtemanche98
@@ -65,88 +60,89 @@ class Courtemanche98 : public Cell
   //##################################################
   // Declare class functions
   //##################################################
-        //#### current updating functions ####
+  //#### current updating functions ####
 
-    virtual void updateiCal();
-    virtual void updateiCab();
-    virtual void updateipCa();
-    virtual void updateiRel();
-    virtual void updateSRFlux();
-    virtual void updateiK1();
-    virtual void updateiKur();
-    virtual void updateiTo();
-    virtual void updateiKr();
-    virtual void updateiKs();
-    virtual void updateiNak();
-    virtual void updateiNaca();
-    virtual void updateiNa();
-    virtual void updateiNab();
-    virtual void updateCurr();
-    virtual void updateConc();
+  virtual void updateiCal();
+  virtual void updateiCab();
+  virtual void updateipCa();
+  virtual void updateiRel();
+  virtual void updateSRFlux();
+  virtual void updateiK1();
+  virtual void updateiKur();
+  virtual void updateiTo();
+  virtual void updateiKr();
+  virtual void updateiKs();
+  virtual void updateiNak();
+  virtual void updateiNaca();
+  virtual void updateiNa();
+  virtual void updateiNab();
+  virtual void updateCurr();
+  virtual void updateConc();
 
-    //#### concentration updating functions ####
-    virtual void updatecaI();
-    virtual void updatecaUp();
-    virtual void updatecaRel();
-    virtual void updatenaI();
-    virtual void updatekI();
+  //#### concentration updating functions ####
+  virtual void updatecaI();
+  virtual void updatecaUp();
+  virtual void updatecaRel();
+  virtual void updatenaI();
+  virtual void updatekI();
 
-    virtual void externalStim(double stimval);
-    virtual void makemap();
-    virtual const char* type() const;
+  virtual void externalStim(double stimval);
+  virtual void makemap();
+  virtual const char* type() const;
 
-    //##### Declare class variables ##############
-    double naI,naO,kI,kO,caI,caO;  // Ion concentrations, mM
-    double iNa;           // Fast inward Na current, uA/uF
-    double iCal;                  // L-type Ca current, uA/uF
-    double iNak;          // Na-K pump, uA/uF
-    double iNaca; // Na-Ca exchanger (20% located in subspace)
-    double iCab;          // Background Ca current, uA/uF
-    double iNab;          // Background Na current, uA/uF
+  //##### Declare class variables ##############
+  double naI, naO, kI, kO, caI, caO;  // Ion concentrations, mM
+  double iNa;                         // Fast inward Na current, uA/uF
+  double iCal;                        // L-type Ca current, uA/uF
+  double iNak;                        // Na-K pump, uA/uF
+  double iNaca;  // Na-Ca exchanger (20% located in subspace)
+  double iCab;   // Background Ca current, uA/uF
+  double iNab;   // Background Na current, uA/uF
 
-    double ipCa;  // Sarcolemmal Ca2+ pump, uA/uF
-    double iKs;   // Slowly activating delayed rectifier K current, uA/uF
-    double iKr;   // Rapidly activating delayed rectifier K current, uA/uF
-    double iKur;  // Ultrarapidly activating delayed rectifier K current, uA/uF
-    double iK1;   // Inwardly rectifying K current, uA/uF
-    double iTo;   // Transient outward K+ current, uA/uF
+  double ipCa;  // Sarcolemmal Ca2+ pump, uA/uF
+  double iKs;   // Slowly activating delayed rectifier K current, uA/uF
+  double iKr;   // Rapidly activating delayed rectifier K current, uA/uF
+  double iKur;  // Ultrarapidly activating delayed rectifier K current, uA/uF
+  double iK1;   // Inwardly rectifying K current, uA/uF
+  double iTo;   // Transient outward K+ current, uA/uF
 
-    double iKt;   // total K+ current, uA/uF
-    double iNat;  // total Na+ current, uA/uF
-    double iCat;  // total Ca2+ current, uA/uF
+  double iKt;   // total K+ current, uA/uF
+  double iNat;  // total Na+ current, uA/uF
+  double iCat;  // total Ca2+ current, uA/uF
 
-    double caR, caRt, iDiff;  // Ca in restricted space, mM.
-    double iUp,iUp_leak,iTr;     // Ca uptake, leak and translocation in SR, mM/ms
+  double caR, caRt, iDiff;    // Ca in restricted space, mM.
+  double iUp, iUp_leak, iTr;  // Ca uptake, leak and translocation in SR, mM/ms
 
-    double iRel;        // Ca2+ release from SR, mM/ms
-    double gRel;
-    double ryRopen;     // RyR open probability
-    int sponRelflag;
-    double tRel;
+  double iRel;  // Ca2+ release from SR, mM/ms
+  double gRel;
+  double ryRopen;  // RyR open probability
+  int sponRelflag;
+  double tRel;
 
-    double maxInak,maxInaca,maxIup;
-    double trpn,cmdn,csqn,dcsqn,caJsr,caNsr,caTotal, caJsrtotal;
-    double caCmdn;
-    double caTrpn;
-    double caCsqn;
+  double maxInak, maxInaca, maxIup;
+  double trpn, cmdn, csqn, dcsqn, caJsr, caNsr, caTotal, caJsrtotal;
+  double caCmdn;
+  double caTrpn;
+  double caCsqn;
 
-    double Vup;
-    double Vrel;
+  double Vup;
+  double Vrel;
 
-    double caUp;
-    double caRel;
-    double iUp_max;
-    double Fn;
-    double KmTrpn;
-    double KmCmdn;
-    double KmCsqn;
-    double Cmdn_m;
-    double Trpn_m;
-    double Csqn_m;
+  double caUp;
+  double caRel;
+  double iUp_max;
+  double Fn;
+  double KmTrpn;
+  double KmCmdn;
+  double KmCsqn;
+  double Cmdn_m;
+  double Trpn_m;
+  double Csqn_m;
 
-    struct GateVariable Gate;
-    protected:
-    virtual void Initialize();
+  struct GateVariable Gate;
+
+ protected:
+  virtual void Initialize();
 };
-} //LongQt
+}  // namespace LongQt
 #endif

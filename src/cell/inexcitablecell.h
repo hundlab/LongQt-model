@@ -5,21 +5,21 @@
 namespace LongQt {
 
 class InexcitableCell : public Cell {
-public:
-    InexcitableCell();
-    InexcitableCell(const InexcitableCell& toCopy);
-    virtual ~InexcitableCell();
+ public:
+  InexcitableCell();
+  InexcitableCell(const InexcitableCell& toCopy);
+  virtual ~InexcitableCell();
 
-    virtual InexcitableCell* clone() override; //public copy function
+  virtual InexcitableCell* clone() override;  // public copy function
 
-    virtual void updateCurr();
-    virtual void updateConc();
+  virtual void updateCurr();
+  virtual void updateConc();
 
-    virtual const char* type() const;
+  virtual const char* type() const;
 
-protected:
-    virtual void Initialize();
+ protected:
+  virtual void Initialize();
 };
-} //LongQt
+}  // namespace LongQt
 
-#endif // INEXCITABLECELL_H
+#endif  // INEXCITABLECELL_H

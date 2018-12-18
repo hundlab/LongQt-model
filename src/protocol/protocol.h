@@ -19,6 +19,7 @@
 #include <memory>
 #include <sstream>
 #include <string>
+#include <atomic>
 
 #include "cellutils.h"
 #include "measuremanager.h"
@@ -56,6 +57,7 @@ class Protocol : public std::enable_shared_from_this<Protocol> {
   virtual void trial(unsigned int current_trial);
   virtual unsigned int trial() const;
   virtual bool runTrial() = 0;
+  virtual void stopTrial();
   void setDataDir(std::string location = "", std::string basedir = "",
                   std::string appendtxt = "");
   void mkDirs();
@@ -117,7 +119,7 @@ class Protocol : public std::enable_shared_from_this<Protocol> {
   std::function<void(Protocol&)> runDuring;
   std::function<void(Protocol&)> runAfter;
 
-  bool runflag;  // fix to bool
+  std::atomic<bool> runflag = true;  // fix to bool
  private:
   void mkmap();
 };

@@ -98,50 +98,50 @@ Protocol& Protocol::operator=(const Protocol& toCopy) {
   return new Protocol(*this);
   };*/
 
-void Protocol::copy(const Protocol& toCopy) {
+void Protocol::copy(const Protocol& c) {
   //##### Assign default parameters ##################
 
   this->mkmap();
-  datadir = toCopy.datadir;
-  cellStateDir = toCopy.cellStateDir;
+  datadir = c.datadir;
+  cellStateDir = c.cellStateDir;
 
-  runflag = toCopy.runflag;  // set to 0 to end simulation
+  runflag = (bool)c.runflag;  // set to 0 to end simulation
 
-  tMax = toCopy.tMax;  // max simulation time, ms
+  tMax = c.tMax;  // max simulation time, ms
 
-  readfile = toCopy.readfile;  // File to read SV ICs
-  savefile = toCopy.savefile;  // File to save final SV
+  readfile = c.readfile;  // File to read SV ICs
+  savefile = c.savefile;  // File to save final SV
 
-  __trial = toCopy.__trial;
-  dvarfile = toCopy.dvarfile;    // File with SV to write.
-  writetime = toCopy.writetime;  // time to start writing.
-  writeint = toCopy.writeint;    // interval for writing.
-  writeflag = toCopy.writeflag;
+  __trial = c.__trial;
+  dvarfile = c.dvarfile;    // File with SV to write.
+  writetime = c.writetime;  // time to start writing.
+  writeint = c.writeint;    // interval for writing.
+  writeflag = c.writeflag;
 
-  pvarfile = toCopy.pvarfile;      // File to specify cell params
-  simvarfile = toCopy.simvarfile;  // File to specify sim params
+  pvarfile = c.pvarfile;      // File to specify cell params
+  simvarfile = c.simvarfile;  // File to specify sim params
 
-  propertyoutfile = toCopy.propertyoutfile;
-  dvarsoutfile = toCopy.dvarsoutfile;
-  finalpropertyoutfile = toCopy.finalpropertyoutfile;
-  finaldvarsoutfile = toCopy.finaldvarsoutfile;
-  cellStateFile = toCopy.cellStateFile;
+  propertyoutfile = c.propertyoutfile;
+  dvarsoutfile = c.dvarsoutfile;
+  finalpropertyoutfile = c.finalpropertyoutfile;
+  finaldvarsoutfile = c.finaldvarsoutfile;
+  cellStateFile = c.cellStateFile;
 
-  measflag = toCopy.measflag;  // 1 to track SV props during sim
-  measfile = toCopy.measfile;  // File containing property names to track
-  meastime = toCopy.meastime;  // time to start tracking props
+  measflag = c.measflag;  // 1 to track SV props during sim
+  measfile = c.measfile;  // File containing property names to track
+  meastime = c.meastime;  // time to start tracking props
 
-  numtrials = toCopy.numtrials;
-  writeCellState = toCopy.writeCellState;
-  readCellState = toCopy.readCellState;
+  numtrials = c.numtrials;
+  writeCellState = c.writeCellState;
+  readCellState = c.readCellState;
 
   //##### Initialize variables ##################
-  numruns = toCopy.numruns;
-  firstRun = toCopy.firstRun;
-  runEvery = toCopy.runEvery;
-  runBefore = toCopy.runBefore;
-  runDuring = toCopy.runDuring;
-  runAfter = toCopy.runAfter;
+  numruns = c.numruns;
+  firstRun = c.firstRun;
+  runEvery = c.runEvery;
+  runBefore = c.runBefore;
+  runDuring = c.runDuring;
+  runAfter = c.runAfter;
 
   //###### Duplicate cells, measures outputs and maps######
 }
@@ -218,6 +218,8 @@ void Protocol::trial(unsigned int current_trial) {
 }
 
 unsigned int Protocol::trial() const { return __trial; }
+
+void Protocol::stopTrial() { this->runflag = false; }
 
 bool Protocol::cell(const string& type) {
   if (cell() != NULL && type == cell()->type()) {
@@ -351,11 +353,11 @@ void Protocol::mkmap() {
         cellStateDir.setPath(QString(value.c_str()));
       });
   //	pars["pvarfile"]= toInsert.Initialize("file", [this] () {return
-  //pvarfile;}, [this] (const string& value) {pvarfile = value;});
+  // pvarfile;}, [this] (const string& value) {pvarfile = value;});
   //	pars["dvarfile"]= toInsert.Initialize("file", [this] () {return
-  //dvarfile;}, [this] (const string& value) {dvarfile = value;});
+  // dvarfile;}, [this] (const string& value) {dvarfile = value;});
   //	pars["measfile"]= toInsert.Initialize("file", [this] () {return
-  //measfile;}, [this] (const string& value) {measfile = value;});
+  // measfile;}, [this] (const string& value) {measfile = value;});
   __pars["simvarfile"] =
       toInsert.Initialize("file", [this]() { return simvarfile; },
                           [this](const string& value) { simvarfile = value; });

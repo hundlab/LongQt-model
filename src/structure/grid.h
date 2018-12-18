@@ -1,9 +1,8 @@
-// 5/10/2016
-//################################################
-// a 2D grid of cells of various types
-// class declaration
-//################################################
-
+/* 5/10/2016
+ *
+ * a 2D grid of cells of various types
+ * class declaration
+*/
 #ifndef CELLGRID_H
 #define CELLGRID_H
 

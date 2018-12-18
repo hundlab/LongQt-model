@@ -1,6 +1,5 @@
 #include "runsim.h"
-#include <QThreadPool>
-#include <QtConcurrent>
+
 using namespace LongQt;
 using namespace std;
 
@@ -18,7 +17,7 @@ RunSim::RunSim(std::vector<shared_ptr<Protocol>> protoList) {
   this->pool.finishedCallback(std::bind(&RunSim::poolCallback, this));
 }
 
-RunSim::~RunSim() {}
+RunSim::~RunSim() { this->cancel(); }
 
 void RunSim::appendSims(shared_ptr<Protocol> proto) {
   int i = 0;

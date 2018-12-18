@@ -47,6 +47,7 @@ set(modellib_sources
     "${CMAKE_CURRENT_LIST_DIR}/cell/inexcitablecell.cpp"
     "${CMAKE_CURRENT_LIST_DIR}/runsim.cpp"
     "${CMAKE_CURRENT_LIST_DIR}/logger.cpp"
+    "${CMAKE_CURRENT_LIST_DIR}/threadpool.cpp"
 )
 
 set(modellib_headers
@@ -93,4 +94,5 @@ set(modellib_headers
     "${CMAKE_CURRENT_LIST_DIR}/cell/inexcitablecell.h"
     "${CMAKE_CURRENT_LIST_DIR}/runsim.h"
     "${CMAKE_CURRENT_LIST_DIR}/logger.h"
+    "${CMAKE_CURRENT_LIST_DIR}/threadpool.h"
 )

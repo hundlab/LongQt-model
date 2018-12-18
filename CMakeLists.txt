@@ -6,7 +6,7 @@ project(LongQt-model VERSION 0.2)
 #Release Debug
 set(CMAKE_BUILD_TYPE Release)
 
-find_package(Qt5 COMPONENTS Core Concurrent REQUIRED)
+find_package(Qt5 COMPONENTS Core REQUIRED)
 include("${CMAKE_CURRENT_LIST_DIR}/src/${CMAKE_PROJECT_NAME}.cmake")
 
 set(CMAKE_AUTOMOC ON)
@@ -50,17 +50,17 @@ set_target_properties(LongQt-model PROPERTIES
 if(${BUILD_QT_STATIC})
 #qt has a bug when its built statically where it doesn't link deps so
     if(WIN32 AND NOT CYGWIN)
-        target_link_libraries(LongQt-model Qt5::Core Qt5::Concurrent libQt5EventDispatcherSupport.a libQt5FontDatabaseSupport.a libqtfreetype.a libQt5ThemeSupport.a libQt5AccessibilitySupport.a libQt5PrintSupport.a libqtlibpng.a libqtharfbuzz.a libQt5Concurrent.a libQt5Core.a  mingw32 shlwapi winspool uxtheme dwmapi comdlg32 oleaut32 imm32 glu32 opengl32 gdi32 mpr version ws2_32 kernel32 user32 shell32 uuid ole32 advapi32 winmm)
+        target_link_libraries(LongQt-model Qt5::Core libQt5EventDispatcherSupport.a libQt5FontDatabaseSupport.a libqtfreetype.a libQt5ThemeSupport.a libQt5AccessibilitySupport.a libQt5PrintSupport.a libqtlibpng.a libqtharfbuzz.a libQt5Concurrent.a libQt5Core.a  mingw32 shlwapi winspool uxtheme dwmapi comdlg32 oleaut32 imm32 glu32 opengl32 gdi32 mpr version ws2_32 kernel32 user32 shell32 uuid ole32 advapi32 winmm)
         target_compile_options(LongQt-model PRIVATE -static-libgcc -static-libstdc++)
     elseif(APPLE)
         set(QT_lib_dir ${Qt5_DIR}/../../)
-        target_link_libraries(LongQt-model PUBLIC Qt5::Core Qt5::Concurrent ${QT_lib_dir}/libqtpcre2.a)
+        target_link_libraries(LongQt-model PUBLIC Qt5::Core ${QT_lib_dir}/libqtpcre2.a)
         target_compile_options(LongQt-model PRIVATE -framework Cocoa)
     else()
-        target_link_libraries(LongQt-model PUBLIC Qt5::Core Qt5::Concurrent)
+        target_link_libraries(LongQt-model PUBLIC Qt5::Core)
     endif()
 else()
-        target_link_libraries(LongQt-model PUBLIC Qt5::Core Qt5::Concurrent)
+        target_link_libraries(LongQt-model PUBLIC Qt5::Core)
 endif()
 
 ##create package

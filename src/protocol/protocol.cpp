@@ -148,15 +148,17 @@ void Protocol::copy(const Protocol& c) {
 //############################################################
 // Run the cell simulation
 //############################################################
-int Protocol::runSim() {
-  int return_val = 0;
-
+bool Protocol::runSim() {
+  bool return_val = true;
+  if(this->numtrials <= 0) {
+      return false;
+  }
   //###############################################################
   // Loop over number of trials
   //###############################################################
-  for (; __trial < numtrials; trial(trial() + 1)) {
-    return_val = (int)runTrial();
-  }
+  do {
+    return_val &= runTrial();
+  } while (trial(trial() + 1));
   return return_val;
 };
 
@@ -207,14 +209,15 @@ bool Protocol::writepars(QXmlStreamWriter& xml) {
   xml.writeEndElement();
   return 0;
 }
-void Protocol::trial(unsigned int current_trial) {
+bool Protocol::trial(unsigned int current_trial) {
   if (current_trial < 0 || current_trial >= numtrials) {
     Logger::getInstance()->write<std::out_of_range>(
         "Protocol: Cannot set trial to {}, max numtrials is {}", current_trial,
         numtrials);
-    return;
+    return false;
   }
   __trial = current_trial;
+  return true;
 }
 
 unsigned int Protocol::trial() const { return __trial; }

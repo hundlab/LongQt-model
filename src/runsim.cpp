@@ -22,8 +22,6 @@ RunSim::~RunSim() { this->cancel(); }
 void RunSim::appendSims(shared_ptr<Protocol> proto) {
   int i = 0;
   proto->mkDirs();
-  simulations.clear();
-
   for (i = 0; i < proto->numtrials; i++) {
     proto->trial(i);
     simulations.push_back(shared_ptr<Protocol>(proto->clone()));
@@ -88,8 +86,15 @@ void RunSim::finishedCallback(std::function<void()> fn) {
 
 void RunSim::startCallback(std::function<void()> fn) { this->__startCall = fn; }
 
+void RunSim::wait() {
+  if (!this->__finished) {
+    pool.wait();
+  }
+}
+
 void RunSim::run() {
   if (!this->finished()) return;
+  if(this->simulations.empty()) return;
   this->__finished = false;
   try {
     this->__startCall();

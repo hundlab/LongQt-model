@@ -49,12 +49,12 @@ class Protocol : public std::enable_shared_from_this<Protocol> {
   virtual ~Protocol();
 
   //##### Declare class functions ##############
-  virtual int runSim();
+  virtual bool runSim();
   virtual int readpars(QXmlStreamReader& xml);
   virtual bool writepars(
       QXmlStreamWriter& xml);  // write the contents of pars to a file
 
-  virtual void trial(unsigned int current_trial);
+  virtual bool trial(unsigned int current_trial);
   virtual unsigned int trial() const;
   virtual bool runTrial() = 0;
   virtual void stopTrial();

@@ -125,6 +125,7 @@ class HRD09Control : public Cell {
 
   double iTrek = 0;  // Trek-1
   double iTrek_na = 0;
+  double iTrek_k = 0;
 
   double iPca;  // Sarcolemmal Ca2+ pump
   double iKs;   // Slowly activating delayed rectifier K current

@@ -22,9 +22,9 @@ bool Cell::setOutputfileConstants(string filename) {
   return setOutputfile(filename, this->parsSelection, &parsofile);
 };
 
-void Cell::writeVariables() { write(varsSelection, this->__vars, &varsofile); };
+void Cell::writeVariables() { write(varsSelection, this->__vars, &varsofile); }
 
-void Cell::writeConstants() { write(parsSelection, this->__pars, &parsofile); };
+void Cell::writeConstants() { write(parsSelection, this->__pars, &parsofile); }
 
 bool Cell::setConstantSelection(set<string> selection) {
   return setSelection(this->__pars, &this->parsSelection, selection,
@@ -36,9 +36,9 @@ bool Cell::setVariableSelection(set<string> selection) {
                       &varsofile);
 };
 
-set<string> Cell::getConstantSelection() { return parsSelection; };
+set<string> Cell::getConstantSelection() { return parsSelection; }
 
-set<string> Cell::getVariableSelection() { return varsSelection; };
+set<string> Cell::getVariableSelection() { return varsSelection; }
 
 bool Cell::setSelection(map<string, double*> map, set<string>* old_selection,
                         set<string> new_selection, ofstream* ofile) {

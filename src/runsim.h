@@ -22,6 +22,7 @@ class RunSim {
   double progress();
   void finishedCallback(std::function<void(void)> fn);
   void startCallback(std::function<void(void)> fn);
+  void wait();
 
   void setSims(std::shared_ptr<Protocol> proto);
   void setSims(std::vector<std::shared_ptr<Protocol>> protoList);

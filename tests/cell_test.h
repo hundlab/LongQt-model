@@ -69,4 +69,60 @@ TEST(cellkernel, options) {
   EXPECT_EQ(optsMap["S571A"] | optsMap["S2814D"], cell->option());
   delete cell;
 }
+
+TEST(cell, ConstantSelection) {
+  auto cell = InexcitableCell();
+  auto selection = cell.getConstantSelection();
+  EXPECT_EQ(selection.size(), 0);
+  std::set<std::string> new_selection = {"dtmin", "RGAS", "TEMP"};
+  cell.setConstantSelection(new_selection);
+  selection = cell.getConstantSelection();
+  EXPECT_EQ(selection.size(), 3);
+  std::set<std::string> test;
+  test.insert(new_selection.begin(), new_selection.end());
+  selection = cell.getConstantSelection();
+  test.insert(selection.begin(), selection.end());
+  EXPECT_EQ(test.size(), 3);
+}
+
+TEST(cell, ConstantSelection_extra) {
+  auto cell = InexcitableCell();
+  std::set<std::string> new_selection = {"dtmin", "RGAS", "TEMP", "asdf",
+                                         "vOld"};
+  cell.setConstantSelection(new_selection);
+  std::vector<std::string> test(10);
+  auto selection = cell.getConstantSelection();
+  auto it = std::set_intersection(new_selection.begin(), new_selection.end(),
+                        selection.begin(), selection.end(), test.begin());
+  test.resize(it-test.begin());
+  EXPECT_EQ(test.size(), 3);
+}
+
+TEST(cell, VariableSelection) {
+  auto cell = InexcitableCell();
+  auto selection = cell.getVariableSelection();
+  EXPECT_EQ(selection.size(), 2);
+  std::set<std::string> new_selection = {"iTot", "iKt", "iCat"};
+  cell.setVariableSelection(new_selection);
+  selection = cell.getVariableSelection();
+  EXPECT_EQ(selection.size(), 3);
+  std::set<std::string> test;
+  test.insert(new_selection.begin(), new_selection.end());
+  selection = cell.getVariableSelection();
+  test.insert(selection.begin(), selection.end());
+  EXPECT_EQ(test.size(), 3);
+}
+
+TEST(cell, VariableSelection_extra) {
+  auto cell = InexcitableCell();
+  std::set<std::string> new_selection = {"dtmin", "RGAS", "TEMP", "asdf",
+                                         "vOld","iKt"};
+  cell.setVariableSelection(new_selection);
+  std::vector<std::string> test(10);
+  auto selection = cell.getVariableSelection();
+  auto it = std::set_intersection(new_selection.begin(), new_selection.end(),
+                        selection.begin(), selection.end(), test.begin());
+  test.resize(it-test.begin());
+  EXPECT_EQ(test.size(), 2);
+}
 #endif

@@ -14,9 +14,9 @@ namespace LongQt {
 class Grid;
 
 struct Node : public std::enable_shared_from_this<Node> {
-  Node(){};
+  Node(){}
   Node(const Node& other);
-  ~Node(){};
+  ~Node(){}
 
   void setCondConst(double dx, CellUtils::Side s, bool perc = true,
                     double val = 1);
@@ -26,7 +26,7 @@ struct Node : public std::enable_shared_from_this<Node> {
   double getCondConst(CellUtils::Side s);
   //## default value cannot be deterimined by constructor
   double dIax = 0;
-  int np = 1;  // number of cells in each node
+  int np = 1;  // nodes per patch
   // can't change atm
   //    double x = 0;
   //    double y = 0;
@@ -44,9 +44,10 @@ struct Node : public std::enable_shared_from_this<Node> {
 
  private:
   void setCondConstDirect(CellUtils::Side s, double val);
-  Grid* parent;
+  Grid* parent = 0;
   std::pair<int, int> calcNeighborPos(CellUtils::Side s);
   double calcCondConst(double dx, CellUtils::Side s, double val);
+  const std::string inexName = cell->type();
 };
 }  // namespace LongQt
 

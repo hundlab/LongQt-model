@@ -36,8 +36,7 @@ void Node::setCondConst(double dx, CellUtils::Side s, bool perc, double val) {
   if (!neiNode) {
     return;
   }
-  if (cell->type() == string("Inexcitable Cell") ||
-      neiNode->cell->type() == string("Inexcitable Cell")) {
+  if (cell->type() == inexName || neiNode->cell->type() == inexName) {
     setCondConstDirect(s, 0.0);
     return;
   }
@@ -77,12 +76,14 @@ double Node::calcCondConst(double dx, CellUtils::Side s, double val) {
   if (val == 0) {
     return 0;
   }
-  int X = (s == CellUtils::Side::right || CellUtils::Side::right) ? row : col;
+  bool isRow = (s == CellUtils::Side::right || s == CellUtils::Side::left);
+  int reduction = isRow ? 1 : 2;
+  int X = isRow ? row : col;
   if ((np == 1) || ((X % np) == 0)) {
-    return 1000 * cell->cellRadius /
+    return (1000 / reduction) * cell->cellRadius /
            (2 * cell->Rcg * (cell->Rmyo * dx + rd * val) * cell->Cm * dx);
   } else {
-    return 1001 * cell->cellRadius /
+    return (1001 / reduction) * cell->cellRadius /
            (2 * cell->Rcg * cell->Rmyo * cell->Cm * dx * dx);
   }
 }
@@ -126,6 +127,7 @@ double Node::getCondConst(CellUtils::Side s) {
 
 void Node::setParent(Grid *par, int row, int col) {
   this->parent = par;
+  if (!this->parent) return;
   if (row == -1 || col == -1) {
     auto temp = parent->findNode(this->shared_from_this());
     this->row = temp.first;

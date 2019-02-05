@@ -161,7 +161,7 @@ void HRD09Control::Initialize() {
   makemap();
 }
 // overriden deep copy funtion
-HRD09Control* HRD09Control::clone() { return new HRD09Control(*this); };
+HRD09Control* HRD09Control::clone() { return new HRD09Control(*this); }
 // L-type Ca current
 void HRD09Control::updateIlca() {
   double taud, finf, fcainf, fcainf2, taufca, taufca2, tauf,
@@ -257,10 +257,10 @@ void HRD09Control::updateItrek() {
 
   double aa = 1 / (1 + exp(-(vOld - 65) / 52));  // from Kim J Gen Physiol 1992
 
-  iTrek = prna / (prna + prk) * gk * aa * (vOld - EK);  // apex vs. septum???
-                                                        // TJH
-  iTrek_na =
-      prk / (prna + prk) * gk * aa * (vOld - EK);  // apex vs. septum??? TJH
+  iTrek = gk * aa * (vOld - EK);  // apex vs. septum???
+                                                           // TJH
+  iTrek_k = prk / (prna + prk) * iTrek;
+  iTrek_na = prna / (prna + prk) * iTrek;
 }
 
 // Slow delayed rectifier K current
@@ -793,7 +793,7 @@ void HRD09Control::updateCurr() {
 
   iNat = iNa + 3 * iNak + 3 * iNaca + 3 * iNacar + iNal + iTrek_na;
   iCat = iCa + iCab + iPca - 2 * iNaca - 2 * iNacar;
-  iKt = iKs + iKr + iK1 + iTo + iKp - 2 * iNak + iTrek;
+  iKt = iKs + iKr + iK1 + iTo + iKp - 2 * iNak + iTrek_k;
   iClt = iTo2 + iClb;
 
   iTotold = iTot;

@@ -15,6 +15,7 @@
 
 #include <list>
 #include <set>
+#include <threadpool.h>
 namespace LongQt {
 
 class GridCell : public Cell {
@@ -65,6 +66,8 @@ class GridCell : public Cell {
   double np;   // 1
   int tcount;  // 0
   std::string gridfileName;
+
+  ThreadPool pool;
 
   void makeMap();
 

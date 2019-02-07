@@ -133,6 +133,7 @@ double GridCell::updateV() {
     //        QtConcurrent::blockingMap(grid.rows,[dt] (Fiber& f) {
     //            f.updateVm(dt);
     //        });
+//    pool.pushAllpnt([dt] (Fiber& f) {f.updateVm(dt);}, grid.rows.begin(), grid.rows.end());
     for (auto& row : grid.rows) {
       row.updateVm(dt);
     }
@@ -140,10 +141,12 @@ double GridCell::updateV() {
     //        QtConcurrent::blockingMap(grid.columns,[dt] (Fiber& f) {
     //            f.updateVm(dt);
     //        });
+//    pool.pushAllpnt([dt] (Fiber& f) {f.updateVm(dt);}, grid.rows.begin(), grid.rows.end());
     for (auto& column : grid.columns) {
       column.updateVm(dt);
     }
   }
+//  pool.wait();
   return 0.0;
 }
 void GridCell::updateConc() {

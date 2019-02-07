@@ -70,6 +70,9 @@ class ThreadPool {
   template <class Fn, class InputIterator>
   void pushAll(Fn &&fn, InputIterator begin, InputIterator end);
 
+  template <class Fn, class InputIterator>
+  void pushAllpnt(Fn &&fn, InputIterator begin, InputIterator end);
+
   void finishedCallback(std::function<void(void)> fn);
 };
 
@@ -87,6 +90,18 @@ void ThreadPool::pushAll(Fn &&fn, InputIterator begin, InputIterator end) {
   std::lock_guard<std::mutex> jobs_lock(shared.jobs_mtx);
   for (auto it = begin; it != end; it++) {
     shared.jobs.push(std::bind(fn, *it));
+  }
+  shared.more_jobs.notify_all();
+  std::lock_guard<std::mutex> th_lock(shared.threads_mtx);
+  this->createThreads();
+}
+
+template <class Fn, class InputIterator>
+void ThreadPool::pushAllpnt(Fn &&fn, InputIterator begin, InputIterator end) {
+  std::lock_guard<std::mutex> jobs_lock(shared.jobs_mtx);
+  for (auto it = begin; it != end; it++) {
+      auto temp = &(*it);
+    shared.jobs.push([fn,temp] () {fn(*temp);});
   }
   shared.more_jobs.notify_all();
   std::lock_guard<std::mutex> th_lock(shared.threads_mtx);

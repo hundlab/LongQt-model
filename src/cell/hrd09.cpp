@@ -250,7 +250,7 @@ void HRD09Control::updateItrek() {
   // TREK-1 with more rectification
   // ref 10.1161/JAHA.115.002865 hund
   double gk = ItrekFactor * .03011;
-  double prna = TestFactor * 0.01833;  // from iks
+  double prna = 0.01833;  // from iks
   double prk = 1;
   double EK = RGAS * TEMP / FDAY *
               log((prk * kO + prna * naO) / (prk * kI + prna * naI));
@@ -735,12 +735,12 @@ void HRD09Control::updateSr() {
 void HRD09Control::updateCamk() {
   double P = 0.00003;         // rate of dephosphorylation .00003
   double calmodulin;          // free calmodulin bound to calcium.
-  double calmtotal = .00006;  // total free calmodulin = 60 nM.
+  double calmtotal = .00006 * IcaMkiiFactor;  // total free calmodulin = 60 nM.
 
   double va, va2, ka, tcamk;
 
-  double ros = 0.0;         // concentration of H2O2, um
-  double kib = 246.0;       // mM-1/ms-1
+  double ros = 1 * ROSFactor;         // concentration of H2O2, um
+  double kib = 246.0 * TestFactor;       // mM-1/ms-1
   double kbi = 0.0022;      // ms-1
   double kox = 0.0002909;   // ms-1
   double kred = 0.0000228;  // um/ms
@@ -905,6 +905,8 @@ void HRD09Control::makemap() {
   __pars["IupFactor"] = &Iupfactor;
   __pars["IleakFactor"] = &Ileakfactor;
   __pars["ItrekFactor"] = &ItrekFactor;
+  __pars["IcaMkiiFactor"] = &IcaMkiiFactor;
+  __pars["ROSFactor"] = &ROSFactor;
   __pars["TestFactor"] = &TestFactor;
   __pars["Test2Factor"] = &Test2Factor;
 }

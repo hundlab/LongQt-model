@@ -237,6 +237,8 @@ class GpbAtrialOnal17 : public Cell {
 
   // testing
   double testFactor;
+  double test2Factor;
+  double test3Factor;
   //
 
   void externalStim(double stimval);

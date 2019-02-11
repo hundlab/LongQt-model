@@ -179,6 +179,8 @@ class HRD09Control : public Cell {
   double Iupfactor;
   double Ileakfactor;
   double ItrekFactor = 1;  // Two-pore K+ channel
+  double IcaMkiiFactor = 1;
+  double ROSFactor = 0;
 
   double TestFactor = 0;
   double Test2Factor = 1;

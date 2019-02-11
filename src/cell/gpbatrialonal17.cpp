@@ -132,6 +132,8 @@ void GpbAtrialOnal17::Initialize() {
   ROSFactor = 0;
 
   testFactor = 1;
+  test2Factor = 1;
+  test3Factor = 1;
 
   makemap();
 }
@@ -282,7 +284,7 @@ void GpbAtrialOnal17::updateSRFlux() {
 
   double RyRN = RyRtot - RyRP;
   double Rxnbasal = kb2815 * RyRN;
-  double Rxnckryr = kckryr * (caMkii * 120E-3) * RyRN /
+  double Rxnckryr = kckryr * (test2Factor * caMkii * 120E-3) * RyRN /
                     (kmckryr + RyRN);  // for WT 1.2923* was old fit value
   if (opts & S2814D) {                 // S2814D
     Rxnckryr = kckryr * (1 * 120E-3) * RyRN / (kmckryr + RyRN); /*1.2923*/
@@ -324,7 +326,7 @@ void GpbAtrialOnal17::updateSRFlux() {
 
   double KMCAM = 0.2;
   double camfact =
-      1 / (1 + pow((KMCAM / caMkii), 5.0));  // refit for wider camkii effect
+      1 / (1 + pow(test3Factor*(KMCAM / caMkii), 5.0));  // refit for wider camkii effect
   double deltakmup = 0.00011;
   double plb = deltakmup * camfact;
 
@@ -484,7 +486,7 @@ void GpbAtrialOnal17::updateIcal() {
   Gate.d = d_inf - (d_inf - Gate.d) * exp(-dt / taud);
 
   //	df_cabjdt = 1.7*cajI*(1-gate.f_cabj)-11.9E-3*gate.f_cabj +
-  //deltatfca*camfact; 	df_cabsldt
+  // deltatfca*camfact; 	df_cabsldt
   //= 1.7*caslI*(1-gate.f_cabsl)-11.9E-3*gate.f_cabsl +deltat*camfact;
   //	gate.f_cabj=gate.f_cabj+df_cabjdt*dt;
   //	gate.f_cabsl=gate.f_cabsl+df_cabsldt*dt;
@@ -1061,6 +1063,8 @@ void GpbAtrialOnal17::makemap() {
   __pars["JsrleakFactor"] = &Jsrleakfactor;
   __pars["ROSFactor"] = &ROSFactor;
   __pars["testFactor"] = &testFactor;
+  __pars["test2Factor"] = &test2Factor;
+  __pars["test3Factor"] = &test3Factor;
 }
 const char* GpbAtrialOnal17::type() const {
   //    return "GpbAtrialOnal17";

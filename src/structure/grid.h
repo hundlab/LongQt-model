@@ -2,7 +2,7 @@
  *
  * a 2D grid of cells of various types
  * class declaration
-*/
+ */
 #ifndef CELLGRID_H
 #define CELLGRID_H
 
@@ -19,15 +19,11 @@ namespace LongQt {
 
 struct CellInfo {
   // necessary
-  CellInfo(int row = -1, int col = -1, double dx = 0.01, double dy = 0.01,
-           int np = 1, std::shared_ptr<Cell> cell = 0,
+  CellInfo(int row = -1, int col = -1, std::shared_ptr<Cell> cell = 0,
            std::array<double, 4> c = {NAN, NAN, NAN, NAN},
            bool c_perc = false) {
     this->row = row;
     this->col = col;
-    this->dx = dx;
-    this->dy = dy;
-    this->np = np;
     this->cell = cell;
     this->c = c;
     this->c_perc = c_perc;
@@ -35,9 +31,6 @@ struct CellInfo {
   ~CellInfo() {}
   int row = -1;
   int col = -1;
-  double dx = 0.01;
-  double dy = 0.01;
-  int np = 1;
   // if cell == NULL then cell will not be changed
   std::shared_ptr<Cell> cell = 0;
   std::array<double, 4> c = {{NAN, NAN, NAN, NAN}};
@@ -82,6 +75,10 @@ class Grid {
 
   std::vector<Fiber> rows;
   std::vector<Fiber> columns;
+
+  double dx = 0.01;
+  double dy = 0.01;
+  int np = 1;  // nodes per patch
 };
 }  // namespace LongQt
 

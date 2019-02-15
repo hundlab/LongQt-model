@@ -141,8 +141,8 @@ class Ksan : public Cell {
   double INaKfactor;
   double iNaCafactor;
 
- protected:
-  virtual void Initialize();
+ private:
+  void Initialize();
 };
 }  // namespace LongQt
 

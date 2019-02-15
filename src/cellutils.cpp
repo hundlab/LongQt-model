@@ -15,6 +15,8 @@
 #include "kurata08.h"
 #include "tnnp04.h"
 
+#include "coupledinexcitablecell.h"
+
 #include "currentClampProtocol.h"
 #include "gridProtocol.h"
 #include "voltageClampProtocol.h"
@@ -49,6 +51,7 @@ const map<string, CellUtils::CellInitializer> CellUtils::cellMap = {
     {GpbVent().type(), []() { return make_shared<GpbVent>(); }},
     {Br04().type(), []() { return make_shared<Br04>(); }},
     {Courtemanche98().type(), []() { return make_shared<Courtemanche98>(); }},
+    {CoupledInexcitableCell().type(), []() { return make_shared<CoupledInexcitableCell>(); }},
 };
 
 /*

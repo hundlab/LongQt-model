@@ -34,6 +34,7 @@ class GridCell : public Cell {
   virtual double tstep(double stimt);
   virtual std::set<std::string> vars();
   virtual std::set<std::string> pars();
+  void setup();
 
   // cell io functions
   virtual void setGridfile(std::string name);
@@ -61,18 +62,15 @@ class GridCell : public Cell {
   bool handleGrid(QXmlStreamReader& xml);
 
   Grid grid;
-  double dx;  // 0.01
-  double dy;
-  double np;   // 1
-  int tcount;  // 0
-  std::string gridfileName;
+  int tcount = 0;
+  std::string gridfileName = "grid.txt";
 
   ThreadPool pool;
 
   void makeMap();
 
- protected:
-  virtual void Initialize();
+ private:
+  void Initialize();
 };
 }  // namespace LongQt
 

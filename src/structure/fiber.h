@@ -29,6 +29,9 @@ class Fiber {
 
   std::vector<std::shared_ptr<Node>> nodes;
   std::vector<double> B;  // coefficients for tridag solver.
+
+private:
+
 };
 }  // namespace LongQt
 

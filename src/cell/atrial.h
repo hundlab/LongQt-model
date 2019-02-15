@@ -141,8 +141,8 @@ class Courtemanche98 : public Cell {
 
   struct GateVariable Gate;
 
- protected:
-  virtual void Initialize();
+ private:
+  void Initialize();
 };
 }  // namespace LongQt
 #endif

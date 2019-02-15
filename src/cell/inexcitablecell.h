@@ -17,8 +17,8 @@ class InexcitableCell : public Cell {
 
   virtual const char* type() const;
 
- protected:
-  virtual void Initialize();
+ private:
+  void Initialize();
 };
 }  // namespace LongQt
 

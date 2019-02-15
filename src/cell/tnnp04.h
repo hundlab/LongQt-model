@@ -130,8 +130,8 @@ class TNNP04Control : public Cell {
 
   enum Options opts;
 
- protected:
-  virtual void Initialize();
+ private:
+  void Initialize();
 };
 }  // namespace LongQt
 

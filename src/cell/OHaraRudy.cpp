@@ -2,8 +2,8 @@
 #include <math.h>
 using namespace std;
 using namespace LongQt;
-OHaraRudy::OHaraRudy() { this->Initialize(); };
-OHaraRudy::~OHaraRudy(){};
+OHaraRudy::OHaraRudy() : Cell() { this->Initialize(); }
+OHaraRudy::~OHaraRudy() {}
 
 OHaraRudy::OHaraRudy(OHaraRudy &toCopy) : Cell(toCopy) {
   this->Initialize();
@@ -11,7 +11,22 @@ OHaraRudy::OHaraRudy(OHaraRudy &toCopy) : Cell(toCopy) {
 }
 
 void OHaraRudy::Initialize() {
+  // variables from CellKernel
   vOld = -87.5;
+  cellLength = 0.01;
+  cellRadius = 0.0011;
+  Vcell = 1000 * 3.14 * cellRadius * cellRadius * cellLength;
+  AGeo =
+      2 * 3.14 * cellRadius * cellRadius + 2 * 3.14 * cellRadius * cellLength;
+  ACap = 2 * AGeo;
+  Vmyo = 0.68 * Vcell;
+
+  // initalize variables
+  Vmito = 0.26 * Vcell;
+  Vsr = 0.06 * Vcell;
+  Vnsr = 0.0552 * Vcell;
+  Vjsr = 0.0048 * Vcell;
+  Vss = 0.02 * Vcell;
   this->makemap();
 }
 
@@ -517,14 +532,14 @@ void OHaraRudy::updatenaI() {
 
   Jdiff = (cass - cai) / 0.2;
   JdiffNa = (nass - naI) / 2.0;
-  naI += dt * (-(iNat)*Acap / (FDAY * vmyo) + JdiffNa * vss / vmyo);
-  nass += dt * (-(ICaNa + 3.0 * INaCa_ss) * Acap / (FDAY * vss) - JdiffNa);
+  naI += dt * (-(iNat)*ACap / (FDAY * Vmyo) + JdiffNa * Vss / Vmyo);
+  nass += dt * (-(ICaNa + 3.0 * INaCa_ss) * ACap / (FDAY * Vss) - JdiffNa);
 }
 
 void OHaraRudy::updatekI() {
   JdiffK = (kss - kI) / 2.0;
-  kI += dt * (-(iKt)*Acap / (FDAY * vmyo) + JdiffK * vss / vmyo);
-  kss += dt * (-(ICaK)*Acap / (FDAY * vss) - JdiffK);
+  kI += dt * (-(iKt)*ACap / (FDAY * Vmyo) + JdiffK * Vss / Vmyo);
+  kss += dt * (-(ICaK)*ACap / (FDAY * Vss) - JdiffK);
 }
 
 void OHaraRudy::updatecajsr() {
@@ -536,15 +551,15 @@ void OHaraRudy::updatecajsr() {
     Bcai = 1.0 / (1.0 + cmdnmax * kmcmdn / pow(kmcmdn + cai, 2.0) +
                   trpnmax * kmtrpn / pow(kmtrpn + cai, 2.0));
   }
-  cai += dt * (Bcai * (-(iCat)*Acap / (2.0 * FDAY * vmyo) - Jup * vnsr / vmyo +
-                       Jdiff * vss / vmyo));
+  cai += dt * (Bcai * (-(iCat)*ACap / (2.0 * FDAY * Vmyo) - Jup * Vnsr / Vmyo +
+                       Jdiff * Vss / Vmyo));
 
   double Bcass = 1.0 / (1.0 + BSRmax * KmBSR / pow(KmBSR + cass, 2.0) +
                         BSLmax * KmBSL / pow(KmBSL + cass, 2.0));
-  cass += dt * (Bcass * (-(ICaL - 2.0 * INaCa_ss) * Acap / (2.0 * FDAY * vss) +
-                         Jrel * vjsr / vss - Jdiff));
+  cass += dt * (Bcass * (-(ICaL - 2.0 * INaCa_ss) * ACap / (2.0 * FDAY * Vss) +
+                         Jrel * Vjsr / Vss - Jdiff));
 
-  cansr += dt * (Jup - Jtr * vjsr / vnsr);
+  cansr += dt * (Jup - Jtr * Vjsr / Vnsr);
 
   double Bcajsr = 1.0 / (1.0 + csqnmax * kmcsqn / pow(kmcsqn + cajsr, 2.0));
   cajsr += dt * (Bcajsr * (Jtr - Jrel));
@@ -692,18 +707,18 @@ void OHaraRudy::makemap() {
   __pars["kmcsqn"] = &kmcsqn;
 
   // cell geometry
-  __pars["L"] = &L;
-  __pars["rad"] = &rad;
-  __pars["vcell"] = &vcell;
-  __pars["Ageo"] = &Ageo;
+  __pars["L"] = &cellLength;
+  __pars["rad"] = &cellRadius;
+  __pars["vcell"] = &Vcell;
+  __pars["Ageo"] = &AGeo;
   // AGeo
-  __pars["Acap"] = &Acap;
-  __pars["vmyo"] = &vmyo;
-  __pars["vmito"] = &vmito;
-  __pars["vsr"] = &vsr;
-  __pars["vnsr"] = &vnsr;
-  __pars["vjsr"] = &vjsr;
-  __pars["vss"] = &vss;
+  __pars["Acap"] = &ACap;
+  __pars["Vmyo"] = &Vmyo;
+  __pars["Vmito"] = &Vmito;
+  __pars["Vsr"] = &Vsr;
+  __pars["Vnsr"] = &Vnsr;
+  __pars["Vjsr"] = &Vjsr;
+  __pars["Vss"] = &Vss;
 
   // CaMK paramaters
   __pars["aCaMKII"] = &aCaMK;

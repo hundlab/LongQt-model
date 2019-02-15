@@ -33,12 +33,13 @@ namespace LongQt {
 //#define beats 20   // Number of Beats
 
 class FR : public Cell {
+  void Initialize();
+
  public:
   FR();
   FR(FR& toCopy);
   virtual ~FR();
 
-  void Initialize();
   FR* clone();
 
   //##### Declare class variables ##############

@@ -12,40 +12,18 @@
 using namespace LongQt;
 using namespace std;
 
-void CellKernel::Initialize() {
-  //##### Assign default parameters ##################
-  dtmin = 0.005;  // ms
-  dtmed = 0.01;
-  dtmax = 0.1;
-  dvcut = 1.0;  // mV/ms
-  Cm = 1.0;     // uF/cm^s
-  Rcg = 1.0;
-  cellRadius = 0.001;  // cm
-  cellLength = 0.01;   // cm
-  RGAS = 8314.0;
-  TEMP = 310.0;
-  FDAY = 96487.0;
-
-  //##### Initialize variables ##################
-  dVdt = /*dVdtmax=*/0.0;
-  t = 0.0;
-  dt = dtmin;
-  vOld = /*vNew =*/-88.0;
-  iTot = iTotold = 0.000000000001;
-  iNat = iKt = iCat = 0.0;
-  this->mkmap();
-}
+void CellKernel::Initialize() { this->mkmap(); }
 
 //######################################################
 // Constructor for parent cell class - the basis for
 // any excitable cell model.
 //######################################################
-CellKernel::CellKernel() { this->Initialize(); };
+CellKernel::CellKernel() { this->Initialize(); }
 
 //#####################################################
 // Constructor for deep copy from annother CellKernel
 //#####################################################
-CellKernel::CellKernel(const CellKernel& toCopy) { this->Initialize(); };
+CellKernel::CellKernel(const CellKernel& o) { this->Initialize(); }
 
 CellKernel::~CellKernel() {}
 

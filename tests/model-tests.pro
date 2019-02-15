@@ -17,6 +17,7 @@ HEADERS +=     \
     measure_test.h \
     threadpool_test.h \
     runsim_test.h \
-    node_test.h
+    node_test.h \
+    logger_test.h
 
 SOURCES +=     main.cpp

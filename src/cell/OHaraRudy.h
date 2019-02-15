@@ -126,19 +126,12 @@ class OHaraRudy : public Cell {
   double csqnmax = 10.0;
   double kmcsqn = 0.8;
 
-  // cell geometry
-  double L = 0.01;
-  double rad = 0.0011;
-  double vcell = 1000 * 3.14 * rad * rad * L;
-  double Ageo = 2 * 3.14 * rad * rad + 2 * 3.14 * rad * L;
   // AGeo
-  double Acap = 2 * Ageo;
-  double vmyo = 0.68 * vcell;
-  double vmito = 0.26 * vcell;
-  double vsr = 0.06 * vcell;
-  double vnsr = 0.0552 * vcell;
-  double vjsr = 0.0048 * vcell;
-  double vss = 0.02 * vcell;
+  double Vmito;
+  double Vsr;
+  double Vnsr;
+  double Vjsr;
+  double Vss;
 
   // CaMK paramaters
   double aCaMK = 0.05;
@@ -183,8 +176,8 @@ class OHaraRudy : public Cell {
   virtual void externalStim(double stimval);
   virtual const char* type() const;
 
- protected:
-  virtual void Initialize();
+ private:
+  void Initialize();
 };
 }  // namespace LongQt
 

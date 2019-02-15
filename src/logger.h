@@ -25,27 +25,37 @@ class Logger {
   template <typename... Args>
   void write(const char* format, Args... args) {
     std::string s = CellUtils::strprintf(format, args...);
-    if (this->out && this->out->good()) {
-      *out << s;
-    }
-    if (this->stdOut && this->stdOut->good()) {
-      *stdOut << s;
-    }
+    this->writeFileOut(s);
+    this->writeSTDOut(s);
   }
 
   template <typename exception, typename... Args>
   void write(const std::string& format, Args... args) {
     std::string s = CellUtils::strprintf(format, args...);
-    if (this->out && this->out->good()) {
-      *out << s;
-    }
-    if (this->stdOut && this->stdOut->good()) {
-      *stdOut << s << std::endl;
-    }
+    this->writeFileOut(s);
+    this->writeSTDOut(s);
     if (this->exceptionEnabled) {
       throw exception(s);
       //            std::is_constructible<exception, std::string>{};
       //            std::is_constructible<exception>{};
+    }
+  }
+
+ private:
+  inline bool writeSTDOut(std::string s) {
+    if (this->stdOut && this->stdOut->good()) {
+      *stdOut << s << std::endl;
+      return true;
+    } else {
+      return false;
+    }
+  }
+  inline bool writeFileOut(std::string s) {
+    if (this->out && this->out->good()) {
+      *out << s << '\n';
+      return true;
+    } else {
+      return false;
     }
   }
 };

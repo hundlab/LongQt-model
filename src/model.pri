@@ -41,7 +41,8 @@ SOURCES += $$PWD/measure.cpp\
     $$PWD/logger.cpp \
     $$PWD/measurevoltage.cpp \
     $$PWD/measuredefault.cpp \
-    $$PWD/threadpool.cpp
+    $$PWD/threadpool.cpp \
+    $$PWD/cell/coupledinexcitablecell.cpp
 
 HEADERS  += $$PWD/measuremanager.h\
     $$PWD/gridmeasuremanager.h\
@@ -87,4 +88,5 @@ HEADERS  += $$PWD/measuremanager.h\
     $$PWD/cellutils_core.hpp \
     $$PWD/measurevoltage.h \
     $$PWD/measuredefault.h \
-    $$PWD/threadpool.h
+    $$PWD/threadpool.h \
+    $$PWD/cell/coupledinexcitablecell.h

@@ -185,8 +185,8 @@ class GpbVent : public Cell {
 
   struct GateVariable gate;
 
- protected:
-  virtual void Initialize();
+ private:
+  void Initialize();
 };
 }  // namespace LongQt
 

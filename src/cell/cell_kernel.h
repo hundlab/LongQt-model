@@ -43,34 +43,40 @@ class CellKernel : public std::enable_shared_from_this<CellKernel> {
   virtual void externalStim(double stimval);
 
   //##### Declare class variables ##############
-  double vOld;  // Transmembrane potential from previous iteration
+  double vOld = -88.0;  // Transmembrane potential from previous iteration
   //    double vNew;    // new Transmembrane potential in calculation
-  double t;        // time, ms
-  double dt;       // Time increment
-  double iNat;     // Total transmembrane sodium current.
-  double iKt;      // Total transmembrane potassium current.
-  double iCat;     // Total transmembrane calcium current.
-  double iTot;     // Total transmembrane current.
-  double iTotold;  // Total transmembrane current.
+  double t = 0;          // time, ms
+  double dtmin = 0.005;  // ms
+  double dtmed = 0.01;   // ms
+  double dtmax = 0.1;    // ms
+  double dvcut = 1.0;    // mV/ms
+  double apTime = 0.0;
+  double dt = dtmin;       // Time increment
+  double iNat = 0;         // Total transmembrane sodium current.
+  double iKt = 0;          // Total transmembrane potassium current.
+  double iCat = 0;         // Total transmembrane calcium current.
+  double iTot = 1e-12;     // Total transmembrane current.
+  double iTotold = 1e-12;  // Total transmembrane current.
 
   //##### Declare class params ##############
-  double Cm;     // Specific membrane capacitance, uF/cm^2
-  double Vcell;  // Total cell Volume, uL.
-  double Vmyo;   //  Myoplasmic volume, uL.
-  double AGeo;   // Geometric cell surface area.
-  double ACap;   // Capacitive cell surface area.
-  double Rcg;    // Ratio of capacitive to geometric area.
-  double cellRadius, cellLength;
-  double dVdt;
+  double Cm = 1.0;           // Specific membrane capacitance, uF/cm^2
+  double Rcg = 1;            // Ratio of capacitive to geometric area.
+  double cellRadius = 1e-3;  // cm
+  double cellLength = 1e-2;  // cm
+  double Vcell = 1000 * 3.14 * cellRadius * cellRadius *
+                 cellLength;   // Total cell Volume, uL.
+  double Vmyo = 0.66 * Vcell;  //  Myoplasmic volume, uL.
+  double AGeo =
+      2 * 3.14 * cellRadius * cellRadius +
+      2 * 3.14 * cellRadius * cellLength;  // Geometric cell surface area.
+  double ACap = AGeo * Rcg;                // Capacitive cell surface area.
+  double dVdt = 0;
   //    double dVdtmax;
   double Rmyo = 150;  // Myoplasmic resistivity.
 
-  double dtmin, dtmed, dtmax, dvcut;
-  double apTime;
-
-  double RGAS;
-  double TEMP;
-  double FDAY;
+  double RGAS = 8314.0;
+  double TEMP = 310.0;
+  double FDAY = 96487.0;
 
   virtual double var(std::string name);
   virtual bool setVar(std::string name, double val);
@@ -97,9 +103,9 @@ class CellKernel : public std::enable_shared_from_this<CellKernel> {
 
   virtual int removeConflicts(int opt);
   void copyVarPar(const CellKernel& toCopy);
-  virtual void Initialize();
 
  private:
+  void Initialize();
   void mkmap();
 };
 }  // namespace LongQt

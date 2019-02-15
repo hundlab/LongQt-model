@@ -213,8 +213,8 @@ class HRD09BorderZone : public HRD09Control {
   virtual void updateCamk();
   virtual const char* type() const;
 
- protected:
-  virtual void Initialize();
+ private:
+  void Initialize();
 };
 }  // namespace LongQt
 

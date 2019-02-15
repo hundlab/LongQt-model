@@ -13,8 +13,8 @@ class OHaraRudyEndo : public OHaraRudy {
   virtual OHaraRudyEndo* clone() override;
   virtual const char* type() const;
 
- protected:
-  virtual void Initialize();
+ private:
+  void Initialize();
 };
 }  // namespace LongQt
 

@@ -76,10 +76,14 @@ int GridProtocol::stim() {
 
 void GridProtocol::setupTrial() {
   this->Protocol::setupTrial();
+  __cell->setup();
   for (auto& n : stimNodes) {
-    auto n_ptr = (*grid)(n);
-    if (n_ptr) {
-      __stimN.insert(n_ptr);
+    try {
+      auto n_ptr = (*grid)(n);
+      if (n_ptr) {
+        __stimN.insert(n_ptr);
+      }
+    } catch (std::out_of_range) {
     }
   }
   for (auto& n : stimNodes2) {
@@ -211,16 +215,14 @@ list<string> GridProtocol::cellOptions() { return {""}; }
 PvarsCell& GridProtocol::pvars() { return *this->__pvars; }
 
 MeasureManager& GridProtocol::measureMgr() { return *this->__measureMgr; }
+
 set<pair<int, int>> GridProtocol::stringToSet(string nodesList) {
   set<pair<int, int>> toReturn;
   stringstream stream(nodesList);
+  pair<int, int> p(-1, -1);
   while (!stream.eof()) {
-    pair<int, int> p(-1, -1);
     stream >> p.first >> p.second;
-    shared_ptr<Node> n = (*grid)(p);
-    if (n) {
-      toReturn.insert(p);
-    }
+    toReturn.insert(p);
   }
   //    cell->closeFiles();
 

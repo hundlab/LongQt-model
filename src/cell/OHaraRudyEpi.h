@@ -13,8 +13,8 @@ class OHaraRudyEpi : public OHaraRudy {
   virtual OHaraRudyEpi* clone() override;
   virtual const char* type() const;
 
- protected:
-  virtual void Initialize();
+ private:
+  void Initialize();
 };
 }  // namespace LongQt
 

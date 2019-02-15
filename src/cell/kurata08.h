@@ -134,10 +134,8 @@ class Kurata08 : public Cell {
 
   enum Options opts;
 
- protected:
-  virtual void Initialize();
-
  private:
+  void Initialize();
   void makemap();
 };
 }  // namespace LongQt

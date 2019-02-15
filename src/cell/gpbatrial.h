@@ -221,8 +221,8 @@ class GpbAtrial : public Cell {
   virtual const char* type() const;
   struct GateVariable Gate;
 
- protected:
-  virtual void Initialize();
+ private:
+  void Initialize();
 };
 }  // namespace LongQt
 

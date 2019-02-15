@@ -150,8 +150,8 @@ void Protocol::copy(const Protocol& c) {
 //############################################################
 bool Protocol::runSim() {
   bool return_val = true;
-  if(this->numtrials <= 0) {
-      return false;
+  if (this->numtrials <= 0) {
+    return false;
   }
   //###############################################################
   // Loop over number of trials

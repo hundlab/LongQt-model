@@ -18,12 +18,13 @@ namespace LongQt {
 // subclass of Cell
 //####################################
 class GpbAtrialOnal17 : public Cell {
+  void Initialize();
+
  public:
   // constructors
   GpbAtrialOnal17();
   GpbAtrialOnal17(GpbAtrialOnal17& toCopy);
   virtual ~GpbAtrialOnal17();
-  void Initialize();
   GpbAtrialOnal17* clone();
 
   /*########################*/

@@ -205,8 +205,8 @@ class Br04 : public Cell {
 
   enum Options opts = WT;
 
- protected:
-  virtual void Initialize();
+ private:
+  void Initialize();
 };
 }  // namespace LongQt
 

@@ -18,6 +18,9 @@ Grid::Grid(const Grid& other) {
   for (unsigned int cn = 0; cn < columns.size(); cn++) {
     columns[cn].B = other.columns[cn].B;
   }
+  dx = other.dx;
+  dy = other.dy;
+  np = other.np;
   this->updateNodePositions();
 }
 Grid::~Grid() {}
@@ -102,7 +105,6 @@ void Grid::setCellTypes(const CellInfo& singleCell) {
     if (singleCell.cell) {
       n->cell = singleCell.cell;
     }
-    n->np = singleCell.np;
     //        n->x = singleCell.X*singleCell.dx;
     //        n->y = singleCell.Y*singleCell.dy;
 
@@ -110,8 +112,7 @@ void Grid::setCellTypes(const CellInfo& singleCell) {
                     isnan(singleCell.c[2]) && isnan(singleCell.c[3]));
     for (int i = 0; i < 4; ++i) {
       if (!(update && isnan(singleCell.c[i]))) {
-        n->setCondConst(singleCell.dx, CellUtils::Side(i), singleCell.c_perc,
-                        singleCell.c[i]);
+        n->setCondConst(CellUtils::Side(i), singleCell.c_perc, singleCell.c[i]);
       }
     }
     if (singleCell.row == 0 ||
@@ -123,8 +124,8 @@ void Grid::setCellTypes(const CellInfo& singleCell) {
       //			fiber.at(singleCell.X).B.at(singleCell.Y) = 0.0;
     }
   } catch (const std::out_of_range& oor) {
-    throw new std::out_of_range(string(oor.what()) +
-                                string(": new cell was not in range of grid"));
+    Logger::getInstance()->write<std::out_of_range>(
+        "{} : new cell was not in range of grid", oor.what());
   }
 }
 int Grid::rowCount() const { return static_cast<int>(rows.size()); }

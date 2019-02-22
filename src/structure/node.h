@@ -6,6 +6,7 @@
 
 #include <array>
 #include <memory>
+#include <atomic>
 #include "cell.h"
 #include "cellutils.h"
 #include "inexcitablecell.h"
@@ -23,7 +24,10 @@ struct Node : public std::enable_shared_from_this<Node> {
   std::shared_ptr<Cell> cell = std::make_shared<InexcitableCell>();
   double rd = 1.5;  // gap junctional disk resistance.
   double getCondConst(CellUtils::Side s);
+  //  double setFiberB();
   //## default value cannot be deterimined by constructor
+  std::array<std::atomic<bool>, 2> lock;
+  void waitUnlock(int which);
   double dIax = 0;
   // can't change atm
   //    double x = 0;
@@ -33,7 +37,7 @@ struct Node : public std::enable_shared_from_this<Node> {
   double d3 = 0;    // off-diagonal for tridag solver
   double r = 0;     // right side of eqn for tridag solver
   double vNew = 0;  // vOld(t+1) for tridag solver
-//  std::string nodeType = "";
+                    //  std::string nodeType = "";
   int row = -1;
   int col = -1;
   void setParent(Grid* par, int row = -1, int col = -1);
@@ -41,10 +45,11 @@ struct Node : public std::enable_shared_from_this<Node> {
   Grid* getParent();
 
  private:
-  void setCondConstDirect(CellUtils::Side s, double val);
+  //  void setCondConstDirect(CellUtils::Side s, double val);
+  std::array<double, 4> c = {{NAN, NAN, NAN, NAN}};
   Grid* parent = 0;
   std::pair<int, int> calcNeighborPos(CellUtils::Side s);
-  double calcCondConst(CellUtils::Side s, double val);
+  double calcOurCondConst(CellUtils::Side s, double val);
   const std::string inexName = cell->type();
 };
 }  // namespace LongQt

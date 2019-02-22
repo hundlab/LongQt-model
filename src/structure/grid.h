@@ -8,20 +8,21 @@
 
 #include <array>
 #include <cmath>
+#include <iterator>
 #include <list>
 #include <memory>
 #include <set>
 #include <string>
-
+#include <utility>
 #include "cellutils.h"
 #include "fiber.h"
 namespace LongQt {
 
-struct CellInfo {
+/*struct CellInfo {
   // necessary
   CellInfo(int row = -1, int col = -1, std::shared_ptr<Cell> cell = 0,
-           std::array<double, 4> c = {NAN, NAN, NAN, NAN},
-           bool c_perc = false) {
+           std::array<double, 4> c = {1, 1, 1, 1},
+           bool c_perc = true) {
     this->row = row;
     this->col = col;
     this->cell = cell;
@@ -33,9 +34,9 @@ struct CellInfo {
   int col = -1;
   // if cell == NULL then cell will not be changed
   std::shared_ptr<Cell> cell = 0;
-  std::array<double, 4> c = {{NAN, NAN, NAN, NAN}};
-  bool c_perc = false;
-};
+  std::array<double, 4> c = {{1, 1, 1, 1}};
+  bool c_perc = true;
+};*/
 
 class Grid {
  public:
@@ -43,6 +44,23 @@ class Grid {
   Grid(const Grid& other);
   ~Grid();
 
+  class GridIterator
+      : public std::iterator<std::input_iterator_tag, std::shared_ptr<Node>> {
+    int row = 0;
+    int col = 0;
+    Grid* parent = 0;
+    bool rowsFirst = true;
+
+   public:
+    GridIterator(Grid* parent, bool rowsFirst = true);
+    GridIterator(const GridIterator& o)
+        : row(o.row), col(o.col), parent(o.parent), rowsFirst(o.rowsFirst) {}
+    GridIterator& operator++();
+    GridIterator operator++(int);
+    bool operator==(const GridIterator& rhs) const;
+    bool operator!=(const GridIterator& rhs) const;
+    std::shared_ptr<Node> operator*();
+  };
   typedef std::vector<Fiber>::const_iterator const_iterator;
   typedef std::vector<Fiber>::iterator iterator;
 
@@ -57,25 +75,27 @@ class Grid {
   virtual void removeRows(unsigned int num, int position = 0);
   virtual void removeColumn(int pos);
   virtual void removeColumns(unsigned int num, int position = 0);
-  virtual void setCellTypes(std::list<CellInfo>& cells);
-  virtual void setCellTypes(const CellInfo& singleCell);
+  //  virtual void setCellTypes(std::list<CellInfo>& cells);
+  //  virtual void setCellTypes(const CellInfo& singleCell);
   virtual int rowCount() const;
   virtual int columnCount() const;
   virtual std::pair<int, int> findNode(const std::shared_ptr<Node> toFind);
   virtual std::shared_ptr<Node> operator()(const std::pair<int, int>& p);
   virtual std::shared_ptr<Node> operator()(const int row, const int col);
   virtual void reset();
-  virtual void updateB(CellInfo node, CellUtils::Side s);
+  //  virtual void updateB(CellInfo node, CellUtils::Side s);
   void updateNodePositions();
+  virtual void setup();
 
-  virtual const_iterator begin() const;
-  virtual const_iterator end() const;
-  virtual iterator begin();
-  virtual iterator end();
+  //  virtual const_iterator begin() const;
+  //  virtual const_iterator end() const;
+  virtual GridIterator begin();
+  virtual GridIterator end();
 
   std::vector<Fiber> rows;
   std::vector<Fiber> columns;
 
+  bool iterRowsFirst = true;
   double dx = 0.01;
   double dy = 0.01;
   int np = 1;  // nodes per patch

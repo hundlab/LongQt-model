@@ -3,19 +3,17 @@
 using namespace LongQt;
 using namespace std;
 
-Fiber::Fiber(int size) {
+Fiber::Fiber(int size, CellUtils::Side dir) {
+  this->setOrderedSides(dir);
   unsigned int i = static_cast<int>(nodes.size());
   nodes.resize(size, NULL);
-  B.resize(size + 1);
   for (; i < nodes.size(); i++) {
     nodes[i] = make_shared<Node>();
-    B[i] = 0;
   }
-  B[size] = 0;
 }
 Fiber::Fiber(const Fiber& o) {
-  this->B = o.B;
   this->nodes = o.nodes;
+  this->directions = o.directions;
   /*
   this->nodes.resize(o.nodes.size());
   for(unsigned int i = 0; i < o.nodes.size(); ++i) {
@@ -29,6 +27,9 @@ Fiber::~Fiber() {}
 void Fiber::updateVm(const double& dt) {
   int i;
   int nn = static_cast<int>(nodes.size());
+/*  for(i = 0; i < nn; ++i) {
+//      nodes[i]->waitUnlock(0);
+  }*/
   if (nn <= 1) {
     return;
   }
@@ -67,6 +68,7 @@ void Fiber::updateVm(const double& dt) {
     nodes[i]->dIax = -(nodes[i]->cell->dVdt + nodes[i]->cell->iTot);
     nodes[i]->cell->iKt = nodes[i]->cell->iKt + nodes[i]->dIax;
     nodes[i]->cell->setV(nodes[i]->vNew);
+    nodes[i]->lock[1] = false;
   }
 }
 shared_ptr<Node> Fiber::operator[](int pos) {
@@ -79,6 +81,14 @@ shared_ptr<Node> Fiber::operator[](int pos) {
 shared_ptr<Node> Fiber::at(int pos) { return this->nodes.at(pos); }
 
 int Fiber::size() const { return nodes.size(); }
+
+void Fiber::setup() {
+  B.resize(nodes.size() + 1);
+  for (unsigned int i = 0; i < nodes.size(); ++i) {
+    B[i] = nodes[i]->getCondConst(directions[0]);
+    B[i + 1] = nodes[i]->getCondConst(directions[1]);
+  }
+}
 void Fiber::diffuseBottom(int node) {
   nodes[node]->cell->iTot -=
       B[node] * (nodes[node - 1]->cell->vOld - nodes[node]->cell->vOld);
@@ -126,3 +136,12 @@ int Fiber::tstep()
 Fiber::const_iterator Fiber::begin() const { return nodes.begin(); }
 
 Fiber::const_iterator Fiber::end() const { return nodes.end(); }
+
+void Fiber::setOrderedSides(CellUtils::Side s) {
+  using namespace CellUtils;
+  if (s == Side::top || s == Side::bottom) {
+    this->directions = {Side::top, Side::bottom};
+  } else {  // if(s == Side::left || s == Side::right) {
+    this->directions = {Side::left, Side::right};
+  }
+}

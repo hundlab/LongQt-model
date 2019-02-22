@@ -13,12 +13,13 @@ OHaraRudy::OHaraRudy(OHaraRudy &toCopy) : Cell(toCopy) {
 void OHaraRudy::Initialize() {
   // variables from CellKernel
   vOld = -87.5;
+  Rcg = 2;
   cellLength = 0.01;
   cellRadius = 0.0011;
   Vcell = 1000 * 3.14 * cellRadius * cellRadius * cellLength;
   AGeo =
       2 * 3.14 * cellRadius * cellRadius + 2 * 3.14 * cellRadius * cellLength;
-  ACap = 2 * AGeo;
+  ACap = Rcg * AGeo;
   Vmyo = 0.68 * Vcell;
 
   // initalize variables

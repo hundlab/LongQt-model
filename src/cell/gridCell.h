@@ -55,10 +55,8 @@ class GridCell : public Cell {
   virtual const char* type() const;
 
  private:
-  bool handleNode(QXmlStreamReader& xml, std::list<CellInfo>& cells,
-                  CellInfo& info);
-  bool handleRow(QXmlStreamReader& xml, std::list<CellInfo>& cells,
-                 CellInfo& info);
+  bool handleNode(QXmlStreamReader& xml, int row);
+  bool handleRow(QXmlStreamReader& xml);
   bool handleGrid(QXmlStreamReader& xml);
 
   Grid grid;

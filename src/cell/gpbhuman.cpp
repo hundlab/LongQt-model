@@ -10,6 +10,10 @@ GpbVent::GpbVent(GpbVent &toCopy) : Cell(toCopy) {
 GpbVent::~GpbVent() {}
 
 void GpbVent::Initialize() {
+  cellLength = 0.01;
+  cellRadius = 1.025e-3;
+  Rcg = 1.945949; //calculated from ACap & AGeo
+
   Cm = 1.0;          // uF/cm2
   ACap = 1.3810E-4;  // capacitive area, cm2
   dVdt = /*dVdtmax=*/0.0;

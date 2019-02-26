@@ -21,45 +21,34 @@ Fiber::Fiber(const Fiber& o) {
   }*/
 }
 Fiber::~Fiber() {}
+
 //#############################################################
 // Solve PDE for Vm along fiber using tridiagonal solver.
 //#############################################################
 void Fiber::updateVm(const double& dt) {
   int i;
   int nn = static_cast<int>(nodes.size());
-/*  for(i = 0; i < nn; ++i) {
-//      nodes[i]->waitUnlock(0);
-  }*/
+  /*  for(i = 0; i < nn; ++i) {
+        nodes[i]->waitUnlock(0);
+    }*/
   if (nn <= 1) {
     return;
   }
 
-  diffuseTop(0);
-  nodes[0]->r = (B[1] * dt - 2) * nodes[0]->cell->vOld -
-                B[1] * dt * nodes[1]->cell->vOld +
-                dt / nodes[0]->cell->Cm *
-                    (nodes[0]->cell->iTotold + nodes[0]->cell->iTot);
   for (i = 0; i < nn; i++) {
-    nodes[i]->d1 = B[i] * dt;
-    nodes[i]->d2 = -(B[i] * dt + B[i + 1] * dt + 2);
-    nodes[i]->d3 = B[i + 1] * dt;
-    if (i > 0 && i < (nn - 1)) {
-      diffuse(i);
-      nodes[i]->r = -B[i] * dt * nodes[i - 1]->cell->vOld +
-                    (B[i] * dt + B[i + 1] * dt - 2) * nodes[i]->cell->vOld -
-                    B[i + 1] * dt * nodes[i + 1]->cell->vOld +
-                    dt / nodes[i]->cell->Cm *
-                        (nodes[i]->cell->iTotold + nodes[i]->cell->iTot);
-    }
+    double vOldp = i - 1 >= 0 ? nodes[i - 1]->cell->vOld : 0;
+    double vOldc = nodes[i]->cell->vOld;
+    double vOldn = i + 1 < nn ? nodes[i + 1]->cell->vOld : 0;
+    d1[i] = B[i] * dt;
+    d2[i] = -(B[i] * dt + B[i + 1] * dt + 2);
+    d3[i] = B[i + 1] * dt;
+    nodes[i]->cell->iTot -= B[i] * (vOldp - vOldc) - B[i + 1] * (vOldc - vOldn);
+    r[i] = dt * (nodes[i]->cell->iTotold + nodes[i]->cell->iTot) /
+               nodes[i]->cell->Cm -
+           (d1[i] * vOldp + (d2[i] + 4) * vOldc + d3[i] * vOldn);
   }
-  diffuseBottom(nn - 1);
-  nodes[nn - 1]->r =
-      -B[nn - 1] * dt * nodes[nn - 2]->cell->vOld +
-      (B[nn - 1] * dt - 2) * nodes[nn - 1]->cell->vOld +
-      dt / nodes[nn - 1]->cell->Cm *
-          (nodes[nn - 1]->cell->iTotold + nodes[nn - 1]->cell->iTot);
 
-  tridag(nodes);
+  this->tridag();
 
   for (i = 0; i < nn; i++) {
     nodes[i]->cell->iTotold = nodes[i]->cell->iTot;
@@ -83,25 +72,20 @@ shared_ptr<Node> Fiber::at(int pos) { return this->nodes.at(pos); }
 int Fiber::size() const { return nodes.size(); }
 
 void Fiber::setup() {
-  B.resize(nodes.size() + 1);
+  int nn = static_cast<int>(nodes.size());
+  gam.resize(nn);
+  d1.resize(nn);
+  d2.resize(nn);
+  d3.resize(nn);
+  r.resize(nn);
+
+  B.resize(nn + 1);
   for (unsigned int i = 0; i < nodes.size(); ++i) {
     B[i] = nodes[i]->getCondConst(directions[0]);
     B[i + 1] = nodes[i]->getCondConst(directions[1]);
   }
 }
-void Fiber::diffuseBottom(int node) {
-  nodes[node]->cell->iTot -=
-      B[node] * (nodes[node - 1]->cell->vOld - nodes[node]->cell->vOld);
-}
-void Fiber::diffuseTop(int node) {
-  nodes[node]->cell->iTot -=
-      -B[node + 1] * (nodes[node]->cell->vOld - nodes[node + 1]->cell->vOld);
-}
-void Fiber::diffuse(int node) {
-  nodes[node]->cell->iTot -=
-      B[node] * (nodes[node - 1]->cell->vOld - nodes[node]->cell->vOld) -
-      B[node + 1] * (nodes[node]->cell->vOld - nodes[node + 1]->cell->vOld);
-}
+
 /*
 //#############################################################
 // Dynamic time step for one-dimensional fiber.
@@ -143,5 +127,28 @@ void Fiber::setOrderedSides(CellUtils::Side s) {
     this->directions = {Side::top, Side::bottom};
   } else {  // if(s == Side::left || s == Side::right) {
     this->directions = {Side::left, Side::right};
+  }
+}
+
+void Fiber::tridag() {
+  int j;
+  double bet;
+
+  int nn = static_cast<int>(nodes.size());
+  if (d2[0] == 0.0) {
+    Logger::getInstance()->write("Error 1 in tridag");
+  }
+
+  nodes[0]->vNew = r[0] / (bet = d2[0]);
+  for (j = 1; j < nn; j++) {
+    gam[j] = d3[j - 1] / bet;
+    bet = d2[j] - d1[j] * gam[j];
+    if (bet == 0.0) {
+      Logger::getInstance()->write("Error 2 in tridag");
+    }
+    nodes[j]->vNew = (r[j] - d1[j] * nodes[j - 1]->vNew) / bet;
+  }
+  for (j = (nn - 2); j >= 0; j--) {
+    nodes[j]->vNew -= gam[j + 1] * nodes[j + 1]->vNew;
   }
 }

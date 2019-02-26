@@ -22,9 +22,6 @@ class Fiber {
   virtual std::shared_ptr<Node> at(int pos);
   virtual int size() const;
   virtual void setup();
-  virtual inline void diffuse(int node);
-  virtual inline void diffuseBottom(int node);
-  virtual inline void diffuseTop(int node);
 
   virtual const_iterator begin() const;
   virtual const_iterator end() const;
@@ -32,10 +29,15 @@ class Fiber {
   std::vector<std::shared_ptr<Node>> nodes;
 
  private:
-  void setOrderedSides(
-      LongQt::CellUtils::Side s);
+  void setOrderedSides(LongQt::CellUtils::Side s);
   std::array<LongQt::CellUtils::Side, 2> directions;
-  std::vector<double> B;  // coefficients for tridag solver.
+  std::vector<double> B;
+  std::vector<double> gam;
+  std::vector<double> d1;// off-diagonal for tridag solver
+  std::vector<double> d2;// diagonal elements for tridag solver
+  std::vector<double> d3;// off-diagonal for tridag solver
+  std::vector<double> r;// right side of eqn for tridag solver
+  void tridag();
 };
 }  // namespace LongQt
 

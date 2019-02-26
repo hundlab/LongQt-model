@@ -32,10 +32,6 @@ struct Node : public std::enable_shared_from_this<Node> {
   // can't change atm
   //    double x = 0;
   //    double y = 0;
-  double d1 = 0;    // off-diagonal for tridag solver
-  double d2 = 0;    // diagonal elements for tridag solver
-  double d3 = 0;    // off-diagonal for tridag solver
-  double r = 0;     // right side of eqn for tridag solver
   double vNew = 0;  // vOld(t+1) for tridag solver
                     //  std::string nodeType = "";
   int row = -1;

@@ -44,25 +44,36 @@ class Grid {
   Grid(const Grid& other);
   ~Grid();
 
-  class GridIterator
-      : public std::iterator<std::input_iterator_tag, std::shared_ptr<Node>> {
+  class GridIterator {
+    using value_type = std::shared_ptr<Node>;
+    using reference = value_type&;
+    using pointer = value_type*;
+    using difference_type = std::pair<int, int>;
+    using iterator_category = std::random_access_iterator_tag;
+
     int row = 0;
     int col = 0;
     Grid* parent = 0;
     bool rowsFirst = true;
 
-   public:
     GridIterator(Grid* parent, bool rowsFirst = true);
     GridIterator(const GridIterator& o)
         : row(o.row), col(o.col), parent(o.parent), rowsFirst(o.rowsFirst) {}
+
+   public:
     GridIterator& operator++();
     GridIterator operator++(int);
+    GridIterator operator+=(int i);
+    GridIterator operator-=(int i);
+    GridIterator operator+(int i);
+    GridIterator operator-(int i);
+    difference_type operator -(GridIterator rhs);
+    value_type operator[](difference_type) const;
+
     bool operator==(const GridIterator& rhs) const;
     bool operator!=(const GridIterator& rhs) const;
     std::shared_ptr<Node> operator*();
   };
-  typedef std::vector<Fiber>::const_iterator const_iterator;
-  typedef std::vector<Fiber>::iterator iterator;
 
   Grid& operator=(const Grid&) = delete;
 
@@ -91,6 +102,8 @@ class Grid {
   //  virtual const_iterator end() const;
   virtual GridIterator begin();
   virtual GridIterator end();
+  virtual GridIterator beginRowsFirst();
+  virtual GridIterator beginColumnsFirst();
 
   std::vector<Fiber> rows;
   std::vector<Fiber> columns;
@@ -99,6 +112,8 @@ class Grid {
   double dx = 0.01;
   double dy = 0.01;
   int np = 1;  // nodes per patch
+ private:
+  friend class GridIterator;
 };
 }  // namespace LongQt
 

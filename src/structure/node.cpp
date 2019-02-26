@@ -10,10 +10,6 @@ Node::Node(const Node &o) : std::enable_shared_from_this<Node>(o) {
   dIax = o.dIax;
   //	x = other.x;
   //	y = other.y;
-  d1 = o.d1;
-  d2 = o.d2;
-  d3 = o.d3;
-  r = o.r;
   vNew = o.vNew;
   //  nodeType = other.nodeType;
   cell.reset(o.cell->clone());

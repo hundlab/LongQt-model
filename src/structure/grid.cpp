@@ -228,6 +228,12 @@ Grid::GridIterator Grid::begin() {
 
 Grid::GridIterator Grid::end() { return GridIterator(0, this->iterRowsFirst); }
 
+Grid::GridIterator Grid::beginRowsFirst() { return GridIterator(this, true); }
+
+Grid::GridIterator Grid::beginColumnsFirst() {
+  return GridIterator(this, false);
+}
+
 void Grid::updateNodePositions() {
   for (int rc = 0; rc < rowCount(); ++rc) {
     for (int cc = 0; cc < columnCount(); ++cc) {
@@ -257,6 +263,18 @@ Grid::GridIterator Grid::GridIterator::operator++(int) {
   GridIterator tmp(*this);
   operator++();
   return tmp;
+}
+
+Grid::GridIterator Grid::GridIterator::operator+=(int i) {
+  if (this->rowsFirst) {
+    row += i % parent->rowCount();
+    col += (int)(i / parent->columnCount());
+    if (col >= parent->columnCount()) {
+      row = -1;
+      col = -1;
+    }
+  } else {
+  }
 }
 
 bool Grid::GridIterator::operator==(const Grid::GridIterator& rhs) const {

@@ -52,6 +52,7 @@ int GridProtocol::stim() {
   for (auto n : __stimN) {
     auto cell = n->cell;
     if (cell->t >= stimt && cell->t < (stimt + stimdur)) {
+      //n->waitUnlock(0);
       if (stimflag == 0) {
         stimcounter++;
         stimflag = 1;
@@ -62,6 +63,7 @@ int GridProtocol::stim() {
       }
       cell->externalStim(stimval);
     } else if (stimflag == 1) {  // trailing edge of stimulus
+      n->waitUnlock(0);
       stimt = stimt + bcl;
       stimflag = 0;
       cell->apTime = 0.0;
@@ -96,7 +98,7 @@ void GridProtocol::setupTrial() {
   for (auto& pvar : pvars()) {
     temp.insert(pvar.first);
   }
-  __cell->setConstantSelection(temp);
+  //  __cell->setConstantSelection(temp);
   temp.clear();
   this->__measureMgr->setupMeasures(
       getDataDir() + "/" + CellUtils::strprintf(propertyoutfile, __trial));
@@ -108,8 +110,9 @@ void GridProtocol::setupTrial() {
   this->pvars().setIonChanParams();
   runflag = true;  // reset doneflag
 
-  __cell->setOuputfileVariables(getDataDir() + "/" +
-                                CellUtils::strprintf(dvarsoutfile, __trial));
+  //  __cell->setOuputfileVariables(getDataDir() + "/" +
+  //                                CellUtils::strprintf(dvarsoutfile,
+  //                                __trial));
 }
 
 bool GridProtocol::runTrial() {
@@ -158,11 +161,12 @@ bool GridProtocol::runTrial() {
       CellUtils::strprintf(getDataDir() + "/" + finalpropertyoutfile, __trial));
 
   // Output parameter values for each trial
-  __cell->setOutputfileConstants(
-      getDataDir() + "/" + CellUtils::strprintf(finaldvarsoutfile, __trial));
-  __cell->writeConstants();
+  //  __cell->setOutputfileConstants(
+  //      getDataDir() + "/" + CellUtils::strprintf(finaldvarsoutfile,
+  //      __trial));
+  //  __cell->writeConstants();
   this->__measureMgr->close();
-  __cell->closeFiles();
+  //  __cell->closeFiles();
   this->writeOutCellState(this->writeCellState);
   if (stimSet) {
     this->swapStims();

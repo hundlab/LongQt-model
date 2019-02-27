@@ -57,13 +57,12 @@ class Grid {
     bool rowsFirst = true;
 
     GridIterator(Grid* parent, bool rowsFirst = true);
-
-    friend class Grid;
-
-   public:
     GridIterator(const GridIterator& o)
         : row(o.row), col(o.col), parent(o.parent), rowsFirst(o.rowsFirst) {}
 
+    friend class FiberIterator;
+
+   public:
     GridIterator& operator++();
     GridIterator operator++(int);
     GridIterator& operator--();
@@ -77,7 +76,7 @@ class Grid {
 
     bool operator==(const GridIterator& rhs) const;
     bool operator!=(const GridIterator& rhs) const;
-//    bool operator==(const Fiber::FiberIterator& rhs) const;
+    bool operator==(const FiberIterator& rhs) const;
   };
 
   Grid& operator=(const Grid&) = delete;
@@ -117,6 +116,8 @@ class Grid {
   double dx = 0.01;
   double dy = 0.01;
   int np = 1;  // nodes per patch
+ private:
+  friend class GridIterator;
 };
 }  // namespace LongQt
 

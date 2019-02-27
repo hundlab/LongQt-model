@@ -1,5 +1,4 @@
 #include "fiber.h"
-#include "tridag.h"
 using namespace LongQt;
 using namespace std;
 
@@ -11,7 +10,7 @@ Fiber::Fiber(int size, CellUtils::Side dir) {
     nodes[i] = make_shared<Node>();
   }
 }
-Fiber::Fiber(const Fiber& o) {
+Fiber::Fiber(const Fiber &o) {
   this->nodes = o.nodes;
   this->directions = o.directions;
   /*
@@ -25,7 +24,7 @@ Fiber::~Fiber() {}
 //#############################################################
 // Solve PDE for Vm along fiber using tridiagonal solver.
 //#############################################################
-void Fiber::updateVm(const double& dt) {
+void Fiber::updateVm(const double &dt) {
   int i;
   int nn = static_cast<int>(nodes.size());
   /*  for(i = 0; i < nn; ++i) {
@@ -117,9 +116,9 @@ int Fiber::tstep()
      return 1;
 }*/
 
-Fiber::const_iterator Fiber::begin() const { return nodes.begin(); }
+Fiber::FiberIterator Fiber::begin() const { return FiberIterator(this); }
 
-Fiber::const_iterator Fiber::end() const { return nodes.end(); }
+Fiber::FiberIterator Fiber::end() const { return FiberIterator(0); }
 
 void Fiber::setOrderedSides(CellUtils::Side s) {
   using namespace CellUtils;
@@ -151,4 +150,82 @@ void Fiber::tridag() {
   for (j = (nn - 2); j >= 0; j--) {
     nodes[j]->vNew -= gam[j + 1] * nodes[j + 1]->vNew;
   }
+}
+
+Fiber::FiberIterator::FiberIterator(const Fiber *parent) {
+  if (!parent || parent->size() == 0) {
+    pos = -1;
+  }
+}
+
+Fiber::FiberIterator &Fiber::FiberIterator::operator++() {
+  if (pos < 0) return *this;
+  ++pos;
+  if (pos >= parent->size()) {
+    pos = -1;
+  }
+  return *this;
+}
+
+Fiber::FiberIterator Fiber::FiberIterator::operator++(int) {
+  FiberIterator tmp(*this);
+  operator++();
+  return tmp;
+}
+
+Fiber::FiberIterator &Fiber::FiberIterator::operator--() {
+  if (pos < 0) return *this;
+  --pos;
+  if (pos < 0) {
+    pos = -1;
+  }
+  return *this;
+}
+
+Fiber::FiberIterator Fiber::FiberIterator::operator--(int) {
+  FiberIterator tmp(*this);
+  operator--();
+  return tmp;
+}
+
+Fiber::FiberIterator &Fiber::FiberIterator::operator+=(int i) {
+  if (pos < 0) return *this;
+  pos += i;
+  if (pos < 0 || pos >= parent->size()) {
+    pos = -1;
+  }
+  return *this;
+}
+
+Fiber::FiberIterator &Fiber::FiberIterator::operator-=(int i) {
+  if (pos < 0) return *this;
+  pos -= i;
+  if (pos < 0 || pos >= parent->size()) {
+    pos = -1;
+  }
+  return *this;
+}
+
+Fiber::FiberIterator Fiber::FiberIterator::operator+(int i) {
+  FiberIterator tmp(*this);
+  tmp += i;
+  return tmp;
+}
+
+Fiber::FiberIterator Fiber::FiberIterator::operator-(int i) {
+  FiberIterator tmp(*this);
+  tmp -= i;
+  return tmp;
+}
+
+bool Fiber::FiberIterator::operator==(const Fiber::FiberIterator &rhs) const {
+  return (pos == rhs.pos);
+}
+
+bool Fiber::FiberIterator::operator!=(const Fiber::FiberIterator &rhs) const {
+  return !operator==(rhs);
+}
+
+std::shared_ptr<Node> Fiber::FiberIterator::operator*() {
+  return (*parent)[pos];
 }

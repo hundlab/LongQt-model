@@ -253,7 +253,7 @@ void Grid::setup() {
 
 Grid::GridIterator::GridIterator(Grid* parent, bool rowsFirst)
     : parent(parent), rowsFirst(rowsFirst) {
-  if (!parent) {
+  if (!parent || parent->rowCount() == 0 || parent->columnCount() == 0) {
     row = -1;
     col = -1;
   }
@@ -265,24 +265,70 @@ Grid::GridIterator Grid::GridIterator::operator++(int) {
   return tmp;
 }
 
-Grid::GridIterator Grid::GridIterator::operator+=(int i) {
-  if (this->rowsFirst) {
-    row += i % parent->rowCount();
-    col += (int)(i / parent->columnCount());
-    if (col >= parent->columnCount()) {
-      row = -1;
-      col = -1;
+Grid::GridIterator& Grid::GridIterator::operator--() {
+  if (row < 0 || col < 0) return *this;
+
+  int& fst = this->rowsFirst ? row : col;
+  int& snd = this->rowsFirst ? col : row;
+  int lenFst = this->rowsFirst ? parent->rowCount() : parent->columnCount();
+
+  --fst;
+  if (fst < 0) {
+    fst = lenFst - 1;
+    --snd;
+    if (snd < 0) {
+      fst = snd = -1;
     }
-  } else {
   }
+
+  return *this;
+}
+
+Grid::GridIterator Grid::GridIterator::operator--(int) {
+  GridIterator tmp(*this);
+  operator--();
+  return tmp;
+}
+
+Grid::GridIterator& Grid::GridIterator::operator+=(int i) {
+  if (row < 0 || col < 0) return *this;
+
+  int& fst = this->rowsFirst ? row : col;
+  int& snd = this->rowsFirst ? col : row;
+  int lenFst = this->rowsFirst ? parent->rowCount() : parent->columnCount();
+  int lenSnd = this->rowsFirst ? parent->columnCount() : parent->rowCount();
+
+  fst = (fst + i) % lenFst;
+  snd = (int)((i + fst + (snd * lenFst)) / lenFst);
+  if (snd < 0 || lenSnd <= snd) {
+    fst = snd = -1;
+  }
+  return *this;
+}
+
+Grid::GridIterator& Grid::GridIterator::operator-=(int i) {
+  (*this) += -i;
+  return *this;
+}
+
+Grid::GridIterator Grid::GridIterator::operator+(int i) {
+  GridIterator tmp(*this);
+  tmp += i;
+  return tmp;
+}
+
+Grid::GridIterator Grid::GridIterator::operator-(int i) {
+  GridIterator tmp(*this);
+  tmp -= i;
+  return tmp;
 }
 
 bool Grid::GridIterator::operator==(const Grid::GridIterator& rhs) const {
-  return ((row == rhs.row) && (col == rhs.col)) || (row == -1) || (col == -1);
+  return ((row == rhs.row) && (col == rhs.col));
 }
 
 bool Grid::GridIterator::operator!=(const Grid::GridIterator& rhs) const {
-  return !operator==(rhs);
+    return !operator==(rhs);
 }
 
 std::shared_ptr<Node> Grid::GridIterator::operator*() {
@@ -290,26 +336,21 @@ std::shared_ptr<Node> Grid::GridIterator::operator*() {
 }
 
 Grid::GridIterator& Grid::GridIterator::operator++() {
-  if (this->rowsFirst) {
-    ++row;
-    if (row >= parent->rowCount()) {
-      row = 0;
-      ++col;
-      if (col >= parent->columnCount()) {
-        row = -1;
-        col = -1;
-      }
-    }
-  } else {
-    ++col;
-    if (col >= parent->columnCount()) {
-      col = 0;
-      ++row;
-      if (row >= parent->rowCount()) {
-        row = -1;
-        col = -1;
-      }
+  if (row < 0 || col < 0) return *this;
+
+  int& fst = this->rowsFirst ? row : col;
+  int& snd = this->rowsFirst ? col : row;
+  int lenFst = this->rowsFirst ? parent->rowCount() : parent->columnCount();
+  int lenSnd = this->rowsFirst ? parent->columnCount() : parent->rowCount();
+
+  ++fst;
+  if (fst >= lenFst) {
+    fst = 0;
+    ++snd;
+    if (snd >= lenSnd) {
+      fst = snd = -1;
     }
   }
+
   return *this;
 }

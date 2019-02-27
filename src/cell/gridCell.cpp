@@ -35,7 +35,7 @@ bool GridCell::setOutputfileConstants(string filename) {
   bool toReturn = true;
   for (auto& row : grid.rows) {
     int cc = 0;
-    for (auto& column : row) {
+    for (auto column : row) {
       toReturn &= column->cell->setOutputfileConstants(
           CellUtils::strprintf(filename, rc, cc));
       cc++;
@@ -49,7 +49,7 @@ bool GridCell::setOuputfileVariables(string filename) {
   bool toReturn = true;
   for (auto& row : grid.rows) {
     int cc = 0;
-    for (auto& column : row) {
+    for (auto column : row) {
       toReturn &= column->cell->setOuputfileVariables(
           CellUtils::strprintf(filename, rc, cc));
       ++cc;
@@ -61,7 +61,7 @@ bool GridCell::setOuputfileVariables(string filename) {
 set<string> GridCell::vars() {
   set<string> toReturn = Cell::vars();
   for (auto& row : grid.rows) {
-    for (auto& column : row) {
+    for (auto column : row) {
       set<string> ivSet = column->cell->vars();
       toReturn.insert(ivSet.begin(), ivSet.end());
     }
@@ -71,7 +71,7 @@ set<string> GridCell::vars() {
 set<string> GridCell::pars() {
   set<string> toReturn = Cell::pars();
   for (auto& row : grid.rows) {
-    for (auto& column : row) {
+    for (auto column : row) {
       set<string> ivSet = column->cell->pars();
       toReturn.insert(ivSet.begin(), ivSet.end());
     }
@@ -116,7 +116,7 @@ bool GridCell::setVariableSelection(set<string> new_selection) {
   bool toReturn = true;
   varsSelection = new_selection;
   for (auto& it : grid.rows) {
-    for (auto& iv : it) {
+    for (auto iv : it) {
       toReturn &= iv->cell->setVariableSelection(new_selection);
     }
   }
@@ -124,21 +124,21 @@ bool GridCell::setVariableSelection(set<string> new_selection) {
 }
 void GridCell::writeConstants() {
   for (auto& it : grid.rows) {
-    for (auto& iv : it) {
+    for (auto iv : it) {
       iv->cell->writeConstants();
     }
   }
 }
 void GridCell::writeVariables() {
   for (auto& it : grid.rows) {
-    for (auto& iv : it) {
+    for (auto iv : it) {
       iv->cell->writeVariables();
     }
   }
 }
 void GridCell::closeFiles() {
   for (auto& it : grid.rows) {
-    for (auto& iv : it) {
+    for (auto iv : it) {
       iv->cell->closeFiles();
     }
   }
@@ -146,7 +146,7 @@ void GridCell::closeFiles() {
 double GridCell::updateV() {
   double dt = this->dt;
   for (auto& row : grid.rows) {
-    for (auto& node : row) {
+    for (auto node : row) {
       //      node->lock[1] = true;
     }
   }
@@ -213,7 +213,7 @@ void GridCell::updateCurr() {
 }
 void GridCell::externalStim(double stimval) {
   for (auto& row : grid.rows) {
-    for (auto& node : row) {
+    for (auto node : row) {
       node->cell->externalStim(stimval);
     }
   }
@@ -278,7 +278,7 @@ bool GridCell::writeGridfile(QXmlStreamWriter& xml) {
   for (auto& row : grid.rows) {
     xml.writeStartElement("row");
     xml.writeAttribute("pos", QString::number(j));
-    for (auto& node : row) {
+    for (auto node : row) {
       xml.writeStartElement("node");
       xml.writeAttribute("pos", QString::number(i));
       xml.writeTextElement("type", node->cell->type());
@@ -468,7 +468,7 @@ bool GridCell::writeCellState(string file) {
   int rn = 0;
   int cn = 0;
   for (auto& row : grid.rows) {
-    for (auto& node : row) {
+    for (auto node : row) {
       xml.writeStartElement("pos");
       xml.writeAttribute("row", QString::number(rn));
       xml.writeAttribute("col", QString::number(cn));

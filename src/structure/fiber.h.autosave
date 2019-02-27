@@ -25,14 +25,11 @@ class Fiber {
     int pos = 0;
     Fiber* parent = 0;
 
-    FiberIterator(const Fiber* parent);
-
-    friend class Fiber;
+    FiberIterator(Fiber* parent);
+    FiberIterator(const FiberIterator& o)
+        : row(o.row), col(o.col), parent(o.parent) {}
 
    public:
-    FiberIterator(const FiberIterator& o)
-        : pos(o.pos), parent(o.parent) {}
-
     FiberIterator& operator++();
     FiberIterator operator++(int);
     FiberIterator& operator--();

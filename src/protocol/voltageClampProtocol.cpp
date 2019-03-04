@@ -91,7 +91,7 @@ void VoltageClamp::setupTrial() {
   __cell->setConstantSelection(temp);
   temp.clear();
 
-  __cell->t = 0.0;  // reset time
+  __cell->setup();
   this->readInCellState(this->readCellState);
   this->pvars().setIonChanParams();
   runflag = true;  // reset doneflag
@@ -151,8 +151,8 @@ bool VoltageClamp::runTrial() {
       CellUtils::strprintf(getDataDir() + "/" + finaldvarsoutfile, __trial));
   __cell->writeConstants();
   this->__measureMgr->close();
-  __cell->closeFiles();
   this->writeOutCellState(this->writeCellState);
+  __cell->closeFiles();
 
   this->runAfter(*this);
   return true;

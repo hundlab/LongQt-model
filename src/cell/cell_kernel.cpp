@@ -103,6 +103,16 @@ set<string> CellKernel::pars() {
   return toReturn;
 }
 
+void CellKernel::setup() {
+  /*  Vcell = 1000 * 3.14 * cellRadius * cellRadius * cellLength;
+    Vmyo = 0.66 * Vcell;
+    AGeo =
+        2 * 3.14 * cellRadius * cellRadius + 2 * 3.14 * cellRadius * cellLength;
+    ACap = AGeo * Rcg;
+    dt = dtmin;*/
+  t = 0;
+}
+
 // const char* CellKernel::name() const
 //{
 //#if !defined(_WIN32) && !defined(_WIN64)

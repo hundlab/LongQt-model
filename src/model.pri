@@ -42,12 +42,12 @@ SOURCES += $$PWD/measure.cpp\
     $$PWD/measurevoltage.cpp \
     $$PWD/measuredefault.cpp \
     $$PWD/threadpool.cpp \
-    $$PWD/cell/coupledinexcitablecell.cpp
+    $$PWD/cell/coupledinexcitablecell.cpp \
+    $$PWD/protocol/fileoutputgenerator.cpp
 
 HEADERS  += $$PWD/measuremanager.h\
     $$PWD/gridmeasuremanager.h\
     $$PWD/measure.h\
-    $$PWD/tridag.h\
     $$PWD/cell/gpbatrial.h\
     $$PWD/cell/gridCell.h\
     $$PWD/cell/hrd09.h\
@@ -89,4 +89,5 @@ HEADERS  += $$PWD/measuremanager.h\
     $$PWD/measurevoltage.h \
     $$PWD/measuredefault.h \
     $$PWD/threadpool.h \
-    $$PWD/cell/coupledinexcitablecell.h
+    $$PWD/cell/coupledinexcitablecell.h \
+    $$PWD/protocol/fileoutputgenerator.h

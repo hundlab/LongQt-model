@@ -30,39 +30,36 @@ GridCell::GridCell(GridCell& toCopy) : Cell(toCopy), grid(toCopy.grid) {
 GridCell* GridCell::clone() { return new GridCell(*this); }
 GridCell::~GridCell() {}
 Grid* GridCell::getGrid() { return &grid; }
-bool GridCell::setOutputfileConstants(string filename) {
+void GridCell::setOutputfileConstants(string filename) {
   int rc = 0;
-  bool toReturn = true;
   for (auto& row : grid.rows) {
     int cc = 0;
     for (auto column : row) {
-      toReturn &= column->cell->setOutputfileConstants(
+      column->cell->setOutputfileConstants(
           CellUtils::strprintf(filename, rc, cc));
       cc++;
     }
     rc++;
   }
-  return toReturn;
 }
-bool GridCell::setOuputfileVariables(string filename) {
+void GridCell::setOuputfileVariables(string filename) {
   int rc = 0;
-  bool toReturn = true;
   for (auto& row : grid.rows) {
     int cc = 0;
     for (auto column : row) {
-      toReturn &= column->cell->setOuputfileVariables(
+      column->cell->setOuputfileVariables(
           CellUtils::strprintf(filename, rc, cc));
       ++cc;
     }
     ++rc;
   }
-  return toReturn;
 }
+
 set<string> GridCell::vars() {
   set<string> toReturn = Cell::vars();
   for (auto& row : grid.rows) {
-    for (auto column : row) {
-      set<string> ivSet = column->cell->vars();
+    for (auto node : row) {
+      set<string> ivSet = node->cell->vars();
       toReturn.insert(ivSet.begin(), ivSet.end());
     }
   }
@@ -88,6 +85,7 @@ void GridCell::setup() {
   dtmax = std::numeric_limits<double>::infinity();
   for (auto& it : grid.rows) {
     for (auto& iv : it.nodes) {
+      iv->cell->setup();
       if (iv->cell->dtmin < dtmin) {
         dtmin = iv->cell->dtmin;
       }
@@ -102,25 +100,21 @@ void GridCell::setup() {
   dt = dtmin;
 }
 
-bool GridCell::setConstantSelection(set<string> new_selection) {
-  bool toReturn = true;
+void GridCell::setConstantSelection(set<string> new_selection) {
   parsSelection = new_selection;
   for (auto& it : grid.rows) {
     for (auto& iv : it.nodes) {
-      toReturn &= iv->cell->setConstantSelection(new_selection);
+      iv->cell->setConstantSelection(new_selection);
     }
   }
-  return toReturn;
 }
-bool GridCell::setVariableSelection(set<string> new_selection) {
-  bool toReturn = true;
+void GridCell::setVariableSelection(set<string> new_selection) {
   varsSelection = new_selection;
   for (auto& it : grid.rows) {
     for (auto iv : it) {
-      toReturn &= iv->cell->setVariableSelection(new_selection);
+      iv->cell->setVariableSelection(new_selection);
     }
   }
-  return toReturn;
 }
 void GridCell::writeConstants() {
   for (auto& it : grid.rows) {
@@ -133,13 +127,6 @@ void GridCell::writeVariables() {
   for (auto& it : grid.rows) {
     for (auto iv : it) {
       iv->cell->writeVariables();
-    }
-  }
-}
-void GridCell::closeFiles() {
-  for (auto& it : grid.rows) {
-    for (auto iv : it) {
-      iv->cell->closeFiles();
     }
   }
 }
@@ -483,4 +470,11 @@ bool GridCell::writeCellState(string file) {
   xml.writeEndDocument();
   ofile.close();
   return success;
+}
+
+void GridCell::closeFiles()
+{
+    for(auto node : grid) {
+        node->cell->closeFiles();
+    }
 }

@@ -87,7 +87,7 @@ class CellKernel : public std::enable_shared_from_this<CellKernel> {
   virtual std::set<std::string> vars();
   virtual std::set<std::string> pars();
   virtual const char* type() const = 0;
-  //    void reset();
+  virtual void setup();
   // class options eg ISO
   virtual std::map<std::string, int> optionsMap() const;
   virtual int option() const;

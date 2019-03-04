@@ -14,64 +14,58 @@
 using namespace LongQt;
 using namespace std;
 
-bool Cell::setOuputfileVariables(string filename) {
-  return setOutputfile(filename, this->varsSelection, &varsofile);
+void Cell::setOuputfileVariables(string filename) {
+  this->varsofile.setFileName(filename);
 };
 
-bool Cell::setOutputfileConstants(string filename) {
-  return setOutputfile(filename, this->parsSelection, &parsofile);
+void Cell::setOutputfileConstants(string filename) {
+  this->parsofile.setFileName(filename);
 };
 
-void Cell::writeVariables() { write(varsSelection, this->__vars, &varsofile); }
+void Cell::writeVariables() {
+  std::string s = "";
+  for (auto& sel : this->varsSelection) {
+    s += std::to_string(this->var(sel)) + '\t';
+  }
+  s += '\n';
+  this->varsofile.write(s);
+}
 
-void Cell::writeConstants() { write(parsSelection, this->__pars, &parsofile); }
+void Cell::writeConstants() {
+  std::string s = "";
+  for (auto& sel : this->parsSelection) {
+    s += std::to_string(this->par(sel)) + '\t';
+  }
+  s += '\n';
+  this->parsofile.write(s);
+}
 
-bool Cell::setConstantSelection(set<string> selection) {
-  return setSelection(this->__pars, &this->parsSelection, selection,
-                      &parsofile);
+void Cell::setConstantSelection(set<string> selection) {
+  parsSelection.clear();
+  for (auto& sel : selection) {
+    if (this->hasPar(sel)) {
+      parsSelection.insert(sel);
+    } else {
+      Logger::getInstance()->write("Cell: {} is not a var in cell", sel);
+    }
+  }
 };
 
-bool Cell::setVariableSelection(set<string> selection) {
-  return setSelection(this->__vars, &this->varsSelection, selection,
-                      &varsofile);
+void Cell::setVariableSelection(set<string> selection) {
+  varsSelection.clear();
+  for (auto& sel : selection) {
+    if (this->hasVar(sel)) {
+      varsSelection.insert(sel);
+    } else {
+      Logger::getInstance()->write("Cell: {} is not a par in cell", sel);
+    }
+  }
 };
 
 set<string> Cell::getConstantSelection() { return parsSelection; }
 
 set<string> Cell::getVariableSelection() { return varsSelection; }
 
-bool Cell::setSelection(map<string, double*> map, set<string>* old_selection,
-                        set<string> new_selection, ofstream* ofile) {
-  bool toReturn = true;
-  set<string>::iterator set_it;
-
-  *old_selection = set<string>();
-
-  for (set_it = new_selection.begin(); set_it != new_selection.end();
-       set_it++) {
-    if (map.find(*set_it) != map.end()) {
-      old_selection->insert(*set_it);
-    } else {
-      toReturn = false;
-    }
-  }
-  if (!ofile->good()) {
-    return toReturn;
-  }
-  ofile->seekp(0);
-  for (set<string>::iterator it = old_selection->begin();
-       it != old_selection->end(); it++) {
-    *ofile << *it << "\t";
-  }
-  *ofile << endl;
-
-  return toReturn;
-};
-
-void Cell::closeFiles() {
-  IOBase::closeFile(&parsofile);
-  IOBase::closeFile(&varsofile);
-}
 bool Cell::writeCellState(string file) {
   QFile ofile(file.c_str());
   string name;
@@ -167,4 +161,27 @@ bool Cell::readCellState(QXmlStreamReader& xml) {
     xml.readNext();
   }
   return true;
+}
+
+void Cell::closeFiles() {
+  this->parsofile.close();
+  this->varsofile.close();
+}
+
+void Cell::setup() {
+  CellKernel::setup();
+
+  std::string s = "";
+  for (auto& sel : this->parsSelection) {
+    s += sel + '\t';
+  }
+  s += '\n';
+  this->parsofile.write(s);
+
+  s = "";
+  for (auto& sel : this->varsSelection) {
+    s += sel + '\t';
+  }
+  s += '\n';
+  this->varsofile.write(s);
 }

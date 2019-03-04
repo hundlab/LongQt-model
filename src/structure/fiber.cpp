@@ -116,9 +116,9 @@ int Fiber::tstep()
      return 1;
 }*/
 
-Fiber::FiberIterator Fiber::begin() const { return FiberIterator(this); }
+Fiber::FiberIterator Fiber::begin() { return FiberIterator(this); }
 
-Fiber::FiberIterator Fiber::end() const { return FiberIterator(0); }
+Fiber::FiberIterator Fiber::end() { return FiberIterator(0); }
 
 void Fiber::setOrderedSides(CellUtils::Side s) {
   using namespace CellUtils;
@@ -152,8 +152,8 @@ void Fiber::tridag() {
   }
 }
 
-Fiber::FiberIterator::FiberIterator(const Fiber *parent) {
-  if (!parent || parent->size() == 0) {
+Fiber::FiberIterator::FiberIterator(Fiber *parent) : parent(parent) {
+  if (!this->parent || this->parent->size() == 0) {
     pos = -1;
   }
 }

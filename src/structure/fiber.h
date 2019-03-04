@@ -25,7 +25,7 @@ class Fiber {
     int pos = 0;
     Fiber* parent = 0;
 
-    FiberIterator(const Fiber* parent);
+    FiberIterator(Fiber *parent);
 
     friend class Fiber;
 
@@ -53,8 +53,8 @@ class Fiber {
   virtual int size() const;
   virtual void setup();
 
-  virtual FiberIterator begin() const;
-  virtual FiberIterator end() const;
+  virtual FiberIterator begin();
+  virtual FiberIterator end();
 
   std::vector<std::shared_ptr<Node>> nodes;
 

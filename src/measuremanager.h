@@ -1,13 +1,13 @@
 #ifndef MEASUREMANAGER_H
 #define MEASUREMANAGER_H
 
-#include <QFile>
 #include <functional>
 #include <map>
 #include <memory>
 #include <set>
 #include <string>
 #include "cell.h"
+#include "fileoutputgenerator.h"
 #include "measure.h"
 #include "measurevoltage.h"
 namespace LongQt {
@@ -33,7 +33,7 @@ class MeasureManager {
   virtual void removeMeasure(std::string var);
   virtual void setupMeasures(std::string filename);
   virtual void measure(double time);
-  virtual void write(QFile* file = 0);
+  virtual void write();
   virtual void writeLast(std::string filename);
   virtual void close();
   virtual void resetMeasures();
@@ -58,7 +58,7 @@ class MeasureManager {
   std::shared_ptr<Cell> __cell = 0;
   std::string last = "";
   double __percrepol = 50;
-  std::unique_ptr<QFile> ofile;
+  FileOutputHandler ofile;
   std::map<std::string, std::shared_ptr<Measure>> measures;
 };
 }  // namespace LongQt

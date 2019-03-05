@@ -3,7 +3,7 @@
 #include "logger.h"
 using namespace LongQt;
 
-int FileOutputHandler::max_fileHandlers = 500;
+int FileOutputHandler::max_fileHandlers = 500; // round down for safety
 int FileOutputHandler::buffmax = 10000;
 
 std::atomic<FileOutputHandler::Props*> FileOutputHandler::head = 0;
@@ -11,6 +11,11 @@ std::atomic<int> FileOutputHandler::numUsed = 0;
 
 // synchronous
 FileOutputHandler::FileOutputHandler() {}
+
+FileOutputHandler::FileOutputHandler(std::string filename)
+{
+    this->filename = filename;
+}
 // synchronous
 FileOutputHandler::~FileOutputHandler() { this->close(); }
 

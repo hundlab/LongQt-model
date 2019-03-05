@@ -5,13 +5,9 @@
 using namespace LongQt;
 using namespace std;
 
-MeasureManager::MeasureManager(shared_ptr<Cell> cell) : __cell(cell){};
+MeasureManager::MeasureManager(shared_ptr<Cell> cell) : __cell(cell) {}
 
-MeasureManager::~MeasureManager() {
-  if (this->ofile) {
-    ofile->close();
-  }
-}
+MeasureManager::~MeasureManager() {}
 
 MeasureManager::MeasureManager(const MeasureManager& o,
                                std::shared_ptr<Cell> cell)
@@ -60,25 +56,17 @@ void MeasureManager::setupMeasures(string filename) {
     variableSelection.insert({"vOld", {}});
   }
   this->removeBad();
-  this->ofile.reset(new QFile(filename.c_str()));
-  if (!ofile->open(QIODevice::WriteOnly | QIODevice::Text)) {
-    Logger::getInstance()->write<std::runtime_error>(
-        "MeasureManager: File could not be opened for writing.");
-  }
+  this->ofile.setFileName(filename);
+  string nameLine = "";
   for (auto& sel : variableSelection) {
     auto it =
         measures.insert({sel.first, this->getMeasure(sel.first, sel.second)})
             .first;
     string nameStr = it->second->getNameString(sel.first);
-    if (ofile->write(nameStr.c_str()) == -1) {
-      Logger::getInstance()->write<std::runtime_error>(
-          "MeasureManager: File cound not be written to");
-    }
+    nameLine += nameStr;
   }
-  if (ofile->write("\n") == -1) {
-    Logger::getInstance()->write<std::runtime_error>(
-        "MeasureManager: File cound not be written to");
-  }
+  nameLine += "\n";
+  ofile.write(nameLine);
 }
 
 void MeasureManager::measure(double time) {
@@ -96,61 +84,26 @@ void MeasureManager::measure(double time) {
 }
 
 void MeasureManager::writeLast(string filename) {
-  QFile lastFile(filename.c_str());
-  if (!lastFile.open(QIODevice::WriteOnly | QIODevice::Text)) {
-    Logger::getInstance()->write<std::runtime_error>(
-        "MeasureManager: File could not be opened for writing.");
-  }
+  FileOutputHandler lastFile(filename);
   for (auto& meas : this->measures) {
     string nameStr = meas.second->getNameString(meas.first);
-    if (lastFile.write(nameStr.c_str()) == -1) {
-      Logger::getInstance()->write<std::runtime_error>(
-          "MeasureManager: Last file cound not be written to");
-    }
+    lastFile.write(nameStr);
   }
-  if (lastFile.write("\n") == -1) {
-    Logger::getInstance()->write<std::runtime_error>(
-        "MeasureManager: Last file cound not be written to");
-  }
-  if (this->last == "") {
-    this->write(&lastFile);
-  } else {
-    if (lastFile.write(last.c_str()) == -1) {
-      Logger::getInstance()->write<std::runtime_error>(
-          "MeasureManager: Last file cound not be written to");
-    }
-  }
+  lastFile.write("\n");
   lastFile.close();
 }
 
-void MeasureManager::write(QFile* file) {
-  QFile& ofile = file ? *file : *this->ofile;
-  if (!ofile.isOpen()) {
-    Logger::getInstance()->write<std::runtime_error>(
-        "MeasureManager: Measure file must be open to be written");
-    return;
-  }
+void MeasureManager::write() {
   this->last = "";
   for (auto& meas : measures) {
     string valStr = meas.second->getValueString();
     last += valStr;
-    if (ofile.write(valStr.c_str()) == -1) {
-      Logger::getInstance()->write<std::runtime_error>(
-          "MeasureManager: File cound not be written to");
-    }
   }
   last += "\n";
-  if (ofile.write("\n") == -1) {
-    Logger::getInstance()->write<std::runtime_error>(
-        "MeasureManager: File cound not be written to");
-  }
+  ofile.write(last);
 }
 
-void MeasureManager::close() {
-  if (this->ofile->isOpen()) {
-    ofile->close();
-  }
-}
+void MeasureManager::close() { ofile.close(); }
 
 void MeasureManager::resetMeasures() {
   for (auto& meas : this->measures) {

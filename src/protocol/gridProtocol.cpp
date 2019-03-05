@@ -160,17 +160,15 @@ bool GridProtocol::runTrial() {
       CellUtils::strprintf(getDataDir() + "/" + finalpropertyoutfile, __trial));
 
   // Output parameter values for each trial
-  //  __cell->setOutputfileConstants(
-  //      getDataDir() + "/" + CellUtils::strprintf(finaldvarsoutfile,
-  //      __trial));
-  //  __cell->writeConstants();
+  __cell->setOutputfileConstants(
+      getDataDir() + "/" + CellUtils::strprintf(finaldvarsoutfile, __trial));
+  __cell->writeConstants();
   this->__measureMgr->close();
-  //  __cell->closeFiles();
+  __cell->closeFiles();
   this->writeOutCellState(this->writeCellState);
   if (stimSet) {
     this->swapStims();
   }
-  __cell->closeFiles();
   this->runAfter(*this);
   return true;
 }

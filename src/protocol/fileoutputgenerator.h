@@ -22,8 +22,9 @@ class FileOutputHandler {
 
  public:
   FileOutputHandler();
+  FileOutputHandler(std::string filename);
   ~FileOutputHandler();
-  static int max_fileHandlers;  // round down for safety
+  static int max_fileHandlers;
   static int buffmax;
   std::string getFileName() { return this->filename; }
   void setFileName(std::string filename) {

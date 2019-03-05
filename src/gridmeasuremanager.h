@@ -1,7 +1,7 @@
 #ifndef GRIDMEASUREMANAGER_H
 #define GRIDMEASUREMANAGER_H
 
-#include <QFile>
+#include "fileoutputgenerator.h"
 #include "grid.h"
 #include "gridCell.h"
 #include "measure.h"
@@ -28,8 +28,8 @@ class GridMeasureManager : public MeasureManager {
 
   virtual void setupMeasures(std::string filename);
   virtual void measure(double time);
-  virtual void write(QFile* file = 0);
-  virtual void writeSingleCell(std::pair<int, int> node, QFile* file = 0);
+  virtual void write();
+  virtual void writeSingleCell(std::pair<int, int> node, FileOutputHandler& file);
   virtual void writeLast(std::string filename);
   virtual std::string nameString(std::pair<int, int> node) const;
   virtual void close();
@@ -37,7 +37,7 @@ class GridMeasureManager : public MeasureManager {
 
  private:
   std::set<std::pair<int, int>> __dataNodes;
-  std::map<std::pair<int, int>, std::shared_ptr<QFile>> ofiles;
+  std::map<std::pair<int, int>, FileOutputHandler> ofiles;
   std::map<std::pair<int, int>, std::string> lasts;
   std::map<std::pair<int, int>, std::map<std::string, std::shared_ptr<Measure>>>
       measures;

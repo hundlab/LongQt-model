@@ -27,6 +27,7 @@ HRD09Control::~HRD09Control(){};
 
 //##### Initialize variables ##################
 void HRD09Control::Initialize() {
+  using std::numeric_limits<double>::nan;
   dVdt = /*dVdtmax=*/5.434230843e-10;  // check
   Cm = 1.0;  // uF/cm2  must be defined for fiber...default = 1.
   t = 0.0;   // check
@@ -37,6 +38,7 @@ void HRD09Control::Initialize() {
   vOld /*= vNew */ = -87.21621716;  // check
   tRel = 10000.0;
   sponRelflag = 0;
+  sponRelT = nan();
 
   apTime = 0.0;
 
@@ -258,7 +260,7 @@ void HRD09Control::updateItrek() {
   double aa = 1 / (1 + exp(-(vOld - 65) / 52));  // from Kim J Gen Physiol 1992
 
   iTrek = gk * aa * (vOld - EK);  // apex vs. septum???
-                                                           // TJH
+                                  // TJH
   iTrek_k = prk / (prna + prk) * iTrek;
   iTrek_na = prna / (prna + prk) * iTrek;
 }
@@ -581,7 +583,7 @@ void HRD09Control::updateIrel() {
     if (sponRelflag == 0) {
       tRel = 0.0;
       sponRelflag = 1;
-      Logger::getInstance()->write("HRD09: Spontaneous release at t = {}", t);
+      sponRelT = t;
       ryRopen = irelinf = 6.0;
     }
     tRel = tRel + dt;
@@ -882,6 +884,7 @@ void HRD09Control::makemap() {
   __vars["iKt"] = &iKt;    // not initialized
   __vars["iClt"] = &iClt;  // not initialized
   __vars["iTrek"] = &iTrek;
+  __vars["sponRelTime"] = &sponRelT;
 
   __pars["InaFactor"] = &Inafactor;
   __pars["InakFactor"] = &Inakfactor;

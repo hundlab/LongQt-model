@@ -145,6 +145,7 @@ class HRD09Control : public Cell {
   double gRel;
   double ryRopen;
   int sponRelflag;
+  double sponRelT;
   double tRel;
 
   double trpn, cmdn, csqn, caJsr, caNsr, caTotal, caJsrtotal;

@@ -52,17 +52,29 @@ map<string, double> Measure::variablesMap() {
 }
 
 string Measure::getNameString(string name) const {
+  bool first = true;
   string nameStr = "";
   for (auto& sel : this->__selection) {
-    nameStr += name + "/" + sel + "\t";
+    if (!first) {
+      nameStr += "\t";
+    } else {
+      first = false;
+    }
+    nameStr += name + "/" + sel;
   }
   return nameStr;
 }
 string Measure::getValueString() {
+  bool first = true;
   this->beforeOutput();
   std::ostringstream valStr;
   for (auto& sel : this->__selection) {
-    valStr << std::scientific << *this->varmap.at(sel) << "\t";
+    if (!first) {
+      valStr << "\t";
+    } else {
+      first = false;
+    }
+    valStr << std::scientific << *this->varmap.at(sel);
   }
   return valStr.str();
 }

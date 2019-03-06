@@ -26,7 +26,7 @@ struct Node : public std::enable_shared_from_this<Node> {
   double getCondConst(CellUtils::Side s);
   //  double setFiberB();
   //## default value cannot be deterimined by constructor
-  std::array<std::atomic<bool>, 2> lock;
+  std::array<std::atomic<bool>, 2> lock{0,0};
   void waitUnlock(int which);
   double dIax = 0;
   // can't change atm

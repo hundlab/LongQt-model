@@ -37,10 +37,9 @@ class FileOutputHandler {
     buffer.push_back(s);
     prop.buffsize.store(buffer.size());
 
-    if (buffer.size() > buffmax) {
-      if (!this->openStream()) return;
-      this->writeAll();
-    }
+    bool largeEnough = buffer.size() > buffmax;
+    if (!this->openStream(!largeEnough)) return;
+    this->writeAll();
   }
 
   void clear();
@@ -52,7 +51,7 @@ class FileOutputHandler {
   std::string filename;
   std::list<std::string> buffer;
 
-  bool openStream();
+  bool openStream(bool fastFail = false);
   void writeAll();
   void closeStream(Props*);  // set open = false
 

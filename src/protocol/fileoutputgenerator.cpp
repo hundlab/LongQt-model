@@ -3,7 +3,7 @@
 #include "logger.h"
 using namespace LongQt;
 
-int FileOutputHandler::max_fileHandlers = 500; // round down for safety
+int FileOutputHandler::max_fileHandlers = 500;  // round down for safety
 int FileOutputHandler::buffmax = 10000;
 
 std::atomic<FileOutputHandler::Props*> FileOutputHandler::head = 0;
@@ -12,9 +12,8 @@ std::atomic<int> FileOutputHandler::numUsed = 0;
 // synchronous
 FileOutputHandler::FileOutputHandler() {}
 
-FileOutputHandler::FileOutputHandler(std::string filename)
-{
-    this->filename = filename;
+FileOutputHandler::FileOutputHandler(std::string filename) {
+  this->filename = filename;
 }
 // synchronous
 FileOutputHandler::~FileOutputHandler() { this->close(); }
@@ -25,36 +24,42 @@ void FileOutputHandler::clear() {
 }
 
 void FileOutputHandler::close() {
-  while (!prop.writing.test_and_set())
-    ;
   if (this->buffer.size() > 0) {
     while (!this->openStream()) {
     }
     this->writeAll();
   }
+  while (prop.writing.test_and_set())
+    ;
   if (prop.open) {
     this->remove(&prop);
+    --numUsed;
   }
   this->closeStream(&prop);
   prop.writing.clear();
 }
 
 // only open a stream if buffer > buffmax
-bool FileOutputHandler::openStream() {
-  while (!prop.writing.test_and_set())
+bool FileOutputHandler::openStream(bool fastFail) {
+  while (prop.writing.test_and_set())
     ;
   if (prop.open) {
+    return prop.open;
+  } else if (fastFail) {
+    // fail fast
+    prop.writing.clear();
     return prop.open;
   }
 
   int used = ++numUsed;
   if (used >= max_fileHandlers) {
     --numUsed;
+
     auto toKill = this->find_min();
     // begin marauding
     int count = 0;
     while (count < max_fileHandlers &&
-           (toKill || !toKill->writing.test_and_set())) {
+           (!toKill || toKill->writing.test_and_set())) {
       toKill = toKill && toKill->next ? toKill->next : this->head;
       ++count;
     }
@@ -80,7 +85,7 @@ bool FileOutputHandler::openStream() {
     return prop.open;
   }
   this->push_front(&prop);
-  return prop.open;
+  return prop.open; 
 }
 
 void FileOutputHandler::writeAll() {
@@ -128,7 +133,7 @@ void FileOutputHandler::remove(FileOutputHandler::Props* p) {
       p->open = false;
       return;
     }
-    while (!curr->writing.test_and_set())
+    while (curr->writing.test_and_set())
       ;
     if (!curr->open) continue;
     curr->next.store(p->next.load());

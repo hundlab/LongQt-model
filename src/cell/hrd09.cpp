@@ -27,7 +27,7 @@ HRD09Control::~HRD09Control(){};
 
 //##### Initialize variables ##################
 void HRD09Control::Initialize() {
-  using std::numeric_limits<double>::nan;
+//  using nan = std::numeric_limits<double>::quiet_NaN;
   dVdt = /*dVdtmax=*/5.434230843e-10;  // check
   Cm = 1.0;  // uF/cm2  must be defined for fiber...default = 1.
   t = 0.0;   // check
@@ -38,7 +38,7 @@ void HRD09Control::Initialize() {
   vOld /*= vNew */ = -87.21621716;  // check
   tRel = 10000.0;
   sponRelflag = 0;
-  sponRelT = nan();
+  sponRelT = std::numeric_limits<double>::quiet_NaN();
 
   apTime = 0.0;
 

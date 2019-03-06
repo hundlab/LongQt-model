@@ -23,21 +23,33 @@ void Cell::setOutputfileConstants(string filename) {
 };
 
 void Cell::writeVariables() {
-  std::string s = "";
+  bool first = true;
+  std::stringstream s;
   for (auto& sel : this->varsSelection) {
-    s += std::to_string(this->var(sel)) + '\t';
+    if (!first) {
+      s << "\t";
+    } else {
+      first = false;
+    }
+    s << std::scientific << this->var(sel);
   }
-  s += '\n';
-  this->varsofile.write(s);
+  s << '\n';
+  this->varsofile.write(s.str());
 }
 
 void Cell::writeConstants() {
-  std::string s = "";
+  bool first = true;
+  std::stringstream s;
   for (auto& sel : this->parsSelection) {
-    s += std::to_string(this->par(sel)) + '\t';
+    if (!first) {
+      s << "\t";
+    } else {
+      first = false;
+    }
+    s << std::scientific << this->par(sel);
   }
-  s += '\n';
-  this->parsofile.write(s);
+  s << '\n';
+  this->parsofile.write(s.str());
 }
 
 void Cell::setConstantSelection(set<string> selection) {

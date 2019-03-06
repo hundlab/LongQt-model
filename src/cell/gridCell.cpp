@@ -474,7 +474,6 @@ bool GridCell::writeCellState(string file) {
 
 void GridCell::closeFiles()
 {
-    for(auto node : grid) {
-        node->cell->closeFiles();
-    }
+    pool.pushAll([] (auto node) {node->cell->closeFiles();},grid.begin(),grid.end());
+    pool.wait();
 }

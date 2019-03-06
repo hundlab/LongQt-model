@@ -96,8 +96,7 @@ void MeasureManager::writeLast(string filename) {
 void MeasureManager::write() {
   this->last = "";
   for (auto& meas : measures) {
-    string valStr = meas.second->getValueString();
-    last += valStr;
+    last += meas.second->getValueString();
   }
   last += "\n";
   ofile.write(last);

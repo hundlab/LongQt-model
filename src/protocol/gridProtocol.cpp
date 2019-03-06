@@ -63,7 +63,7 @@ int GridProtocol::stim() {
       }
       cell->externalStim(stimval);
     } else if (stimflag == 1) {  // trailing edge of stimulus
-      n->waitUnlock(0);
+      //n->waitUnlock(0);
       stimt = stimt + bcl;
       stimflag = 0;
       cell->apTime = 0.0;

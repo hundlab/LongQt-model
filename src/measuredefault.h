@@ -22,6 +22,8 @@ class MeasureDefault : public Measure {
                                      // when ready for output.
   virtual void reset();  // resets params to init vals
 
+  virtual const char *type() const;
+
  protected:
   virtual void beforeOutput();
 

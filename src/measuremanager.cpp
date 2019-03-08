@@ -11,14 +11,9 @@ MeasureManager::~MeasureManager() {}
 
 MeasureManager::MeasureManager(const MeasureManager& o,
                                std::shared_ptr<Cell> cell)
-    : __cell(cell) {
-  this->copy(o);
-}
-
-void MeasureManager::copy(const MeasureManager& o) {
-  variableSelection = o.variableSelection;
-  __percrepol = o.__percrepol;
-  last = o.last;
+    : __cell(cell), measMaker(o.measMaker) {
+    variableSelection = o.variableSelection;
+    last = o.last;
 }
 
 map<string, set<string>> MeasureManager::selection() {
@@ -27,21 +22,6 @@ map<string, set<string>> MeasureManager::selection() {
 
 void MeasureManager::selection(map<string, set<string>> sel) {
   this->variableSelection = sel;
-}
-
-double MeasureManager::percrepol() { return this->__percrepol; }
-
-void MeasureManager::percrepol(double percrepol) {
-  if (0 <= percrepol && percrepol <= 100) this->__percrepol = percrepol;
-}
-
-shared_ptr<Measure> MeasureManager::getMeasure(string varname,
-                                               set<string> selection) {
-  if (varsMeas.count(varname) > 0) {
-    string measName = varsMeas.at(varname);
-    return shared_ptr<Measure>(varMeasCreator.at(measName)(selection));
-  }
-  return make_shared<MeasureDefault>(selection);
 }
 
 void MeasureManager::addMeasure(string var, set<string> selection) {
@@ -58,11 +38,12 @@ void MeasureManager::setupMeasures(string filename) {
   this->removeBad();
   this->ofile.setFileName(filename);
   string nameLine = "";
-  for (auto& sel : variableSelection) {
+  for (auto& item1 : variableSelection) {
+    auto& name = item1.first;
+    auto& sel = item1.second;
     auto it =
-        measures.insert({sel.first, this->getMeasure(sel.first, sel.second)})
-            .first;
-    string nameStr = it->second->getNameString(sel.first);
+        measures.insert({name, this->measMaker.buildMeasure(name, sel)}).first;
+    string nameStr = it->second->getNameString(name);
     nameLine += nameStr;
   }
   nameLine += "\n";
@@ -121,7 +102,7 @@ bool MeasureManager::readMvarsFile(QXmlStreamReader& xml) {
   if (!CellUtils::readNext(xml, "mvars")) return false;
   if (xml.readNextStartElement() && xml.name() == "percrepol") {
     xml.readNext();
-    __percrepol = xml.text().toDouble();
+    measMaker.percrepol(xml.text().toDouble());
     xml.skipCurrentElement();
   } else {
     return true;
@@ -145,7 +126,7 @@ bool MeasureManager::readMvarsFile(QXmlStreamReader& xml) {
 
 bool MeasureManager::writeMVarsFile(QXmlStreamWriter& xml) {
   xml.writeStartElement("mvars");
-  xml.writeTextElement("percrepol", QString::number(__percrepol));
+  xml.writeTextElement("percrepol", QString::number(measMaker.percrepol()));
   for (auto& sel : this->variableSelection) {
     xml.writeStartElement("mvar");
     xml.writeAttribute("name", sel.first.c_str());

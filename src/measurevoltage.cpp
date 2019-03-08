@@ -147,6 +147,8 @@ void MeasureVoltage::percrepol(double val) { this->__percrepol = val; }
 
 double MeasureVoltage::percrepol() const { return this->__percrepol; }
 
+const char *MeasureVoltage::type() const { return "Measure Voltage"; }
+
 void MeasureVoltage::beforeOutput() {
   //    sd = std::sqrt(avg_2-avg*avg);
 }

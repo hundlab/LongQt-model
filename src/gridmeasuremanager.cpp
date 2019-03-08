@@ -63,7 +63,7 @@ void GridMeasureManager::setupMeasures(string filenameTemplate) {
       auto gridNode = (*this->grid)(node);
       if (gridNode && gridNode->cell->hasVar(sel.first)) {
         pos->second.insert(
-            {sel.first, this->getMeasure(sel.first, sel.second)});
+            {sel.first, this->measMaker.buildMeasure(sel.first, sel.second)});
       }
     }
     std::string filename =

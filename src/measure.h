@@ -44,6 +44,8 @@ class Measure {
   virtual std::string getNameString(std::string name) const;
   virtual std::string getValueString();
 
+  virtual const char* type() const = 0;
+
  protected:
   virtual void beforeOutput();
 

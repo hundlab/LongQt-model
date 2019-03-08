@@ -9,6 +9,7 @@
 #include "cell.h"
 #include "fileoutputgenerator.h"
 #include "measure.h"
+#include "measurefactory.h"
 #include "measurevoltage.h"
 namespace LongQt {
 
@@ -21,12 +22,11 @@ class MeasureManager {
   virtual bool writeMVarsFile(QXmlStreamWriter& xml);
   virtual bool readMvarsFile(QXmlStreamReader& xml);
 
+  double percrepol() { return measMaker.percrepol(); }
+  void percrepol(double percrepol) { measMaker.percrepol(percrepol); }
+
   std::map<std::string, std::set<std::string>> selection();
   void selection(std::map<std::string, std::set<std::string>> sel);
-  double percrepol();
-  void percrepol(double percrepol);
-  std::shared_ptr<Measure> getMeasure(std::string varname,
-                                      std::set<std::string> selection);
 
   virtual void addMeasure(std::string var,
                           std::set<std::string> selection = {});
@@ -38,26 +38,16 @@ class MeasureManager {
   virtual void close();
   virtual void resetMeasures();
 
-  const std::map<std::string, std::string> varsMeas = {
-      {"vOld", "MeasureVoltage"},
-  };
-  const std::map<std::string,
-                 std::function<Measure*(std::set<std::string> selection)>>
-      varMeasCreator = {
-          {"MeasureVoltage", [this](std::set<std::string> selection) {
-             return (Measure*)new MeasureVoltage(selection, this->__percrepol);
-           }}};
+  MeasureFactory measMaker;
 
  protected:
   std::map<std::string, std::set<std::string>> variableSelection;
 
  private:
   void removeBad();
-  void copy(const MeasureManager& other);
 
   std::shared_ptr<Cell> __cell = 0;
   std::string last = "";
-  double __percrepol = 50;
   FileOutputHandler ofile;
   std::map<std::string, std::shared_ptr<Measure>> measures;
 };

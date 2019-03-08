@@ -142,14 +142,6 @@ bool VoltageClamp::runTrial() {
     pCount++;
   }
 
-  // Output final (ss) property values for each trial
-  this->__measureMgr->writeLast(
-      CellUtils::strprintf(getDataDir() + "/" + finalpropertyoutfile, __trial));
-
-  // Output parameter values for each trial
-  __cell->setOutputfileConstants(
-      CellUtils::strprintf(getDataDir() + "/" + finaldvarsoutfile, __trial));
-  __cell->writeConstants();
   this->__measureMgr->close();
   this->writeOutCellState(this->writeCellState);
   __cell->closeFiles();

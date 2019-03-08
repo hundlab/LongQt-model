@@ -34,7 +34,6 @@ class MeasureManager {
   virtual void setupMeasures(std::string filename);
   virtual void measure(double time);
   virtual void write();
-  virtual void writeLast(std::string filename);
   virtual void close();
   virtual void resetMeasures();
 
@@ -47,7 +46,6 @@ class MeasureManager {
   void removeBad();
 
   std::shared_ptr<Cell> __cell = 0;
-  std::string last = "";
   FileOutputHandler ofile;
   std::map<std::string, std::shared_ptr<Measure>> measures;
 };

@@ -22,9 +22,7 @@ GridProtocol::GridProtocol() : CurrentClamp() {
   bcl2 = bcl;
   stimt2 = stimt;
   propertyoutfile = "cell_{{}}_{{}}_" + this->propertyoutfile;
-  finalpropertyoutfile = "cell_{{}}_{{}}_" + this->finalpropertyoutfile;
   dvarsoutfile = "cell_{{}}_{{}}_" + this->dvarsoutfile;
-  finaldvarsoutfile = "cell_{{}}_{{}}_" + this->finaldvarsoutfile;
 
   CellUtils::set_default_vals(*this);
 }
@@ -155,14 +153,6 @@ bool GridProtocol::runTrial() {
     pCount++;
   }
 
-  // Output final (ss) property values for each trial
-  this->__measureMgr->writeLast(
-      CellUtils::strprintf(getDataDir() + "/" + finalpropertyoutfile, __trial));
-
-  // Output parameter values for each trial
-  __cell->setOutputfileConstants(
-      getDataDir() + "/" + CellUtils::strprintf(finaldvarsoutfile, __trial));
-  __cell->writeConstants();
   this->__measureMgr->close();
   __cell->closeFiles();
   this->writeOutCellState(this->writeCellState);

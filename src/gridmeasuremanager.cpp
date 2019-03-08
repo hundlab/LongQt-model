@@ -102,42 +102,23 @@ void GridMeasureManager::measure(double time) {
 void GridMeasureManager::write() {
   for (auto& pos : measures) {
     FileOutputHandler& ofile = ofiles[pos.first];
-    this->lasts[pos.first] = "";
     for (auto& meas : pos.second) {
       string valStr = meas.second->getValueString();
-      this->lasts[pos.first] += valStr;
       ofile.write(valStr);
     }
-    lasts[pos.first] += "\n";
     ofile.write("\n");
   }
 }
 
 void GridMeasureManager::writeSingleCell(pair<int, int> node,
                                          FileOutputHandler& file) {
-  auto& last = this->lasts[node];
-  last = "";
+  std::string text = "";
   for (auto& meas : measures[node]) {
     string valStr = meas.second->getValueString();
-    last += valStr;
-    file.write(valStr);
+    text += valStr;
   }
-  last += "\n";
-  file.write("\n");
-}
-
-void GridMeasureManager::writeLast(string filename) {
-  for (auto& pos : this->measures) {
-    FileOutputHandler lastFile(
-        CellUtils::strprintf(filename, pos.first.first, pos.first.second));
-    lastFile.write((this->nameString(pos.first) + "\n"));
-    if (this->lasts[pos.first] == "") {
-      this->writeSingleCell(pos.first, lastFile);
-    } else {
-      lastFile.write(lasts[pos.first]);
-    }
-    lastFile.close();
-  }
+  text += "\n";
+  file.write(text);
 }
 
 void GridMeasureManager::resetMeasures(pair<int, int> node) {

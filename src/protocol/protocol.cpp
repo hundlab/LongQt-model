@@ -53,8 +53,6 @@ Protocol::Protocol() {
 
   propertyoutfile = "dt{}.tsv";
   dvarsoutfile = "dt{}_dvars.tsv";
-  finalpropertyoutfile = "dss{}.tsv";
-  finaldvarsoutfile = "dss{}_pvars.tsv";
   cellStateFile = "cellstate.xml";  //"dss%d_state.dat";
 
   measflag = true;         // 1 to track SV props during sim
@@ -123,9 +121,6 @@ void Protocol::copy(const Protocol& c) {
 
   propertyoutfile = c.propertyoutfile;
   dvarsoutfile = c.dvarsoutfile;
-  finalpropertyoutfile = c.finalpropertyoutfile;
-  finaldvarsoutfile = c.finaldvarsoutfile;
-  cellStateFile = c.cellStateFile;
 
   measflag = c.measflag;  // 1 to track SV props during sim
   measfile = c.measfile;  // File containing property names to track

@@ -13,13 +13,13 @@
 #include <QDir>
 #include <QXmlStreamReader>
 #include <QXmlStreamWriter>
+#include <atomic>
 #include <exception>
 #include <functional>
 #include <list>
 #include <memory>
 #include <sstream>
 #include <string>
-#include <atomic>
 
 #include "cellutils.h"
 #include "measuremanager.h"
@@ -84,8 +84,7 @@ class Protocol : public std::enable_shared_from_this<Protocol> {
   double tMax;
 
   std::string readfile, savefile, dvarfile, pvarfile, measfile, simvarfile,
-      propertyoutfile, dvarsoutfile, finalpropertyoutfile, finaldvarsoutfile,
-      cellStateFile;
+      propertyoutfile, dvarsoutfile, cellStateFile;
 
   QDir basedir;
   QDir datadir;

@@ -13,7 +13,6 @@ MeasureManager::MeasureManager(const MeasureManager& o,
                                std::shared_ptr<Cell> cell)
     : __cell(cell), measMaker(o.measMaker) {
     variableSelection = o.variableSelection;
-    last = o.last;
 }
 
 map<string, set<string>> MeasureManager::selection() {
@@ -64,23 +63,13 @@ void MeasureManager::measure(double time) {
   }
 }
 
-void MeasureManager::writeLast(string filename) {
-  FileOutputHandler lastFile(filename);
-  for (auto& meas : this->measures) {
-    string nameStr = meas.second->getNameString(meas.first);
-    lastFile.write(nameStr);
-  }
-  lastFile.write("\n");
-  lastFile.close();
-}
-
 void MeasureManager::write() {
-  this->last = "";
+  std::string text = "";
   for (auto& meas : measures) {
-    last += meas.second->getValueString();
+    text += meas.second->getValueString();
   }
-  last += "\n";
-  ofile.write(last);
+  text += "\n";
+  ofile.write(text);
 }
 
 void MeasureManager::close() { ofile.close(); }

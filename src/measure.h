@@ -16,6 +16,7 @@
 #include <map>
 #include <set>
 #include <string>
+#include <vector>
 
 #define INF std::numeric_limits<double>::infinity()
 #define Q_NAN std::numeric_limits<double>::quiet_NaN()
@@ -32,7 +33,7 @@ class Measure {
   virtual bool measure(double time,
                        double var) = 0;  // measures props related to var;
                                          // returns 1 when ready for output.
-  virtual void reset() = 0;  // resets params to init vals
+  virtual void reset() = 0;              // resets params to init vals
 
   virtual std::set<std::string> variables();
   virtual std::map<std::string, double> variablesMap();
@@ -43,6 +44,7 @@ class Measure {
 
   virtual std::string getNameString(std::string name) const;
   virtual std::string getValueString();
+  virtual std::vector<double> getValues();
 
   virtual const char* type() const = 0;
 

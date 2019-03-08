@@ -153,6 +153,7 @@ bool GridProtocol::runTrial() {
     pCount++;
   }
 
+  this->__measureMgr->write();
   this->__measureMgr->close();
   __cell->closeFiles();
   this->writeOutCellState(this->writeCellState);

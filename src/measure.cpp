@@ -79,6 +79,16 @@ string Measure::getValueString() {
   return valStr.str();
 }
 
+std::vector<double> Measure::getValues() {
+  this->beforeOutput();
+  std::vector<double> dat(this->selection().size());
+  int i = 0;
+  for (auto& sel : this->__selection) {
+    dat[i] = *this->varmap.at(sel);
+  }
+  return dat;
+}
+
 set<string> Measure::selection() { return this->__selection; }
 void Measure::selection(set<string> new_selection) {
   this->__selection.clear();

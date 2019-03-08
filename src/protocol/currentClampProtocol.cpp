@@ -163,6 +163,7 @@ bool CurrentClamp::runTrial() {
     pCount++;
   }
 
+  this->__measureMgr->write();
   this->__measureMgr->close();
   this->writeOutCellState(this->writeCellState);
   __cell->closeFiles();

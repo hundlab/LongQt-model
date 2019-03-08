@@ -52,26 +52,37 @@ bool GridMeasureManager::readMvarsFile(QXmlStreamReader& xml) {
   return true;
 }
 
-void GridMeasureManager::setupMeasures(string filenameTemplate) {
+void GridMeasureManager::setupMeasures(string filename) {
   this->measures.clear();
   if (variableSelection.count("vOld") == 0) {
     variableSelection.insert({"vOld", {}});
   }
+  std::string nameLine;
+  bool first = true;
   for (auto& node : this->__dataNodes) {
+    int nodeSelectedCount = 0;
     auto pos = measures.insert({node, {}}).first;
-    for (auto& sel : variableSelection) {
+    for (auto& items1 : variableSelection) {
+      auto& varName = items1.first;
+      auto& sel = items1.second;
       auto gridNode = (*this->grid)(node);
-      if (gridNode && gridNode->cell->hasVar(sel.first)) {
+      if (gridNode && gridNode->cell->hasVar(varName)) {
         pos->second.insert(
-            {sel.first, this->measMaker.buildMeasure(sel.first, sel.second)});
+            {varName, this->measMaker.buildMeasure(varName, sel)});
+        nodeSelectedCount += sel.size();
       }
+      this->numSelected.insert({node, nodeSelectedCount});
     }
-    std::string filename =
-        CellUtils::strprintf(filenameTemplate, node.first, node.second);
-    this->ofiles.emplace(node, filename);
-    auto& ofile = this->ofiles[node];
-    ofile.write(this->nameString(node) + "\n");
+    this->ofile.setFileName(filename);
+    if (first) {
+      first = false;
+    } else {
+      nameLine += '\t';
+    }
+    nameLine += this->nameString(node);
   }
+  nameLine += '\n';
+  ofile.write(nameLine);
 }
 
 std::string GridMeasureManager::nameString(pair<int, int> node) const {
@@ -94,31 +105,39 @@ void GridMeasureManager::measure(double time) {
       }
     }
     if (writeCell) {
-      this->writeSingleCell(pos.first, this->ofiles[pos.first]);
+      this->saveSingleCell(pos.first);
       this->resetMeasures(pos.first);
     }
   }
 }
 void GridMeasureManager::write() {
-  for (auto& pos : measures) {
-    FileOutputHandler& ofile = ofiles[pos.first];
-    for (auto& meas : pos.second) {
-      string valStr = meas.second->getValueString();
-      ofile.write(valStr);
+  std::stringstream ss;
+  ss << std::scientific;
+  bool first = true;
+  for (auto node : this->__dataNodes) {
+    for (auto& row : this->data[node]) {
+      for (double val : row) {
+        if (first) {
+          first = false;
+        } else {
+          ss << '\t';
+        }
+        ss << val;
+      }
     }
-    ofile.write("\n");
   }
+  ss << '\n';
+  ofile.write(ss.str());
 }
 
-void GridMeasureManager::writeSingleCell(pair<int, int> node,
-                                         FileOutputHandler& file) {
-  std::string text = "";
+void GridMeasureManager::saveSingleCell(pair<int, int> node) {
+  std::vector<double> dat(this->numSelected[node]);
+  auto pos = dat.begin();
   for (auto& meas : measures[node]) {
-    string valStr = meas.second->getValueString();
-    text += valStr;
+    auto vals = meas.second->getValues();
+    pos = std::copy(vals.begin(), vals.end(), pos);
   }
-  text += "\n";
-  file.write(text);
+  this->data[node].push_back(dat);
 }
 
 void GridMeasureManager::resetMeasures(pair<int, int> node) {
@@ -127,8 +146,4 @@ void GridMeasureManager::resetMeasures(pair<int, int> node) {
   }
 }
 
-void GridMeasureManager::close() {
-  for (auto& ofile : this->ofiles) {
-    ofile.second.close();
-  }
-}
+void GridMeasureManager::close() { ofile.close(); }

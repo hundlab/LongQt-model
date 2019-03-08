@@ -29,16 +29,19 @@ class GridMeasureManager : public MeasureManager {
   virtual void setupMeasures(std::string filename);
   virtual void measure(double time);
   virtual void write();
-  virtual void writeSingleCell(std::pair<int, int> node, FileOutputHandler& file);
   virtual std::string nameString(std::pair<int, int> node) const;
   virtual void close();
   virtual void resetMeasures(std::pair<int, int> node);
 
  private:
+  void saveSingleCell(std::pair<int, int> node);
+
   std::set<std::pair<int, int>> __dataNodes;
-  std::map<std::pair<int, int>, FileOutputHandler> ofiles;
+  FileOutputHandler ofile;
   std::map<std::pair<int, int>, std::map<std::string, std::shared_ptr<Measure>>>
       measures;
+  std::map<std::pair<int,int>, std::vector<std::vector<double>>> data;
+  std::map<std::pair<int,int>, int> numSelected;
   Grid* grid = 0;
 };
 }  // namespace LongQt

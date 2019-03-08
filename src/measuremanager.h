@@ -35,19 +35,23 @@ class MeasureManager {
   virtual void measure(double time);
   virtual void write();
   virtual void close();
-  virtual void resetMeasures();
 
   MeasureFactory measMaker;
 
  protected:
   std::map<std::string, std::set<std::string>> variableSelection;
+  virtual void resetMeasures();
 
  private:
+  void save();
   void removeBad();
 
   std::shared_ptr<Cell> __cell = 0;
   FileOutputHandler ofile;
   std::map<std::string, std::shared_ptr<Measure>> measures;
+
+  int numSelected = 0;
+  std::vector<std::vector<double>> data;
 };
 }  // namespace LongQt
 

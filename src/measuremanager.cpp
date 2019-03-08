@@ -2,6 +2,10 @@
 #include "cellutils.h"
 #include "logger.h"
 #include "measuredefault.h"
+
+#include <algorithm>
+#include <numeric>
+
 using namespace LongQt;
 using namespace std;
 
@@ -12,7 +16,7 @@ MeasureManager::~MeasureManager() {}
 MeasureManager::MeasureManager(const MeasureManager& o,
                                std::shared_ptr<Cell> cell)
     : __cell(cell), measMaker(o.measMaker) {
-    variableSelection = o.variableSelection;
+  variableSelection = o.variableSelection;
 }
 
 map<string, set<string>> MeasureManager::selection() {
@@ -37,15 +41,21 @@ void MeasureManager::setupMeasures(string filename) {
   this->removeBad();
   this->ofile.setFileName(filename);
   string nameLine = "";
+  bool first = true;
   for (auto& item1 : variableSelection) {
     auto& name = item1.first;
     auto& sel = item1.second;
     auto it =
         measures.insert({name, this->measMaker.buildMeasure(name, sel)}).first;
-    string nameStr = it->second->getNameString(name);
-    nameLine += nameStr;
+    this->numSelected += sel.size();
+    if (first) {
+      first = false;
+    } else {
+      nameLine += '\t';
+    }
+    nameLine += it->second->getNameString(name);
   }
-  nameLine += "\n";
+  nameLine += '\n';
   ofile.write(nameLine);
 }
 
@@ -58,18 +68,27 @@ void MeasureManager::measure(double time) {
     }
   }
   if (write) {
-    this->write();
+    this->save();
     this->resetMeasures();
   }
 }
 
 void MeasureManager::write() {
-  std::string text = "";
-  for (auto& meas : measures) {
-    text += meas.second->getValueString();
+  std::stringstream ss;
+  ss << std::scientific;
+  bool first = true;
+  for (auto& row : this->data) {
+    for (double val : row) {
+      if (first) {
+        first = false;
+      } else {
+        ss << '\t';
+      }
+      ss << val;
+    }
   }
-  text += "\n";
-  ofile.write(text);
+  ss << '\n';
+  ofile.write(ss.str());
 }
 
 void MeasureManager::close() { ofile.close(); }
@@ -78,6 +97,16 @@ void MeasureManager::resetMeasures() {
   for (auto& meas : this->measures) {
     meas.second->reset();
   }
+}
+
+void MeasureManager::save() {
+  std::vector<double> dat(this->numSelected);
+  auto pos = dat.begin();
+  for (auto& meas : measures) {
+    auto vals = meas.second->getValues();
+    pos = std::copy(vals.begin(), vals.end(), pos);
+  }
+  this->data.push_back(dat);
 }
 
 //#############################################################

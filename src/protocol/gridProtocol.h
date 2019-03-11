@@ -42,12 +42,7 @@ class GridProtocol : public CurrentClamp {
 
   virtual MeasureManager& measureMgr() override;
 
-  void setStim2(bool enable);
-  bool getStim2();
-
   std::set<std::pair<int, int>> stimNodes;
-  std::set<std::pair<int, int>> stimNodes2;
-  double stimval2, stimdur2, bcl2, stimt2;
 
   const static char* name;
   const char* type() const override;
@@ -58,13 +53,10 @@ class GridProtocol : public CurrentClamp {
  private:
   void CCcopy(const GridProtocol& toCopy);
   void mkmap();
-  bool stim2 = false;
   std::string setToString(std::set<std::pair<int, int>>& nodes);
   std::set<std::pair<int, int>> stringToSet(std::string nodesList);
   Grid* grid;
-  void swapStims();
   std::set<std::shared_ptr<Node>> __stimN;
-  std::set<std::shared_ptr<Node>> __stimN2;
   std::shared_ptr<GridCell> __cell =
       std::make_shared<GridCell>();  // pointer to cell class
   std::unique_ptr<PvarsGrid> __pvars;

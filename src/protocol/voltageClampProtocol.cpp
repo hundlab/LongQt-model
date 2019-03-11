@@ -96,8 +96,7 @@ void VoltageClamp::setupTrial() {
   this->pvars().setIonChanParams();
   runflag = true;  // reset doneflag
 
-  this->__measureMgr->setupMeasures(
-      CellUtils::strprintf(getDataDir() + "/" + propertyoutfile, __trial));
+  this->__measureMgr->setupMeasures();
   __cell->setOuputfileVariables(
       CellUtils::strprintf(getDataDir() + "/" + dvarsoutfile, __trial));
 }
@@ -142,8 +141,8 @@ bool VoltageClamp::runTrial() {
     pCount++;
   }
 
-  this->__measureMgr->write();
-  this->__measureMgr->close();
+  this->__measureMgr->write(
+      CellUtils::strprintf(getDataDir() + "/" + propertyoutfile, __trial));
   this->writeOutCellState(this->writeCellState);
   __cell->closeFiles();
 

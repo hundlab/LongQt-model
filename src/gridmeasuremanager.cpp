@@ -52,12 +52,12 @@ bool GridMeasureManager::readMvarsFile(QXmlStreamReader& xml) {
   return true;
 }
 
-void GridMeasureManager::setupMeasures(string filename) {
+void GridMeasureManager::setupMeasures() {
   this->measures.clear();
   if (variableSelection.count("vOld") == 0) {
     variableSelection.insert({"vOld", {}});
   }
-  std::string nameLine;
+  std::string header;
   bool first = true;
   for (auto& node : this->__dataNodes) {
     int nodeSelectedCount = 0;
@@ -73,16 +73,14 @@ void GridMeasureManager::setupMeasures(string filename) {
       }
       this->numSelected.insert({node, nodeSelectedCount});
     }
-    this->ofile.setFileName(filename);
     if (first) {
       first = false;
     } else {
-      nameLine += '\t';
+      header += '\t';
     }
-    nameLine += this->nameString(node);
+    header += this->nameString(node);
   }
-  nameLine += '\n';
-  ofile.write(nameLine);
+  header += '\n';
 }
 
 std::string GridMeasureManager::nameString(pair<int, int> node) const {
@@ -110,9 +108,16 @@ void GridMeasureManager::measure(double time) {
     }
   }
 }
-void GridMeasureManager::write() {
-  std::stringstream ss;
-  ss << std::scientific;
+void GridMeasureManager::write(std::string filename) {
+  std::ofstream ofile;
+  ofile.open(filename, std::ios_base::app);
+  if (!ofile.good()) {
+    ofile.close();
+    Logger::getInstance()->write<std::runtime_error>(
+        "GridMeasureManager: Error Opening \'{}\'", filename);
+  }
+  ofile << header;
+  ofile << std::scientific;
   bool first = true;
   for (auto node : this->__dataNodes) {
     for (auto& row : this->data[node]) {
@@ -120,14 +125,15 @@ void GridMeasureManager::write() {
         if (first) {
           first = false;
         } else {
-          ss << '\t';
+          ofile << '\t';
         }
-        ss << val;
+        ofile << val;
       }
     }
+    ofile << '\n';
   }
-  ss << '\n';
-  ofile.write(ss.str());
+  ofile.flush();
+  ofile.close();
 }
 
 void GridMeasureManager::saveSingleCell(pair<int, int> node) {
@@ -145,5 +151,3 @@ void GridMeasureManager::resetMeasures(pair<int, int> node) {
     meas.second->reset();
   }
 }
-
-void GridMeasureManager::close() { ofile.close(); }

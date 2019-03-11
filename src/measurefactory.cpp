@@ -31,7 +31,7 @@ MeasureFactory::MeasureFactory(const MeasureFactory& o) : MeasureFactory() {
 std::shared_ptr<Measure> MeasureFactory::buildMeasure(
     std::string varname, std::set<std::string> selection) {
   std::string measName = this->measureType(varname);
-  return this->buildMeasureFromType(measName);
+  return this->buildMeasureFromType(measName, selection);
 }
 
 std::string MeasureFactory::measureType(std::string varname) {

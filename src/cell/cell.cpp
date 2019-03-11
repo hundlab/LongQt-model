@@ -188,7 +188,7 @@ void Cell::setup() {
     s += sel + '\t';
   }
   s += '\n';
-  this->parsofile.write(s);
+//  this->parsofile.write(s);
 
   s = "";
   for (auto& sel : this->varsSelection) {

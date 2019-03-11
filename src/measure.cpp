@@ -85,6 +85,7 @@ std::vector<double> Measure::getValues() {
   int i = 0;
   for (auto& sel : this->__selection) {
     dat[i] = *this->varmap.at(sel);
+    ++i;
   }
   return dat;
 }

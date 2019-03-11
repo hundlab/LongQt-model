@@ -121,8 +121,7 @@ void CurrentClamp::setupTrial() {
   runflag = true;  // reset doneflag
   __cell->setOuputfileVariables(
       CellUtils::strprintf(getDataDir() + "/" + dvarsoutfile, __trial));
-  this->__measureMgr->setupMeasures(
-      CellUtils::strprintf(getDataDir() + "/" + propertyoutfile, __trial));
+  this->__measureMgr->setupMeasures();
 }
 
 bool CurrentClamp::runTrial() {
@@ -163,8 +162,8 @@ bool CurrentClamp::runTrial() {
     pCount++;
   }
 
-  this->__measureMgr->write();
-  this->__measureMgr->close();
+  this->__measureMgr->write(
+      CellUtils::strprintf(getDataDir() + "/" + propertyoutfile, __trial));
   this->writeOutCellState(this->writeCellState);
   __cell->closeFiles();
 

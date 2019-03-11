@@ -61,7 +61,7 @@ int GridProtocol::stim() {
       }
       cell->externalStim(stimval);
     } else if (stimflag == 1) {  // trailing edge of stimulus
-      //n->waitUnlock(0);
+      // n->waitUnlock(0);
       stimt = stimt + bcl;
       stimflag = 0;
       cell->apTime = 0.0;
@@ -98,8 +98,7 @@ void GridProtocol::setupTrial() {
   }
   __cell->setConstantSelection(temp);
   temp.clear();
-  this->__measureMgr->setupMeasures(
-      getDataDir() + "/" + CellUtils::strprintf(propertyoutfile, __trial));
+  this->__measureMgr->setupMeasures();
 
   __cell->t = 0.0;  // reset time
 
@@ -153,8 +152,8 @@ bool GridProtocol::runTrial() {
     pCount++;
   }
 
-  this->__measureMgr->write();
-  this->__measureMgr->close();
+  this->__measureMgr->write(getDataDir() + "/" +
+                            CellUtils::strprintf(propertyoutfile, __trial));
   __cell->closeFiles();
   this->writeOutCellState(this->writeCellState);
   if (stimSet) {

@@ -26,11 +26,10 @@ class GridMeasureManager : public MeasureManager {
   virtual bool writeMVarsFile(QXmlStreamWriter& xml);
   virtual bool readMvarsFile(QXmlStreamReader& xml);
 
-  virtual void setupMeasures(std::string filename);
+  virtual void setupMeasures();
   virtual void measure(double time);
-  virtual void write();
+  virtual void write(std::string filename);
   virtual std::string nameString(std::pair<int, int> node) const;
-  virtual void close();
   virtual void resetMeasures(std::pair<int, int> node);
 
  private:
@@ -40,6 +39,7 @@ class GridMeasureManager : public MeasureManager {
   FileOutputHandler ofile;
   std::map<std::pair<int, int>, std::map<std::string, std::shared_ptr<Measure>>>
       measures;
+  std::string header = "";
   std::map<std::pair<int,int>, std::vector<std::vector<double>>> data;
   std::map<std::pair<int,int>, int> numSelected;
   Grid* grid = 0;

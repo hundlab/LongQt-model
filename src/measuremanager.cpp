@@ -33,14 +33,13 @@ void MeasureManager::addMeasure(string var, set<string> selection) {
 
 void MeasureManager::removeMeasure(string var) { measures.erase(var); }
 
-void MeasureManager::setupMeasures(string filename) {
+void MeasureManager::setupMeasures() {
   this->measures.clear();
   if (variableSelection.count("vOld") == 0) {
     variableSelection.insert({"vOld", {}});
   }
   this->removeBad();
-  this->ofile.setFileName(filename);
-  string nameLine = "";
+  header = "";
   bool first = true;
   for (auto& item1 : variableSelection) {
     auto& name = item1.first;
@@ -51,12 +50,11 @@ void MeasureManager::setupMeasures(string filename) {
     if (first) {
       first = false;
     } else {
-      nameLine += '\t';
+      header += '\t';
     }
-    nameLine += it->second->getNameString(name);
+    header += it->second->getNameString(name);
   }
-  nameLine += '\n';
-  ofile.write(nameLine);
+  header += '\n';
 }
 
 void MeasureManager::measure(double time) {
@@ -73,25 +71,31 @@ void MeasureManager::measure(double time) {
   }
 }
 
-void MeasureManager::write() {
-  std::stringstream ss;
-  ss << std::scientific;
-  bool first = true;
+void MeasureManager::write(string filename) {
+  std::ofstream ofile;
+  ofile.open(filename, std::ios_base::app);
+  if (!ofile.good()) {
+    ofile.close();
+    Logger::getInstance()->write<std::runtime_error>(
+        "MeasureManager: Error Opening \'{}\'", filename);
+  }
+  ofile << header;
+  ofile << std::scientific;
   for (auto& row : this->data) {
+    bool first = true;
     for (double val : row) {
       if (first) {
         first = false;
       } else {
-        ss << '\t';
+        ofile << '\t';
       }
-      ss << val;
+      ofile << val;
     }
+    ofile << '\n';
   }
-  ss << '\n';
-  ofile.write(ss.str());
+  ofile.flush();
+  ofile.close();
 }
-
-void MeasureManager::close() { ofile.close(); }
 
 void MeasureManager::resetMeasures() {
   for (auto& meas : this->measures) {

@@ -7,7 +7,6 @@
 #include <set>
 #include <string>
 #include "cell.h"
-#include "fileoutputgenerator.h"
 #include "measure.h"
 #include "measurefactory.h"
 #include "measurevoltage.h"
@@ -31,10 +30,9 @@ class MeasureManager {
   virtual void addMeasure(std::string var,
                           std::set<std::string> selection = {});
   virtual void removeMeasure(std::string var);
-  virtual void setupMeasures(std::string filename);
+  virtual void setupMeasures();
   virtual void measure(double time);
-  virtual void write();
-  virtual void close();
+  virtual void write(std::string filename);
 
   MeasureFactory measMaker;
 
@@ -47,10 +45,10 @@ class MeasureManager {
   void removeBad();
 
   std::shared_ptr<Cell> __cell = 0;
-  FileOutputHandler ofile;
   std::map<std::string, std::shared_ptr<Measure>> measures;
 
   int numSelected = 0;
+  std::string header = "";
   std::vector<std::vector<double>> data;
 };
 }  // namespace LongQt

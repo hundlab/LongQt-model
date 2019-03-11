@@ -28,6 +28,8 @@ namespace LongQt {
 // Define class for parent cell.
 //######################################################
 class CellKernel : public std::enable_shared_from_this<CellKernel> {
+  using dlim = std::numeric_limits<double>;
+
  public:
   CellKernel();
   CellKernel(const CellKernel& toCopy);
@@ -36,7 +38,7 @@ class CellKernel : public std::enable_shared_from_this<CellKernel> {
   virtual CellKernel* clone() = 0;  // public copy function
   //##### Declare class functions ##############
   virtual double updateV();
-  virtual void setV(double v);
+  virtual void setV(double v = dlim::quiet_NaN());
   virtual void updateCurr() = 0;
   virtual void updateConc() = 0;
   virtual double tstep(double stimt);
@@ -44,6 +46,7 @@ class CellKernel : public std::enable_shared_from_this<CellKernel> {
 
   //##### Declare class variables ##############
   double vOld = -88.0;  // Transmembrane potential from previous iteration
+  double vNew = -88.0; // Transmembrane potential from current iteration
   //    double vNew;    // new Transmembrane potential in calculation
   double t = 0;          // time, ms
   double dtmin = 0.005;  // ms

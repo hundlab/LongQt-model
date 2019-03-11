@@ -34,7 +34,7 @@ class CurrentClamp : public Protocol {
 
   virtual bool runTrial() override;
 
-  double bcl, stimval, stimdur, stimt, stimbegin, stimend;
+  double bcl, stimval, stimdur, stimt;
   int numstims;  // variables for pacing.
   bool stimflag, paceflag;
 
@@ -46,7 +46,7 @@ class CurrentClamp : public Protocol {
   virtual void readInCellState(bool read) override;
   virtual void setupTrial() override;
 
-  double stimcounter;
+  double stimcounter, stimbegin, stimend;
 
  private:
   void CCcopy(const CurrentClamp& toCopy);

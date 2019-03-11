@@ -216,7 +216,6 @@ class GpbAtrial : public Cell {
   virtual void updateIclca();
   virtual void updateIclbk();
   //##################
-  void externalStim(double stimval);
   virtual void makemap();
   virtual const char* type() const;
   struct GateVariable Gate;

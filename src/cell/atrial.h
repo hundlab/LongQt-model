@@ -86,7 +86,6 @@ class Courtemanche98 : public Cell {
   virtual void updatenaI();
   virtual void updatekI();
 
-  virtual void externalStim(double stimval);
   virtual void makemap();
   virtual const char* type() const;
 

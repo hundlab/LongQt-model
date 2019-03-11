@@ -489,8 +489,7 @@ void Courtemanche98::updateConc() {
   updatecaUp();
   updatecaRel();
 };
-// External stimulus.
-void Courtemanche98::externalStim(double stimval) { iTot = iTot + stimval; }
+
 // Create map for easy retrieval of variable values.
 void Courtemanche98::makemap() {
   __vars["vOld"] = &vOld;

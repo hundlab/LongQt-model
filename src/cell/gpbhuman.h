@@ -179,7 +179,6 @@ class GpbVent : public Cell {
   virtual void updateIclbk();
   virtual void updateCurr();
   virtual void updateConc();
-  virtual void externalStim(double stimval);
   virtual void makemap();
   virtual const char* type() const;
 

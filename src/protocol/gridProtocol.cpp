@@ -36,47 +36,15 @@ void GridProtocol::CCcopy(const GridProtocol& toCopy) {
   __measureMgr.reset(
       new GridMeasureManager(*toCopy.__measureMgr, this->__cell));
 }
-// External stimulus.
-int GridProtocol::stim() {
-  for (auto n : __stimN) {
-    auto cell = n->cell;
-    if (cell->t >= stimt && cell->t < (stimt + stimdur)) {
-      // n->waitUnlock(0);
-      if (stimflag == 0) {
-        stimcounter++;
-        stimflag = 1;
-        if (stimcounter > int(numstims)) {
-          runflag = false;
-          return 0;
-        }
-      }
-      cell->externalStim(stimval);
-    } else if (stimflag == 1) {  // trailing edge of stimulus
-      // n->waitUnlock(0);
-      stimt = stimt + bcl;
-      stimflag = 0;
-      cell->apTime = 0.0;
-    }
-
-    cell->apTime = cell->apTime + cell->dt;
-
-    runflag = true;
-  }
-  return 1;
-};
 
 void GridProtocol::setupTrial() {
   this->Protocol::setupTrial();
-  __cell->setup();
-  for (auto& n : stimNodes) {
-    try {
-      auto n_ptr = (*grid)(n);
-      if (n_ptr) {
-        __stimN.insert(n_ptr);
-      }
-    } catch (std::out_of_range) {
-    }
-  }
+  __cell->setup(stimNodes, __measureMgr->dataNodes());
+
+  stimbegin = stimt;
+  stimend = stimt + stimdur;
+  stimcounter = 0;
+
   set<string> temp;
   for (auto& pvar : pvars()) {
     temp.insert(pvar.first);
@@ -113,8 +81,8 @@ bool GridProtocol::runTrial() {
       --numrunsLeft;
       nextRunT += this->runEvery;
     }
-    __cell->tstep(stimt);  // Update time
-    __cell->updateCurr();  // Update membrane currents
+    __cell->tstep(stimt);      // Update time
+    __cell->updateCurr();      // Update membrane currents
     if (int(paceflag) == 1) {  // Apply stimulus
       stim();
     }
@@ -129,6 +97,7 @@ bool GridProtocol::runTrial() {
     if (writeflag && time > writetime && pCount % writeint == 0) {
       __cell->writeVariables();
     }
+    __cell->setV();
     pCount++;
   }
 

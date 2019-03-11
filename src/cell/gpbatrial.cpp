@@ -682,32 +682,6 @@ void GpbAtrial::updateInab() {
   iNab = iNabjunc + iNabsl;
 }
 
-// External stimulus.
-void GpbAtrial::externalStim(double stimval) { iTot = iTot + stimval; }
-/*
-int GpbAtrial::stim()
-{
-  if(t>=stimt&&t<(stimt+dur)){
-    if(flag==0){
-      cout << "Stimulus to " << type << " at t = " << t << endl;
-      num++;
-      flag=1;
-      if(num>=numstims)
-         return 0;
-    }
-    iTot = iTot + val;
-  }
-  else if(flag==1){     //trailing edge of stimulus
-        stimt=stimt+bcl;
-        flag=0;
-        apTime = 0.0;
-  }
-
-  apTime = apTime+dt;
-
-  return 1;
-};
-*/
 // Create map for easy retrieval of variable values.
 void GpbAtrial::makemap() {
   __vars["vOld"] = &vOld;

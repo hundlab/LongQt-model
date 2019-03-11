@@ -38,13 +38,17 @@ double CellKernel::updateV() {
 };
 
 void CellKernel::setV(double v) {
-  //  vNew=v;
-  vOld = v;
-};
+  if (std::isnan(v)) {
+    vOld = vNew;
+  } else {
+    vOld = v;
+    vNew = v;
+  }
+}
 
 // Dynamic time step
 double CellKernel::tstep(double stimt) {
-  t = t + dt;
+  t += dt;
 
   if ((dVdt >= dvcut) || ((t > stimt - 2.0) && (t < stimt + 10.0)) ||
       (apTime < 5.0)) {
@@ -55,13 +59,16 @@ double CellKernel::tstep(double stimt) {
     dt = dtmax;
   }
 
+  this->apTime += dt;
+
   return t;
 };
 
 // External stimulus.
 void CellKernel::externalStim(double stimval) {
-  iTot = iTot + stimval;  // If [ion] change, also should add stimval to
-                          // specific ion total (e.g. iKt)
+  iTot += stimval;  // If [ion] change, also should add stimval to
+                    // specific ion total (e.g. iKt)
+  apTime = 0;
 }
 double CellKernel::var(string name) { return *__vars.at(name); }
 bool CellKernel::setVar(string name, double val) {

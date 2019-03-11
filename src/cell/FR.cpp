@@ -626,6 +626,7 @@ void FR::externalStim(double stimval) {
   // iKt was only changed for conc_ki
   iTot = iTot + stimval;
   boolien = 0;
+  apTime = 0;
 }
 
 void FR::makemap() {

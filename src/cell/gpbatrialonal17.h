@@ -240,7 +240,6 @@ class GpbAtrialOnal17 : public Cell {
   double testFactor;
   //
 
-  void externalStim(double stimval);
   void makemap();
   struct GateVariable Gate;
   enum Options opts;

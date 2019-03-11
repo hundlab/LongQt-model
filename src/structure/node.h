@@ -32,7 +32,6 @@ struct Node : public std::enable_shared_from_this<Node> {
   // can't change atm
   //    double x = 0;
   //    double y = 0;
-  double vNew = 0;  // vOld(t+1) for tridag solver
                     //  std::string nodeType = "";
   int row = -1;
   int col = -1;

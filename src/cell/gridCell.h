@@ -13,9 +13,9 @@
 #include "cell.h"
 #include "grid.h"
 
+#include <threadpool.h>
 #include <list>
 #include <set>
-#include <threadpool.h>
 namespace LongQt {
 
 class GridCell : public Cell {
@@ -30,11 +30,14 @@ class GridCell : public Cell {
   virtual void updateConc();
   virtual void updateCurr();
   virtual double updateV();
-  virtual void externalStim(double stimval);  // stimulates every cell
+  virtual void externalStim(double stimval);
   virtual double tstep(double stimt);
+  virtual void setV(double v = dlim::quiet_NaN());
   virtual std::set<std::string> vars();
   virtual std::set<std::string> pars();
-  void setup();
+  virtual void setup() override;
+  void setup(std::set<std::pair<int, int>> stimNodes,
+                     std::set<std::pair<int, int>> traceNodes);
 
   // cell io functions
   virtual void setGridfile(std::string name);
@@ -69,6 +72,9 @@ class GridCell : public Cell {
 
  private:
   void Initialize();
+
+  std::set<std::shared_ptr<Node>> __stimN;
+  std::set<std::shared_ptr<Node>> __traceN;
 };
 }  // namespace LongQt
 

@@ -81,7 +81,6 @@ class Br04 : public Cell {
   virtual void updateCurr();
   virtual void updateConc();
   virtual double tstep(double stimt) override;
-  virtual void externalStim(double stimval);
   //    virtual int tstep();
   virtual void makemap();
   virtual const char* type() const;

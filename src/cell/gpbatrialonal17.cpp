@@ -906,8 +906,6 @@ void GpbAtrialOnal17::updateConc() {
   //    updateClI();
 };
 
-void GpbAtrialOnal17::externalStim(double stimval) { iTot = iTot + stimval; }
-
 // External stimulus.
 // int GpbAtrialOnal17::stim()
 //{

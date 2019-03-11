@@ -543,8 +543,6 @@ void Br04::updateNai() {
 
   naI = naI + dnaI;
 };
-// External stimulus.
-void Br04::externalStim(double stimval) { iTot = iTot + stimval; }
 
 void Br04::updateCurr() {
   updateIlca();                    // L-type Ca current
@@ -609,6 +607,8 @@ double Br04::tstep(double stimt) {
     dt = 0.0005;  // 0.008
   else
     dt = 0.0005;  // 0.008
+
+  this->apTime += dt;
   return t;
 }
 

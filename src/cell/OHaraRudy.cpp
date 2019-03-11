@@ -37,6 +37,7 @@ OHaraRudy *OHaraRudy::clone() { return new OHaraRudy(*this); }
 void OHaraRudy::externalStim(double stimval) {
   iKt = iKt + stimval;
   iTot = iTot + stimval;
+  apTime = 0;
 }
 
 const char *OHaraRudy::type() const {

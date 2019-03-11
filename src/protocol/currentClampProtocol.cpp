@@ -70,14 +70,12 @@ int CurrentClamp::stim() {
   if (stimbegin <= __cell->t && __cell->t < stimend) {
     __cell->externalStim(stimval);
   }
-  if (stimend < __cell->t) {
+  if (__cell->t > stimend) {
     stimbegin += bcl;
     stimend += bcl;
-    __cell->apTime = 0.0;
     stimcounter++;
   }
 
-  __cell->apTime = __cell->apTime + __cell->dt;
   return 1;
   ///////////////////////////////////////////test
   //    if(__cell->t>=stimt&&__cell->t<(stimt+stimdur)){
@@ -114,7 +112,6 @@ void CurrentClamp::setupTrial() {
   __cell->setup();
   stimbegin = stimt;
   stimend = stimt + stimdur;
-  //    stimt = 0;
   stimcounter = 0;
   this->readInCellState(this->readCellState);
   this->__pvars->setIonChanParams();
@@ -148,7 +145,7 @@ bool CurrentClamp::runTrial() {
       stim();
 
     __cell->updateConc();           // Update ion concentrations
-    double vM = __cell->updateV();  // Update transmembrane potential
+    __cell->updateV();  // Update transmembrane potential
 
     //##### Output select variables to file  ####################
     if (measflag == 1 && __cell->t > meastime) {
@@ -158,7 +155,7 @@ bool CurrentClamp::runTrial() {
     if (writeflag && time > writetime && (pCount % writeint == 0)) {
       __cell->writeVariables();
     }
-    __cell->setV(vM);  // Overwrite vOld with new value
+    __cell->setV();  // Overwrite vOld with new value
     pCount++;
   }
 

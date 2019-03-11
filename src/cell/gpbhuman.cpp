@@ -631,9 +631,6 @@ void GpbVent::updateConc() {
   updatenaI();
 }
 
-// External stimulus.
-void GpbVent::externalStim(double stimval) { iTot = iTot + stimval; }
-
 // Create map for easy retrieval of variable values.
 void GpbVent::makemap() {
   __vars["vOld"] = &vOld;

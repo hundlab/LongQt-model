@@ -819,6 +819,7 @@ void HRD09Control::externalStim(double stimval) {
   iKt = iKt + 0.5 * stimval;
   iClt = iClt + 0.5 * stimval;
   iTot = iTot + stimval;
+  apTime += dt;
 };
 
 // Create map for easy retrieval of variable values.

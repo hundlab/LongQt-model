@@ -76,25 +76,45 @@ set<string> GridCell::pars() {
   return toReturn;
 }
 
-void GridCell::setup() {
+void GridCell::setup() { this->setup({}, {}); }
+
+void GridCell::setup(std::set<std::pair<int, int>> stimNodes,
+                     std::set<std::pair<int, int>> traceNodes) {
   grid.setup();
+
+  for (auto& n : stimNodes) {
+    try {
+      auto n_ptr = grid(n);
+      if (n_ptr) {
+        __stimN.insert(n_ptr);
+      }
+    } catch (std::out_of_range) {
+    }
+  }
+  for (auto& n : traceNodes) {
+    try {
+      auto n_ptr = grid(n);
+      if (n_ptr) {
+        __traceN.insert(n_ptr);
+      }
+    } catch (std::out_of_range) {
+    }
+  }
 
   // setup dt
   dtmin = std::numeric_limits<double>::infinity();
   dtmed = std::numeric_limits<double>::infinity();
   dtmax = std::numeric_limits<double>::infinity();
-  for (auto& it : grid.rows) {
-    for (auto& iv : it.nodes) {
-      iv->cell->setup();
-      if (iv->cell->dtmin < dtmin) {
-        dtmin = iv->cell->dtmin;
-      }
-      if (iv->cell->dtmed < dtmed) {
-        dtmin = iv->cell->dtmin;
-      }
-      if (iv->cell->dtmax < dtmax) {
-        dtmin = iv->cell->dtmin;
-      }
+  for (auto node : grid) {
+    node->cell->setup();
+    if (node->cell->dtmin < dtmin) {
+      dtmin = node->cell->dtmin;
+    }
+    if (node->cell->dtmed < dtmed) {
+      dtmin = node->cell->dtmin;
+    }
+    if (node->cell->dtmax < dtmax) {
+      dtmin = node->cell->dtmin;
     }
   }
   dt = dtmin;
@@ -124,10 +144,8 @@ void GridCell::writeConstants() {
   }
 }
 void GridCell::writeVariables() {
-  for (auto& it : grid.rows) {
-    for (auto iv : it) {
-      iv->cell->writeVariables();
-    }
+  for (auto node : this->__traceN) {
+    node->cell->writeVariables();
   }
 }
 double GridCell::updateV() {
@@ -199,10 +217,8 @@ void GridCell::updateCurr() {
   pool.wait();
 }
 void GridCell::externalStim(double stimval) {
-  for (auto& row : grid.rows) {
-    for (auto node : row) {
-      node->cell->externalStim(stimval);
-    }
+  for (auto node : __stimN) {
+    node->cell->externalStim(stimval);
   }
 }
 double GridCell::tstep(double stimt) {
@@ -236,8 +252,23 @@ double GridCell::tstep(double stimt) {
     else
       dt = dtmax;
   }
+  this->apTime += dt;
+  for (auto node : grid) {
+    node->cell->apTime = this->apTime;
+  }
 
   return t;
+}
+
+void GridCell::setV(double v) {
+  for (auto node : grid) {
+    if (std::isnan(v)) {
+      node->cell->vOld = node->cell->vNew;
+    } else {
+      node->cell->vOld = v;
+      node->cell->vNew = v;
+    }
+  }
 }
 void GridCell::makeMap() {  // only aply to cells added after the change?
   __pars["dx"] = &grid.dx;
@@ -472,8 +503,8 @@ bool GridCell::writeCellState(string file) {
   return success;
 }
 
-void GridCell::closeFiles()
-{
-    pool.pushAll([] (auto node) {node->cell->closeFiles();},grid.begin(),grid.end());
-    pool.wait();
+void GridCell::closeFiles() {
+  pool.pushAll([](auto node) { node->cell->closeFiles(); }, grid.begin(),
+               grid.end());
+  pool.wait();
 }

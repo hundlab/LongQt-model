@@ -597,5 +597,3 @@ void Ksan::makemap() {
 
 const char *Ksan::type() const { return "Mouse Sinus Node (Kharche 2011)"; }
 
-// External stimulus.
-void Ksan::externalStim(double stimval) { iTot = iTot + stimval; }

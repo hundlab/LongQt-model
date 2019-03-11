@@ -27,9 +27,7 @@ Fiber::~Fiber() {}
 void Fiber::updateVm(const double &dt) {
   int i;
   int nn = static_cast<int>(nodes.size());
-  /*  for(i = 0; i < nn; ++i) {
-        nodes[i]->waitUnlock(0);
-    }*/
+
   if (nn <= 1) {
     return;
   }
@@ -51,12 +49,11 @@ void Fiber::updateVm(const double &dt) {
 
   for (i = 0; i < nn; i++) {
     nodes[i]->cell->iTotold = nodes[i]->cell->iTot;
-    nodes[i]->cell->dVdt = (nodes[i]->vNew - nodes[i]->cell->vOld) / dt;
+    nodes[i]->cell->dVdt = (nodes[i]->cell->vNew - nodes[i]->cell->vOld) / dt;
     //##### Conservation for multicellular fiber ############
     nodes[i]->dIax = -(nodes[i]->cell->dVdt + nodes[i]->cell->iTot);
     nodes[i]->cell->iKt = nodes[i]->cell->iKt + nodes[i]->dIax;
-    nodes[i]->cell->setV(nodes[i]->vNew);
-    nodes[i]->lock[1] = false;
+//    nodes[i]->cell->setV();
   }
 }
 shared_ptr<Node> Fiber::operator[](int pos) {
@@ -138,17 +135,17 @@ void Fiber::tridag() {
     Logger::getInstance()->write("Error 1 in tridag");
   }
 
-  nodes[0]->vNew = r[0] / (bet = d2[0]);
+  nodes[0]->cell->vNew = r[0] / (bet = d2[0]);
   for (j = 1; j < nn; j++) {
     gam[j] = d3[j - 1] / bet;
     bet = d2[j] - d1[j] * gam[j];
     if (bet == 0.0) {
       Logger::getInstance()->write("Error 2 in tridag");
     }
-    nodes[j]->vNew = (r[j] - d1[j] * nodes[j - 1]->vNew) / bet;
+    nodes[j]->cell->vNew = (r[j] - d1[j] * nodes[j - 1]->cell->vNew) / bet;
   }
   for (j = (nn - 2); j >= 0; j--) {
-    nodes[j]->vNew -= gam[j + 1] * nodes[j + 1]->vNew;
+    nodes[j]->cell->vNew -= gam[j + 1] * nodes[j + 1]->cell->vNew;
   }
 }
 

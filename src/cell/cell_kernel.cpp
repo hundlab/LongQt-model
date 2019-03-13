@@ -29,7 +29,7 @@ CellKernel::~CellKernel() {}
 
 // Transmembrane potential
 double CellKernel::updateV() {
-  double vNew = vOld - iTot * dt;
+  vNew = vOld - iTot * dt;
 
   dVdt = (vNew - vOld) / dt;
   //  if(dVdt>dVdtmax)

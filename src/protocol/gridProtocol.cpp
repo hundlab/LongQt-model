@@ -16,9 +16,8 @@ GridProtocol::GridProtocol() : CurrentClamp() {
   __measureMgr.reset(new GridMeasureManager(this->__cell));
   grid = __cell->getGrid();
   this->__pvars.reset(new PvarsGrid(grid));
+  CurrentClamp::cell(this->__cell);
   this->mkmap();
-  propertyoutfile = "cell_{{}}_{{}}_" + this->propertyoutfile;
-  dvarsoutfile = "cell_{{}}_{{}}_" + this->dvarsoutfile;
 
   CellUtils::set_default_vals(*this);
 }
@@ -29,12 +28,29 @@ GridProtocol::GridProtocol(const GridProtocol& toCopy) : CurrentClamp(toCopy) {
 }
 void GridProtocol::CCcopy(const GridProtocol& toCopy) {
   this->mkmap();
-  __cell.reset(dynamic_cast<GridCell*>(toCopy.cell()->clone()));
+  __cell.reset(toCopy.__cell->clone());
   this->stimNodes = toCopy.stimNodes;
   this->grid = this->__cell->getGrid();
   __pvars.reset(new PvarsGrid(*toCopy.__pvars, this->grid));
   __measureMgr.reset(
       new GridMeasureManager(*toCopy.__measureMgr, this->__cell));
+}
+
+// External stimulus.
+int GridProtocol::stim() {
+  if (stimcounter >= numstims) {
+    return 0;
+  }
+  if (stimbegin <= __cell->t && __cell->t < stimend) {
+    __cell->externalStim(stimval);
+  }
+  if (__cell->t > stimend) {
+    stimbegin += bcl;
+    stimend += bcl;
+    stimcounter++;
+  }
+
+  return 1;
 }
 
 void GridProtocol::setupTrial() {

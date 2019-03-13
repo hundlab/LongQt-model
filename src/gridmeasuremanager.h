@@ -36,7 +36,6 @@ class GridMeasureManager : public MeasureManager {
   void saveSingleCell(std::pair<int, int> node);
 
   std::set<std::pair<int, int>> __dataNodes;
-  FileOutputHandler ofile;
   std::map<std::pair<int, int>, std::map<std::string, std::shared_ptr<Measure>>>
       measures;
   std::string header = "";

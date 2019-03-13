@@ -55,10 +55,10 @@ string Measure::getNameString(string name) const {
   bool first = true;
   string nameStr = "";
   for (auto& sel : this->__selection) {
-    if (!first) {
-      nameStr += "\t";
-    } else {
+    if (first) {
       first = false;
+    } else {
+      nameStr += "\t";
     }
     nameStr += name + "/" + sel;
   }

@@ -15,41 +15,69 @@ using namespace LongQt;
 using namespace std;
 
 void Cell::setOuputfileVariables(string filename) {
-  this->varsofile.setFileName(filename);
+  varsofile.open(filename, std::ios_base::app);
+  varsofile << std::scientific;
+  if (!varsofile.good()) {
+    varsofile.close();
+    Logger::getInstance()->write<std::runtime_error>(
+        "Cell: Error Opening \'{}\'", filename);
+  }
+  bool first = true;
+  for (auto& sel : this->getVariableSelection()) {
+    if (first) {
+      first = false;
+    } else {
+      varsofile << '\t';
+    }
+    varsofile << sel;
+  }
+  varsofile << '\n';
 };
 
 void Cell::setOutputfileConstants(string filename) {
-  this->parsofile.setFileName(filename);
+  parsofile.open(filename, std::ios_base::app);
+  parsofile << std::scientific;
+  if (!parsofile.good()) {
+    parsofile.close();
+    Logger::getInstance()->write<std::runtime_error>(
+        "Cell: Error Opening \'{}\'", filename);
+  }
 };
 
 void Cell::writeVariables() {
   bool first = true;
-  std::stringstream s;
   for (auto& sel : this->varsSelection) {
     if (!first) {
-      s << "\t";
+      varsofile << '\t';
     } else {
       first = false;
     }
-    s << std::scientific << this->var(sel);
+    varsofile << this->var(sel);
   }
-  s << '\n';
-  this->varsofile.write(s.str());
+  varsofile << '\n';
+}
+
+std::vector<double> Cell::getVariablesVals() {
+  std::vector<double> res(this->varsSelection.size());
+  int i = 0;
+  for (auto& sel : this->varsSelection) {
+    res[i] = this->var(sel);
+    ++i;
+  }
+  return res;
 }
 
 void Cell::writeConstants() {
   bool first = true;
-  std::stringstream s;
   for (auto& sel : this->parsSelection) {
     if (!first) {
-      s << "\t";
+      parsofile << "\t";
     } else {
       first = false;
     }
-    s << std::scientific << this->par(sel);
+    parsofile << this->par(sel);
   }
-  s << '\n';
-  this->parsofile.write(s.str());
+  parsofile << '\n';
 }
 
 void Cell::setConstantSelection(set<string> selection) {
@@ -183,17 +211,4 @@ void Cell::closeFiles() {
 void Cell::setup() {
   CellKernel::setup();
 
-  std::string s = "";
-  for (auto& sel : this->parsSelection) {
-    s += sel + '\t';
-  }
-  s += '\n';
-//  this->parsofile.write(s);
-
-  s = "";
-  for (auto& sel : this->varsSelection) {
-    s += sel + '\t';
-  }
-  s += '\n';
-  this->varsofile.write(s);
 }

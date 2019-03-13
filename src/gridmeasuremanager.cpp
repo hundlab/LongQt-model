@@ -57,7 +57,6 @@ void GridMeasureManager::setupMeasures() {
   if (variableSelection.count("vOld") == 0) {
     variableSelection.insert({"vOld", {}});
   }
-  std::string header;
   bool first = true;
   for (auto& node : this->__dataNodes) {
     int nodeSelectedCount = 0;
@@ -71,8 +70,8 @@ void GridMeasureManager::setupMeasures() {
             {varName, this->measMaker.buildMeasure(varName, sel)});
         nodeSelectedCount += sel.size();
       }
-      this->numSelected.insert({node, nodeSelectedCount});
     }
+    this->numSelected.insert({node, nodeSelectedCount});
     if (first) {
       first = false;
     } else {
@@ -85,7 +84,13 @@ void GridMeasureManager::setupMeasures() {
 
 std::string GridMeasureManager::nameString(pair<int, int> node) const {
   string nameStr = "";
+  bool first = true;
   for (auto& meas : this->measures.at(node)) {
+    if (first) {
+      first = false;
+    } else {
+      nameStr += '\t';
+    }
     nameStr +=
         meas.second->getNameString("cell" + to_string(node.first) + "_" +
                                    to_string(node.second) + "/" + meas.first);
@@ -118,25 +123,47 @@ void GridMeasureManager::write(std::string filename) {
   }
   ofile << header;
   ofile << std::scientific;
-  bool first = true;
-  for (auto node : this->__dataNodes) {
-    for (auto& row : this->data[node]) {
-      for (double val : row) {
+
+  int maxRow = 0;
+  for (auto& item1 : this->data) {
+    if (item1.second.size() > maxRow) {
+      maxRow = item1.second.size();
+    }
+  }
+
+  for (int rowNum = 0; rowNum < maxRow; ++rowNum) {
+    bool first = true;
+    for (auto node : this->__dataNodes) {
+      auto& nodeData = this->data[node];
+      if (rowNum < nodeData.size()) {
+        auto& row = nodeData[rowNum];
+        for (double val : row) {
+          if (first) {
+            first = false;
+          } else {
+            ofile << '\t';
+          }
+          ofile << val;
+        }
+      } else {
+        int selSize = this->numSelected[node];
         if (first) {
           first = false;
+          ofile << std::string('\t', selSize - 2);
         } else {
-          ofile << '\t';
+          ofile << std::string('\t', selSize - 1);
         }
-        ofile << val;
       }
     }
     ofile << '\n';
   }
+
   ofile.flush();
   ofile.close();
 }
 
 void GridMeasureManager::saveSingleCell(pair<int, int> node) {
+  if (this->numSelected[node] == 0) return;
   std::vector<double> dat(this->numSelected[node]);
   auto pos = dat.begin();
   for (auto& meas : measures[node]) {

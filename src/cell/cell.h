@@ -21,7 +21,6 @@
 #include <vector>
 
 #include "cell_kernel.h"
-#include "fileoutputgenerator.h"
 
 namespace LongQt {
 
@@ -50,16 +49,18 @@ class Cell : public CellKernel {
   virtual std::set<std::string> getVariableSelection();
   virtual void writeConstants();
   virtual void writeVariables();
+  virtual std::vector<double> getVariablesVals();
   virtual bool writeCellState(std::string file);
   virtual bool writeCellState(QXmlStreamWriter& xml);
   virtual bool readCellState(std::string file);
   virtual bool readCellState(QXmlStreamReader& xml);
   virtual void closeFiles();
 
-  virtual void setup();
+  virtual void setup() override;
+
  protected:
-  FileOutputHandler parsofile;
-  FileOutputHandler varsofile;
+  std::ofstream parsofile;
+  std::ofstream varsofile;
   std::set<std::string> parsSelection;
   std::set<std::string> varsSelection;
 };

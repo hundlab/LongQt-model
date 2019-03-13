@@ -51,8 +51,8 @@ Protocol::Protocol() {
   pvarfile = "pvars.txt";      // File to specify cell params
   simvarfile = "simvars.xml";  // File to specify sim params
 
-  propertyoutfile = "dt{}.tsv";
-  dvarsoutfile = "dt{}_dvars.tsv";
+  propertyoutfile = "meas{}.tsv";
+  dvarsoutfile = "trace{}.tsv";
   cellStateFile = "cellstate.xml";  //"dss%d_state.dat";
 
   measflag = true;         // 1 to track SV props during sim

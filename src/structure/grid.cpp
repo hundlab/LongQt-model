@@ -245,6 +245,9 @@ void Grid::updateNodePositions() {
 void Grid::setup() {
   for (auto& row : rows) {
     row.setup();
+    for (auto node : row) {
+      node->cell->setup();
+    }
   }
   for (auto& col : columns) {
     col.setup();
@@ -328,7 +331,7 @@ bool Grid::GridIterator::operator==(const Grid::GridIterator& rhs) const {
 }
 
 bool Grid::GridIterator::operator!=(const Grid::GridIterator& rhs) const {
-    return !operator==(rhs);
+  return !operator==(rhs);
 }
 
 std::shared_ptr<Node> Grid::GridIterator::operator*() {

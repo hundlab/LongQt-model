@@ -43,16 +43,27 @@ void GridCell::setOutputfileConstants(string filename) {
   }
 }
 void GridCell::setOuputfileVariables(string filename) {
-  int rc = 0;
-  for (auto& row : grid.rows) {
-    int cc = 0;
-    for (auto column : row) {
-      column->cell->setOuputfileVariables(
-          CellUtils::strprintf(filename, rc, cc));
-      ++cc;
-    }
-    ++rc;
+  varsofile.open(filename, std::ios_base::app);
+  varsofile << std::scientific;
+  if (!varsofile.good()) {
+    varsofile.close();
+    Logger::getInstance()->write<std::runtime_error>(
+        "Cell: Error Opening \'{}\'", filename);
   }
+  bool first = true;
+  for (auto node : __traceN) {
+    for (auto& sel : node->cell->getVariableSelection()) {
+      if (first) {
+        first = false;
+      } else {
+        varsofile << '\t';
+      }
+      std::string varHeader =
+          CellUtils::strprintf("cell{}_{}/{}", node->row, node->col, sel);
+      varsofile << varHeader;
+    }
+  }
+  varsofile << '\n';
 }
 
 set<string> GridCell::vars() {
@@ -76,12 +87,15 @@ set<string> GridCell::pars() {
   return toReturn;
 }
 
-void GridCell::setup() { this->setup({}, {}); }
+void GridCell::setup() {
+    this->setup({}, {});
+}
 
 void GridCell::setup(std::set<std::pair<int, int>> stimNodes,
                      std::set<std::pair<int, int>> traceNodes) {
-  grid.setup();
+  grid.setup();  // setup grid and cells
 
+  // collect valid stim & trace Nodes
   for (auto& n : stimNodes) {
     try {
       auto n_ptr = grid(n);
@@ -106,15 +120,14 @@ void GridCell::setup(std::set<std::pair<int, int>> stimNodes,
   dtmed = std::numeric_limits<double>::infinity();
   dtmax = std::numeric_limits<double>::infinity();
   for (auto node : grid) {
-    node->cell->setup();
     if (node->cell->dtmin < dtmin) {
       dtmin = node->cell->dtmin;
     }
     if (node->cell->dtmed < dtmed) {
-      dtmin = node->cell->dtmin;
+      dtmed = node->cell->dtmed;
     }
     if (node->cell->dtmax < dtmax) {
-      dtmin = node->cell->dtmin;
+      dtmax = node->cell->dtmax;
     }
   }
   dt = dtmin;
@@ -144,9 +157,19 @@ void GridCell::writeConstants() {
   }
 }
 void GridCell::writeVariables() {
+  bool first = true;
   for (auto node : this->__traceN) {
-    node->cell->writeVariables();
+    auto vals = node->cell->getVariablesVals();
+    for (double val : vals) {
+      if (first) {
+        first = false;
+      } else {
+        varsofile << '\t';
+      }
+      varsofile << val;
+    }
   }
+  varsofile << '\n';
 }
 double GridCell::updateV() {
   double dt = this->dt;
@@ -220,6 +243,7 @@ void GridCell::externalStim(double stimval) {
   for (auto node : __stimN) {
     node->cell->externalStim(stimval);
   }
+  apTime = 0;
 }
 double GridCell::tstep(double stimt) {
   unsigned int i, j;
@@ -262,12 +286,7 @@ double GridCell::tstep(double stimt) {
 
 void GridCell::setV(double v) {
   for (auto node : grid) {
-    if (std::isnan(v)) {
-      node->cell->vOld = node->cell->vNew;
-    } else {
-      node->cell->vOld = v;
-      node->cell->vNew = v;
-    }
+    node->cell->setV(v);
   }
 }
 void GridCell::makeMap() {  // only aply to cells added after the change?

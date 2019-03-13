@@ -81,6 +81,7 @@ void MeasureManager::write(string filename) {
   }
   ofile << header;
   ofile << std::scientific;
+  bool written = false;
   for (auto& row : this->data) {
     bool first = true;
     for (double val : row) {
@@ -90,8 +91,9 @@ void MeasureManager::write(string filename) {
         ofile << '\t';
       }
       ofile << val;
+      written = true;
     }
-    ofile << '\n';
+    if (written) ofile << '\n';
   }
   ofile.flush();
   ofile.close();
@@ -104,6 +106,7 @@ void MeasureManager::resetMeasures() {
 }
 
 void MeasureManager::save() {
+  if (this->numSelected == 0) return;
   std::vector<double> dat(this->numSelected);
   auto pos = dat.begin();
   for (auto& meas : measures) {

@@ -48,6 +48,7 @@ class GridProtocol : public CurrentClamp {
 
  protected:
   virtual void setupTrial() override;
+  virtual int stim() override;
 
  private:
   void CCcopy(const GridProtocol& toCopy);

@@ -38,7 +38,7 @@ CurrentClamp::~CurrentClamp() {}
 shared_ptr<Cell> CurrentClamp::cell() const { return __cell; }
 
 void CurrentClamp::cell(shared_ptr<Cell> cell) {
-  __measureMgr.reset(new MeasureManager(cell));
+  if (__measureMgr) __measureMgr.reset(new MeasureManager(cell));
   if (__pvars) pvars().clear();
   this->__cell = cell;
 }

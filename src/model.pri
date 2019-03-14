@@ -44,7 +44,8 @@ SOURCES += $$PWD/measure.cpp\
     $$PWD/threadpool.cpp \
     $$PWD/cell/coupledinexcitablecell.cpp \
     $$PWD/protocol/fileoutputgenerator.cpp \
-    $$PWD/measurefactory.cpp
+    $$PWD/measurefactory.cpp \
+    $$PWD/datareader.cpp
 
 HEADERS  += $$PWD/measuremanager.h\
     $$PWD/gridmeasuremanager.h\
@@ -92,4 +93,5 @@ HEADERS  += $$PWD/measuremanager.h\
     $$PWD/threadpool.h \
     $$PWD/cell/coupledinexcitablecell.h \
     $$PWD/protocol/fileoutputgenerator.h \
-    $$PWD/measurefactory.h
+    $$PWD/measurefactory.h \
+    $$PWD/datareader.h

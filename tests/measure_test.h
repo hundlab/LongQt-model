@@ -30,7 +30,7 @@ TEST(measure, getNameSring_normal) {
 
   std::string res = meas.getNameString("asdf");
   std::sort(res.begin(), res.end());
-  std::string ans = "asdf/amp\tasdf/avg\tasdf/min\tasdf/stdev\t";
+  std::string ans = "asdf/amp\tasdf/avg\tasdf/min\tasdf/stdev";
   std::sort(ans.begin(), ans.end());
   EXPECT_EQ(ans, res);
 }
@@ -52,7 +52,7 @@ TEST(measure, getNameSring_no_name) {
 
   std::string res = meas.getNameString("");
   std::sort(res.begin(), res.end());
-  std::string ans = "/avg\t/min\t/stdev\t";
+  std::string ans = "/avg\t/min\t/stdev";
   std::sort(ans.begin(), ans.end());
   EXPECT_EQ(ans, res);
 }
@@ -63,7 +63,7 @@ TEST(measure, getValueString_normal) {
 
   std::string res = meas.getValueString();
   std::sort(res.begin(), res.end());
-  std::string ans = "nan\t0.000000e+00\tinf\t0.000000e+00\t";
+  std::string ans = "nan\t0.000000e+00\tinf\t0.000000e+00";
   std::sort(ans.begin(), ans.end());
   EXPECT_EQ(ans, res);
 }

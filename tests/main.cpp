@@ -1,11 +1,11 @@
-//#include "cell_test.h"
-//#include "cellutils_test.h"
-//#include "measure_test.h"
-//#include "protocol_test.h"
-//#include "threadpool_test.h"
-//#include "runsim_test.h"
-//#include "node_test.h"
+#include "cell_test.h"
+#include "cellutils_test.h"
 #include "logger_test.h"
+//#include "measure_test.h"
+#include "node_test.h"
+#include "protocol_test.h"
+#include "runsim_test.h"
+#include "threadpool_test.h"
 
 #include <gtest/gtest.h>
 

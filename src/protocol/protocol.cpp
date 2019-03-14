@@ -206,7 +206,7 @@ bool Protocol::writepars(QXmlStreamWriter& xml) {
 }
 bool Protocol::trial(unsigned int current_trial) {
   if (current_trial < 0 || current_trial >= numtrials) {
-    Logger::getInstance()->write<std::out_of_range>(
+    Logger::getInstance()->write(
         "Protocol: Cannot set trial to {}, max numtrials is {}", current_trial,
         numtrials);
     return false;

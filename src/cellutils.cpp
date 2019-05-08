@@ -51,7 +51,8 @@ const map<string, CellUtils::CellInitializer> CellUtils::cellMap = {
     {GpbVent().type(), []() { return make_shared<GpbVent>(); }},
     {Br04().type(), []() { return make_shared<Br04>(); }},
     {Courtemanche98().type(), []() { return make_shared<Courtemanche98>(); }},
-    {CoupledInexcitableCell().type(), []() { return make_shared<CoupledInexcitableCell>(); }},
+    {CoupledInexcitableCell().type(),
+     []() { return make_shared<CoupledInexcitableCell>(); }},
 };
 
 /*
@@ -154,14 +155,14 @@ CellUtils::Side CellUtils::flipSide(CellUtils::Side s) {
   }
 }
 
-vector<string> CellUtils::split(string s, char delim) {
+vector<string> CellUtils::split(string s, char delim, bool keepEmpty) {
   vector<string> v;
   size_t prev_pos = 0;
   size_t pos = s.find(delim, prev_pos);
   std::string token;
   while (pos != std::string::npos) {
     token = s.substr(prev_pos, pos - prev_pos);
-    if (token != "") {
+    if (keepEmpty || token != "") {
       v.push_back(token);
     }
     prev_pos = pos + 1;

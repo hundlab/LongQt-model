@@ -27,7 +27,7 @@
 namespace LongQt {
 
 namespace CellUtils {
-//version number for LongQt-model
+// version number for LongQt-model
 static const char* version = "v0.4";
 
 /*
@@ -73,7 +73,8 @@ inline bool stob(const std::string& s) {
  * splits s on delim into a list of strings not including delim
  * does not keep empty strings
  */
-std::vector<std::string> split(std::string s, char delim);
+std::vector<std::string> split(std::string s, char delim,
+                               bool keepEmpty = false);
 
 /*
  * Create formated string, similar to python with {}

@@ -185,9 +185,6 @@ set<pair<int, int>> GridProtocol::stringToSet(string nodesList) {
 
 void GridProtocol::mkmap() {
   GetSetRef toInsert;
-  __pars["gridFile"] = toInsert.Initialize(
-      "file", [this]() { return __cell->gridfile(); },
-      [this](const string& value) { __cell->setGridfile(value); });
   //    pars["measNodes"]= toInsert.Initialize("set",
   //            [this] () {return setToString(dataNodes);},
   //            [this] (const string& value) {dataNodes = stringToSet(value);});

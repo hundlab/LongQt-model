@@ -40,8 +40,6 @@ class GridCell : public Cell {
                      std::set<std::pair<int, int>> traceNodes);
 
   // cell io functions
-  virtual void setGridfile(std::string name);
-  virtual std::string gridfile();
   virtual bool writeGridfile(QXmlStreamWriter& xml);
   virtual bool writeGridfile(std::string fileName = "");
   virtual bool readGridfile(QXmlStreamReader& xml);
@@ -64,7 +62,6 @@ class GridCell : public Cell {
 
   Grid grid;
   int tcount = 0;
-  std::string gridfileName = "grid.txt";
 
   ThreadPool pool;
 

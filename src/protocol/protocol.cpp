@@ -85,7 +85,7 @@ Protocol::Protocol(const Protocol& toCopy)
   this->copy(toCopy);
 };
 
-Protocol::Protocol(Protocol&& toCopy) { this->copy(toCopy); };
+Protocol::Protocol(Protocol&& toCopy) { this->copy(toCopy); }
 
 Protocol& Protocol::operator=(const Protocol& toCopy) {
   this->copy(toCopy);

@@ -25,7 +25,6 @@ GridCell::GridCell() : Cell() { this->Initialize(); }
 void GridCell::Initialize() { makeMap(); }
 GridCell::GridCell(GridCell& toCopy) : Cell(toCopy), grid(toCopy.grid) {
   this->Initialize();
-  this->gridfileName = toCopy.gridfileName;
 }
 GridCell* GridCell::clone() { return new GridCell(*this); }
 GridCell::~GridCell() {}
@@ -297,10 +296,6 @@ void GridCell::makeMap() {  // only aply to cells added after the change?
 
 const char* GridCell::type() const { return "gridCell"; }
 
-void GridCell::setGridfile(string name) { gridfileName = name; }
-
-string GridCell::gridfile() { return gridfileName; }
-
 bool GridCell::writeGridfile(QXmlStreamWriter& xml) {
   using namespace CellUtils;
   int i = 0;
@@ -341,9 +336,6 @@ bool GridCell::writeGridfile(QXmlStreamWriter& xml) {
   return true;
 }
 bool GridCell::writeGridfile(string fileName) {
-  if (fileName == "") {
-    fileName = this->gridfileName;
-  }
   QFile ofile(fileName.c_str());
 
   if (!ofile.open(QIODevice::Append)) {

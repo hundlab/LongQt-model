@@ -9,10 +9,22 @@ GpbVent::GpbVent(GpbVent &toCopy) : Cell(toCopy) {
 
 GpbVent::~GpbVent() {}
 
+void GpbVent::setup() {
+  Cell::setup();
+  Vsr = 0.035 * Vcell;
+  Vjunc = (5.39E-4) * Vcell;
+  Vsl = 0.02 * Vcell;
+  Vmyo = 0.65 * Vcell;
+
+  Fsl = 1 - Fjunc;
+  F_slCaL = 1 - F_juncCaL;
+  RI = 1.0 - Ryrr - Ryro - Ryri;
+}
+
 void GpbVent::Initialize() {
   cellLength = 0.01;
   cellRadius = 1.025e-3;
-  Rcg = 1.945949; //calculated from ACap & AGeo
+  Rcg = 1.945949;  // calculated from ACap & AGeo
 
   Cm = 1.0;          // uF/cm2
   ACap = 1.3810E-4;  // capacitive area, cm2
@@ -27,10 +39,7 @@ void GpbVent::Initialize() {
   apTime = 0.0;
 
   Vcell = 3.3E-5;  // uL
-  Vsr = 0.035 * Vcell;
-  Vjunc = (5.39E-4) * Vcell;
-  Vsl = 0.02 * Vcell;
-  Vmyo = 0.65 * Vcell;
+
   //###### Concentrations #########
   naI = 9.06;            // mM
   naO = 140.0;           // mM
@@ -48,9 +57,8 @@ void GpbVent::Initialize() {
   mgI = 1.0;             // mM
   //##### Fractional Currents ########
   Fjunc = 0.11;
-  Fsl = 1 - Fjunc;
   F_juncCaL = 0.9;
-  F_slCaL = 1 - F_juncCaL;
+
   //##### Buffers ########
   // Sodium Buffers
   Nabj = 3.539892;
@@ -89,7 +97,6 @@ void GpbVent::Initialize() {
   Ryrr = 0.8884332;
   Ryro = 8.156628E-7;
   Ryri = 1.024274E-7;
-  RI = 1.0 - Ryrr - Ryro - Ryri;
 
   iTos = iTof = iTo = 0.0;
   iKsjunc = iKssl = iKs = iKr = iKpjunc = iKpsl = iKp = iK1 = 0.0;

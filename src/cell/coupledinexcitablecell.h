@@ -8,9 +8,9 @@ class CoupledInexcitableCell : public Cell {
  public:
   CoupledInexcitableCell();
   CoupledInexcitableCell(const CoupledInexcitableCell& toCopy);
-  virtual ~CoupledInexcitableCell();
+  ~CoupledInexcitableCell();
 
-  virtual CoupledInexcitableCell* clone() override;  // public copy function
+  CoupledInexcitableCell* clone() override;  // public copy function
 
   void updateIcab();
   void updateInab();
@@ -31,11 +31,11 @@ class CoupledInexcitableCell : public Cell {
   double Inabfactor = 1;
   double Ikbfactor = 1;
 
-  virtual void updateCurr();
-  virtual void updateConc();
-  virtual void makemap();
+  void updateCurr();
+  void updateConc();
+  void makemap();
 
-  virtual const char* type() const;
+  const char* type() const;
 
  private:
   void Initialize();

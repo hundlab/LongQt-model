@@ -38,16 +38,15 @@ class FR : public Cell {
  public:
   FR();
   FR(FR& toCopy);
-  virtual ~FR();
+  ~FR();
 
+  void setup() override;
   FR* clone();
 
   //##### Declare class variables ##############
 
   double iKtStim;
   /* Cell Geometry */
-  const double l = 0.01;       // Length of the cell (cm)
-  const double a = 0.0011;     // Radius of the cell (cm)
   const double pi = 3.141592;  // Pi
   // double cellLength;       // Length of the cell (cm)
   // double cellRadius;     // Radius of the cell (cm)
@@ -351,38 +350,38 @@ class FR : public Cell {
   // declared in parent class (Cell) are inherited by FR class.
 
   /* Ion Current Functions */
-  virtual void comp_ina();    // Calculates Fast Na Current
-  virtual void comp_ical();   // Calculates Currents through L-Type Ca Channel
-  virtual void comp_icat();   // Calculates Currents through T-Type Ca Channel
-  virtual void comp_ikr();    // Calculates Rapidly Activating K Current
-  virtual void comp_iks();    // Calculates Slowly Activating K Current
-  virtual void comp_iki();    // Calculates Time-Independant K Current
-  virtual void comp_ikp();    // Calculates Plateau K Current
-  virtual void comp_ikna();   // Calculates Na-activated K Current
-  virtual void comp_ikatp();  // Calculates ATP-Sensitive K Current
-  virtual void comp_ito();    // Calculates Transient Outward Current
-  virtual void comp_inaca();  // Calculates Na-Ca Exchanger Current
-  virtual void comp_inak();   // Calculates Na-K Pump Current
-  virtual void comp_insca();  // Calculates Non-Specific ca-Activated Current
-  virtual void comp_ipca();   // Calculates Sarcolemmal Ca Pump Current
-  virtual void comp_icab();   // Calculates Ca Background Current
-  virtual void comp_inab();   // Calculates Na Background Current
-  virtual void comp_it();     // Calculates Total Current
+  void comp_ina();    // Calculates Fast Na Current
+  void comp_ical();   // Calculates Currents through L-Type Ca Channel
+  void comp_icat();   // Calculates Currents through T-Type Ca Channel
+  void comp_ikr();    // Calculates Rapidly Activating K Current
+  void comp_iks();    // Calculates Slowly Activating K Current
+  void comp_iki();    // Calculates Time-Independant K Current
+  void comp_ikp();    // Calculates Plateau K Current
+  void comp_ikna();   // Calculates Na-activated K Current
+  void comp_ikatp();  // Calculates ATP-Sensitive K Current
+  void comp_ito();    // Calculates Transient Outward Current
+  void comp_inaca();  // Calculates Na-Ca Exchanger Current
+  void comp_inak();   // Calculates Na-K Pump Current
+  void comp_insca();  // Calculates Non-Specific ca-Activated Current
+  void comp_ipca();   // Calculates Sarcolemmal Ca Pump Current
+  void comp_icab();   // Calculates Ca Background Current
+  void comp_inab();   // Calculates Na Background Current
+  void comp_it();     // Calculates Total Current
 
   /* Ion Concentration Functions */
-  virtual void conc_nai();    // Calculates new myoplasmic Na ion concentration
-  virtual void conc_ki();     // Calculates new myoplasmic K ion concentration
-  virtual void conc_nsr();    // Calculates new NSR Ca ion concentration
-  virtual void conc_jsr();    // Calculates new JSR Ca ion concentration
-  virtual void calc_itr();    // Calculates Translocation of Ca from NSR to JSR
-  virtual void conc_cai();    // Calculates new myoplasmic Ca ion concentration
-  virtual void conc_cleft();  // Calculates new cleft ion concentrationsvirtual
+  void conc_nai();    // Calculates new myoplasmic Na ion concentration
+  void conc_ki();     // Calculates new myoplasmic K ion concentration
+  void conc_nsr();    // Calculates new NSR Ca ion concentration
+  void conc_jsr();    // Calculates new JSR Ca ion concentration
+  void calc_itr();    // Calculates Translocation of Ca from NSR to JSR
+  void conc_cai();    // Calculates new myoplasmic Ca ion concentration
+  void conc_cleft();  // Calculates new cleft ion concentrationsvirtual
 
-  virtual void externalStim(double stimval);
-  virtual void updateCurr();
-  virtual void updateConc();
-  virtual void makemap();
-  virtual const char* type() const;
+  void externalStim(double stimval);
+  void updateCurr();
+  void updateConc();
+  void makemap();
+  const char* type() const;
 };
 }  // namespace LongQt
 

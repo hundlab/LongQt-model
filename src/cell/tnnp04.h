@@ -26,7 +26,8 @@ class TNNP04Control : public Cell {
   TNNP04Control(const TNNP04Control& toCopy);
   ~TNNP04Control();
 
-  virtual TNNP04Control* clone();
+  TNNP04Control* clone() override;
+  void setup() override;
 
   /*########################*/
   /*    DEFINE STRUCTS	  */
@@ -50,29 +51,29 @@ class TNNP04Control : public Cell {
   // Declare class functions
   //##################################################
   //###Concentration updating functions ######
-  virtual void updatecaI();
-  virtual void updatecaSr();
-  virtual void updatekI();
-  virtual void updatenaI();
+  void updatecaI();
+  void updatecaSr();
+  void updatekI();
+  void updatenaI();
   //####Current updating functions #######
-  virtual void updateSRcurrents();
-  virtual void updateIcal();
-  virtual void updateIcab();
-  virtual void updateIpca();
-  virtual void updateIto();
-  virtual void updateIks();
-  virtual void updateIkr();
-  virtual void updateIk1();
-  virtual void updateIpk();
-  virtual void updateInaca();
-  virtual void updateInak();
-  virtual void updateInab();
-  virtual void updateIna();
-  virtual void updateCurr();
-  virtual void updateConc();
-  virtual void externalStim(double stimval);
-  virtual void makemap();
-  virtual const char* type() const;
+  void updateSRcurrents();
+  void updateIcal();
+  void updateIcab();
+  void updateIpca();
+  void updateIto();
+  void updateIks();
+  void updateIkr();
+  void updateIk1();
+  void updateIpk();
+  void updateInaca();
+  void updateInak();
+  void updateInab();
+  void updateIna();
+  void updateCurr();
+  void updateConc();
+  void externalStim(double stimval);
+  void makemap();
+  const char* type() const;
 
   //##### Declare class variables ##############
   double Vc;

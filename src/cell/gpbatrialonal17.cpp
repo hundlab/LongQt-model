@@ -10,6 +10,17 @@ GpbAtrialOnal17::GpbAtrialOnal17(GpbAtrialOnal17& toCopy) : Cell(toCopy) {
 
 GpbAtrialOnal17::~GpbAtrialOnal17() {}
 
+void GpbAtrialOnal17::setup() {
+  Vsr = 0.035 * Vcell;
+  Vjunc = (5.39E-4) * Vcell;
+  Vsl = 0.02 * Vcell;
+  Vmyo = 0.65 * Vcell;
+
+  Fsl = 1 - Fjunc;
+  F_slCaL = 1 - F_juncCaL;
+  RI = 1.0 - Ryrr - Ryro - Ryri;
+}
+
 void GpbAtrialOnal17::Initialize() {
   Cm = 1.0;        // uF/cm2
   ACap = 1.10E-4;  // capacitive area, cm2
@@ -26,10 +37,7 @@ void GpbAtrialOnal17::Initialize() {
   // num = 0;
 
   Vcell = 3.3E-5;  // uL
-  Vsr = 0.035 * Vcell;
-  Vjunc = (5.39E-4) * Vcell;
-  Vsl = 0.02 * Vcell;
-  Vmyo = 0.65 * Vcell;
+
   //###### Concentrations #########
   naI = 9.136;           // mM
   naO = 140.0;           // mM
@@ -47,9 +55,9 @@ void GpbAtrialOnal17::Initialize() {
   mgI = 1.0;             // mM
   //##### Fractional Currents ########
   Fjunc = 0.11;
-  Fsl = 1 - Fjunc;
+
   F_juncCaL = 0.9;
-  F_slCaL = 1 - F_juncCaL;
+
   //##### Buffers ########
   // Sodium Buffers
   Nabj = 3.539892;
@@ -90,7 +98,6 @@ void GpbAtrialOnal17::Initialize() {
   Ryrr = 0.8884332;
   Ryro = 8.156628E-7;
   Ryri = 1.024274E-7;
-  RI = 1.0 - Ryrr - Ryro - Ryri;
 
   iTos = iTof = iTo = 0.0;
   iKsjunc = iKssl = iKs = iKr = iKur = iKpjunc = iKpsl = iKp = iK1 = 0.0;
@@ -129,7 +136,7 @@ void GpbAtrialOnal17::Initialize() {
   IcaMkiiFactor = 1;
   InalPFactor = 1;
   Jsrleakfactor = 1;
-  ROSFactor = 0;
+  ROSConc = 0;
 
   testFactor = 1;
 
@@ -145,7 +152,7 @@ void GpbAtrialOnal17::updateCamk() {
   double
       calmodulin;  // free calmodulin bound to calcium. in the sl (for camkii)
 
-  double ros = 1 * ROSFactor;       // concentration of H2O2, um
+  double ros = ROSConc;             // concentration of H2O2, um
   double kib = 246.0 * testFactor;  // mM-1/ms-1
   double kbi = 0.0022;              // ms-1
   double kox = 0.0002909;           // ms-1
@@ -484,7 +491,7 @@ void GpbAtrialOnal17::updateIcal() {
   Gate.d = d_inf - (d_inf - Gate.d) * exp(-dt / taud);
 
   //	df_cabjdt = 1.7*cajI*(1-gate.f_cabj)-11.9E-3*gate.f_cabj +
-  //deltatfca*camfact; 	df_cabsldt
+  // deltatfca*camfact; 	df_cabsldt
   //= 1.7*caslI*(1-gate.f_cabsl)-11.9E-3*gate.f_cabsl +deltat*camfact;
   //	gate.f_cabj=gate.f_cabj+df_cabjdt*dt;
   //	gate.f_cabsl=gate.f_cabsl+df_cabsldt*dt;
@@ -1051,13 +1058,13 @@ void GpbAtrialOnal17::makemap() {
   __pars["IclcaFactor"] = &Iclcafactor;
   __pars["IclbkFactor"] = &Iclbkfactor;
   __pars["InalFactor"] = &Inalfactor;
-  __pars["JSRcarelFactor"] = &JSRcarelfactor;
+  __pars["JSRcaRelFactor"] = &JSRcarelfactor;
   __pars["JsercaFactor"] = &Jsercafactor;
-  __pars["Inabfactor"] = &Inabfactor;
-  __pars["IcaMkiiFactor"] = &IcaMkiiFactor;
+  __pars["InabFactor"] = &Inabfactor;
+  __pars["ICaMKIIFactor"] = &IcaMkiiFactor;
   __pars["InalPFactor"] = &InalPFactor;
   __pars["JsrleakFactor"] = &Jsrleakfactor;
-  __pars["ROSFactor"] = &ROSFactor;
+  __pars["ROS"] = &ROSConc;
   __pars["testFactor"] = &testFactor;
 }
 const char* GpbAtrialOnal17::type() const {

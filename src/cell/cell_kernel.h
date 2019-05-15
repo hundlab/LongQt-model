@@ -35,6 +35,7 @@ class CellKernel : public std::enable_shared_from_this<CellKernel> {
   CellKernel(const CellKernel& toCopy);
   virtual ~CellKernel();
 
+  virtual void setup();
   virtual CellKernel* clone() = 0;  // public copy function
   //##### Declare class functions ##############
   virtual double updateV();
@@ -46,7 +47,7 @@ class CellKernel : public std::enable_shared_from_this<CellKernel> {
 
   //##### Declare class variables ##############
   double vOld = -88.0;  // Transmembrane potential from previous iteration
-  double vNew = -88.0; // Transmembrane potential from current iteration
+  double vNew = -88.0;  // Transmembrane potential from current iteration
   //    double vNew;    // new Transmembrane potential in calculation
   double t = 0;          // time, ms
   double dtmin = 0.005;  // ms
@@ -54,7 +55,7 @@ class CellKernel : public std::enable_shared_from_this<CellKernel> {
   double dtmax = 0.1;    // ms
   double dvcut = 1.0;    // mV/ms
   double apTime = 0.0;
-  double dt = dtmin;       // Time increment
+  double dt;               // Time increment
   double iNat = 0;         // Total transmembrane sodium current.
   double iKt = 0;          // Total transmembrane potassium current.
   double iCat = 0;         // Total transmembrane calcium current.
@@ -66,13 +67,10 @@ class CellKernel : public std::enable_shared_from_this<CellKernel> {
   double Rcg = 1;            // Ratio of capacitive to geometric area.
   double cellRadius = 1e-3;  // cm
   double cellLength = 1e-2;  // cm
-  double Vcell = 1000 * 3.14 * cellRadius * cellRadius *
-                 cellLength;   // Total cell Volume, uL.
-  double Vmyo = 0.66 * Vcell;  //  Myoplasmic volume, uL.
-  double AGeo =
-      2 * 3.14 * cellRadius * cellRadius +
-      2 * 3.14 * cellRadius * cellLength;  // Geometric cell surface area.
-  double ACap = AGeo * Rcg;                // Capacitive cell surface area.
+  double Vcell;              // Total cell Volume, uL.
+  double Vmyo;               //  Myoplasmic volume, uL.
+  double AGeo;               // Geometric cell surface area.
+  double ACap;               // Capacitive cell surface area.
   double dVdt = 0;
   //    double dVdtmax;
   double Rmyo = 150;  // Myoplasmic resistivity.
@@ -90,7 +88,6 @@ class CellKernel : public std::enable_shared_from_this<CellKernel> {
   virtual std::set<std::string> vars();
   virtual std::set<std::string> pars();
   virtual const char* type() const = 0;
-  virtual void setup();
   // class options eg ISO
   virtual std::map<std::string, int> optionsMap() const;
   virtual int option() const;

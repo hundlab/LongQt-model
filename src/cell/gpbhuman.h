@@ -20,8 +20,9 @@ class GpbVent : public Cell {
   // constructors
   GpbVent();
   GpbVent(GpbVent& toCopy);
-  virtual ~GpbVent();
+  ~GpbVent();
 
+  void setup() override;
   GpbVent* clone() override;
 
   /*########################*/
@@ -155,32 +156,32 @@ class GpbVent : public Cell {
   double F_slCaL;
 
   //###Concentration updating functions ######
-  virtual void updatecaI();
-  virtual void updatenaI();
+  void updatecaI();
+  void updatenaI();
   //####Current updating functions #######
-  /*virtual void updateSRcurrents();*/
-  virtual void updateIcal();
-  virtual void updateIcab();
-  virtual void updateIpca();
-  virtual void updateIto();
-  virtual void updateIks();
-  virtual void updateIkr();
-  virtual void updateIk1();
-  virtual void updateIpk();
-  virtual void updateInaca();
-  virtual void updateInak();
-  virtual void updateInab();
-  virtual void updateIna();
-  virtual void updateSRFlux();
-  virtual void updatecytobuff();  // cytosolic Ca buffers
-  virtual void updateJSLbuff();   // junctional and SL Ca buffers
-  virtual void updateSRbuff();    // SR Ca buffer
-  virtual void updateIclca();
-  virtual void updateIclbk();
-  virtual void updateCurr();
-  virtual void updateConc();
-  virtual void makemap();
-  virtual const char* type() const;
+  /*void updateSRcurrents();*/
+  void updateIcal();
+  void updateIcab();
+  void updateIpca();
+  void updateIto();
+  void updateIks();
+  void updateIkr();
+  void updateIk1();
+  void updateIpk();
+  void updateInaca();
+  void updateInak();
+  void updateInab();
+  void updateIna();
+  void updateSRFlux();
+  void updatecytobuff();  // cytosolic Ca buffers
+  void updateJSLbuff();   // junctional and SL Ca buffers
+  void updateSRbuff();    // SR Ca buffer
+  void updateIclca();
+  void updateIclbk();
+  void updateCurr();
+  void updateConc();
+  void makemap();
+  const char* type() const;
 
   struct GateVariable gate;
 

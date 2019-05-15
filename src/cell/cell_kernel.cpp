@@ -27,6 +27,18 @@ CellKernel::CellKernel(const CellKernel& o) { this->Initialize(); }
 
 CellKernel::~CellKernel() {}
 
+// setup variables for simulation
+// to be called directly before running simulation
+void CellKernel::setup() {
+  dt = dtmin;
+  Vcell = 1000 * 3.14 * cellRadius * cellRadius * cellLength;
+  Vmyo = 0.66 * Vcell;
+  AGeo =
+      2 * 3.14 * cellRadius * cellRadius + 2 * 3.14 * cellRadius * cellLength;
+  ACap = AGeo * Rcg;
+  t = 0;
+}
+
 // Transmembrane potential
 double CellKernel::updateV() {
   vNew = vOld - iTot * dt;
@@ -108,16 +120,6 @@ set<string> CellKernel::pars() {
     toReturn.insert(it->first);
   }
   return toReturn;
-}
-
-void CellKernel::setup() {
-  /*  Vcell = 1000 * 3.14 * cellRadius * cellRadius * cellLength;
-    Vmyo = 0.66 * Vcell;
-    AGeo =
-        2 * 3.14 * cellRadius * cellRadius + 2 * 3.14 * cellRadius * cellLength;
-    ACap = AGeo * Rcg;
-    dt = dtmin;*/
-  t = 0;
 }
 
 // const char* CellKernel::name() const

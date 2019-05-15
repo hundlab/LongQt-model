@@ -56,8 +56,6 @@ class Cell : public CellKernel {
   virtual bool readCellState(QXmlStreamReader& xml);
   virtual void closeFiles();
 
-  virtual void setup() override;
-
  protected:
   std::ofstream parsofile;
   std::ofstream varsofile;

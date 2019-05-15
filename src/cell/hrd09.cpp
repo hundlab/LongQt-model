@@ -27,7 +27,7 @@ HRD09Control::~HRD09Control(){};
 
 //##### Initialize variables ##################
 void HRD09Control::Initialize() {
-//  using nan = std::numeric_limits<double>::quiet_NaN;
+  //  using nan = std::numeric_limits<double>::quiet_NaN;
   dVdt = /*dVdtmax=*/5.434230843e-10;  // check
   Cm = 1.0;  // uF/cm2  must be defined for fiber...default = 1.
   t = 0.0;   // check
@@ -58,17 +58,6 @@ void HRD09Control::Initialize() {
   cellRadius = 0.0011;  // must be defined for fiber...default = 0.001;
   cellLength = 0.01;
   Rcg = 2.0;  // must be defined for fiber...default = 1.
-
-  Vcell = 1000 * 3.14 * cellRadius * cellRadius * cellLength;
-  AGeo =
-      2 * 3.14 * cellRadius * cellRadius + 2 * 3.14 * cellRadius * cellLength;
-  ACap = AGeo * Rcg;
-  Vmyo = Vcell * 0.66;
-  Vmito = Vcell * 0.26;
-  Vsr = Vcell * 0.06;
-  Vnsr = Vsr * 0.92;
-  Vjsr = Vsr * 0.08;
-  Vss = Vcell * 0.02;
 
   //#### Initialize ion channel gatess ####
   Gate.m = 0.00106712815;     // check
@@ -110,8 +99,6 @@ void HRD09Control::Initialize() {
   fOx = 0;                   // check
   fOxP = 0;                  // check
   fPhos = 8.382592879e-09;   // check
-
-  caTotal = caI + cmdn + trpn;
 
   iCab = -0.1545414915;    // check
   iCa = -0.0002372516075;  // check
@@ -164,6 +151,22 @@ void HRD09Control::Initialize() {
 }
 // overriden deep copy funtion
 HRD09Control* HRD09Control::clone() { return new HRD09Control(*this); }
+
+void HRD09Control::setup() {
+  Cell::setup();
+  Vcell = 1000 * 3.14 * cellRadius * cellRadius * cellLength;
+  AGeo =
+      2 * 3.14 * cellRadius * cellRadius + 2 * 3.14 * cellRadius * cellLength;
+  ACap = AGeo * Rcg;
+  Vmyo = Vcell * 0.66;
+  Vmito = Vcell * 0.26;
+  Vsr = Vcell * 0.06;
+  Vnsr = Vsr * 0.92;
+  Vjsr = Vsr * 0.08;
+  Vss = Vcell * 0.02;
+
+  caTotal = caI + cmdn + trpn;
+}
 // L-type Ca current
 void HRD09Control::updateIlca() {
   double taud, finf, fcainf, fcainf2, taufca, taufca2, tauf,

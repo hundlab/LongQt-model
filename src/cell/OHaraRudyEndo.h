@@ -10,8 +10,8 @@ class OHaraRudyEndo : public OHaraRudy {
   OHaraRudyEndo(OHaraRudyEndo& toCopy);
   ~OHaraRudyEndo();
 
-  virtual OHaraRudyEndo* clone() override;
-  virtual const char* type() const;
+  OHaraRudyEndo* clone() override;
+  const char* type() const;
 
  private:
   void Initialize();

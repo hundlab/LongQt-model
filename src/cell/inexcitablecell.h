@@ -8,14 +8,14 @@ class InexcitableCell : public Cell {
  public:
   InexcitableCell();
   InexcitableCell(const InexcitableCell& toCopy);
-  virtual ~InexcitableCell();
+  ~InexcitableCell();
 
-  virtual InexcitableCell* clone() override;  // public copy function
+  InexcitableCell* clone() override;  // public copy function
 
-  virtual void updateCurr();
-  virtual void updateConc();
+  void updateCurr();
+  void updateConc();
 
-  virtual const char* type() const;
+  const char* type() const;
 
  private:
   void Initialize();

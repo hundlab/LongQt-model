@@ -24,7 +24,8 @@ class GpbAtrialOnal17 : public Cell {
   // constructors
   GpbAtrialOnal17();
   GpbAtrialOnal17(GpbAtrialOnal17& toCopy);
-  virtual ~GpbAtrialOnal17();
+  ~GpbAtrialOnal17();
+  void setup() override;
   GpbAtrialOnal17* clone();
 
   /*########################*/
@@ -184,34 +185,34 @@ class GpbAtrialOnal17 : public Cell {
 
   //###Concentration updating functions ######
   void updateConc();
-  virtual void updatecaI();
-  virtual void updatenaI();
+  void updatecaI();
+  void updatenaI();
   //####Current updating functions #######
-  /*virtual void updateSRcurrents();*/
+  /*void updateSRcurrents();*/
   void updateCurr();
-  virtual void updateIcal();
-  virtual void updateIcab();
-  virtual void updateIpca();
-  virtual void updateIto();
-  virtual void updateIks();
-  virtual void updateIkr();
-  virtual void updateIk1();
-  virtual void updateIkur();
-  virtual void updateIpk();
-  virtual void updateInaca();
-  virtual void updateInak();
-  virtual void updateInab();
-  virtual void updateIna();
-  virtual void updateSRFlux();
-  virtual void updateCamk();
-  virtual void updatecytobuff();  // cytosolic Ca buffers
-  virtual void updateJSLbuff();   // junctional and SL Ca buffers
-  virtual void updateSRbuff();    // SR Ca buffer
-  virtual void updateIclca();
-  virtual void updateIclbk();
-  virtual void updateInal();
-  virtual void updatekI();
-  virtual void updateClI();
+  void updateIcal();
+  void updateIcab();
+  void updateIpca();
+  void updateIto();
+  void updateIks();
+  void updateIkr();
+  void updateIk1();
+  void updateIkur();
+  void updateIpk();
+  void updateInaca();
+  void updateInak();
+  void updateInab();
+  void updateIna();
+  void updateSRFlux();
+  void updateCamk();
+  void updatecytobuff();  // cytosolic Ca buffers
+  void updateJSLbuff();   // junctional and SL Ca buffers
+  void updateSRbuff();    // SR Ca buffer
+  void updateIclca();
+  void updateIclbk();
+  void updateInal();
+  void updatekI();
+  void updateClI();
 
   double Icalfactor;
   double Icabfactor;
@@ -234,7 +235,7 @@ class GpbAtrialOnal17 : public Cell {
   double IcaMkiiFactor;
   double InalPFactor;
   double Jsrleakfactor;
-  double ROSFactor;
+  double ROSConc;
 
   // testing
   double testFactor;
@@ -243,7 +244,7 @@ class GpbAtrialOnal17 : public Cell {
   void makemap();
   struct GateVariable Gate;
   enum Options opts;
-  virtual const char* type() const;
+  const char* type() const;
 };
 }  // namespace LongQt
 

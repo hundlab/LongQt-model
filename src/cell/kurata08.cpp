@@ -574,21 +574,21 @@ void Kurata08::makemap() {
   __pars["naO"] = &naO;
   __pars["kO"] = &kO;
   __pars["caO"] = &caO;
-  __pars["icalFactor"] = &icalFactor;
-  __pars["icattFactor"] = &icattFactor;
-  __pars["ikrFactor"] = &ikrFactor;
-  __pars["iksFactor"] = &iksFactor;
-  __pars["itoFactor"] = &itoFactor;
-  __pars["itrekFactor"] = &itrekFactor;
-  __pars["isusFactor"] = &isusFactor;
-  __pars["ikachFactor"] = &ikachFactor;
-  __pars["istFactor"] = &istFactor;
-  __pars["inabFactor"] = &inabFactor;
-  __pars["inakFactor"] = &inakFactor;
-  __pars["inacaFactor"] = &inacaFactor;
-  __pars["ihFactor"] = &ihFactor;
-  __pars["iupFactor"] = &iupFactor;
-  __pars["irelFactor"] = &irelFactor;
+  __pars["IcalFactor"] = &icalFactor;
+  __pars["IcattFactor"] = &icattFactor;
+  __pars["IkrFactor"] = &ikrFactor;
+  __pars["IksFactor"] = &iksFactor;
+  __pars["ItoFactor"] = &itoFactor;
+  __pars["ItrekFactor"] = &itrekFactor;
+  __pars["IsusFactor"] = &isusFactor;
+  __pars["IkachFactor"] = &ikachFactor;
+  __pars["IstFactor"] = &istFactor;
+  __pars["InabFactor"] = &inabFactor;
+  __pars["InakFactor"] = &inakFactor;
+  __pars["InacaFactor"] = &inacaFactor;
+  __pars["IhFactor"] = &ihFactor;
+  __pars["IupFactor"] = &iupFactor;
+  __pars["IrelFactor"] = &irelFactor;
 }
 
 const char *Kurata08::type() const { return "Rabbit Sinus Node (Kurata 2008)"; }

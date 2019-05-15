@@ -1,9 +1,9 @@
 #include "OHaraRudyEpi.h"
 using namespace LongQt;
 
-OHaraRudyEpi::OHaraRudyEpi() { this->Initialize(); };
+OHaraRudyEpi::OHaraRudyEpi() { this->Initialize(); }
 
-OHaraRudyEpi::~OHaraRudyEpi(){};
+OHaraRudyEpi::~OHaraRudyEpi(){}
 
 OHaraRudyEpi::OHaraRudyEpi(OHaraRudyEpi &toCopy) : OHaraRudy(toCopy) {
   this->Initialize();

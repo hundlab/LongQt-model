@@ -1,9 +1,9 @@
 #include "OHaraRudyEndo.h"
 using namespace LongQt;
 
-OHaraRudyEndo::OHaraRudyEndo() { this->Initialize(); };
+OHaraRudyEndo::OHaraRudyEndo() { this->Initialize(); }
 
-OHaraRudyEndo::~OHaraRudyEndo(){};
+OHaraRudyEndo::~OHaraRudyEndo(){}
 
 OHaraRudyEndo::OHaraRudyEndo(OHaraRudyEndo &toCopy) : OHaraRudy(toCopy) {
   this->Initialize();

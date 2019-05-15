@@ -27,33 +27,33 @@ class GridCell : public Cell {
   GridCell* clone() override;
   Grid* getGrid();
 
-  virtual void updateConc();
-  virtual void updateCurr();
-  virtual double updateV();
-  virtual void externalStim(double stimval);
-  virtual double tstep(double stimt);
-  virtual void setV(double v = dlim::quiet_NaN());
-  virtual std::set<std::string> vars();
-  virtual std::set<std::string> pars();
-  virtual void setup() override;
+  void updateConc();
+  void updateCurr();
+  double updateV();
+  void externalStim(double stimval);
+  double tstep(double stimt);
+  void setV(double v = dlim::quiet_NaN());
+  std::set<std::string> vars();
+  std::set<std::string> pars();
+  void setup() override;
   void setup(std::set<std::pair<int, int>> stimNodes,
                      std::set<std::pair<int, int>> traceNodes);
 
   // cell io functions
-  virtual bool writeGridfile(QXmlStreamWriter& xml);
-  virtual bool writeGridfile(std::string fileName = "");
-  virtual bool readGridfile(QXmlStreamReader& xml);
-  virtual bool readGridfile(std::string filename);
-  virtual void setOutputfileConstants(std::string filename);
-  virtual void setOuputfileVariables(std::string filename);
-  virtual void setConstantSelection(std::set<std::string> new_selection);
-  virtual void setVariableSelection(std::set<std::string> new_selection);
-  virtual void writeConstants();
-  virtual void writeVariables();
-  virtual bool readCellState(std::string filename);
-  virtual bool writeCellState(std::string filename);
-  virtual void closeFiles();
-  virtual const char* type() const;
+  bool writeGridfile(QXmlStreamWriter& xml);
+  bool writeGridfile(std::string fileName = "");
+  bool readGridfile(QXmlStreamReader& xml);
+  bool readGridfile(std::string filename);
+  void setOutputfileConstants(std::string filename);
+  void setOuputfileVariables(std::string filename);
+  void setConstantSelection(std::set<std::string> new_selection);
+  void setVariableSelection(std::set<std::string> new_selection);
+  void writeConstants();
+  void writeVariables();
+  bool readCellState(std::string filename);
+  bool writeCellState(std::string filename);
+  void closeFiles();
+  const char* type() const;
 
  private:
   bool handleNode(QXmlStreamReader& xml, int row);

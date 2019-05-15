@@ -30,7 +30,13 @@ Br04 *Br04::clone() { return new Br04(*this); }
 // Destructor for control canine epicardial
 // ventricular model.
 //#####################################################
-Br04::~Br04(){};
+Br04::~Br04() {}
+
+void Br04::setup() {
+  Cell::setup();
+  caTrpn_low = 0.07 * (caI / (caI + 0.0006));
+  caTrpn_high = 0.140 * (caI / (caI + 0.0000135));
+};
 
 void Br04::updateIlca() {
   double dO, dC2, dC3, dC4, dI1, dI2, dI3;

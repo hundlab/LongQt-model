@@ -33,15 +33,6 @@ void Courtemanche98::Initialize() {
   cellLength = 0.01;
   Rcg = 1.0;
 
-  Vcell = 1000 * 3.14 * cellRadius * cellRadius * cellLength;
-  AGeo =
-      2 * 3.14 * cellRadius * cellRadius + 2 * 3.14 * cellRadius * cellLength;
-  ACap = AGeo;
-  Vmyo = 0.68 * Vcell;  // 13668; //uL, 13668 um3
-  Vup = 0.0552 *
-        Vcell;  // 1109.52; //uL,  1109.52 um3... SR compartment uptake volume
-  Vrel = 0.0048 *
-         Vcell;  // 96.48; //uL,  96.48 um3... SR compartment release volume
   //#### Initialize ion channel gates ####
   Gate.m = 0.0;
   Gate.h = 1.0;
@@ -101,7 +92,20 @@ Courtemanche98 *Courtemanche98::clone() { return new Courtemanche98(*this); }
 // Destructor for control human
 // atrial model.
 //#####################################################
-Courtemanche98::~Courtemanche98(){};
+Courtemanche98::~Courtemanche98() {}
+
+void Courtemanche98::setup() {
+  Cell::setup();
+  Vcell = 1000 * 3.14 * cellRadius * cellRadius * cellLength;
+  AGeo =
+      2 * 3.14 * cellRadius * cellRadius + 2 * 3.14 * cellRadius * cellLength;
+  ACap = AGeo;
+  Vmyo = 0.68 * Vcell;  // 13668; //uL, 13668 um3
+  Vup = 0.0552 *
+        Vcell;  // 1109.52; //uL,  1109.52 um3... SR compartment uptake volume
+  Vrel = 0.0048 *
+         Vcell;  // 96.48; //uL,  96.48 um3... SR compartment release volume
+};
 
 // L-type Ca current
 void Courtemanche98::updateiCal() {  // slow inward Ca2+ current, L-type

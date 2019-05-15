@@ -27,8 +27,9 @@ class Courtemanche98 : public Cell {
  public:
   Courtemanche98();
   Courtemanche98(Courtemanche98& toCopy);
-  virtual ~Courtemanche98();
+  ~Courtemanche98();
 
+  void setup() override;
   Courtemanche98* clone() override;
 
   /*########################*/
@@ -62,32 +63,32 @@ class Courtemanche98 : public Cell {
   //##################################################
   //#### current updating functions ####
 
-  virtual void updateiCal();
-  virtual void updateiCab();
-  virtual void updateipCa();
-  virtual void updateiRel();
-  virtual void updateSRFlux();
-  virtual void updateiK1();
-  virtual void updateiKur();
-  virtual void updateiTo();
-  virtual void updateiKr();
-  virtual void updateiKs();
-  virtual void updateiNak();
-  virtual void updateiNaca();
-  virtual void updateiNa();
-  virtual void updateiNab();
-  virtual void updateCurr();
-  virtual void updateConc();
+  void updateiCal();
+  void updateiCab();
+  void updateipCa();
+  void updateiRel();
+  void updateSRFlux();
+  void updateiK1();
+  void updateiKur();
+  void updateiTo();
+  void updateiKr();
+  void updateiKs();
+  void updateiNak();
+  void updateiNaca();
+  void updateiNa();
+  void updateiNab();
+  void updateCurr();
+  void updateConc();
 
   //#### concentration updating functions ####
-  virtual void updatecaI();
-  virtual void updatecaUp();
-  virtual void updatecaRel();
-  virtual void updatenaI();
-  virtual void updatekI();
+  void updatecaI();
+  void updatecaUp();
+  void updatecaRel();
+  void updatenaI();
+  void updatekI();
 
-  virtual void makemap();
-  virtual const char* type() const;
+  void makemap();
+  const char* type() const;
 
   //##### Declare class variables ##############
   double naI, naO, kI, kO, caI, caO;  // Ion concentrations, mM

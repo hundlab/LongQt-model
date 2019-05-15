@@ -91,5 +91,5 @@ void CoupledInexcitableCell::makemap() {
 
   __pars["InabFactor"] = &Inabfactor;
   __pars["IkbFactor"] = &Ikbfactor;
-  __pars["iCabFactor"] = &Icabfactor;
+  __pars["IcabFactor"] = &Icabfactor;
 }

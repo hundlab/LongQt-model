@@ -207,8 +207,3 @@ void Cell::closeFiles() {
   this->parsofile.close();
   this->varsofile.close();
 }
-
-void Cell::setup() {
-  CellKernel::setup();
-
-}

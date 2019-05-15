@@ -25,10 +25,7 @@ void GpbAtrial::Initialize() {
   //    num = 0;
 
   Vcell = 3.3E-5;  // uL
-  Vsr = 0.035 * Vcell;
-  Vjunc = (5.39E-4) * Vcell;
-  Vsl = 0.02 * Vcell;
-  Vmyo = 0.65 * Vcell;
+
   //###### Concentrations #########
   naI = 9.136;           // mM
   naO = 140.0;           // mM
@@ -46,9 +43,7 @@ void GpbAtrial::Initialize() {
   mgI = 1.0;             // mM
   //##### Fractional Currents ########
   Fjunc = 0.11;
-  Fsl = 1 - Fjunc;
   F_juncCaL = 0.9;
-  F_slCaL = 1 - F_juncCaL;
   //##### Buffers ########
   // Sodium Buffers
   Nabj = 3.539892;
@@ -87,7 +82,6 @@ void GpbAtrial::Initialize() {
   Ryrr = 0.8884332;
   Ryro = 8.156628E-7;
   Ryri = 1.024274E-7;
-  RI = 1.0 - Ryrr - Ryro - Ryri;
 
   iTos = iTof = iTo = 0.0;
   iKsjunc = iKssl = iKs = iKr = iKur = iKpjunc = iKpsl = iKp = iK1 = 0.0;
@@ -137,6 +131,18 @@ void GpbAtrial::Initialize() {
   makemap();
 }
 GpbAtrial *GpbAtrial::clone() { return new GpbAtrial(*this); }
+
+void GpbAtrial::setup() {
+  Cell::setup();
+  Vsr = 0.035 * Vcell;
+  Vjunc = (5.39E-4) * Vcell;
+  Vsl = 0.02 * Vcell;
+  Vmyo = 0.65 * Vcell;
+
+  Fsl = 1 - Fjunc;
+  F_slCaL = 1 - F_juncCaL;
+  RI = 1.0 - Ryrr - Ryro - Ryri;
+}
 
 void GpbAtrial::updateConc() {
   updateSRFlux();

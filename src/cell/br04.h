@@ -27,8 +27,9 @@ class Br04 : public Cell {
  public:
   Br04();
   Br04(Br04& toCopy);
-  virtual ~Br04();
+  ~Br04();
 
+  void setup() override;
   Br04* clone() override;
 
   /*########################*/
@@ -54,36 +55,36 @@ class Br04 : public Cell {
   //##################################################
   // Declare class functions
   //##################################################
-  virtual void updateIlca();
-  virtual void updateIcab();
-  virtual void updateIpca();
-  virtual void updateIto_f();
-  virtual void updateIto_s();
-  virtual void updateIk1();
-  virtual void updateIks();
-  virtual void updateIkur();
-  virtual void updateIkss();
-  virtual void updateIkr();
-  virtual void updateItrek();
-  virtual void updateInak();
-  virtual void updateInaca();
-  virtual void updateIclca();
-  virtual void updateIna();
-  virtual void updateInab();
-  virtual void updateIns();
-  virtual void updateCaFlux();
-  virtual void updateCai();
-  virtual void updateCaSs();
-  virtual void updateCaJsr();
-  virtual void updateCaNsr();
-  virtual void updateNai();
-  virtual void updateKi();
-  virtual void updateCurr();
-  virtual void updateConc();
-  virtual double tstep(double stimt) override;
+  void updateIlca();
+  void updateIcab();
+  void updateIpca();
+  void updateIto_f();
+  void updateIto_s();
+  void updateIk1();
+  void updateIks();
+  void updateIkur();
+  void updateIkss();
+  void updateIkr();
+  void updateItrek();
+  void updateInak();
+  void updateInaca();
+  void updateIclca();
+  void updateIna();
+  void updateInab();
+  void updateIns();
+  void updateCaFlux();
+  void updateCai();
+  void updateCaSs();
+  void updateCaJsr();
+  void updateCaNsr();
+  void updateNai();
+  void updateKi();
+  void updateCurr();
+  void updateConc();
+  double tstep(double stimt) override;
   //    virtual int tstep();
-  virtual void makemap();
-  virtual const char* type() const;
+  void makemap();
+  const char* type() const;
   //##### Declare class variables ##############
   // Ion concentrations, mM
   double naI = 9.309480051;
@@ -95,8 +96,8 @@ class Br04 : public Cell {
 
   double caSs = 0.0001101446222;  // Ca in restricted space, mM.
 
-  double caTrpn_low = 0.07 * (caI / (caI + 0.0006));
-  double caTrpn_high = 0.140 * (caI / (caI + 0.0000135));
+  double caTrpn_low;
+  double caTrpn_high;
   double csqn = 8.990557096;
   double caJsr = 1.646733367;
   double caNsr = 1.666917661;

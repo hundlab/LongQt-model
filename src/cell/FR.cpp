@@ -23,22 +23,13 @@ void FR::Initialize() {
   vOld = /* vNew =*/-90.0;
 
   /* Cell Geometry */
-  cellLength = 0.01;                       // Length of the cell (cm)
-  cellRadius = 0.0011;                     // Radius of the cell (cm)
-  Vcell = 1000 * pi * a * a * l;           //   3.801e-5 uL
-  AGeo = 2 * pi * a * a + 2 * pi * a * l;  //   7.671e-5 cm^2
-  ACap = AGeo * 2;                         //   1.534e-4 cm^2
-  Vmyo = Vcell * 0.68;
-  vmito = Vcell * 0.26;
-  vsr = Vcell * 0.06;
-  Vnsr = Vcell * 0.0552;
-  Vjsr = Vcell * 0.0048;
-  vcleft = Vcell * 0.12 / 0.88;
+  cellLength = 0.01;    // Length of the cell (cm)
+  cellRadius = 0.0011;  // Radius of the cell (cm)
+
+  Rcg = 2;
 
   /* Terms for Solution of Conductance and Reversal Potential */
-  RGAS = 8314;   // Universal Gas Constant (J/kmol*K)
   FDAY = 96485;  // Faraday's Constant (C/mol)
-  TEMP = 310;    // Temperature (K)
 
   /* Ion Valences */
   zna = 1;  // Na valence
@@ -90,8 +81,7 @@ void FR::Initialize() {
   //    dt = udt;
   //    utsc = 50;
   dcaiont = 0;
-  caiontold = iCat;
-  dcaiont = dcaiontnew;
+
   i = -1;
 
   /*Factors*/
@@ -114,9 +104,9 @@ void FR::Initialize() {
   irelFactor = 1;
 
   /* NSR Ca Ion Concentration Changes */
-  kmup = 0.00092;                // Half-saturation concentration of iup (mM)
-  iupbar = iupFactor * 0.00875;  // Max. current through iup channel (mM/ms)
-  nsrbar = 15;                   // Max. [Ca] in NSR (mM)
+  kmup = 0.00092;  // Half-saturation concentration of iup (mM)
+
+  nsrbar = 15;  // Max. [Ca] in NSR (mM)
 
   /* JSR Ca Ion Concentration Changes */
   tauon = 2;   // Time constant of activation of Ca release from JSR (ms)
@@ -205,8 +195,26 @@ FR* FR::clone() { return new FR(*this); }
 
 // Destructor
 
-FR::~FR(){
+FR::~FR() {}
 
+void FR::setup() {
+  Cell::setup();
+  Vcell = 1000 * pi * cellRadius * cellRadius * cellLength;  //   3.801e-5 uL
+  AGeo = 2 * pi * cellRadius * cellRadius +
+         2 * pi * cellRadius * cellLength;  //   7.671e-5 cm^2
+
+  ACap = AGeo * Rcg;  //   1.534e-4 cm^2
+  Vmyo = Vcell * 0.68;
+  vmito = Vcell * 0.26;
+  vsr = Vcell * 0.06;
+  Vnsr = Vcell * 0.0552;
+  Vjsr = Vcell * 0.0048;
+  vcleft = Vcell * 0.12 / 0.88;
+
+  caiontold = iCat;
+  dcaiont = dcaiontnew;
+
+  iupbar = iupFactor * 0.00875;  // Max. current through iup channel (mM/ms)
 };
 
 //* Functions that describe the currents begin here */
@@ -840,21 +848,21 @@ void FR::makemap() {
   __pars["cao"] = &cao;
   __pars["gacai"] = &gacai;
   __pars["gacao"] = &gacao;
-  __pars["icalFactor"] = &icalFactor;
-  __pars["icattFactor"] = &icattFactor;
-  __pars["ikrFactor"] = &ikrFactor;
-  __pars["iksFactor"] = &iksFactor;
-  __pars["itoFactor"] = &itoFactor;
-  __pars["isusFactor"] = &isusFactor;  // atp sensitive potassium current
+  __pars["IcalFactor"] = &icalFactor;
+  __pars["IcattFactor"] = &icattFactor;
+  __pars["IkrFactor"] = &ikrFactor;
+  __pars["IksFactor"] = &iksFactor;
+  __pars["ItoFactor"] = &itoFactor;
+  __pars["IsusFactor"] = &isusFactor;  // atp sensitive potassium current
   // pars["ikachFactor"] = &ikachFactor;
   // pars["istFactor"] = &istFactor;
-  __pars["inabFactor"] = &inabFactor;
-  __pars["inakFactor"] = &inakFactor;
-  __pars["inacaFactor"] = &inacaFactor;
-  __pars["ikiFactor"] = &ikiFactor;
+  __pars["InabFactor"] = &inabFactor;
+  __pars["InakFactor"] = &inakFactor;
+  __pars["InacaFactor"] = &inacaFactor;
+  __pars["IkiFactor"] = &ikiFactor;
   //   pars["ihFactor"] = &ihFactor;
-  __pars["iupFactor"] = &iupFactor;
-  __pars["irelFactor"] = &irelFactor;
+  __pars["IupFactor"] = &iupFactor;
+  __pars["IrelFactor"] = &irelFactor;
 };
 const char* FR::type() const {
   return "Mammalian Ventricular (Faber-Rudy 2000)";

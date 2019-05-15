@@ -13,7 +13,7 @@ using namespace LongQt;
 // Constructor for canine infarct border zone epicardial
 // ventricular model.
 //######################################################
-HRD09BorderZone::HRD09BorderZone() { this->Initialize(); };
+HRD09BorderZone::HRD09BorderZone() { this->Initialize(); }
 HRD09BorderZone::HRD09BorderZone(const HRD09BorderZone& toCopy)
     : HRD09Control(toCopy) {
   this->Initialize();
@@ -23,7 +23,23 @@ HRD09BorderZone::HRD09BorderZone(const HRD09BorderZone& toCopy)
 // Destructor for canine infarct border zone epicardial
 // ventricular model.
 //#####################################################
-HRD09BorderZone::~HRD09BorderZone(){};
+HRD09BorderZone::~HRD09BorderZone() {}
+
+void HRD09BorderZone::setup() {
+  Cell::setup();
+  Vcell = 1000 * 3.14 * cellRadius * cellRadius * cellLength;
+  AGeo =
+      2 * 3.14 * cellRadius * cellRadius + 2 * 3.14 * cellRadius * cellLength;
+  ACap = AGeo * Rcg;
+  Vmyo = Vcell * 0.66;
+  Vmito = Vcell * 0.26;
+  Vsr = Vcell * 0.06;
+  Vnsr = Vsr * 0.92;
+  Vjsr = Vsr * 0.08;
+  Vss = Vcell * 0.02;
+
+  caTotal = caI + cmdn + trpn;
+}
 
 //##### Initialize variables ##################
 void HRD09BorderZone::Initialize() {
@@ -55,17 +71,6 @@ void HRD09BorderZone::Initialize() {
   cellRadius = 0.0011;
   cellLength = 0.01;
   Rcg = 2.0;
-
-  Vcell = 1000 * 3.14 * cellRadius * cellRadius * cellLength;
-  AGeo =
-      2 * 3.14 * cellRadius * cellRadius + 2 * 3.14 * cellRadius * cellLength;
-  ACap = AGeo * Rcg;
-  Vmyo = Vcell * 0.66;
-  Vmito = Vcell * 0.26;
-  Vsr = Vcell * 0.06;
-  Vnsr = Vsr * 0.92;
-  Vjsr = Vsr * 0.08;
-  Vss = Vcell * 0.02;
 
   //#### Initialize ion channel gatess ####
   Gate.m = 0.001267720639;
@@ -107,8 +112,6 @@ void HRD09BorderZone::Initialize() {
   fOx = 4.27796317e-05;
   fOxP = 6.992656517e-11;
   fPhos = 5.480670365e-12;
-
-  caTotal = caI + cmdn + trpn;
 
   iCab = -0.2296685076;
   iCa = -0.0001748612881;

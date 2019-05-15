@@ -53,8 +53,6 @@ void TNNP04Control::Initialize() {
   caO = 2.0;      // uM
   caSr = 0.56;    // uM
 
-  caSrbufc = 10.0 * (caSr / (caSr + 0.3));
-  caIbufc = 0.15 * (caI / (caI + 0.001));
   //##### Gating Variables #####
   Gate.g = 1.0;
   Gate.d = 0.0;
@@ -93,6 +91,12 @@ void TNNP04Control::Initialize() {
 }
 
 TNNP04Control *TNNP04Control::clone() { return new TNNP04Control(*this); }
+
+void TNNP04Control::setup()
+{
+    caSrbufc = 10.0 * (caSr / (caSr + 0.3));
+    caIbufc = 0.15 * (caI / (caI + 0.001));
+}
 
 void TNNP04Control::updateIcal() {
   double d_inf, tau_d, gamma_d, alpha_d, beta_d;
@@ -493,8 +497,8 @@ void TNNP04Control::makemap() {
   __vars["Gate.h"] = &Gate.h;
   __vars["Gate.j"] = &Gate.j;
 
-  __pars["iRelFactor"] = &iRelfactor;
-  __pars["ileakFactor"] = &ileakfactor;
+  __pars["IrelFactor"] = &iRelfactor;
+  __pars["IleakFactor"] = &ileakfactor;
   __pars["IcalFactor"] = &Icalfactor;
   __pars["IcabFactor"] = &Icabfactor;
   __pars["IpcaFactor"] = &Ipcafactor;

@@ -65,9 +65,10 @@ class OHaraRudy : public Cell {
   OHaraRudy(OHaraRudy& toCopy);
   ~OHaraRudy();
 
-  virtual OHaraRudy* clone() override;
+  void setup();
+  OHaraRudy* clone() override;
 
-  virtual void makemap();
+  void makemap();
 
   double naI = 7;
   double nass = naI;
@@ -76,7 +77,7 @@ class OHaraRudy : public Cell {
   double cai = 1.0e-4;
   double cass = cai;
   double cansr = 1.2;
-  double cajsr = cansr;
+  double cajsr;
   double m = 0;
   double hf = 1;
   double hs = 1;
@@ -171,10 +172,10 @@ class OHaraRudy : public Cell {
   void updatekI();
   void updatecajsr();
 
-  virtual void updateCurr();
-  virtual void updateConc();
-  virtual void externalStim(double stimval);
-  virtual const char* type() const;
+  void updateCurr();
+  void updateConc();
+  void externalStim(double stimval);
+  const char* type() const;
 
  private:
   void Initialize();

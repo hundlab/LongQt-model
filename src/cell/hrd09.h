@@ -32,7 +32,8 @@ class HRD09Control : public Cell {
   HRD09Control();
   HRD09Control(const HRD09Control& toCopy);
   ~HRD09Control();
-  virtual HRD09Control* clone() override;
+  HRD09Control* clone() override;
+  void setup() override;
 
   /*########################*/
   /*    DEFINE STRUCTS	  */
@@ -81,37 +82,37 @@ class HRD09Control : public Cell {
   //##################################################
   // Declare class functions
   //##################################################
-  virtual void updateIna();
-  virtual void updateInal();
-  virtual void updateInak();
-  virtual void updateInaca();
-  virtual void updateIcab();
-  virtual void updateIclb();
-  virtual void updateInacl();
-  virtual void updateIlca();
-  virtual void updateIpca();
-  virtual void updateIks();
-  virtual void updateIkr();
-  virtual void updateIkcl();
-  virtual void updateIk1();
-  virtual void updateIkp();
-  virtual void updateIto();
-  virtual void updateIto2();
-  virtual void updateSrFlux();
-  virtual void updateIrel();
-  virtual void updateCaSub();
-  virtual void updateNai();
-  virtual void updateKi();
-  virtual void updateSr();
-  virtual void updateCli();
-  virtual void updateCai();
-  virtual void updateCamk();
-  virtual void updateItrek();
-  virtual void updateCurr();
-  virtual void updateConc();
-  virtual void externalStim(double stimval);
-  virtual void makemap();
-  virtual const char* type() const;
+  void updateIna();
+  void updateInal();
+  void updateInak();
+  void updateInaca();
+  void updateIcab();
+  void updateIclb();
+  void updateInacl();
+  void updateIlca();
+  void updateIpca();
+  void updateIks();
+  void updateIkr();
+  void updateIkcl();
+  void updateIk1();
+  void updateIkp();
+  void updateIto();
+  void updateIto2();
+  void updateSrFlux();
+  void updateIrel();
+  void updateCaSub();
+  void updateNai();
+  void updateKi();
+  void updateSr();
+  void updateCli();
+  void updateCai();
+  void updateCamk();
+  void updateItrek();
+  void updateCurr();
+  void updateConc();
+  void externalStim(double stimval);
+  void makemap();
+  const char* type() const;
   //##### Declare class variables ##############
   double naI, naO, kI, kO, caI, caO, clI, clO;  // Ion concentrations
   double iNa;                                   // Fast inward Na current
@@ -190,7 +191,7 @@ class HRD09Control : public Cell {
   enum Options opts;
 
  protected:
-  virtual void Initialize();
+  void Initialize();
 };
 
 class HRD09BorderZone : public HRD09Control {
@@ -199,24 +200,26 @@ class HRD09BorderZone : public HRD09Control {
   HRD09BorderZone(const HRD09BorderZone& toCopy);
   ~HRD09BorderZone();
 
-  virtual HRD09BorderZone* clone() override;
+  HRD09BorderZone* clone() override;
+  void setup() override;
 
   //##################################################
   // Declare functions that will be overwritten in
   // HRD09BorderZone class. All other functions/variables
   // are inherited from Control class.
   //##################################################
-  virtual void updateIna();
-  virtual void updateIcab();
-  virtual void updateIlca();
-  virtual void updateIk1();
-  virtual void updateIto();
-  virtual void updateCamk();
-  virtual const char* type() const;
+  void updateIna();
+  void updateIcab();
+  void updateIlca();
+  void updateIk1();
+  void updateIto();
+  void updateCamk();
+  const char* type() const;
 
  private:
   void Initialize();
 };
+
 }  // namespace LongQt
 
 #endif

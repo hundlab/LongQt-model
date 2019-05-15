@@ -5,17 +5,8 @@ using namespace LongQt;
 OHaraRudy::OHaraRudy() : Cell() { this->Initialize(); }
 OHaraRudy::~OHaraRudy() {}
 
-OHaraRudy::OHaraRudy(OHaraRudy &toCopy) : Cell(toCopy) {
-  this->Initialize();
-  CellKernel::copyVarPar(toCopy);
-}
-
-void OHaraRudy::Initialize() {
-  // variables from CellKernel
-  vOld = -87.5;
-  Rcg = 2;
-  cellLength = 0.01;
-  cellRadius = 0.0011;
+void OHaraRudy::setup() {
+  Cell::setup();
   Vcell = 1000 * 3.14 * cellRadius * cellRadius * cellLength;
   AGeo =
       2 * 3.14 * cellRadius * cellRadius + 2 * 3.14 * cellRadius * cellLength;
@@ -28,6 +19,22 @@ void OHaraRudy::Initialize() {
   Vnsr = 0.0552 * Vcell;
   Vjsr = 0.0048 * Vcell;
   Vss = 0.02 * Vcell;
+
+  cajsr = cansr;
+}
+
+OHaraRudy::OHaraRudy(OHaraRudy &toCopy) : Cell(toCopy) {
+  this->Initialize();
+  CellKernel::copyVarPar(toCopy);
+}
+
+void OHaraRudy::Initialize() {
+  // variables from CellKernel
+  vOld = -87.5;
+  Rcg = 2;
+  cellLength = 0.01;
+  cellRadius = 0.0011;
+
   this->makemap();
 }
 
@@ -708,11 +715,6 @@ void OHaraRudy::makemap() {
   __pars["csqnmax"] = &csqnmax;
   __pars["kmcsqn"] = &kmcsqn;
 
-  // cell geometry
-  __pars["L"] = &cellLength;
-  __pars["rad"] = &cellRadius;
-  __pars["vcell"] = &Vcell;
-  __pars["Ageo"] = &AGeo;
   // AGeo
   __pars["Acap"] = &ACap;
   __pars["Vmyo"] = &Vmyo;

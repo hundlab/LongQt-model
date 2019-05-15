@@ -26,7 +26,7 @@ class GpbAtrialOnal17 : public Cell {
   GpbAtrialOnal17(GpbAtrialOnal17& toCopy);
   ~GpbAtrialOnal17();
   void setup() override;
-  GpbAtrialOnal17* clone();
+  GpbAtrialOnal17* clone() override;
 
   /*########################*/
   /*    DEFINE STRUCTS	  */
@@ -184,12 +184,12 @@ class GpbAtrialOnal17 : public Cell {
   double RyRratio;
 
   //###Concentration updating functions ######
-  void updateConc();
+  void updateConc() override;
   void updatecaI();
   void updatenaI();
   //####Current updating functions #######
   /*void updateSRcurrents();*/
-  void updateCurr();
+  void updateCurr() override;
   void updateIcal();
   void updateIcab();
   void updateIpca();
@@ -244,7 +244,7 @@ class GpbAtrialOnal17 : public Cell {
   void makemap();
   struct GateVariable Gate;
   enum Options opts;
-  const char* type() const;
+  const char* type() const override;
 };
 }  // namespace LongQt
 

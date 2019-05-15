@@ -75,10 +75,10 @@ class Kurata08 : public Cell {
   void updateNai();
   void updateKi();
   void updateCai();
-  void updateCurr();
-  void updateConc();
-  void externalStim(double stimval);
-  const char* type() const;
+  void updateCurr() override;
+  void updateConc() override;
+  void externalStim(double stimval) override;
+  const char* type() const override;
 
   //##### Declare additional class variables ##############
   double naI, kI, caI;  // Intracellular Ion concentrations

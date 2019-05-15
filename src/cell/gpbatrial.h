@@ -192,12 +192,12 @@ class GpbAtrial : public Cell {
   double Icalfactor;
 
   //###Concentration updating functions ######
-  void updateConc();
+  void updateConc() override;
   void updatecaI();
   void updatenaI();
   //####Current updating functions #######
   /*void updateSRcurrents();*/
-  void updateCurr();
+  void updateCurr() override;
   void updateIcal();
   void updateIcab();
   void updateIpca();
@@ -219,7 +219,7 @@ class GpbAtrial : public Cell {
   void updateIclbk();
   //##################
   void makemap();
-  const char* type() const;
+  const char* type() const override;
   struct GateVariable Gate;
 
  private:

@@ -27,14 +27,14 @@ class GridCell : public Cell {
   GridCell* clone() override;
   Grid* getGrid();
 
-  void updateConc();
-  void updateCurr();
-  double updateV();
-  void externalStim(double stimval);
-  double tstep(double stimt);
-  void setV(double v = dlim::quiet_NaN());
-  std::set<std::string> vars();
-  std::set<std::string> pars();
+  void updateConc() override;
+  void updateCurr() override;
+  double updateV() override;
+  void externalStim(double stimval) override;
+  double tstep(double stimt) override;
+  void setV(double v = dlim::quiet_NaN()) override;
+  std::set<std::string> vars() override;
+  std::set<std::string> pars() override;
   void setup() override;
   void setup(std::set<std::pair<int, int>> stimNodes,
                      std::set<std::pair<int, int>> traceNodes);
@@ -44,16 +44,16 @@ class GridCell : public Cell {
   bool writeGridfile(std::string fileName = "");
   bool readGridfile(QXmlStreamReader& xml);
   bool readGridfile(std::string filename);
-  void setOutputfileConstants(std::string filename);
-  void setOuputfileVariables(std::string filename);
-  void setConstantSelection(std::set<std::string> new_selection);
-  void setVariableSelection(std::set<std::string> new_selection);
-  void writeConstants();
-  void writeVariables();
-  bool readCellState(std::string filename);
-  bool writeCellState(std::string filename);
-  void closeFiles();
-  const char* type() const;
+  void setOutputfileConstants(std::string filename) override;
+  void setOuputfileVariables(std::string filename) override;
+  void setConstantSelection(std::set<std::string> new_selection) override;
+  void setVariableSelection(std::set<std::string> new_selection) override;
+  void writeConstants() override;
+  void writeVariables() override;
+  bool readCellState(std::string filename) override;
+  bool writeCellState(std::string filename) override;
+  void closeFiles() override;
+  const char* type() const override;
 
  private:
   bool handleNode(QXmlStreamReader& xml, int row);

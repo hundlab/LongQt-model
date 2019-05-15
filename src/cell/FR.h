@@ -41,7 +41,7 @@ class FR : public Cell {
   ~FR();
 
   void setup() override;
-  FR* clone();
+  FR* clone() override;
 
   //##### Declare class variables ##############
 
@@ -377,11 +377,11 @@ class FR : public Cell {
   void conc_cai();    // Calculates new myoplasmic Ca ion concentration
   void conc_cleft();  // Calculates new cleft ion concentrationsvirtual
 
-  void externalStim(double stimval);
-  void updateCurr();
-  void updateConc();
+  void externalStim(double stimval) override;
+  void updateCurr() override;
+  void updateConc() override;
   void makemap();
-  const char* type() const;
+  const char* type() const override;
 };
 }  // namespace LongQt
 

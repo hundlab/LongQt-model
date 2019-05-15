@@ -108,11 +108,11 @@ class HRD09Control : public Cell {
   void updateCai();
   void updateCamk();
   void updateItrek();
-  void updateCurr();
-  void updateConc();
-  void externalStim(double stimval);
+  void updateCurr() override;
+  void updateConc() override;
+  void externalStim(double stimval) override;
   void makemap();
-  const char* type() const;
+  const char* type() const override;
   //##### Declare class variables ##############
   double naI, naO, kI, kO, caI, caO, clI, clO;  // Ion concentrations
   double iNa;                                   // Fast inward Na current
@@ -214,7 +214,7 @@ class HRD09BorderZone : public HRD09Control {
   void updateIk1();
   void updateIto();
   void updateCamk();
-  const char* type() const;
+  const char* type() const override;
 
  private:
   void Initialize();

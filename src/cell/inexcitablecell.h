@@ -12,10 +12,10 @@ class InexcitableCell : public Cell {
 
   InexcitableCell* clone() override;  // public copy function
 
-  void updateCurr();
-  void updateConc();
+  void updateCurr() override;
+  void updateConc() override;
 
-  const char* type() const;
+  const char* type() const override;
 
  private:
   void Initialize();

@@ -79,12 +79,12 @@ class Br04 : public Cell {
   void updateCaNsr();
   void updateNai();
   void updateKi();
-  void updateCurr();
-  void updateConc();
+  void updateCurr() override;
+  void updateConc() override;
   double tstep(double stimt) override;
   //    virtual int tstep();
   void makemap();
-  const char* type() const;
+  const char* type() const override;
   //##### Declare class variables ##############
   // Ion concentrations, mM
   double naI = 9.309480051;

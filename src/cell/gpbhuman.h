@@ -178,10 +178,10 @@ class GpbVent : public Cell {
   void updateSRbuff();    // SR Ca buffer
   void updateIclca();
   void updateIclbk();
-  void updateCurr();
-  void updateConc();
+  void updateCurr() override;
+  void updateConc() override;
   void makemap();
-  const char* type() const;
+  const char* type() const override;
 
   struct GateVariable gate;
 

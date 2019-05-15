@@ -85,11 +85,11 @@ class Ksan : public Cell {
   void updateIsus();
   void updateINaK();
   void updateiNaCa();
-  void updateCurr();
-  void updateConc();
+  void updateCurr() override;
+  void updateConc() override;
 
   void makemap();
-  const char* type() const;
+  const char* type() const override;
 
   //##### Declare class variables ##############
 

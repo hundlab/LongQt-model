@@ -203,7 +203,7 @@ void GridCell::updateConc() {
   /*  pool.pushAll(
         [](auto node) {
   //        node->waitUnlock(1);
-          node->cell->updateConc();
+          node->cell->updateConc() override;
         },
         grid.begin(), grid.end());*/
   pool.pushAllpnt(
@@ -218,13 +218,13 @@ void GridCell::updateConc() {
 void GridCell::updateCurr() {
   /*  for (auto& row : grid.rows) {
       for (auto& node : row) {
-        // node->cell->updateCurr();
+        // node->cell->updateCurr() override;
         node->lock[0] = true;
       }
     }
     pool.pushAll(
         [](auto node) {
-          node->cell->updateCurr();
+          node->cell->updateCurr() override;
           node->lock[0] = false;
         },
         grid.begin(), grid.end());

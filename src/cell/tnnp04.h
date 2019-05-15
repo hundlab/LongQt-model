@@ -69,11 +69,11 @@ class TNNP04Control : public Cell {
   void updateInak();
   void updateInab();
   void updateIna();
-  void updateCurr();
-  void updateConc();
-  void externalStim(double stimval);
+  void updateCurr() override;
+  void updateConc() override;
+  void externalStim(double stimval) override;
   void makemap();
-  const char* type() const;
+  const char* type() const override;
 
   //##### Declare class variables ##############
   double Vc;

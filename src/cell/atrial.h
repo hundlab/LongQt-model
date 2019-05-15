@@ -77,8 +77,8 @@ class Courtemanche98 : public Cell {
   void updateiNaca();
   void updateiNa();
   void updateiNab();
-  void updateCurr();
-  void updateConc();
+  void updateCurr() override;
+  void updateConc() override;
 
   //#### concentration updating functions ####
   void updatecaI();
@@ -88,7 +88,7 @@ class Courtemanche98 : public Cell {
   void updatekI();
 
   void makemap();
-  const char* type() const;
+  const char* type() const override;
 
   //##### Declare class variables ##############
   double naI, naO, kI, kO, caI, caO;  // Ion concentrations, mM

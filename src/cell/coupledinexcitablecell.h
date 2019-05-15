@@ -31,11 +31,11 @@ class CoupledInexcitableCell : public Cell {
   double Inabfactor = 1;
   double Ikbfactor = 1;
 
-  void updateCurr();
-  void updateConc();
+  void updateCurr() override;
+  void updateConc() override;
   void makemap();
 
-  const char* type() const;
+  const char* type() const override;
 
  private:
   void Initialize();

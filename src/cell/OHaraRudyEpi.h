@@ -11,7 +11,7 @@ class OHaraRudyEpi : public OHaraRudy {
   ~OHaraRudyEpi();
 
   OHaraRudyEpi* clone() override;
-  const char* type() const;
+  const char* type() const override;
 
  private:
   void Initialize();

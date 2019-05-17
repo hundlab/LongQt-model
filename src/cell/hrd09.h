@@ -188,7 +188,7 @@ class HRD09Control : public Cell {
   //    TREK //include the trek channel
   MAKE_OPTIONS(TREK)
 
-  enum Options opts;
+  enum Options opts = Options::WT;
 
  protected:
   void Initialize();

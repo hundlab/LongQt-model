@@ -22,14 +22,14 @@ class GridMeasureManager : public MeasureManager {
   void dataNodes(std::set<std::pair<int, int>> nodes);
   std::set<std::pair<int, int>> dataNodes();
 
-  virtual bool writeMVarsFile(QXmlStreamWriter& xml);
-  virtual bool readMvarsFile(QXmlStreamReader& xml);
+  bool writeMVarsFile(QXmlStreamWriter& xml);
+  bool readMvarsFile(QXmlStreamReader& xml);
 
-  virtual void setupMeasures();
-  virtual void measure(double time);
-  virtual void write(std::string filename);
-  virtual std::string nameString(std::pair<int, int> node) const;
-  virtual void resetMeasures(std::pair<int, int> node);
+  void setupMeasures();
+  void measure(double time, bool write = false) override;
+  void write(std::string filename);
+  std::string nameString(std::pair<int, int> node) const;
+  void resetMeasures(std::pair<int, int> node);
 
  private:
   void saveSingleCell(std::pair<int, int> node);
@@ -38,8 +38,8 @@ class GridMeasureManager : public MeasureManager {
   std::map<std::pair<int, int>, std::map<std::string, std::shared_ptr<Measure>>>
       measures;
   std::string header = "";
-  std::map<std::pair<int,int>, std::vector<std::vector<double>>> data;
-  std::map<std::pair<int,int>, int> numSelected;
+  std::map<std::pair<int, int>, std::vector<std::vector<double>>> data;
+  std::map<std::pair<int, int>, int> numSelected;
   Grid* grid = 0;
 };
 }  // namespace LongQt

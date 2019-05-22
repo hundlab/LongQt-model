@@ -57,11 +57,10 @@ void MeasureManager::setupMeasures() {
   header += '\n';
 }
 
-void MeasureManager::measure(double time) {
-  bool write = false;
+void MeasureManager::measure(double time, bool write) {
   for (auto& m : this->measures) {
     bool varWrite = m.second->measure(time, __cell->var(m.first));
-    if (m.first == "vOld" && varWrite) {
+    if (this->determineWriteTime && m.first == "vOld" && varWrite) {
       write = true;
     }
   }

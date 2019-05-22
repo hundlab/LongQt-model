@@ -103,7 +103,8 @@ void GridMeasureManager::measure(double time) {
     bool writeCell = false;
     for (auto& meas : pos.second) {
       double val = (*this->grid)(pos.first)->cell->var(meas.first);
-      if (meas.second->measure(time, val) && meas.first == "vOld") {
+      if (meas.second->measure(time, val) && this->determineWriteTime &&
+          meas.first == "vOld") {
         writeCell = true;
       }
     }

@@ -31,10 +31,11 @@ class MeasureManager {
                           std::set<std::string> selection = {});
   virtual void removeMeasure(std::string var);
   virtual void setupMeasures();
-  virtual void measure(double time);
+  virtual void measure(double time, bool write = false);
   virtual void write(std::string filename);
 
   MeasureFactory measMaker;
+  bool determineWriteTime = true;
 
  protected:
   std::map<std::string, std::set<std::string>> variableSelection;

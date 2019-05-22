@@ -22,7 +22,6 @@ SOURCES += $$PWD/measure.cpp\
     $$PWD/cell/OHaraRudyEpi.cpp\
     $$PWD/cell/OHaraRudyM.cpp\
     $$PWD/cell/FR.cpp\
-    $$PWD/iobase.cpp\
     $$PWD/structure/fiber.cpp\
     $$PWD/structure/node.cpp\
     $$PWD/structure/grid.cpp\
@@ -43,7 +42,6 @@ SOURCES += $$PWD/measure.cpp\
     $$PWD/measuredefault.cpp \
     $$PWD/threadpool.cpp \
     $$PWD/cell/coupledinexcitablecell.cpp \
-    $$PWD/protocol/fileoutputgenerator.cpp \
     $$PWD/measurefactory.cpp \
     $$PWD/datareader.cpp
 
@@ -68,7 +66,6 @@ HEADERS  += $$PWD/measuremanager.h\
     $$PWD/cell/OHaraRudyEpi.h\
     $$PWD/cell/OHaraRudyM.h\
     $$PWD/cell/FR.h\
-    $$PWD/iobase.h\
     $$PWD/cellutils.h\
     $$PWD/structure/grid.h\
     $$PWD/structure/node.h\
@@ -92,6 +89,5 @@ HEADERS  += $$PWD/measuremanager.h\
     $$PWD/measuredefault.h \
     $$PWD/threadpool.h \
     $$PWD/cell/coupledinexcitablecell.h \
-    $$PWD/protocol/fileoutputgenerator.h \
     $$PWD/measurefactory.h \
     $$PWD/datareader.h

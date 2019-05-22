@@ -19,7 +19,6 @@
 #include <string>
 #include <vector>
 
-#include "iobase.h"
 #include "logger.h"
 
 namespace LongQt {

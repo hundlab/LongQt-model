@@ -14,7 +14,6 @@
 #include <string>
 #include <utility>
 
-#include <QString>
 #include <QXmlStreamReader>
 
 #include <cellutils_core.h>

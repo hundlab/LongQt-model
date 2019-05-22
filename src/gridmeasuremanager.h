@@ -1,7 +1,6 @@
 #ifndef GRIDMEASUREMANAGER_H
 #define GRIDMEASUREMANAGER_H
 
-#include "fileoutputgenerator.h"
 #include "grid.h"
 #include "gridCell.h"
 #include "measure.h"

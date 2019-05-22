@@ -160,6 +160,7 @@ void GridProtocol::cell(shared_ptr<Cell> cell) {
   __measureMgr.reset(new GridMeasureManager(new_cell));
   if (__pvars) pvars().clear();
   this->__cell = new_cell;
+  CurrentClamp::cell(this->__cell);
 }
 
 bool GridProtocol::cell(const string&) { return false; }

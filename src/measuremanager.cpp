@@ -65,8 +65,7 @@ void MeasureManager::measure(double time, bool write) {
     }
   }
   if (write) {
-    this->save();
-    this->resetMeasures();
+    this->saveCurrent();
   }
 }
 
@@ -96,6 +95,11 @@ void MeasureManager::write(string filename) {
   }
   ofile.flush();
   ofile.close();
+}
+
+void MeasureManager::saveCurrent() {
+  this->save();
+  this->resetMeasures();
 }
 
 void MeasureManager::resetMeasures() {

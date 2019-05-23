@@ -30,6 +30,7 @@ class GridMeasureManager : public MeasureManager {
   void write(std::string filename);
   std::string nameString(std::pair<int, int> node) const;
   void resetMeasures(std::pair<int, int> node);
+  void saveCurrent() override;
 
  private:
   void saveSingleCell(std::pair<int, int> node);

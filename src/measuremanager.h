@@ -33,6 +33,7 @@ class MeasureManager {
   virtual void setupMeasures();
   virtual void measure(double time, bool write = false);
   virtual void write(std::string filename);
+  virtual void saveCurrent();
 
   MeasureFactory measMaker;
   bool determineWriteTime = true;

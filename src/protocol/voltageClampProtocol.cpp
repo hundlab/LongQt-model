@@ -6,12 +6,13 @@ using namespace std;
 
 VoltageClamp::VoltageClamp() : Protocol() {
   __measureMgr.reset(new MeasureManager(cell()));
+  __measureMgr->determineWriteTime = false;
   clampsHint = 0;
   this->mkmap();
   CellUtils::set_default_vals(*this);
 }
 // overriden deep copy funtion
-VoltageClamp* VoltageClamp::clone() { return new VoltageClamp(*this); };
+VoltageClamp* VoltageClamp::clone() { return new VoltageClamp(*this); }
 
 VoltageClamp::VoltageClamp(const VoltageClamp& toCopy) : Protocol(toCopy) {
   this->CCcopy(toCopy);
@@ -54,6 +55,7 @@ shared_ptr<Cell> VoltageClamp::cell() const { return __cell; }
 
 void VoltageClamp::cell(shared_ptr<Cell> cell) {
   __measureMgr.reset(new MeasureManager(cell));
+  __measureMgr->determineWriteTime = false;
   if (__pvars) pvars().clear();
   this->__cell = cell;
 }
@@ -68,19 +70,22 @@ void VoltageClamp::CCcopy(const VoltageClamp& toCopy) {
   __clamps = toCopy.__clamps;
   __pvars.reset(new PvarsVoltageClamp(*toCopy.__pvars, this));
   __measureMgr.reset(new MeasureManager(*toCopy.__measureMgr, cell()));
+  __measureMgr->determineWriteTime = false;
 }
 
 // External stimulus.
-void VoltageClamp::clamp(double& vM) {
+bool VoltageClamp::clamp(double& vM) {
   double t = __cell->t;
-  if (__clamps.empty() || t < __clamps[0].first) return;
+  if (__clamps.empty() || t < __clamps[0].first) return false;
+  int initialClamp = clampsHint;
   int pos = clampsHint;
   while (pos < __clamps.size() && __clamps[pos].first <= t) {
     clampsHint = pos;
     pos += 1;
   }
   vM = __cell->vOld = __clamps[clampsHint].second;
-};
+  return bool(clampsHint - initialClamp);
+}
 
 void VoltageClamp::setupTrial() {
   this->Protocol::setupTrial();
@@ -128,11 +133,11 @@ bool VoltageClamp::runTrial() {
     __cell->updateConc();           // Update ion concentrations
     double vM = __cell->updateV();  // Update transmembrane potential
 
-    clamp(vM);
+    bool clampChanged = clamp(vM);
 
     //##### Output select variables to file  ####################
-    if (int(measflag) == 1 && __cell->t > meastime) {
-      this->__measureMgr->measure(time);
+    if (measflag && __cell->t > meastime) {
+      this->__measureMgr->measure(time, clampChanged);
     }
     if (writeflag && time > writetime && (pCount % writeint == 0)) {
       __cell->writeVariables();
@@ -141,6 +146,7 @@ bool VoltageClamp::runTrial() {
     pCount++;
   }
 
+  this->__measureMgr->saveCurrent();
   this->__measureMgr->write(
       CellUtils::strprintf(getDataDir() + "/" + propertyoutfile, __trial));
   this->writeOutCellState(this->writeCellState);

@@ -98,9 +98,9 @@ std::string GridMeasureManager::nameString(pair<int, int> node) const {
   return nameStr;
 }
 
-void GridMeasureManager::measure(double time) {
+void GridMeasureManager::measure(double time, bool write) {
   for (auto& pos : this->measures) {
-    bool writeCell = false;
+    bool writeCell = write;
     for (auto& meas : pos.second) {
       double val = (*this->grid)(pos.first)->cell->var(meas.first);
       if (meas.second->measure(time, val) && this->determineWriteTime &&
@@ -177,5 +177,12 @@ void GridMeasureManager::saveSingleCell(pair<int, int> node) {
 void GridMeasureManager::resetMeasures(pair<int, int> node) {
   for (auto& meas : this->measures[node]) {
     meas.second->reset();
+  }
+}
+
+void GridMeasureManager::saveCurrent() {
+  for (auto& pos : this->measures) {
+    this->saveSingleCell(pos.first);
+    this->resetMeasures(pos.first);
   }
 }

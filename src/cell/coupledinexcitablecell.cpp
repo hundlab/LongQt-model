@@ -82,14 +82,14 @@ void CoupledInexcitableCell::Initialize() {
 }
 
 void CoupledInexcitableCell::makemap() {
-  __vars["caI"] = &caI;
-  __vars["naI"] = &naI;
-  __vars["kI"] = &kI;
-  __vars["iCab"] = &iCab;
-  __vars["iNab"] = &iNab;
-  __vars["iKb"] = &iKb;
+  CellKernel::insertVar("caI",&caI);
+  CellKernel::insertVar("naI",&naI);
+  CellKernel::insertVar("kI",&kI);
+  CellKernel::insertVar("iCab",&iCab);
+  CellKernel::insertVar("iNab",&iNab);
+  CellKernel::insertVar("iKb",&iKb);
 
-  __pars["InabFactor"] = &Inabfactor;
-  __pars["IkbFactor"] = &Ikbfactor;
-  __pars["IcabFactor"] = &Icabfactor;
+  CellKernel::insertPar("InabFactor",&Inabfactor);
+  CellKernel::insertPar("IkbFactor",&Ikbfactor);
+  CellKernel::insertPar("IcabFactor",&Icabfactor);
 }

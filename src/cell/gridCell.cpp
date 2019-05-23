@@ -289,9 +289,9 @@ void GridCell::setV(double v) {
   }
 }
 void GridCell::makeMap() {  // only aply to cells added after the change?
-  __pars["dx"] = &grid.dx;
-  __pars["dy"] = &grid.dy;
-  //  __pars["np"] = &grid.np;
+  CellKernel::insertPar("dx",&grid.dx);
+  CellKernel::insertPar("dy",&grid.dy);
+  //  CellKernel::insertPar("np",&grid);.np;
 }
 
 const char* GridCell::type() const { return "gridCell"; }

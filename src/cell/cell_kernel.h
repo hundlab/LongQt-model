@@ -95,15 +95,17 @@ class CellKernel : public std::enable_shared_from_this<CellKernel> {
   virtual void setOption(int opt);
 
  protected:
-  std::map<std::string, double*> __vars;  // map of state vars
-  std::map<std::string, double*> __pars;  // map of params
-
+  virtual void insertPar(std::string name, double* valptr);
+  virtual void insertVar(std::string name, double* valptr);
   std::list<std::list<int>> conflicts;  // list of conflicting options
 
   virtual int removeConflicts(int opt);
   void copyVarPar(const CellKernel& toCopy);
 
  private:
+  std::map<std::string, double*> __vars;  // map of state vars
+  std::map<std::string, double*> __pars;  // map of params
+
   void Initialize();
   void mkmap();
 };

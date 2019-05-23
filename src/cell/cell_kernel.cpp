@@ -152,33 +152,33 @@ void CellKernel::copyVarPar(const CellKernel& toCopy) {
 }
 void CellKernel::mkmap() {
   // make map of state vars
-  __vars["vOld"] = &vOld;
-  __vars["t"] = &t;
-  __vars["dVdt"] = &dVdt;
-  __vars["iTot"] = &iTot;
-  __vars["iKt"] = &iKt;
-  __vars["iNat"] = &iNat;
-  __vars["iCat"] = &iCat;
+  CellKernel::insertVar("vOld",&vOld);
+  CellKernel::insertVar("t",&t);
+  CellKernel::insertVar("dVdt",&dVdt);
+  CellKernel::insertVar("iTot",&iTot);
+  CellKernel::insertVar("iKt",&iKt);
+  CellKernel::insertVar("iNat",&iNat);
+  CellKernel::insertVar("iCat",&iCat);
 
   // make map of params
-  __pars["dtmin"] = &dtmin;
-  __pars["dtmed"] = &dtmed;
-  __pars["dtmax"] = &dtmax;
-  __pars["Cm"] = &Cm;
-  __pars["Rcg"] = &Rcg;
-  __pars["RGAS"] = &RGAS;
-  __pars["TEMP"] = &TEMP;
-  __pars["FDAY"] = &FDAY;
-  __pars["cellRadius"] = &cellRadius;
-  __pars["cellLength"] = &cellLength;
-  __pars["Vcell"] = &Vcell;
-  __pars["Vmyo"] = &Vmyo;
-  __pars["AGeo"] = &AGeo;
-  __pars["ACap"] = &ACap;
+  CellKernel::insertPar("dtmin",&dtmin);
+  CellKernel::insertPar("dtmed",&dtmed);
+  CellKernel::insertPar("dtmax",&dtmax);
+  CellKernel::insertPar("Cm",&Cm);
+  CellKernel::insertPar("Rcg",&Rcg);
+  CellKernel::insertPar("RGAS",&RGAS);
+  CellKernel::insertPar("TEMP",&TEMP);
+  CellKernel::insertPar("FDAY",&FDAY);
+  CellKernel::insertPar("cellRadius",&cellRadius);
+  CellKernel::insertPar("cellLength",&cellLength);
+  CellKernel::insertPar("Vcell",&Vcell);
+  CellKernel::insertPar("Vmyo",&Vmyo);
+  CellKernel::insertPar("AGeo",&AGeo);
+  CellKernel::insertPar("ACap",&ACap);
 
   // add potenttially needed values to pars
-  //    __pars["vNew"]=&vNew;
-  //    __pars["dVdtmax"]=&dVdtmax;
+  //    CellKernel::insertPar("vNew",&vNew);
+  //    CellKernel::insertPar("dVdtmax",&dVdtmax);
 }
 /*void CellKernel::reset() {
     int opt = this->option();
@@ -209,4 +209,12 @@ int CellKernel::removeConflicts(int opt) {
     finalOpt |= first;  // add the first cOpt from conflicts back
   }
   return finalOpt;
+}
+
+void CellKernel::insertPar(std::string name, double* valptr) {
+  this->__pars[name] = valptr;
+}
+
+void CellKernel::insertVar(std::string name, double* valptr) {
+  this->__vars[name] = valptr;
 }

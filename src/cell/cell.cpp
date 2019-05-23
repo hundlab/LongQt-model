@@ -128,19 +128,19 @@ bool Cell::writeCellState(QXmlStreamWriter& xml) {
   xml.writeAttribute("type", this->type());
 
   xml.writeStartElement("pars");
-  for (auto& par : this->__pars) {
+  for (auto& par : this->pars()) {
     xml.writeStartElement("par");
-    xml.writeAttribute("name", par.first.c_str());
-    xml.writeCharacters(QString::number(*par.second));
+    xml.writeAttribute("name", par.c_str());
+    xml.writeCharacters(QString::number(this->par(par)));
     xml.writeEndElement();
   }
   xml.writeEndElement();
 
   xml.writeStartElement("vars");
-  for (auto& var : this->__vars) {
+  for (auto& var : this->vars()) {
     xml.writeStartElement("var");
-    xml.writeAttribute("name", var.first.c_str());
-    xml.writeCharacters(QString::number(*var.second));
+    xml.writeAttribute("name", var.c_str());
+    xml.writeCharacters(QString::number(this->var(var)));
     xml.writeEndElement();
   }
   xml.writeEndElement();
@@ -178,7 +178,7 @@ bool Cell::readCellState(QXmlStreamReader& xml) {
     double val = xml.text().toDouble(&ok);
     if (ok) {
       try {
-        *(this->__pars.at(name)) = val;
+        this->setPar(name, val);
       } catch (const std::out_of_range&) {
         Logger::getInstance()->write("Cell: {} not in cell pars", name);
       }
@@ -193,7 +193,7 @@ bool Cell::readCellState(QXmlStreamReader& xml) {
     double val = xml.text().toDouble(&ok);
     if (ok) {
       try {
-        *(this->__vars.at(name)) = val;
+        this->setVar(name, val);
       } catch (const std::out_of_range&) {
         Logger::getInstance()->write("Cell: {} not in cell vars", name);
       }

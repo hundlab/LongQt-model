@@ -638,68 +638,100 @@ void FR::externalStim(double stimval) {
 }
 
 void FR::makemap() {
-  __vars["iTot"] = &iTot;
+  CellKernel::insertVar("iTot", &iTot);
+  ;
 
   // ion concentrations
-  __vars["nai"] = &nai;
+  CellKernel::insertVar("nai", &nai);
+  ;
   //   vars["nao"]=&nao;
   //   vars["nabm"]=&nabm;
   //   vars["dnao"]=&dnao;
-  __vars["ki"] = &ki;
+  CellKernel::insertVar("ki", &ki);
+  ;
   //   vars["ko"]=&ko;
   //   vars["kbm"]=&kbm;
   //   vars["dko"]=&dko;
-  __vars["cai"] = &cai;
+  CellKernel::insertVar("cai", &cai);
+  ;
   //   vars["cao"]=&cao;
   //   vars["cabm"]=&cabm;
   //   vars["dcao"]=&dcao;
-  __vars["cmdn"] = &cmdn;
-  __vars["trpn"] = &trpn;
-  __vars["nsr"] = &nsr;
-  __vars["jsr"] = &jsr;
-  __vars["csqn"] = &csqn;
+  CellKernel::insertVar("cmdn", &cmdn);
+  ;
+  CellKernel::insertVar("trpn", &trpn);
+  ;
+  CellKernel::insertVar("nsr", &nsr);
+  ;
+  CellKernel::insertVar("jsr", &jsr);
+  ;
+  CellKernel::insertVar("csqn", &csqn);
+  ;
   //   vars["taudiff"] = &taudiff;
   //   vars["dnsr"]=&dnsr; // Change in [Ca] in the NSR (mM)
-  __vars["iup"] = &iup;  // Ca uptake from myo. to NSR (mM/ms)
+  CellKernel::insertVar("iup", &iup);
+  ;  // Ca uptake from myo. to NSR (mM/ms)
   //    vars["ileak"]=&ileak; // Ca leakage from NSR to myo. (mM/ms)
   //    vars["kleak"]=&kleak; // Rate constant of Ca leakage from NSR (ms^-1)
   //    vars["kmup"]=&kmup; // Half-saturation concentration of iup (mM)
   //    vars["iupbar"]=&iupbar; // Max. current through iup channel (mM/ms)
-  __vars["nsrbar"] = &nsrbar;  // Max. [Ca] in NSR (mM)
+  CellKernel::insertVar("nsrbar", &nsrbar);
+  ;  // Max. [Ca] in NSR (mM)
 
   // sodium current
-  __vars["ina"] = &ina;  // Fast Na Current (uA/uF)
+  CellKernel::insertVar("ina", &ina);
+  ;  // Fast Na Current (uA/uF)
   //   vars["gna"]=&gna;    // Max. Conductance of the Na Channel (mS/uF)
   //    vars["ena"]=&ena;    // Reversal Potential of Na (mV)
-  __vars["am"] = &am;  // Na alpha-m rate constant (ms^-1)
-  __vars["bm"] = &bm;  // Na beta-m rate constant (ms^-1)
-  __vars["ah"] = &ah;  // Na alpha-h rate constant (ms^-1)
-  __vars["bh"] = &bh;  // Na beta-h rate constant (ms^-1)
-  __vars["aj"] = &aj;  // Na alpha-j rate constant (ms^-1)
-  __vars["bj"] = &bj;  // Na beta-j rate constant (ms^-1)
-  __vars["m"] = &m;    // Na activation
-  __vars["h"] = &h;    // Na inactivation
-  __vars["j"] = &j;    // Na inactivation
+  CellKernel::insertVar("am", &am);
+  ;  // Na alpha-m rate constant (ms^-1)
+  CellKernel::insertVar("bm", &bm);
+  ;  // Na beta-m rate constant (ms^-1)
+  CellKernel::insertVar("ah", &ah);
+  ;  // Na alpha-h rate constant (ms^-1)
+  CellKernel::insertVar("bh", &bh);
+  ;  // Na beta-h rate constant (ms^-1)
+  CellKernel::insertVar("aj", &aj);
+  ;  // Na alpha-j rate constant (ms^-1)
+  CellKernel::insertVar("bj", &bj);
+  ;  // Na beta-j rate constant (ms^-1)
+  CellKernel::insertVar("m", &m);
+  ;  // Na activation
+  CellKernel::insertVar("h", &h);
+  ;  // Na inactivation
+  CellKernel::insertVar("j", &j);
+  ;  // Na inactivation
 
   // l-type ca
-  __vars["ilca"] = &ilca;      // Ca current through L-type Ca channel (uA/uF)
-  __vars["ilcana"] = &ilcana;  // Na current through L-type Ca channel (uA/uF)
-  __vars["ilcak"] = &ilcak;
-  __vars["ilcatot"] = &ilcatot;
+  CellKernel::insertVar("ilca", &ilca);
+  ;  // Ca current through L-type Ca channel (uA/uF)
+  CellKernel::insertVar("ilcana", &ilcana);
+  ;  // Na current through L-type Ca channel (uA/uF)
+  CellKernel::insertVar("ilcak", &ilcak);
+  ;
+  CellKernel::insertVar("ilcatot", &ilcatot);
+  ;
   //   vars["ibarca"]=&ibarca;  // Max. Ca current through Ca channel (uA/uF)
   //   vars["ibarna"]=&ibarna;  // Max. Na current through Ca channel (uA/uF)
   //  vars["ibark"]=&ibark;   // Max. K current through Ca channel (uA/uF)
-  __vars["d"] = &d;  // Voltage dependant activation gate
+  CellKernel::insertVar("d", &d);
+  ;  // Voltage dependant activation gate
   //   vars["dss"]=&dss;     // Steady-state value of activation gate d
-  __vars["taud"] = &taud;  // Time constant of gate d (ms^-1)
-  __vars["f"] = &f;        // Voltage dependant inactivation gate
+  CellKernel::insertVar("taud", &taud);
+  ;  // Time constant of gate d (ms^-1)
+  CellKernel::insertVar("f", &f);
+  ;  // Voltage dependant inactivation gate
   //   vars["fss"]=&fss;     // Steady-state value of inactivation gate f
-  __vars["tauf"] = &tauf;  // Time constant of gate f (ms^-1)
-  __vars["fca"] = &fca;    // Ca dependant inactivation gate
+  CellKernel::insertVar("tauf", &tauf);
+  ;  // Time constant of gate f (ms^-1)
+  CellKernel::insertVar("fca", &fca);
+  ;  // Ca dependant inactivation gate
   //   vars["kmca"]=&kmca;     // Half-saturation concentration of Ca channel
   //   (mM) vars["pca"]=&pca;     // Permiability of membrane to Ca (cm/s)
-  __vars["gacai"] = &gacai;  // Activity coefficient of Ca
-  __vars["gacao"] = &gacao;  // Activity coefficient of Ca
+  CellKernel::insertVar("gacai", &gacai);
+  ;  // Activity coefficient of Ca
+  CellKernel::insertVar("gacao", &gacao);
+  ;  // Activity coefficient of Ca
   //   vars["pna"]=&pna; // Permiability of membrane to Na (cm/s)
   //   vars["ganai"]=&ganai;      // Activity coefficient of Na
   //   vars["ganao"]=&ganao;      // Activity coefficient of Na
@@ -708,59 +740,82 @@ void FR::makemap() {
   //   vars["gako"]=&gako;       // Activity coefficient of K
 
   /* Current through T-type Ca Channel */
-  __vars["icat"] = &icat;  // Ca current through T-type Ca channel (uA/uF)
+  CellKernel::insertVar("icat", &icat);
+  ;  // Ca current through T-type Ca channel (uA/uF)
   //   vars["gcat"]=&gcat;    // Max. Conductance of the T-type Ca channel
   //   (mS/uF) vars["eca"]=&eca;     // Reversal Potential of the T-type Ca
   //   channel (mV)
-  __vars["b"] = &b;  // Voltage dependant activation gate
+  CellKernel::insertVar("b", &b);
+  ;  // Voltage dependant activation gate
   //   vars["bss"]=&bss;     // Steady-state value of activation gate b
-  __vars["taub"] = &taub;  // Time constant of gate b (ms^-1)
-  __vars["g"] = &g;        // Voltage dependant inactivation gate
+  CellKernel::insertVar("taub", &taub);
+  ;  // Time constant of gate b (ms^-1)
+  CellKernel::insertVar("g", &g);
+  ;  // Voltage dependant inactivation gate
   //   vars["gss"]=&gss;     // Steady-state value of inactivation gate g
-  __vars["taug"] = &taug;  // Time constant of gate g (ms^-1)
+  CellKernel::insertVar("taug", &taug);
+  ;  // Time constant of gate g (ms^-1)
 
   /* Rapidly Activating Potassium Current */
-  __vars["ikr"] = &ikr;  // Rapidly Activating K Current (uA/uF)
-  __vars["gkr"] =
-      &gkr;  // Channel Conductance of Rapidly Activating K Current (mS/uF)
-  __vars["ekr"] =
-      &ekr;  // Reversal Potential of Rapidly Activating K Current (mV)
-  __vars["xr"] = &xr;  // Rapidly Activating K time-dependant activation
+  CellKernel::insertVar("ikr", &ikr);
+  ;  // Rapidly Activating K Current (uA/uF)
+  CellKernel::insertVar(
+      "gkr",
+      &gkr);  // Channel Conductance of Rapidly Activating K Current (mS/uF)
+  CellKernel::insertVar(
+      "ekr",
+      &ekr);  // Reversal Potential of Rapidly Activating K Current (mV)
+  CellKernel::insertVar("xr", &xr);
+  ;  // Rapidly Activating K time-dependant activation
   //   vars["xrss"]=&xrss;  // Steady-state value of inactivation gate xr
-  __vars["tauxr"] = &tauxr;  // Time constant of gate xr (ms^-1)
-  __vars["r"] = &r;          // K time-independant inactivation
+  CellKernel::insertVar("tauxr", &tauxr);
+  ;  // Time constant of gate xr (ms^-1)
+  CellKernel::insertVar("r", &r);
+  ;  // K time-independant inactivation
 
   /* Slowly Activating Potassium Current */
-  __vars["iks"] = &iks;  // Slowly Activating K Current (uA/uF)
+  CellKernel::insertVar("iks", &iks);
+  ;  // Slowly Activating K Current (uA/uF)
   //   vars["gks"]=&gks;   // Channel Conductance of Slowly Activating K Current
   //   (mS/uF) vars["eks"]=&eks;   // Reversal Potential of Slowly Activating K
   //   Current (mV)
-  __vars["xs1"] = &xs1;  // Slowly Activating K time-dependant activation
+  CellKernel::insertVar("xs1", &xs1);
+  ;  // Slowly Activating K time-dependant activation
   //   vars["xs1ss"]=&xs1ss;  // Steady-state value of inactivation gate xs1
-  __vars["tauxs1"] = &tauxs1;  // Time constant of gate xs1 (ms^-1)
-  __vars["xs2"] = &xs2;        // Slowly Activating K time-dependant activation
+  CellKernel::insertVar("tauxs1", &tauxs1);
+  ;  // Time constant of gate xs1 (ms^-1)
+  CellKernel::insertVar("xs2", &xs2);
+  ;  // Slowly Activating K time-dependant activation
   //    vars["xs2ss"]=&xs2ss;  // Steady-state value of inactivation gate xs2
-  __vars["tauxs2"] = &tauxs2;  // Time constant of gate xs2 (ms^-1)
+  CellKernel::insertVar("tauxs2", &tauxs2);
+  ;  // Time constant of gate xs2 (ms^-1)
   //    vars["prnak"]=&prnak;  // Na/K Permiability Ratio
 
   /* Potassium Current (time-independant) */
-  __vars["iki"] = &iki;  // Time-independant K current (uA/uF)
+  CellKernel::insertVar("iki", &iki);
+  ;  // Time-independant K current (uA/uF)
   //  vars["gki"]=&gki;    // Channel Conductance of Time Independant K Current
   //  (mS/uF)
   //   vars["eki"]=&eki;    // Reversal Potential of Time Independant K Current
   //   (mV)
-  __vars["aki"] = &aki;  // K alpha-ki rate constant (ms^-1)
-  __vars["bki"] = &bki;  // K beta-ki rate constant (ms^-1)
-  __vars["kin"] = &kin;  // K inactivation
+  CellKernel::insertVar("aki", &aki);
+  ;  // K alpha-ki rate constant (ms^-1)
+  CellKernel::insertVar("bki", &bki);
+  ;  // K beta-ki rate constant (ms^-1)
+  CellKernel::insertVar("kin", &kin);
+  ;  // K inactivation
 
   /* Plateau Potassium Current */
-  __vars["ikp"] = &ikp;  // Plateau K current (uA/uF)
+  CellKernel::insertVar("ikp", &ikp);
+  ;  // Plateau K current (uA/uF)
   //   vars["gkp"]=&gkp;    // Channel Conductance of Plateau K Current (mS/uF)
   //  vars["ekp"]=&ekp;    // Reversal Potential of Plateau K Current (mV)
-  __vars["kp"] = &kp;  // K plateau factor
+  CellKernel::insertVar("kp", &kp);
+  ;  // K plateau factor
 
   /* Na-Activated K Channel */
-  __vars["ikna"] = &ikna;  // Na activated K channel
+  CellKernel::insertVar("ikna", &ikna);
+  ;  // Na activated K channel
   //  vars["pona"]=&pona;   // Open probability dependant on Nai
   //  vars["pov"]=&pov;    // Open probability dependant on Voltage
   //   vars["ekna"]=&ekna;   // Reversal potential
@@ -770,43 +825,58 @@ void FR::makemap() {
   //   dependance(mM)
 
   /* ATP-Sensitive K Channel */
-  __vars["ikatp"] = &ikatp;  // ATP-sensitive K current (uA/uF)
+  CellKernel::insertVar("ikatp", &ikatp);
+  ;  // ATP-sensitive K current (uA/uF)
   //   vars["ekatp"]=&ekatp;    // K reversal potential (mV)
   //   vars["gkbaratp"]=&gkbaratp; // Conductance of the ATP-sensitive K channel
   //   (mS/uF) vars["gkatp"]=&gkatp;    // Maximum conductance of the
   //   ATP-sensitive K channel (mS/uF) vars["patp"]=&patp;     // Percentage
   //   availibility of open channels vars["natp"]=&natp;          // K
   //   dependence of ATP-sensitive K current
-  __vars["atpi"] = &atpi;  // Intracellular ATP concentraion (mM)
-  __vars["hatp"] = &hatp;  // Hill coefficient
+  CellKernel::insertVar("atpi", &atpi);
+  ;  // Intracellular ATP concentraion (mM)
+  CellKernel::insertVar("hatp", &hatp);
+  ;  // Hill coefficient
   //   vars["katp"]=&katp;         // Half-maximal saturation point of
   //   ATP-sensitive K current (mM)
 
   /* Ito Transient Outward Current (Dumaine et al. Circ Res 1999;85:803-809) */
-  __vars["ito"] = &ito;  // Transient outward current
+  CellKernel::insertVar("ito", &ito);
+  ;  // Transient outward current
   //   vars["gitodv"]=&gitodv;	  // Maximum conductance of Ito
   //   vars["ekdv"]=&ekdv;	  // Reversal Potential of Ito
-  __vars["rvdv"] = &rvdv;      // Time independant voltage dependence of Ito
-  __vars["zdv"] = &zdv;        // Ito activation
-  __vars["azdv"] = &azdv;      // Ito alpha-z rate constant
-  __vars["bzdv"] = &bzdv;      // Ito beta-z rate constant
-  __vars["tauzdv"] = &tauzdv;  // Time constant of z gate
+  CellKernel::insertVar("rvdv", &rvdv);
+  ;  // Time independant voltage dependence of Ito
+  CellKernel::insertVar("zdv", &zdv);
+  ;  // Ito activation
+  CellKernel::insertVar("azdv", &azdv);
+  ;  // Ito alpha-z rate constant
+  CellKernel::insertVar("bzdv", &bzdv);
+  ;  // Ito beta-z rate constant
+  CellKernel::insertVar("tauzdv", &tauzdv);
+  ;  // Time constant of z gate
   //   vars["zssdv"]=&zssdv;     // Steady-state value of z gate
-  __vars["ydv"] = &ydv;        // Ito inactivation
-  __vars["aydv"] = &aydv;      // Ito alpha-y rate constant
-  __vars["bydv"] = &bydv;      // Ito beta-y rate constant
-  __vars["tauydv"] = &tauydv;  // Time constant of y gate
+  CellKernel::insertVar("ydv", &ydv);
+  ;  // Ito inactivation
+  CellKernel::insertVar("aydv", &aydv);
+  ;  // Ito alpha-y rate constant
+  CellKernel::insertVar("bydv", &bydv);
+  ;  // Ito beta-y rate constant
+  CellKernel::insertVar("tauydv", &tauydv);
+  ;  // Time constant of y gate
   //   vars["yssdv"]=&yssdv;     // Steady-state value of y gate
 
   /* Sodium-Calcium Exchanger V-S */
-  __vars["inaca"] = &inaca;  // NaCa exchanger current (uA/uF)
+  CellKernel::insertVar("inaca", &inaca);
+  ;  // NaCa exchanger current (uA/uF)
   //   vars["c1"]=&c1;   // Scaling factor for inaca (uA/uF)
   //   vars["c2"]=&c2;   // Half-saturation concentration of NaCa exhanger (mM)
   //   vars["gammas"]=&gammas;  // Position of energy barrier controlling
   //   voltage dependance of inaca
 
   /* Sodium-Potassium Pump */
-  __vars["inak"] = &inak;  // NaK pump current (uA/uF)
+  CellKernel::insertVar("inak", &inak);
+  ;  // NaK pump current (uA/uF)
   //  vars["fnak"]=&fnak;    // Voltage-dependance parameter of inak
   //  vars["sigma"]=&sigma;   // [Na]o dependance factor of fnak
   // vars["ibarnak"]=&ibarnak;   // Max. current through Na-K pump (uA/uF)
@@ -814,8 +884,10 @@ void FR::makemap() {
   //  vars["kmko"]=&kmko;    // Half-saturation concentration of NaK pump (mM)
 
   /* Nonspecific Ca-activated Current */
-  __vars["insna"] = &insna;  // Non-specific Na current (uA/uF)
-  __vars["insk"] = &insk;    // Non-specific K current (uA/uF)
+  CellKernel::insertVar("insna", &insna);
+  ;  // Non-specific Na current (uA/uF)
+  CellKernel::insertVar("insk", &insk);
+  ;  // Non-specific K current (uA/uF)
   //  vars["ibarnsna"]=&ibarnsna;  // Max. Na current through NSCa channel
   //  (uA/uF) vars["ibarnsk"]=&ibarnsk;   // Max. K current through NSCa channel
   //  (uA/uF) vars["pnsca"]=&pnsca;  // Permiability of channel to Na and K
@@ -823,46 +895,71 @@ void FR::makemap() {
   //  NSCa channel (mM)
 
   /* Sarcolemmal Ca Pump */
-  __vars["ipca"] = &ipca;  // Sarcolemmal Ca pump current (uA/uF)
+  CellKernel::insertVar("ipca", &ipca);
+  ;  // Sarcolemmal Ca pump current (uA/uF)
   //  vars["ibarpca"]=&ibarpca; // Max. Ca current through sarcolemmal Ca pump
   //  (uA/uF) vars["kmpca"]=&kmpca; // Half-saturation concentration of
   //  sarcolemmal Ca pump (mM)
 
   /* Ca Background Current */
-  __vars["icab"] = &icab;  // Ca background current (uA/uF)
+  CellKernel::insertVar("icab", &icab);
+  ;  // Ca background current (uA/uF)
   //  vars["gcab"]=&gcab;  // Max. conductance of Ca background (mS/uF)
   //  vars["ecan"]=&ecan;  // Nernst potential for Ca (mV)
 
   /* Na Background Current */
-  __vars["inab"] = &inab;  // Na background current (uA/uF)
+  CellKernel::insertVar("inab", &inab);
+  ;  // Na background current (uA/uF)
   //   vars["gnab"]=&gnab;  // Max. conductance of Na background (mS/uF)
   //    vars["enan"]=&enan;  // Nernst potential for Na (mV)
 
-  __pars["Vnsr"] = &Vnsr;
-  __pars["Vjsr"] = &Vjsr;
-  __pars["zk"] = &zk;
-  __pars["zna"] = &zna;
-  __pars["zca"] = &zca;
-  __pars["nao"] = &nao;
-  __pars["ko"] = &ko;
-  __pars["cao"] = &cao;
-  __pars["gacai"] = &gacai;
-  __pars["gacao"] = &gacao;
-  __pars["IcalFactor"] = &icalFactor;
-  __pars["IcattFactor"] = &icattFactor;
-  __pars["IkrFactor"] = &ikrFactor;
-  __pars["IksFactor"] = &iksFactor;
-  __pars["ItoFactor"] = &itoFactor;
-  __pars["IsusFactor"] = &isusFactor;  // atp sensitive potassium current
+  CellKernel::insertPar("Vnsr", &Vnsr);
+  ;
+  CellKernel::insertPar("Vjsr", &Vjsr);
+  ;
+  CellKernel::insertPar("zk", &zk);
+  ;
+  CellKernel::insertPar("zna", &zna);
+  ;
+  CellKernel::insertPar("zca", &zca);
+  ;
+  CellKernel::insertPar("nao", &nao);
+  ;
+  CellKernel::insertPar("ko", &ko);
+  ;
+  CellKernel::insertPar("cao", &cao);
+  ;
+  CellKernel::insertPar("gacai", &gacai);
+  ;
+  CellKernel::insertPar("gacao", &gacao);
+  ;
+  CellKernel::insertPar("IcalFactor", &icalFactor);
+  ;
+  CellKernel::insertPar("IcattFactor", &icattFactor);
+  ;
+  CellKernel::insertPar("IkrFactor", &ikrFactor);
+  ;
+  CellKernel::insertPar("IksFactor", &iksFactor);
+  ;
+  CellKernel::insertPar("ItoFactor", &itoFactor);
+  ;
+  CellKernel::insertPar("IsusFactor", &isusFactor);
+  ;  // atp sensitive potassium current
   // pars["ikachFactor"] = &ikachFactor;
   // pars["istFactor"] = &istFactor;
-  __pars["InabFactor"] = &inabFactor;
-  __pars["InakFactor"] = &inakFactor;
-  __pars["InacaFactor"] = &inacaFactor;
-  __pars["IkiFactor"] = &ikiFactor;
+  CellKernel::insertPar("InabFactor", &inabFactor);
+  ;
+  CellKernel::insertPar("InakFactor", &inakFactor);
+  ;
+  CellKernel::insertPar("InacaFactor", &inacaFactor);
+  ;
+  CellKernel::insertPar("IkiFactor", &ikiFactor);
+  ;
   //   pars["ihFactor"] = &ihFactor;
-  __pars["IupFactor"] = &iupFactor;
-  __pars["IrelFactor"] = &irelFactor;
+  CellKernel::insertPar("IupFactor", &iupFactor);
+  ;
+  CellKernel::insertPar("IrelFactor", &irelFactor);
+  ;
 };
 const char* FR::type() const {
   return "Mammalian Ventricular (Faber-Rudy 2000)";

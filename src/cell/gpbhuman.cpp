@@ -110,6 +110,38 @@ void GpbVent::Initialize() {
   ipCajunc = ipCasl = ipCa = 0.0;
   iCabjunc = iCabsl = iCab = 0.0;
 
+  Icajuncfactor = 1;
+  Icaslfactor = 1;
+  Icakfactor = 1;
+  Icanajuncfactor = 1;
+  Icanaslfactor = 1;
+  Icabslfactor = 1;
+  Icabjuncfactor = 1;
+  Ipcaslfactor = 1;
+  Ipcajuncfactor = 1;
+  Itofactor = 1;
+  Iksslfactor = 1;
+  Iksjuncfactor = 1;
+  Ikrfactor = 1;
+  Ik1factor = 1;
+  Ipkslfactor = 1;
+  Ipkjuncfactor = 1;
+  Inacaslfactor = 1;
+  Inacajuncfactor = 1;
+  Inakslfactor = 1;
+  Inakjuncfactor = 1;
+  Inabslfactor = 1;
+  Inabjuncfactor = 1;
+  Inaslfactor = 1;
+  Inajuncfactor = 1;
+  Jsrcarelfactor = 1;
+  Jsrleakfactor = 1;
+  Jsercafactor = 1;
+  Iclcaslfactor = 1;
+  Iclcajuncfactor = 1;
+  Iclbkfactor = 1;
+  Icalfactor = 1;
+
   this->makemap();
 }
 GpbVent *GpbVent::clone() { return new GpbVent(*this); }
@@ -168,13 +200,13 @@ void GpbVent::updateSRFlux() {
   Ryri = Ryri + dRyri;
   RI = 1.0 - Ryrr - Ryro - Ryri;
 
-  Jsrcarel = ks * Ryro * (caSr - cajI);
+  Jsrcarel = Jsrcarelfactor * ks * Ryro * (caSr - cajI);
 
   alpha = pow((caI / kmf), hillSRcaP) - pow((caSr / kmr), hillSRcaP);
   beta = 1.0 + pow((caI / kmf), hillSRcaP) + pow((caSr / kmr), hillSRcaP);
-  Jserca = VmaxSRcaP * (alpha / beta);
+  Jserca = Jsercafactor * VmaxSRcaP * (alpha / beta);
 
-  Jsrleak = 0.000005348 * (caSr - cajI);
+  Jsrleak = Jsrleakfactor * 0.000005348 * (caSr - cajI);
 }
 void GpbVent::updatecytobuff() {
   // cytosolic Ca buffers
@@ -301,20 +333,25 @@ void GpbVent::updateIcal() {
                (0.75 * naslI * exp(vOld * FoRT) - 0.75 * naO) /
                (exp(vOld * FoRT) - 1);
 
-  iCajunc =
-      (F_juncCaL * icajbar * gate.d * gate.f * ((1 - gate.f_cabj))) * 0.45 * 1;
-  iCasl =
-      (F_slCaL * icaslbar * gate.d * gate.f * ((1 - gate.f_cabsl))) * 0.45 * 1;
+  iCajunc = Icajuncfactor *
+            (F_juncCaL * icajbar * gate.d * gate.f * ((1 - gate.f_cabj))) *
+            0.45 * 1;
+  iCasl = Icaslfactor *
+          (F_slCaL * icaslbar * gate.d * gate.f * ((1 - gate.f_cabsl))) * 0.45 *
+          1;
   iCa = iCajunc + iCasl;
-  iCak = (icakbar * gate.d * gate.f *
+  iCak = Icakfactor *
+         (icakbar * gate.d * gate.f *
           (F_juncCaL * ((1 - gate.f_cabj)) + F_slCaL * ((1 - gate.f_cabsl)))) *
          0.45 * 1;
-  iCanajunc = (F_juncCaL * icanajbar * gate.d * gate.f * ((1 - gate.f_cabj))) *
+  iCanajunc = Icanajuncfactor *
+              (F_juncCaL * icanajbar * gate.d * gate.f * ((1 - gate.f_cabj))) *
               0.45 * 1;
-  iCanasl =
-      (F_slCaL * icanaslbar * gate.d * gate.f * ((1 - gate.f_cabsl))) * .45 * 1;
+  iCanasl = Icanaslfactor *
+            (F_slCaL * icanaslbar * gate.d * gate.f * ((1 - gate.f_cabsl))) *
+            .45 * 1;
   iCana = iCanajunc + iCanasl;
-  iCaL = iCa + iCak + iCana;
+  iCaL = Icalfactor * (iCa + iCak + iCana);
 }
 
 void GpbVent::updateIcab() {
@@ -322,8 +359,8 @@ void GpbVent::updateIcab() {
   double Ecajunc = RGAS * TEMP / (2 * FDAY) * log(caO / cajI);
   double Ecasl = RGAS * TEMP / (2 * FDAY) * log(caO / caslI);
 
-  iCabjunc = Fjunc * gcab * (vOld - Ecajunc);
-  iCabsl = Fsl * gcab * (vOld - Ecasl);
+  iCabjunc = Icabjuncfactor * Fjunc * gcab * (vOld - Ecajunc);
+  iCabsl = Icabslfactor * Fsl * gcab * (vOld - Ecasl);
 
   iCab = iCabjunc + iCabsl;
 }
@@ -346,8 +383,10 @@ void GpbVent::updateIclca() {
   double kd_clca = 0.1;
   double Ecl = -RGAS * TEMP / FDAY * log(clO / clI);
 
-  iClcajunc = (Fjunc * gclca * (vOld - Ecl)) / (1.0 + kd_clca / cajI);
-  iClcasl = (Fsl * gclca * (vOld - Ecl)) / (1.0 + kd_clca / caslI);
+  iClcajunc =
+      Iclcajuncfactor * (Fjunc * gclca * (vOld - Ecl)) / (1.0 + kd_clca / cajI);
+  iClcasl =
+      Iclcaslfactor * (Fsl * gclca * (vOld - Ecl)) / (1.0 + kd_clca / caslI);
   iClca = iClcajunc + iClcasl;
 }
 
@@ -355,7 +394,7 @@ void GpbVent::updateIclbk() {
   double gclb = 0.009;  // ms/uF
   double Ecl = -RGAS * TEMP / FDAY * log(clO / clI);
 
-  iClbk = gclb * (vOld - Ecl);
+  iClbk = Iclbkfactor * gclb * (vOld - Ecl);
 }
 
 void GpbVent::updateIto() {
@@ -388,7 +427,7 @@ void GpbVent::updateIto() {
 
   iTof = gtof * gate.xf * gate.yf * (vOld - Ek);
 
-  iTo = iTos + iTof;
+  iTo = Itofactor * (iTos + iTof);
 }
 
 void GpbVent::updateIks() {
@@ -407,8 +446,9 @@ void GpbVent::updateIks() {
 
   gate.xks = xs_inf - (xs_inf - gate.xks) * exp(-dt / tau_xs);
 
-  iKsjunc = Fjunc * gksjunc * gate.xks * gate.xks * (vOld - EKsjunc);
-  iKssl = Fsl * gkssl * gate.xks * gate.xks * (vOld - EKssl);
+  iKsjunc =
+      Iksjuncfactor * Fjunc * gksjunc * gate.xks * gate.xks * (vOld - EKsjunc);
+  iKssl = Iksslfactor * Fsl * gkssl * gate.xks * gate.xks * (vOld - EKssl);
 
   iKs = iKsjunc + iKssl;
 }
@@ -428,7 +468,7 @@ void GpbVent::updateIkr() {
 
   r_kr = 1.0 / (1.0 + exp((vOld + 74.0) / 24.0));
 
-  iKr = gkr * gate.xkr * r_kr * (vOld - Ek);
+  iKr = Ikrfactor * gkr * gate.xkr * r_kr * (vOld - Ek);
 }
 
 void GpbVent::updateIk1() {
@@ -442,7 +482,7 @@ void GpbVent::updateIk1() {
             (1 + exp(-0.5143 * (vOld - Ek + 4.753)));
   k1_inf = alpha_K1 / (alpha_K1 + beta_K1);
 
-  iK1 = 0.35 * sqrt(kO / 5.4) * k1_inf * (vOld - Ek);
+  iK1 = Ik1factor * 0.35 * sqrt(kO / 5.4) * k1_inf * (vOld - Ek);
 }
 
 void GpbVent::updateIpk() {
@@ -451,8 +491,8 @@ void GpbVent::updateIpk() {
   double Ek = RGAS * TEMP / FDAY * log(kO / kI);
 
   kp_kp = 1.0 / (1.0 + exp(7.488 - vOld / 5.98));
-  iKpjunc = Fjunc * gkp * kp_kp * (vOld - Ek);
-  iKpsl = Fsl * gkp * kp_kp * (vOld - Ek);
+  iKpjunc = Ipkjuncfactor * Fjunc * gkp * kp_kp * (vOld - Ek);
+  iKpsl = Ipkslfactor * Fsl * gkp * kp_kp * (vOld - Ek);
   iKp = iKpjunc + iKpsl;
 }
 
@@ -483,9 +523,9 @@ void GpbVent::updateInaca() {
          pow(naslI, 3) * caO + pow(naO, 3) * caslI;
 
   iNcxjunc =
-      (Fjunc * incxbar * kajunc * (s1junc - s2junc)) /
+      Inacajuncfactor * (Fjunc * incxbar * kajunc * (s1junc - s2junc)) /
       (s3junc * (1 + ksat * exp((nu - 1) * vOld * (FDAY / RGAS / TEMP))));
-  iNcxsl = (Fsl * incxbar * kasl * (s1sl - s2sl)) /
+  iNcxsl = Inacaslfactor * (Fsl * incxbar * kasl * (s1sl - s2sl)) /
            (s3sl * (1 + ksat * exp((nu - 1) * vOld * (FDAY / RGAS / TEMP))));
 
   iNaca = iNcxjunc + iNcxsl;
@@ -501,10 +541,10 @@ void GpbVent::updateInak() {
   sigma = (exp(naO / 67.3) - 1) / 7;
   fnak = 1 / (1 + 0.1245 * exp(-0.1 * vOld * FoRT) +
               0.0365 * sigma * exp(-vOld * FoRT));
-  iNaKjunc = 1 * Fjunc * inakbar * fnak * kO / (1 + pow(kmnaip / najI, 4.0)) /
-             (kO + kmko);
-  iNaKsl = 1 * Fsl * inakbar * fnak * kO / (1 + pow(kmnaip / naslI, 4.0)) /
-           (kO + kmko);
+  iNaKjunc = Inakjuncfactor * 1 * Fjunc * inakbar * fnak * kO /
+             (1 + pow(kmnaip / najI, 4.0)) / (kO + kmko);
+  iNaKsl = Inakslfactor * 1 * Fsl * inakbar * fnak * kO /
+           (1 + pow(kmnaip / naslI, 4.0)) / (kO + kmko);
   iNak = iNaKjunc + iNaKsl;
 }
 void GpbVent::updatenaI() {
@@ -582,10 +622,10 @@ void GpbVent::updateIna() {
   gate.h = h_inf - (h_inf - gate.h) * exp(-dt / tau_h);
   gate.j = j_inf - (j_inf - gate.j) * exp(-dt / tau_j);
 
-  iNajunc = Fjunc * gna * gate.m * gate.m * gate.m * gate.h * gate.j *
-            (vOld - Enajunc);
-  iNasl =
-      Fsl * gna * gate.m * gate.m * gate.m * gate.h * gate.j * (vOld - Enasl);
+  iNajunc = Inajuncfactor * Fjunc * gna * gate.m * gate.m * gate.m * gate.h *
+            gate.j * (vOld - Enajunc);
+  iNasl = Inaslfactor * Fsl * gna * gate.m * gate.m * gate.m * gate.h * gate.j *
+          (vOld - Enasl);
   iNa = iNajunc + iNasl;
 }
 
@@ -595,8 +635,8 @@ void GpbVent::updateInab() {
   double Enajunc = RGAS * TEMP / FDAY * log(naO / najI);
   double Enasl = RGAS * TEMP / FDAY * log(naO / naslI);
 
-  iNabjunc = Fjunc * gnab * (vOld - Enajunc);
-  iNabsl = Fsl * gnab * (vOld - Enasl);
+  iNabjunc = Inabjuncfactor * Fjunc * gnab * (vOld - Enajunc);
+  iNabsl = Inabslfactor * Fsl * gnab * (vOld - Enasl);
   iNab = iNabjunc + iNabsl;
 }
 
@@ -640,85 +680,117 @@ void GpbVent::updateConc() {
 
 // Create map for easy retrieval of variable values.
 void GpbVent::makemap() {
-  CellKernel::insertVar("vOld",&vOld);
-  CellKernel::insertVar("t",&t);
-  CellKernel::insertVar("dVdt",&dVdt);
-  CellKernel::insertVar("naI",&naI);
-  CellKernel::insertVar("kI",&kI);
-  CellKernel::insertVar("clI",&clI);
-  CellKernel::insertVar("caI",&caI);
-  CellKernel::insertVar("caslI",&caslI);
-  CellKernel::insertVar("cajI",&cajI);
-  CellKernel::insertVar("caSr",&caSr);
-  CellKernel::insertVar("najI",&najI);
-  CellKernel::insertVar("naslI",&naslI);
-  CellKernel::insertVar("mgI",&mgI);
-  CellKernel::insertVar("CaM",&CaM);
-  CellKernel::insertVar("Csqnb",&Csqnb);
-  CellKernel::insertVar("iCa",&iCa);
-  CellKernel::insertVar("iCab",&iCab);
-  CellKernel::insertVar("iNa",&iNa);
-  CellKernel::insertVar("iNak",&iNak);
-  CellKernel::insertVar("iNaca",&iNaca);
+  CellKernel::insertVar("vOld", &vOld);
+  CellKernel::insertVar("t", &t);
+  CellKernel::insertVar("dVdt", &dVdt);
+  CellKernel::insertVar("naI", &naI);
+  CellKernel::insertVar("kI", &kI);
+  CellKernel::insertVar("clI", &clI);
+  CellKernel::insertVar("caI", &caI);
+  CellKernel::insertVar("caslI", &caslI);
+  CellKernel::insertVar("cajI", &cajI);
+  CellKernel::insertVar("caSr", &caSr);
+  CellKernel::insertVar("najI", &najI);
+  CellKernel::insertVar("naslI", &naslI);
+  CellKernel::insertVar("mgI", &mgI);
+  CellKernel::insertVar("CaM", &CaM);
+  CellKernel::insertVar("Csqnb", &Csqnb);
+  CellKernel::insertVar("iCa", &iCa);
+  CellKernel::insertVar("iCab", &iCab);
+  CellKernel::insertVar("iNa", &iNa);
+  CellKernel::insertVar("iNak", &iNak);
+  CellKernel::insertVar("iNaca", &iNaca);
 
-  CellKernel::insertVar("Gate.m",&gate.m);
-  CellKernel::insertVar("Gate.h",&gate.h);
-  CellKernel::insertVar("Gate.j",&gate.j);
-  CellKernel::insertVar("Gate.xkr",&gate.xkr);
-  CellKernel::insertVar("Gate.xks",&gate.xks);
-  CellKernel::insertVar("Gate.xf",&gate.xf);
-  CellKernel::insertVar("Gate.yf",&gate.yf);
+  CellKernel::insertVar("Gate.m", &gate.m);
+  CellKernel::insertVar("Gate.h", &gate.h);
+  CellKernel::insertVar("Gate.j", &gate.j);
+  CellKernel::insertVar("Gate.xkr", &gate.xkr);
+  CellKernel::insertVar("Gate.xks", &gate.xks);
+  CellKernel::insertVar("Gate.xf", &gate.xf);
+  CellKernel::insertVar("Gate.yf", &gate.yf);
 
-  CellKernel::insertVar("Gate.d",&gate.d);
-  CellKernel::insertVar("Gate.f",&gate.f);
-  CellKernel::insertVar("Gate.f_cabj",&gate.f_cabj);
-  CellKernel::insertVar("Gate.f_cabsl",&gate.f_cabsl);
+  CellKernel::insertVar("Gate.d", &gate.d);
+  CellKernel::insertVar("Gate.f", &gate.f);
+  CellKernel::insertVar("Gate.f_cabj", &gate.f_cabj);
+  CellKernel::insertVar("Gate.f_cabsl", &gate.f_cabsl);
 
-  CellKernel::insertVar("iTos",&iTos);
-  CellKernel::insertVar("iTof",&iTof);
-  CellKernel::insertVar("iTo",&iTo);
-  CellKernel::insertVar("iKsjunc",&iKsjunc);
-  CellKernel::insertVar("iKssl",&iKssl);
-  CellKernel::insertVar("iKs",&iKs);
-  CellKernel::insertVar("iKr",&iKr);
+  CellKernel::insertVar("iTos", &iTos);
+  CellKernel::insertVar("iTof", &iTof);
+  CellKernel::insertVar("iTo", &iTo);
+  CellKernel::insertVar("iKsjunc", &iKsjunc);
+  CellKernel::insertVar("iKssl", &iKssl);
+  CellKernel::insertVar("iKs", &iKs);
+  CellKernel::insertVar("iKr", &iKr);
 
-  CellKernel::insertVar("iKpjunc",&iKpjunc);
-  CellKernel::insertVar("iKpsl",&iKpsl);
-  CellKernel::insertVar("iKp",&iKp);
-  CellKernel::insertVar("iK1",&iK1);
-  CellKernel::insertVar("iNajunc",&iNajunc);
-  CellKernel::insertVar("iNasl",&iNasl);
-  CellKernel::insertVar("iNabjunc",&iNabjunc);
-  CellKernel::insertVar("iNabsl",&iNabsl);
-  CellKernel::insertVar("iNab",&iNab);
-  CellKernel::insertVar("iNa",&iNa);
-  CellKernel::insertVar("iCajunc",&iCajunc);
-  CellKernel::insertVar("iCasl",&iCasl);
-  CellKernel::insertVar("iCa",&iCa);
-  CellKernel::insertVar("iCaL",&iCaL);
-  CellKernel::insertVar("iCab",&iCab);
-  CellKernel::insertVar("ipCa",&ipCa);
-  CellKernel::insertVar("iCak",&iCak);
-  CellKernel::insertVar("iCanajunc",&iCanajunc);
-  CellKernel::insertVar("iCanasl",&iCanasl);
-  CellKernel::insertVar("iCana",&iCana);
-  CellKernel::insertVar("iNaKjunc",&iNaKjunc);
-  CellKernel::insertVar("iNaKsl",&iNaKsl);
-  CellKernel::insertVar("iNak",&iNak);
-  CellKernel::insertVar("iNcxjunc",&iNcxjunc);
-  CellKernel::insertVar("iNcxsl",&iNcxsl);
-  CellKernel::insertVar("iNaca",&iNaca);
-  CellKernel::insertVar("iClcajunc",&iClcajunc);
-  CellKernel::insertVar("iClcasl",&iClcasl);
-  CellKernel::insertVar("iClca",&iClca);
-  CellKernel::insertVar("iClbk",&iClbk);
-  CellKernel::insertVar("iClcajunc",&iClcajunc);
-  CellKernel::insertVar("ipCajunc",&ipCajunc);
-  CellKernel::insertVar("ipCasl",&ipCasl);
-  CellKernel::insertVar("ipCa",&ipCa);
-  CellKernel::insertVar("iCabjunc",&iCabjunc);
-  CellKernel::insertVar("iCabsl",&iCabsl);
-  CellKernel::insertVar("iCab",&iCab);
+  CellKernel::insertVar("iKpjunc", &iKpjunc);
+  CellKernel::insertVar("iKpsl", &iKpsl);
+  CellKernel::insertVar("iKp", &iKp);
+  CellKernel::insertVar("iK1", &iK1);
+  CellKernel::insertVar("iNajunc", &iNajunc);
+  CellKernel::insertVar("iNasl", &iNasl);
+  CellKernel::insertVar("iNabjunc", &iNabjunc);
+  CellKernel::insertVar("iNabsl", &iNabsl);
+  CellKernel::insertVar("iNab", &iNab);
+  CellKernel::insertVar("iNa", &iNa);
+  CellKernel::insertVar("iCajunc", &iCajunc);
+  CellKernel::insertVar("iCasl", &iCasl);
+  CellKernel::insertVar("iCa", &iCa);
+  CellKernel::insertVar("iCaL", &iCaL);
+  CellKernel::insertVar("iCab", &iCab);
+  CellKernel::insertVar("ipCa", &ipCa);
+  CellKernel::insertVar("iCak", &iCak);
+  CellKernel::insertVar("iCanajunc", &iCanajunc);
+  CellKernel::insertVar("iCanasl", &iCanasl);
+  CellKernel::insertVar("iCana", &iCana);
+  CellKernel::insertVar("iNaKjunc", &iNaKjunc);
+  CellKernel::insertVar("iNaKsl", &iNaKsl);
+  CellKernel::insertVar("iNak", &iNak);
+  CellKernel::insertVar("iNcxjunc", &iNcxjunc);
+  CellKernel::insertVar("iNcxsl", &iNcxsl);
+  CellKernel::insertVar("iNaca", &iNaca);
+  CellKernel::insertVar("iClcajunc", &iClcajunc);
+  CellKernel::insertVar("iClcasl", &iClcasl);
+  CellKernel::insertVar("iClca", &iClca);
+  CellKernel::insertVar("iClbk", &iClbk);
+  CellKernel::insertVar("iClcajunc", &iClcajunc);
+  CellKernel::insertVar("ipCajunc", &ipCajunc);
+  CellKernel::insertVar("ipCasl", &ipCasl);
+  CellKernel::insertVar("ipCa", &ipCa);
+  CellKernel::insertVar("iCabjunc", &iCabjunc);
+  CellKernel::insertVar("iCabsl", &iCabsl);
+  CellKernel::insertVar("iCab", &iCab);
+
+  CellKernel::insertPar("IcajuncFactor", &Icajuncfactor);
+  CellKernel::insertPar("IcaslFactor", &Icaslfactor);
+  CellKernel::insertPar("IcakFactor", &Icakfactor);
+  CellKernel::insertPar("IcanajuncFactor", &Icanajuncfactor);
+  CellKernel::insertPar("IcanaslFactor", &Icanaslfactor);
+  CellKernel::insertPar("IcabslFactor", &Icabslfactor);
+  CellKernel::insertPar("IcabjuncFactor", &Icabjuncfactor);
+  CellKernel::insertPar("IpcaslFactor", &Ipcaslfactor);
+  CellKernel::insertPar("IpcajuncFactor", &Ipcajuncfactor);
+  CellKernel::insertPar("ItoFactor", &Itofactor);
+  CellKernel::insertPar("IksslFactor", &Iksslfactor);
+  CellKernel::insertPar("IksjuncFactor", &Iksjuncfactor);
+  CellKernel::insertPar("IkrFactor", &Ikrfactor);
+  CellKernel::insertPar("Ik1Factor", &Ik1factor);
+  CellKernel::insertPar("IpkslFactor", &Ipkslfactor);
+  CellKernel::insertPar("IpkjuncFactor", &Ipkjuncfactor);
+  CellKernel::insertPar("InacaslFactor", &Inacaslfactor);
+  CellKernel::insertPar("InacajuncFactor", &Inacajuncfactor);
+  CellKernel::insertPar("InakslFactor", &Inakslfactor);
+  CellKernel::insertPar("InakjuncFactor", &Inakjuncfactor);
+  CellKernel::insertPar("InabslFactor", &Inabslfactor);
+  CellKernel::insertPar("InabjuncFactor", &Inabjuncfactor);
+  CellKernel::insertPar("InaslFactor", &Inaslfactor);
+  CellKernel::insertPar("InajuncFactor", &Inajuncfactor);
+  CellKernel::insertPar("JsrcarelFactor", &Jsrcarelfactor);
+  CellKernel::insertPar("JsrleakFactor", &Jsrleakfactor);
+  CellKernel::insertPar("JsercaFactor", &Jsercafactor);
+  CellKernel::insertPar("IclcaslFactor", &Iclcaslfactor);
+  CellKernel::insertPar("IclcajuncFactor", &Iclcajuncfactor);
+  CellKernel::insertPar("IclbkFactor", &Iclbkfactor);
+  CellKernel::insertPar("IcalFactor", &Icalfactor);
 }
 
 const char *GpbVent::type() const { return "Human Ventricular (Grandi 10)"; }

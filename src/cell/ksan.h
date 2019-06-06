@@ -31,6 +31,7 @@ class Ksan : public Cell {
   ~Ksan();
 
   Ksan* clone() override;
+  void setup() override;
 
   /*########################*/
   /*    DEFINE STRUCTS	  */

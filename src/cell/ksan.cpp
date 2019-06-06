@@ -103,6 +103,13 @@ void Ksan::Initialize() {
   this->makemap();
 }
 Ksan *Ksan::clone() { return new Ksan(*this); }
+
+void Ksan::setup() {
+  dt = dtmin;
+  AGeo =
+      2 * 3.14 * cellRadius * cellRadius + 2 * 3.14 * cellRadius * cellLength;
+  t = 0;
+}
 /*Ist********************************************************************/
 void Ksan::updateIst() {
   double qa, qi, tauqa, tauqi, alphaqa, betaqa, alphaqi, betaqi;
@@ -523,77 +530,94 @@ void Ksan::updateCurr() {
 }
 
 void Ksan::makemap() {
-  CellKernel::insertVar("vOld",&vOld);
-  CellKernel::insertVar("t",&t);
-  CellKernel::insertVar("dVdt",&dVdt);
+  CellKernel::insertVar("vOld", &vOld);
+  CellKernel::insertVar("t", &t);
+  CellKernel::insertVar("dVdt", &dVdt);
 
-  CellKernel::insertVar("naI",&naI);
-  CellKernel::insertVar("kI",&kI);
-  CellKernel::insertVar("caI",&caI);
-  CellKernel::insertVar("mgI",&caI);
+  CellKernel::insertVar("naI", &naI);
+  CellKernel::insertVar("kI", &kI);
+  CellKernel::insertVar("caI", &caI);
+  CellKernel::insertVar("mgI", &caI);
 
-  CellKernel::insertVar("Gate.dst",&Gate.dst);
-  CellKernel::insertVar("Gate.fst",&Gate.fst);
-  CellKernel::insertVar("Gate.dt",&Gate.dt);
-  CellKernel::insertVar("Gate.ft",&Gate.ft);
-  CellKernel::insertVar("Gate.ikr_act",&Gate.ikr_act);
-  CellKernel::insertVar("Gate.ikr_inact",&Gate.ikr_inact);
-  CellKernel::insertVar("Gate.ikr_inact2",&Gate.ikr_inact2);
-  CellKernel::insertVar("Gate.iks_act",&Gate.iks_act);
-  CellKernel::insertVar("Gate.fl12",&Gate.fl12);
-  CellKernel::insertVar("Gate.dl12",&Gate.dl12);
-  CellKernel::insertVar("Gate.fl13",&Gate.fl13);
-  CellKernel::insertVar("Gate.dl13",&Gate.dl13);
-  CellKernel::insertVar("Gate.fca",&Gate.fca);
-  CellKernel::insertVar("Gate.r",&Gate.r);
-  CellKernel::insertVar("Gate.m_ttxr",&Gate.m_ttxr);
-  CellKernel::insertVar("Gate.h_ttxr",&Gate.h_ttxr);
-  CellKernel::insertVar("Gate.j_ttxr",&Gate.j_ttxr);
-  CellKernel::insertVar("Gate.m_ttxs",&Gate.m_ttxs);
-  CellKernel::insertVar("Gate.h_ttxs",&Gate.h_ttxs);
-  CellKernel::insertVar("Gate.j_ttxs",&Gate.j_ttxs);
-  CellKernel::insertVar("Gate.y_1_2",&Gate.y_1_2);
-  CellKernel::insertVar("Gate.q",&Gate.q);
-  CellKernel::insertVar("Gate.resting",&Gate.resting);
-  CellKernel::insertVar("Gate.open",&Gate.open);
-  CellKernel::insertVar("Gate.inactivated",&Gate.inactivated);
-  CellKernel::insertVar("Gate.resting_inactivated",&Gate.resting_inactivated);
+  CellKernel::insertVar("Gate.dst", &Gate.dst);
+  CellKernel::insertVar("Gate.fst", &Gate.fst);
+  CellKernel::insertVar("Gate.dt", &Gate.dt);
+  CellKernel::insertVar("Gate.ft", &Gate.ft);
+  CellKernel::insertVar("Gate.ikr_act", &Gate.ikr_act);
+  CellKernel::insertVar("Gate.ikr_inact", &Gate.ikr_inact);
+  CellKernel::insertVar("Gate.ikr_inact2", &Gate.ikr_inact2);
+  CellKernel::insertVar("Gate.iks_act", &Gate.iks_act);
+  CellKernel::insertVar("Gate.fl12", &Gate.fl12);
+  CellKernel::insertVar("Gate.dl12", &Gate.dl12);
+  CellKernel::insertVar("Gate.fl13", &Gate.fl13);
+  CellKernel::insertVar("Gate.dl13", &Gate.dl13);
+  CellKernel::insertVar("Gate.fca", &Gate.fca);
+  CellKernel::insertVar("Gate.r", &Gate.r);
+  CellKernel::insertVar("Gate.m_ttxr", &Gate.m_ttxr);
+  CellKernel::insertVar("Gate.h_ttxr", &Gate.h_ttxr);
+  CellKernel::insertVar("Gate.j_ttxr", &Gate.j_ttxr);
+  CellKernel::insertVar("Gate.m_ttxs", &Gate.m_ttxs);
+  CellKernel::insertVar("Gate.h_ttxs", &Gate.h_ttxs);
+  CellKernel::insertVar("Gate.j_ttxs", &Gate.j_ttxs);
+  CellKernel::insertVar("Gate.y_1_2", &Gate.y_1_2);
+  CellKernel::insertVar("Gate.q", &Gate.q);
+  CellKernel::insertVar("Gate.resting", &Gate.resting);
+  CellKernel::insertVar("Gate.open", &Gate.open);
+  CellKernel::insertVar("Gate.inactivated", &Gate.inactivated);
+  CellKernel::insertVar("Gate.resting_inactivated", &Gate.resting_inactivated);
 
-  CellKernel::insertVar("Ftc",&Ftc);
-  CellKernel::insertVar("Ftmc",&Ftmc);
-  CellKernel::insertVar("Ftmm",&Ftmm);
-  CellKernel::insertVar("Fcms",&Fcms);
-  CellKernel::insertVar("Fcmi",&Fcmi);
-  CellKernel::insertVar("Fcq",&Fcq);
+  CellKernel::insertVar("Ftc", &Ftc);
+  CellKernel::insertVar("Ftmc", &Ftmc);
+  CellKernel::insertVar("Ftmm", &Ftmm);
+  CellKernel::insertVar("Fcms", &Fcms);
+  CellKernel::insertVar("Fcmi", &Fcmi);
+  CellKernel::insertVar("Fcq", &Fcq);
 
-  CellKernel::insertVar("caSub",&caSub);
-  CellKernel::insertVar("caJsr",&caJsr);
-  CellKernel::insertVar("caNsr",&caNsr);
+  CellKernel::insertVar("caSub", &caSub);
+  CellKernel::insertVar("caJsr", &caJsr);
+  CellKernel::insertVar("caNsr", &caNsr);
 
-  CellKernel::insertVar("ist",&ist);
-  CellKernel::insertVar("ibca",&ibca);
-  CellKernel::insertVar("ibna",&ibna);
-  CellKernel::insertVar("ibk",&ibk);
-  CellKernel::insertVar("ik1",&ik1);
-  CellKernel::insertVar("icat",&icat);
-  CellKernel::insertVar("ikr",&ikr);
-  CellKernel::insertVar("iks",&iks);
-  CellKernel::insertVar("ical12",&ical12);
-  CellKernel::insertVar("ical13",&ical13);
-  CellKernel::insertVar("ina_ttxr",&ina_ttxr);
-  CellKernel::insertVar("ina_ttxs",&ina_ttxs);
-  CellKernel::insertVar("ih",&ih);
-  CellKernel::insertVar("ihk",&ihk);
-  CellKernel::insertVar("ihna",&ihna);
-  CellKernel::insertVar("inak",&inak);
-  CellKernel::insertVar("inaca",&inaca);
-  CellKernel::insertVar("isus",&isus);
-  CellKernel::insertVar("ito",&ito);
-  CellKernel::insertVar("Jrel",&Jrel);
-  CellKernel::insertVar("Jup",&Jup);
-  CellKernel::insertVar("Jtr",&Jtr);
-  CellKernel::insertVar("Jcadif",&Jcadif);
+  CellKernel::insertVar("ist", &ist);
+  CellKernel::insertVar("ibca", &ibca);
+  CellKernel::insertVar("ibna", &ibna);
+  CellKernel::insertVar("ibk", &ibk);
+  CellKernel::insertVar("ik1", &ik1);
+  CellKernel::insertVar("icat", &icat);
+  CellKernel::insertVar("ikr", &ikr);
+  CellKernel::insertVar("iks", &iks);
+  CellKernel::insertVar("ical12", &ical12);
+  CellKernel::insertVar("ical13", &ical13);
+  CellKernel::insertVar("ina_ttxr", &ina_ttxr);
+  CellKernel::insertVar("ina_ttxs", &ina_ttxs);
+  CellKernel::insertVar("ih", &ih);
+  CellKernel::insertVar("ihk", &ihk);
+  CellKernel::insertVar("ihna", &ihna);
+  CellKernel::insertVar("inak", &inak);
+  CellKernel::insertVar("inaca", &inaca);
+  CellKernel::insertVar("isus", &isus);
+  CellKernel::insertVar("ito", &ito);
+  CellKernel::insertVar("Jrel", &Jrel);
+  CellKernel::insertVar("Jup", &Jup);
+  CellKernel::insertVar("Jtr", &Jtr);
+  CellKernel::insertVar("Jcadif", &Jcadif);
+
+  CellKernel::insertPar("IstFactor", &Istfactor);
+  CellKernel::insertPar("InabFactor", &Ibnafactor);
+  CellKernel::insertPar("IcabFactor", &Ibcafactor);
+  CellKernel::insertPar("IkbFactor", &Ibkfactor);
+  CellKernel::insertPar("Ik1Factor", &IK1factor);
+  CellKernel::insertPar("IcatFactor", &ICaTfactor);
+  CellKernel::insertPar("IkrFactor", &IKrfactor);
+  CellKernel::insertPar("IksFactor", &IKsfactor);
+  CellKernel::insertPar("Ical12Factor", &ICaL12factor);
+  CellKernel::insertPar("Ical13Factor", &ICaL13factor);
+  CellKernel::insertPar("InaxrFactor", &INafactorxr);
+  CellKernel::insertPar("InaxsFacotr", &INafactorxs);
+  CellKernel::insertPar("IfFactor", &Iffactor);
+  CellKernel::insertPar("ItoFactor", &Itofactor);
+  CellKernel::insertPar("IsusFactor", &Isusfactor);
+  CellKernel::insertPar("InakFactor", &INaKfactor);
+  CellKernel::insertPar("InacaFactor", &iNaCafactor);
 }
 
 const char *Ksan::type() const { return "Mouse Sinus Node (Kharche 2011)"; }
-

@@ -89,6 +89,8 @@ const map<pair<string, string>, map<string, string>>
          {{"stimval", "-80"}, {"stimdur", "0.5"}}},
         {{CurrentClamp::name, Br04().type()},
          {{"stimval", "-60"}, {"stimdur", "0.5"}}},
+        {{CurrentClamp::name, Ksan().type()},
+         {{"stimval", "-10"}, {"paceflag", "false"}}},
 
         {{VoltageClamp::name, ""}, {{"writetime", "0"}, {"writeint", "20"}}},
 

@@ -142,7 +142,18 @@ class OHaraRudy : public Cell {
   double KmCaMK = 0.15;
 
   // factors
+  double InaFactor = 1;
+  double InalFactor = 1;
+  double ItoFactor = 1;
   double IcalFactor = 1;
+  double IkrFactor = 1;
+  double IksFactor = 1;
+  double Ik1Factor = 1;
+  double InacaFactor = 1;
+  double InakFactor = 1;
+  double InabFactor = 1;
+  double IpcaFactor = 1;
+  double IcabFactor = 1;
 
   // cell type
   cellType celltype = endo;  // endo = 0, epi = 1, M = 2

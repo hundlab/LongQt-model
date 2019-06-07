@@ -11,10 +11,18 @@ Node::Node(const Node &o) : std::enable_shared_from_this<Node>(o) {
   //	x = other.x;
   //	y = other.y;
   //  nodeType = other.nodeType;
-  cell.reset(o.cell->clone());
+  __cell.reset(o.__cell->clone());
   row = o.row;
   col = o.col;
   c = o.c;
+}
+
+void Node::resetCondConst(CellUtils::Side s) {
+  if (s == -1) {
+    this->c = {{NAN, NAN, NAN, NAN}};
+  } else {
+    this->c[s] = NAN;
+  }
 }
 
 /*double Node::calPerc(int X, double dx, double val) {
@@ -49,6 +57,14 @@ void Node::setCondConst(CellUtils::Side s, bool perc, double val) {
     this->c[s] = val;
   }
 }
+
+void Node::cell(std::shared_ptr<Cell> cell) {
+  this->__cell = cell;
+  this->resetCondConst();
+}
+
+std::shared_ptr<Cell> Node::cell() const { return this->__cell; }
+
 pair<int, int> Node::calcNeighborPos(CellUtils::Side s) {
   pair<int, int> nei;
   switch (s) {
@@ -69,7 +85,7 @@ pair<int, int> Node::calcNeighborPos(CellUtils::Side s) {
 }
 
 double Node::calcOurCondConst(CellUtils::Side s, double val) {
-  if (val == 0 || cell->type() == inexName) {
+  if (val == 0 || __cell->type() == inexName) {
     return 0;
   }
   bool isRow = (s == CellUtils::Side::right || s == CellUtils::Side::left);
@@ -77,11 +93,11 @@ double Node::calcOurCondConst(CellUtils::Side s, double val) {
   double dx = isRow ? parent->dx : parent->dy;
   int X = isRow ? row : col;
   if ((parent->np == 1) || ((X % parent->np) == 0)) {
-    return (1000 / reduction) * cell->cellRadius /
-           (2 * cell->Rcg * (cell->Rmyo * dx + rd * val) * cell->Cm * dx);
+    return (1000 / reduction) * __cell->cellRadius /
+           (2 * __cell->Rcg * (__cell->Rmyo * dx + rd * val) * __cell->Cm * dx);
   } else {
-    return (1001 / reduction) * cell->cellRadius /
-           (2 * cell->Rcg * cell->Rmyo * cell->Cm * dx * dx);
+    return (1001 / reduction) * __cell->cellRadius /
+           (2 * __cell->Rcg * __cell->Rmyo * __cell->Cm * dx * dx);
   }
 }
 

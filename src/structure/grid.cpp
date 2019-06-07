@@ -246,7 +246,7 @@ void Grid::setup() {
   for (auto& row : rows) {
     row.setup();
     for (auto node : row) {
-      node->cell->setup();
+      node->cell()->setup();
     }
   }
   for (auto& col : columns) {

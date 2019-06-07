@@ -34,7 +34,7 @@ void GridCell::setOutputfileConstants(string filename) {
   for (auto& row : grid.rows) {
     int cc = 0;
     for (auto column : row) {
-      column->cell->setOutputfileConstants(
+      column->cell()->setOutputfileConstants(
           CellUtils::strprintf(filename, rc, cc));
       cc++;
     }
@@ -51,7 +51,7 @@ void GridCell::setOuputfileVariables(string filename) {
   }
   bool first = true;
   for (auto node : __traceN) {
-    for (auto& sel : node->cell->getVariableSelection()) {
+    for (auto& sel : node->cell()->getVariableSelection()) {
       if (first) {
         first = false;
       } else {
@@ -69,7 +69,7 @@ set<string> GridCell::vars() {
   set<string> toReturn = Cell::vars();
   for (auto& row : grid.rows) {
     for (auto node : row) {
-      set<string> ivSet = node->cell->vars();
+      set<string> ivSet = node->cell()->vars();
       toReturn.insert(ivSet.begin(), ivSet.end());
     }
   }
@@ -79,16 +79,14 @@ set<string> GridCell::pars() {
   set<string> toReturn = Cell::pars();
   for (auto& row : grid.rows) {
     for (auto column : row) {
-      set<string> ivSet = column->cell->pars();
+      set<string> ivSet = column->cell()->pars();
       toReturn.insert(ivSet.begin(), ivSet.end());
     }
   }
   return toReturn;
 }
 
-void GridCell::setup() {
-    this->setup({}, {});
-}
+void GridCell::setup() { this->setup({}, {}); }
 
 void GridCell::setup(std::set<std::pair<int, int>> stimNodes,
                      std::set<std::pair<int, int>> traceNodes) {
@@ -119,14 +117,14 @@ void GridCell::setup(std::set<std::pair<int, int>> stimNodes,
   dtmed = std::numeric_limits<double>::infinity();
   dtmax = std::numeric_limits<double>::infinity();
   for (auto node : grid) {
-    if (node->cell->dtmin < dtmin) {
-      dtmin = node->cell->dtmin;
+    if (node->cell()->dtmin < dtmin) {
+      dtmin = node->cell()->dtmin;
     }
-    if (node->cell->dtmed < dtmed) {
-      dtmed = node->cell->dtmed;
+    if (node->cell()->dtmed < dtmed) {
+      dtmed = node->cell()->dtmed;
     }
-    if (node->cell->dtmax < dtmax) {
-      dtmax = node->cell->dtmax;
+    if (node->cell()->dtmax < dtmax) {
+      dtmax = node->cell()->dtmax;
     }
   }
   dt = dtmin;
@@ -136,7 +134,7 @@ void GridCell::setConstantSelection(set<string> new_selection) {
   parsSelection = new_selection;
   for (auto& it : grid.rows) {
     for (auto& iv : it.nodes) {
-      iv->cell->setConstantSelection(new_selection);
+      iv->cell()->setConstantSelection(new_selection);
     }
   }
 }
@@ -144,21 +142,21 @@ void GridCell::setVariableSelection(set<string> new_selection) {
   varsSelection = new_selection;
   for (auto& it : grid.rows) {
     for (auto iv : it) {
-      iv->cell->setVariableSelection(new_selection);
+      iv->cell()->setVariableSelection(new_selection);
     }
   }
 }
 void GridCell::writeConstants() {
   for (auto& it : grid.rows) {
     for (auto iv : it) {
-      iv->cell->writeConstants();
+      iv->cell()->writeConstants();
     }
   }
 }
 void GridCell::writeVariables() {
   bool first = true;
   for (auto node : this->__traceN) {
-    auto vals = node->cell->getVariablesVals();
+    auto vals = node->cell()->getVariablesVals();
     for (double val : vals) {
       if (first) {
         first = false;
@@ -209,7 +207,7 @@ void GridCell::updateConc() {
   pool.pushAllpnt(
       [](auto& row) {
         for (auto node : row) {
-          node->cell->updateConc();
+          node->cell()->updateConc();
         }
       },
       grid.rows.begin(), grid.rows.end());
@@ -232,7 +230,7 @@ void GridCell::updateCurr() {
   pool.pushAllpnt(
       [](auto& row) {
         for (auto node : row) {
-          node->cell->updateCurr();
+          node->cell()->updateCurr();
         }
       },
       grid.rows.begin(), grid.rows.end());
@@ -240,7 +238,7 @@ void GridCell::updateCurr() {
 }
 void GridCell::externalStim(double stimval) {
   for (auto node : __stimN) {
-    node->cell->externalStim(stimval);
+    node->cell()->externalStim(stimval);
   }
   apTime = 0;
 }
@@ -256,10 +254,10 @@ double GridCell::tstep(double stimt) {
   t = t + dt;
   for (i = 0; i < grid.rows.size(); i++) {
     for (j = 0; j < grid.columns.size(); j++) {
-      grid.rows[i][j]->cell->t = t;
-      grid.rows[i][j]->cell->dt = dt;
+      grid.rows[i][j]->cell()->t = t;
+      grid.rows[i][j]->cell()->dt = dt;
       if (tcount == 0) {  // used to prevent time step change in middle of ADI
-        if (grid.rows[i][j]->cell->dVdt > grid.rows[i][j]->cell->dvcut ||
+        if (grid.rows[i][j]->cell()->dVdt > grid.rows[i][j]->cell()->dvcut ||
             (t > (stimt - 2.0) && t < stimt + 10) || (apTime < 5.0))
           vmflag = 2;
         else if ((apTime < 40) && vmflag != 2)
@@ -277,7 +275,7 @@ double GridCell::tstep(double stimt) {
   }
   this->apTime += dt;
   for (auto node : grid) {
-    node->cell->apTime = this->apTime;
+    node->cell()->apTime = this->apTime;
   }
 
   return t;
@@ -285,12 +283,12 @@ double GridCell::tstep(double stimt) {
 
 void GridCell::setV(double v) {
   for (auto node : grid) {
-    node->cell->setV(v);
+    node->cell()->setV(v);
   }
 }
 void GridCell::makeMap() {  // only aply to cells added after the change?
-  CellKernel::insertPar("dx",&grid.dx);
-  CellKernel::insertPar("dy",&grid.dy);
+  CellKernel::insertPar("dx", &grid.dx);
+  CellKernel::insertPar("dy", &grid.dy);
   //  CellKernel::insertPar("np",&grid);.np;
 }
 
@@ -313,7 +311,7 @@ bool GridCell::writeGridfile(QXmlStreamWriter& xml) {
     for (auto node : row) {
       xml.writeStartElement("node");
       xml.writeAttribute("pos", QString::number(i));
-      xml.writeTextElement("type", node->cell->type());
+      xml.writeTextElement("type", node->cell()->type());
       xml.writeStartElement("conductance");
       xml.writeTextElement("left",
                            QString::number(node->getCondConst(Side::left)));
@@ -398,11 +396,11 @@ bool GridCell::handleNode(QXmlStreamReader& xml, int row) {
     try {
       xml.readNext();
       cell_type = xml.text().toString().toStdString();
-      node->cell = cellMap.at(cell_type)();
+      node->cell(cellMap.at(cell_type)());
     } catch (const std::out_of_range&) {
       success = false;
       Logger::getInstance()->write("{} not a valid cell type", cell_type);
-      node->cell = cellMap.at(inexcitable)();
+      node->cell(cellMap.at(inexcitable)());
     }
     xml.skipCurrentElement();
     return success;
@@ -474,7 +472,7 @@ bool GridCell::readCellState(string file) {
       xml.skipCurrentElement();
       continue;
     }
-    n->cell->readCellState(xml);
+    n->cell()->readCellState(xml);
     xml.readNext();
   }
   ifile.close();
@@ -501,7 +499,7 @@ bool GridCell::writeCellState(string file) {
       xml.writeStartElement("pos");
       xml.writeAttribute("row", QString::number(rn));
       xml.writeAttribute("col", QString::number(cn));
-      success &= node->cell->writeCellState(xml);
+      success &= node->cell()->writeCellState(xml);
       xml.writeEndElement();
       cn++;
     }
@@ -515,7 +513,7 @@ bool GridCell::writeCellState(string file) {
 }
 
 void GridCell::closeFiles() {
-  pool.pushAll([](auto node) { node->cell->closeFiles(); }, grid.begin(),
+  pool.pushAll([](auto node) { node->cell()->closeFiles(); }, grid.begin(),
                grid.end());
   pool.wait();
 }

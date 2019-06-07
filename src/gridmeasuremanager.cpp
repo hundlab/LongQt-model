@@ -65,7 +65,7 @@ void GridMeasureManager::setupMeasures() {
       auto& varName = items1.first;
       auto& sel = items1.second;
       auto gridNode = (*this->grid)(node);
-      if (gridNode && gridNode->cell->hasVar(varName)) {
+      if (gridNode && gridNode->cell()->hasVar(varName)) {
         pos->second.insert(
             {varName, this->measMaker.buildMeasure(varName, sel)});
         nodeSelectedCount += sel.size();
@@ -102,7 +102,7 @@ void GridMeasureManager::measure(double time, bool write) {
   for (auto& pos : this->measures) {
     bool writeCell = write;
     for (auto& meas : pos.second) {
-      double val = (*this->grid)(pos.first)->cell->var(meas.first);
+      double val = (*this->grid)(pos.first)->cell()->var(meas.first);
       if (meas.second->measure(time, val) && this->determineWriteTime &&
           meas.first == "vOld") {
         writeCell = true;

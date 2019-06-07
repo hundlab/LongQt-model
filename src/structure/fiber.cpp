@@ -33,27 +33,29 @@ void Fiber::updateVm(const double &dt) {
   }
 
   for (i = 0; i < nn; i++) {
-    double vOldp = i - 1 >= 0 ? nodes[i - 1]->cell->vOld : 0;
-    double vOldc = nodes[i]->cell->vOld;
-    double vOldn = i + 1 < nn ? nodes[i + 1]->cell->vOld : 0;
+    double vOldp = i - 1 >= 0 ? nodes[i - 1]->cell()->vOld : 0;
+    double vOldc = nodes[i]->cell()->vOld;
+    double vOldn = i + 1 < nn ? nodes[i + 1]->cell()->vOld : 0;
     d1[i] = B[i] * dt;
     d2[i] = -(B[i] * dt + B[i + 1] * dt + 2);
     d3[i] = B[i + 1] * dt;
-    nodes[i]->cell->iTot -= B[i] * (vOldp - vOldc) - B[i + 1] * (vOldc - vOldn);
-    r[i] = dt * (nodes[i]->cell->iTotold + nodes[i]->cell->iTot) /
-               nodes[i]->cell->Cm -
+    nodes[i]->cell()->iTot -=
+        B[i] * (vOldp - vOldc) - B[i + 1] * (vOldc - vOldn);
+    r[i] = dt * (nodes[i]->cell()->iTotold + nodes[i]->cell()->iTot) /
+               nodes[i]->cell()->Cm -
            (d1[i] * vOldp + (d2[i] + 4) * vOldc + d3[i] * vOldn);
   }
 
   this->tridag();
 
   for (i = 0; i < nn; i++) {
-    nodes[i]->cell->iTotold = nodes[i]->cell->iTot;
-    nodes[i]->cell->dVdt = (nodes[i]->cell->vNew - nodes[i]->cell->vOld) / dt;
+    nodes[i]->cell()->iTotold = nodes[i]->cell()->iTot;
+    nodes[i]->cell()->dVdt =
+        (nodes[i]->cell()->vNew - nodes[i]->cell()->vOld) / dt;
     //##### Conservation for multicellular fiber ############
-    nodes[i]->dIax = -(nodes[i]->cell->dVdt + nodes[i]->cell->iTot);
-    nodes[i]->cell->iKt = nodes[i]->cell->iKt + nodes[i]->dIax;
-//    nodes[i]->cell->setV();
+    nodes[i]->dIax = -(nodes[i]->cell()->dVdt + nodes[i]->cell()->iTot);
+    nodes[i]->cell()->iKt = nodes[i]->cell()->iKt + nodes[i]->dIax;
+    //    nodes[i]->cell->setV();
   }
 }
 shared_ptr<Node> Fiber::operator[](int pos) {
@@ -135,17 +137,17 @@ void Fiber::tridag() {
     Logger::getInstance()->write("Error 1 in tridag");
   }
 
-  nodes[0]->cell->vNew = r[0] / (bet = d2[0]);
+  nodes[0]->cell()->vNew = r[0] / (bet = d2[0]);
   for (j = 1; j < nn; j++) {
     gam[j] = d3[j - 1] / bet;
     bet = d2[j] - d1[j] * gam[j];
     if (bet == 0.0) {
       Logger::getInstance()->write("Error 2 in tridag");
     }
-    nodes[j]->cell->vNew = (r[j] - d1[j] * nodes[j - 1]->cell->vNew) / bet;
+    nodes[j]->cell()->vNew = (r[j] - d1[j] * nodes[j - 1]->cell()->vNew) / bet;
   }
   for (j = (nn - 2); j >= 0; j--) {
-    nodes[j]->cell->vNew -= gam[j + 1] * nodes[j + 1]->cell->vNew;
+    nodes[j]->cell()->vNew -= gam[j + 1] * nodes[j + 1]->cell()->vNew;
   }
 }
 

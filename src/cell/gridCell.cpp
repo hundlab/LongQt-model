@@ -311,17 +311,7 @@ bool GridCell::writeGridfile(QXmlStreamWriter& xml) {
     for (auto node : row) {
       xml.writeStartElement("node");
       xml.writeAttribute("pos", QString::number(i));
-      xml.writeTextElement("type", node->cell()->type());
-      xml.writeStartElement("conductance");
-      xml.writeTextElement("left",
-                           QString::number(node->getCondConst(Side::left)));
-      xml.writeTextElement("right",
-                           QString::number(node->getCondConst(Side::right)));
-      xml.writeTextElement("top",
-                           QString::number(node->getCondConst(Side::top)));
-      xml.writeTextElement("bottom",
-                           QString::number(node->getCondConst(Side::bottom)));
-      xml.writeEndElement();
+      node->writeNode(xml);
       xml.writeEndElement();
       i++;
     }
@@ -384,62 +374,9 @@ bool GridCell::handleRow(QXmlStreamReader& xml) {
 }
 bool GridCell::handleNode(QXmlStreamReader& xml, int row) {
   if (xml.atEnd()) return false;
-  auto cellMap = CellUtils::cellMap;
-  auto inexcitable = InexcitableCell().type();
-  cellMap[inexcitable] = []() { return make_shared<InexcitableCell>(); };
-  map<QString, function<bool(QXmlStreamReader&, std::shared_ptr<Node>)>>
-      handlers;
-  handlers["type"] = [cellMap, inexcitable](QXmlStreamReader& xml,
-                                            std::shared_ptr<Node> node) {
-    bool success = true;
-    string cell_type;
-    try {
-      xml.readNext();
-      cell_type = xml.text().toString().toStdString();
-      node->cell(cellMap.at(cell_type)());
-    } catch (const std::out_of_range&) {
-      success = false;
-      Logger::getInstance()->write("{} not a valid cell type", cell_type);
-      node->cell(cellMap.at(inexcitable)());
-    }
-    xml.skipCurrentElement();
-    return success;
-  };
-  handlers["conductance"] = [](QXmlStreamReader& xml,
-                               std::shared_ptr<Node> node) {
-    while (xml.readNextStartElement()) {
-      if (xml.name() == "top") {
-        xml.readNext();
-        node->setCondConst(CellUtils::top, false, xml.text().toDouble());
-        xml.skipCurrentElement();
-      } else if (xml.name() == "bottom") {
-        xml.readNext();
-        node->setCondConst(CellUtils::bottom, false, xml.text().toDouble());
-        xml.skipCurrentElement();
-      } else if (xml.name() == "right") {
-        xml.readNext();
-        node->setCondConst(CellUtils::right, false, xml.text().toDouble());
-        xml.skipCurrentElement();
-      } else if (xml.name() == "left") {
-        xml.readNext();
-        node->setCondConst(CellUtils::left, false, xml.text().toDouble());
-        xml.skipCurrentElement();
-      }
-    }
-    return true;
-  };
-
-  bool success = true;
   int col = xml.attributes().value("pos").toInt();
   auto node = grid(row, col);
-  while (xml.readNextStartElement()) {
-    try {
-      success &= handlers.at(xml.name().toString())(xml, node);
-    } catch (const std::out_of_range&) {
-      Logger::getInstance()->write("GridCell: xml type {} not recognized",
-                                   qUtf8Printable(xml.name().toString()));
-    }
-  }
+  bool success = node->readNode(xml);
   return success;
 }
 bool GridCell::readGridfile(string filename) {

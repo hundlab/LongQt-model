@@ -4,6 +4,8 @@
 #ifndef NODE_H
 #define NODE_H
 
+#include <QXmlStreamReader>
+#include <QXmlStreamWriter>
 #include <array>
 #include <atomic>
 #include <memory>
@@ -43,6 +45,9 @@ struct Node : public std::enable_shared_from_this<Node> {
   void setParent(Grid* par, int row = -1, int col = -1);
   void setPosition(int row, int col);
   Grid* getParent();
+
+  bool writeNode(QXmlStreamWriter& xml);
+  bool readNode(QXmlStreamReader& xml);
 
  private:
   std::shared_ptr<Cell> __cell = std::make_shared<InexcitableCell>();

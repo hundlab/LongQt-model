@@ -198,6 +198,75 @@ void Node::setPosition(int row, int col) {
 }
 
 Grid *Node::getParent() { return this->parent; }
+
+bool Node::writeNode(QXmlStreamWriter &xml) {
+  xml.writeTextElement("type", __cell->type());
+  xml.writeStartElement("conductance");
+  xml.writeTextElement("left", QString::number(this->c[CellUtils::Side::left]));
+  xml.writeTextElement("right",
+                       QString::number(this->c[CellUtils::Side::right]));
+  xml.writeTextElement("top", QString::number(this->c[CellUtils::Side::top]));
+  xml.writeTextElement("bottom",
+                       QString::number(this->c[CellUtils::Side::bottom]));
+  xml.writeEndElement();
+  return true;
+}
+
+bool Node::readNode(QXmlStreamReader &xml) {
+  if (xml.atEnd()) return false;
+  auto cellMap = CellUtils::cellMap;
+  auto inexcitable = InexcitableCell().type();
+  cellMap[inexcitable] = []() { return make_shared<InexcitableCell>(); };
+  map<QString, function<bool(QXmlStreamReader &)>> handlers;
+  handlers["type"] = [cellMap, inexcitable, this](QXmlStreamReader &xml) {
+    bool success = true;
+    string cell_type;
+    try {
+      xml.readNext();
+      cell_type = xml.text().toString().toStdString();
+      this->cell(cellMap.at(cell_type)());
+    } catch (const std::out_of_range &) {
+      success = false;
+      Logger::getInstance()->write("{} not a valid cell type", cell_type);
+      this->cell(cellMap.at(inexcitable)());
+    }
+    xml.skipCurrentElement();
+    return success;
+  };
+  handlers["conductance"] = [this](QXmlStreamReader &xml) {
+    while (xml.readNextStartElement()) {
+      if (xml.name() == "top") {
+        xml.readNext();
+        this->c[CellUtils::top] = xml.text().toDouble();
+        xml.skipCurrentElement();
+      } else if (xml.name() == "bottom") {
+        xml.readNext();
+        this->c[CellUtils::bottom] = xml.text().toDouble();
+        xml.skipCurrentElement();
+      } else if (xml.name() == "right") {
+        xml.readNext();
+        this->c[CellUtils::right] = xml.text().toDouble();
+        xml.skipCurrentElement();
+      } else if (xml.name() == "left") {
+        xml.readNext();
+        this->c[CellUtils::left] = xml.text().toDouble();
+        xml.skipCurrentElement();
+      }
+    }
+    return true;
+  };
+
+  bool success = true;
+  while (xml.readNextStartElement()) {
+    try {
+      success &= handlers.at(xml.name().toString())(xml);
+    } catch (const std::out_of_range &) {
+      Logger::getInstance()->write("Node: xml type {} not recognized",
+                                   qUtf8Printable(xml.name().toString()));
+    }
+  }
+  return success;
+}
 /*
 void Node::updateV(double dt) {
         this->cell->iTotold=this->cell->iTot;

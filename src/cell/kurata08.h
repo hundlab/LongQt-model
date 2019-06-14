@@ -25,7 +25,6 @@ class Kurata08 : public Cell {
 
   Kurata08* clone() override;
 
-
   /*########################*/
   /*    DEFINE STRUCTS      */
   /*########################*/
@@ -129,11 +128,8 @@ class Kurata08 : public Cell {
   double Vjsr;
   double Vss;
 
-  //    ISO //isoproterenol
-  //    TREK //include the trek channel
-  MAKE_OPTIONS(TREK)  //,ISO
-
-  enum Options opts;
+  bool trekflag = false;
+  bool isoflag = false;
 
  private:
   void Initialize();

@@ -49,13 +49,6 @@ class GpbAtrialOnal17 : public Cell {
     double hl;
   };
 
-  //    S571E //Nav1.5 S571E
-  //    S571A //Nav1.5 S571A
-  //    S2814D //RyR2 S2814D
-  //    S2814A //RyR2 S2814A
-  //    ISO //isoproterenol
-  MAKE_OPTIONS(S571E, S571A, S2814D, S2814A, ISO)
-
   double Vsl;
   double Vjunc;
   double Vsr;
@@ -237,13 +230,18 @@ class GpbAtrialOnal17 : public Cell {
   double Jsrleakfactor;
   double ROSConc;
 
+  bool isoFlag = false;
+  bool s571eFlag = false;
+  bool s571aFlag = false;
+  bool s2814dFlag = false;
+  bool s2814aFlag = false;
+
   // testing
   double testFactor;
   //
 
   void makemap();
   struct GateVariable Gate;
-  enum Options opts;
   const char* type() const override;
 };
 }  // namespace LongQt

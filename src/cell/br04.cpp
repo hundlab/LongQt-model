@@ -23,6 +23,10 @@ void Br04::Initialize() {
 
   ACap = 1.534E-4;  // cm2
   Vmyo = 25.84E-6;  // uL
+
+  this->insertOpt("ISO", &isoflag, "Isoproternol");
+  this->insertOpt("TREK", &trekflag, "Enable the trek channel");
+  //  this->insertOpt("INS",&insflag, "?Plateau K current?");
   this->makemap();
 }
 Br04 *Br04::clone() { return new Br04(*this); }
@@ -80,7 +84,7 @@ void Br04::updateIlca() {
   I3 = I3 + dI3;
   C1 = 1 - O - C2 - C3 - C4 - I1 - I2 - I3;
 
-  if (opts & ISO) condfact = 2.429;
+  if (isoflag) condfact = 2.429;
 
   iCal = IcalFactor * condfact * gcal * O * (vOld - Eca);
 };
@@ -173,7 +177,7 @@ void Br04::updateIks() {
   nksinf = alpha_n / (alpha_n + beta_n);
   gate.nks = nksinf - (nksinf - gate.nks) * exp(-dt / taunks);
 
-  if (opts & ISO) condfact = 1.8;
+  if (isoflag) condfact = 1.8;
 
   iKs = IksFactor * condfact * gks * gate.nks * gate.nks * (vOld - EK);
 };
@@ -343,7 +347,7 @@ void Br04::updateInak() {
   fNak = 1.0 / (1.0 + 0.1245 * exp(-0.1 * vOld * FDAY / RGAS / TEMP) +
                 0.0365 * sigma * exp(-vOld * FDAY / (RGAS * TEMP)));
 
-  if (opts & ISO) condfact = 1.4;
+  if (isoflag) condfact = 1.4;
 
   iNak = InakFactor * condfact *
          (inakmax * fNak / (1 + pow((KmNai / naI), 1.5))) * (kO / (kO + KmKo));
@@ -426,7 +430,7 @@ void Br04::updateCaFlux() {
 
   dPO2 = dt * (pow((caSs * 1000.0), 3.0) * PO1 * kb_open - kb_close * PO2);
   dPC2 = dt * (kc_open * PO1 - kc_close * PC2);
-  if (opts & ISO) irelcondfact = 2.429;
+  if (isoflag) irelcondfact = 2.429;
 
   dPRyr = dt * (-0.04 * PRyr - 0.1 * (iCal / (irelcondfact * 7.0)) *
                                    exp(-1.0 * (vOld) / 30.0));
@@ -454,7 +458,7 @@ void Br04::updateCaFlux() {
 
   PC1 = 1 - PC2 - PO1 - PO2;
 
-  if (opts & ISO) iupcondfact = 1.2;
+  if (isoflag) iupcondfact = 1.2;
 
   J_rel = JrelFactor * v1 * (PO1 + PO2) * (caJsr - caSs) * PRyr;
 
@@ -551,24 +555,23 @@ void Br04::updateNai() {
 };
 
 void Br04::updateCurr() {
-  updateIlca();                    // L-type Ca current
-  updateIcab();                    // Background Ca current
-  updateIpca();                    // Sarcolemmal Ca pump
-  updateIto_f();                   // Transient outward K current
-  updateIto_s();                   // Transient outward K current
-  updateIk1();                     // Time-independent K current
-  updateIks();                     // Slow delayed rectifier current
-  updateIkur();                    // Slow delayed rectifier current
-  updateIkss();                    // Slow delayed rectifier current
-  updateIkr();                     // Rapid delayed rectifier current
-  if (opts & TREK) updateItrek();  // Transient outward K current
-  updateInak();                    // Na-K pump
-  updateInaca();                   // Na-Ca exchanger
-  updateIclca();                   // Na-Ca exchanger
-  updateIna();                     // Fast Na current
-  updateInab();                    // Late Na current
-                                   /*    if(opts & INS)
-                                           updateIns();*/    // Plateau K current
+  updateIlca();                 // L-type Ca current
+  updateIcab();                 // Background Ca current
+  updateIpca();                 // Sarcolemmal Ca pump
+  updateIto_f();                // Transient outward K current
+  updateIto_s();                // Transient outward K current
+  updateIk1();                  // Time-independent K current
+  updateIks();                  // Slow delayed rectifier current
+  updateIkur();                 // Slow delayed rectifier current
+  updateIkss();                 // Slow delayed rectifier current
+  updateIkr();                  // Rapid delayed rectifier current
+  if (trekflag) updateItrek();  // Transient outward K current
+  updateInak();                 // Na-K pump
+  updateInaca();                // Na-Ca exchanger
+  updateIclca();                // Na-Ca exchanger
+  updateIna();                  // Fast Na current
+  updateInab();                 // Late Na current
+  if (insflag) updateIns();     // Plateau K current
 
   iNat = iNa + iNab + 3 * iNak + 3 * iNaca + iNsna;
   iCait = iCab - 2 * iNaca + iPca;
@@ -799,5 +802,3 @@ void Br04::makemap() {
 const char *Br04::type() const {
   return "Mouse Ventricular (Bondarenko 2004)";
 };
-
-MAKE_OPTIONS_FUNCTIONS(Br04)

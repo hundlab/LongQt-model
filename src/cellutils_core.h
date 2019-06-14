@@ -80,13 +80,12 @@ std::vector<std::string> split(std::string s, char delim,
  * breaks a opts based on seperator and then converts that to a flag of opts
  * or'ed together
  */
-int strToFlag(std::string opts, std::map<std::string, int> optsMap,
-              char seperator = '|');
+std::map<std::string, bool> strToFlag(std::string opts, char seperator = '|');
 
 /*
  * constructs opts string from opts int flags using seperator
  */
-std::string flagToStr(int opts, std::map<std::string, int> optsMap,
+std::string flagToStr(std::map<std::string, bool> optsMap,
                       char seperator = '|');
 
 /*

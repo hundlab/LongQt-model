@@ -185,10 +185,7 @@ class HRD09Control : public Cell {
   double TestFactor = 0;
   double Test2Factor = 1;
 
-  //    TREK //include the trek channel
-  MAKE_OPTIONS(TREK)
-
-  enum Options opts = Options::WT;
+  bool trekflag = false;
 
  protected:
   void Initialize();

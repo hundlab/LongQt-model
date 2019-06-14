@@ -86,16 +86,16 @@ void TNNP04Control::Initialize() {
   Inabfactor = 1;
   Inafactor = 1;
 
-  opts = WT;
+  this->insertOpt("ISO", &isoflag, "Isoproternol");
+
   makemap();
 }
 
 TNNP04Control *TNNP04Control::clone() { return new TNNP04Control(*this); }
 
-void TNNP04Control::setup()
-{
-    caSrbufc = 10.0 * (caSr / (caSr + 0.3));
-    caIbufc = 0.15 * (caI / (caI + 0.001));
+void TNNP04Control::setup() {
+  caSrbufc = 10.0 * (caSr / (caSr + 0.3));
+  caIbufc = 0.15 * (caI / (caI + 0.001));
 }
 
 void TNNP04Control::updateIcal() {
@@ -130,7 +130,7 @@ void TNNP04Control::updateIcal() {
   Gate.fca = fca_inf - (fca_inf - Gate.fca) * exp(-dt / tau_fca);
   if ((Gate.fca > fcaold) && (vOld > -37.0)) Gate.fca = fcaold;
 
-  if (opts & ISO) condfact = 2.429;
+  if (isoflag) condfact = 2.429;
 
   iCal = Icalfactor * gcal * condfact * Gate.d * Gate.f * Gate.fca * 4 *
          (vOld * FDAY * FDAY / (RGAS * TEMP)) *
@@ -254,7 +254,7 @@ void TNNP04Control::updateIks() {
 
   Gate.xs = xs_inf - (xs_inf - Gate.xs) * exp(-dt / tau_xs);
 
-  if (opts & ISO) condfact = 1.8;
+  if (isoflag) condfact = 1.8;
 
   EKs = RGAS * TEMP / FDAY * log((kO + pKna * naO) / (kI + pKna * naI));
   iKs = Iksfactor * gks * condfact * Gate.xs * Gate.xs * (vOld - EKs);
@@ -330,7 +330,7 @@ void TNNP04Control::updateInak() {
   double KmNa = 40.0;
   double condfact = 1.0;
 
-  if (opts & ISO) condfact = 1.4;
+  if (isoflag) condfact = 1.4;
 
   iNak = Inakfactor * pnak * condfact * kO * naI /
          ((kO + KmK) * (naI + KmNa) *
@@ -402,7 +402,7 @@ void TNNP04Control::updateSRcurrents() {
   Gate.g = g_inf - (g_inf - Gate.g) * exp(-dt / tau_g);
   if ((Gate.g > gold) && (vOld > -37)) Gate.g = gold;
 
-  if (opts & ISO) iupcondfact = 1.2;
+  if (isoflag) iupcondfact = 1.2;
 
   iLeak = ileakfactor * Vleak * iupcondfact * (caSr - caI);
   iUp = Vmaxup / (1 + (Kup * Kup / (caI * caI)));
@@ -463,58 +463,56 @@ void TNNP04Control::externalStim(double stimval) {
 }
 
 void TNNP04Control::makemap() {
-  CellKernel::insertVar("vOld",&vOld);
-  CellKernel::insertVar("t",&t);
-  CellKernel::insertVar("dVdt",&dVdt);
-  CellKernel::insertVar("caI",&caI);
-  CellKernel::insertVar("caSr",&caSr);
-  CellKernel::insertVar("naI",&naI);
-  CellKernel::insertVar("kI",&kI);
-  CellKernel::insertVar("iCal",&iCal);
-  CellKernel::insertVar("iCab",&iCab);
-  CellKernel::insertVar("iPca",&iPca);
-  CellKernel::insertVar("iTo",&iTo);
-  CellKernel::insertVar("iK1",&iK1);
-  CellKernel::insertVar("iKs",&iKs);
-  CellKernel::insertVar("iKr",&iKr);
-  CellKernel::insertVar("ipK",&ipK);
-  CellKernel::insertVar("iNak",&iNak);
-  CellKernel::insertVar("iNaca",&iNaca);
-  CellKernel::insertVar("iNa",&iNa);
-  CellKernel::insertVar("iNab",&iNab);
-  CellKernel::insertVar("iUp",&iUp);
-  CellKernel::insertVar("iLeak",&iLeak);
-  CellKernel::insertVar("Gate.g",&Gate.g);
-  CellKernel::insertVar("Gate.d",&Gate.d);
-  CellKernel::insertVar("Gate.f",&Gate.f);
-  CellKernel::insertVar("Gate.fca",&Gate.fca);
-  CellKernel::insertVar("Gate.r",&Gate.r);
-  CellKernel::insertVar("Gate.s",&Gate.s);
-  CellKernel::insertVar("Gate.xs",&Gate.xs);
-  CellKernel::insertVar("Gate.xr1",&Gate.xr1);
-  CellKernel::insertVar("Gate.xr2",&Gate.xr2);
-  CellKernel::insertVar("Gate.m",&Gate.m);
-  CellKernel::insertVar("Gate.h",&Gate.h);
-  CellKernel::insertVar("Gate.j",&Gate.j);
+  CellKernel::insertVar("vOld", &vOld);
+  CellKernel::insertVar("t", &t);
+  CellKernel::insertVar("dVdt", &dVdt);
+  CellKernel::insertVar("caI", &caI);
+  CellKernel::insertVar("caSr", &caSr);
+  CellKernel::insertVar("naI", &naI);
+  CellKernel::insertVar("kI", &kI);
+  CellKernel::insertVar("iCal", &iCal);
+  CellKernel::insertVar("iCab", &iCab);
+  CellKernel::insertVar("iPca", &iPca);
+  CellKernel::insertVar("iTo", &iTo);
+  CellKernel::insertVar("iK1", &iK1);
+  CellKernel::insertVar("iKs", &iKs);
+  CellKernel::insertVar("iKr", &iKr);
+  CellKernel::insertVar("ipK", &ipK);
+  CellKernel::insertVar("iNak", &iNak);
+  CellKernel::insertVar("iNaca", &iNaca);
+  CellKernel::insertVar("iNa", &iNa);
+  CellKernel::insertVar("iNab", &iNab);
+  CellKernel::insertVar("iUp", &iUp);
+  CellKernel::insertVar("iLeak", &iLeak);
+  CellKernel::insertVar("Gate.g", &Gate.g);
+  CellKernel::insertVar("Gate.d", &Gate.d);
+  CellKernel::insertVar("Gate.f", &Gate.f);
+  CellKernel::insertVar("Gate.fca", &Gate.fca);
+  CellKernel::insertVar("Gate.r", &Gate.r);
+  CellKernel::insertVar("Gate.s", &Gate.s);
+  CellKernel::insertVar("Gate.xs", &Gate.xs);
+  CellKernel::insertVar("Gate.xr1", &Gate.xr1);
+  CellKernel::insertVar("Gate.xr2", &Gate.xr2);
+  CellKernel::insertVar("Gate.m", &Gate.m);
+  CellKernel::insertVar("Gate.h", &Gate.h);
+  CellKernel::insertVar("Gate.j", &Gate.j);
 
-  CellKernel::insertPar("IrelFactor",&iRelfactor);
-  CellKernel::insertPar("IleakFactor",&ileakfactor);
-  CellKernel::insertPar("IcalFactor",&Icalfactor);
-  CellKernel::insertPar("IcabFactor",&Icabfactor);
-  CellKernel::insertPar("IpcaFactor",&Ipcafactor);
-  CellKernel::insertPar("ItoFactor",&Itofactor);
-  CellKernel::insertPar("IksFactor",&Iksfactor);
-  CellKernel::insertPar("IkrFactor",&Ikrfactor);
-  CellKernel::insertPar("Ik1Factor",&Ik1factor);
-  CellKernel::insertPar("IpkFactor",&Ipkfactor);
-  CellKernel::insertPar("InacaFactor",&Inacafactor);
-  CellKernel::insertPar("InakFactor",&Inakfactor);
-  CellKernel::insertPar("InabFactor",&Inabfactor);
-  CellKernel::insertPar("InaFactor",&Inafactor);
+  CellKernel::insertPar("IrelFactor", &iRelfactor);
+  CellKernel::insertPar("IleakFactor", &ileakfactor);
+  CellKernel::insertPar("IcalFactor", &Icalfactor);
+  CellKernel::insertPar("IcabFactor", &Icabfactor);
+  CellKernel::insertPar("IpcaFactor", &Ipcafactor);
+  CellKernel::insertPar("ItoFactor", &Itofactor);
+  CellKernel::insertPar("IksFactor", &Iksfactor);
+  CellKernel::insertPar("IkrFactor", &Ikrfactor);
+  CellKernel::insertPar("Ik1Factor", &Ik1factor);
+  CellKernel::insertPar("IpkFactor", &Ipkfactor);
+  CellKernel::insertPar("InacaFactor", &Inacafactor);
+  CellKernel::insertPar("InakFactor", &Inakfactor);
+  CellKernel::insertPar("InabFactor", &Inabfactor);
+  CellKernel::insertPar("InaFactor", &Inafactor);
 }
 
 const char *TNNP04Control::type() const {
   return "Human Ventricular (Ten Tusscher 2004)";
 }
-
-MAKE_OPTIONS_FUNCTIONS(TNNP04Control)

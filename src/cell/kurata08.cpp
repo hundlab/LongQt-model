@@ -96,8 +96,8 @@ void Kurata08::Initialize() {
 
   iCait = iCart = 0.0;
 
-  opts = WT;
-
+  this->insertOpt("TREK", &trekflag, "include the trek channel");
+  //  this->insertOpt("ISO", &isoflag, "Isoproterenol");
   makemap();
 };
 
@@ -166,12 +166,12 @@ void Kurata08::updateIkr() {
   double ek = (RGAS * TEMP / FDAY) * log(kO / kI);  // mV
   double isofact = 1;
 
-  //        if(opts & ISO) {
-  //            pafinf = pasinf = 1/(1+exp(-(vOld+33.2)/10.6));
-  //        } else {
-  pafinf = pasinf =
-      1 / (1 + exp(-(vOld + 23.2) / 10.6));  //+23.2 or 33.2 for iso
-                                             //        }
+  if (isoflag) {
+    pafinf = pasinf = 1 / (1 + exp(-(vOld + 33.2) / 10.6));
+  } else {
+    pafinf = pasinf =
+        1 / (1 + exp(-(vOld + 23.2) / 10.6));  //+23.2 or 33.2 for iso
+  }
   // Zhang et al.
   // pafinf = pasinf = 1/(1+exp(-(vOld+14.2)/10.6));  //+23.2 or 33.2 for iso
   taupaf =
@@ -189,9 +189,9 @@ void Kurata08::updateIkr() {
   Gate.pi = piinf - (piinf - Gate.pi) * exp(-dt / taupi);
 
   // from Demir et al. AJP Heart 1999
-  //        if(opts & ISO) {
-  //            isofact=0.62*(1+2.6129*(cAmp/(cAmp+9.0)))-0.025;
-  //        }
+  //  if (isoflag) {
+  //    isofact = 0.62 * (1 + 2.6129 * (cAmp / (cAmp + 9.0))) - 0.025;
+  //  }
   iKr =
       gkr * isofact * (0.6 * Gate.paf + 0.4 * Gate.pas) * Gate.pi * (vOld - ek);
 };
@@ -271,9 +271,9 @@ void Kurata08::updateIst() {
   double isofact = 0;  // effect of iso on conductance
   double vhalf = -57.0;
 
-  //        if(opts & ISO) {
-  //            vhalf = -15.0*isoConc/(0.00226+isoConc);
-  //        }
+  if (isoflag) {
+    vhalf = -15.0 * isoConc / (0.00226 + isoConc);
+  }
   alphaqa = 1 / (0.15 * exp(-vOld / 11.0) + 0.2 * exp(-vOld / 700.0));
   betaqa = 1 / (16.0 * exp(vOld / 8.0) + 15.0 * exp(vOld / 50.0));
   qainf = 1 / (1 + exp(-(vOld - vhalf) / 5.0));
@@ -288,9 +288,9 @@ void Kurata08::updateIst() {
   Gate.qa = qainf - (qainf - Gate.qa) * exp(-dt / tauqa);
   Gate.qi = qiinf - (qiinf - Gate.qi) * exp(-dt / tauqi);
 
-  //        if(opts & ISO) {
-  //            isofact=0.964*isoConc/(0.00226+isoConc);
-  //        }
+  if (isoflag) {
+    isofact = 0.964 * isoConc / (0.00226 + isoConc);
+  }
   iSt = gSt * (1 + isofact) * Gate.qa * Gate.qi * (vOld - est);
 };
 // Na+ background current
@@ -386,9 +386,9 @@ void Kurata08::updateIup() {
   //        double deltaiup=.75;
   double isofact = 0;
 
-  //        if(opts & ISO) {
-  //            isofact = 0.85*pow(isoConc,0.934)/(pow(isoConc,0.934)+0.0052);
-  //        }
+  if (isoflag) {
+    isofact = 0.85 * pow(isoConc, 0.934) / (pow(isoConc, 0.934) + 0.0052);
+  }
   iUp = iUpbar * (1 + isofact) * caI / (caI + kmup);
 };
 // Transfer from NSR to JSR^M
@@ -489,7 +489,7 @@ void Kurata08::updateCurr() {
   updateIks();    // Slow delayed rectifier current
   updateIkr();    // Rapid delayed rectifier current
   updateI4ap();   // Transient outward K current
-  if (opts & TREK) {
+  if (trekflag) {
     updateItrek();  // Transient outward K current
   }
   updateIkach();  // Transient outward K current
@@ -594,5 +594,3 @@ void Kurata08::makemap() {
 }
 
 const char *Kurata08::type() const { return "Rabbit Sinus Node (Kurata 2008)"; }
-
-MAKE_OPTIONS_FUNCTIONS(Kurata08)

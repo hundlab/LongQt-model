@@ -88,24 +88,26 @@ class CellKernel : public std::enable_shared_from_this<CellKernel> {
   virtual std::set<std::string> pars();
   virtual const char* type() const = 0;
   // class options eg ISO
-  virtual std::map<std::string, int> optionsMap() const;
-  virtual int option() const;
-  virtual std::string optionStr() const;
-  virtual void setOption(std::string opt);
-  virtual void setOption(int opt);
-  virtual std::list<std::list<int>> checkConflicts(int opt);
+  virtual std::map<std::string, bool> optionsMap() const;
+  virtual bool option(std::string name) const;
+  virtual void setOption(std::string name, bool val);
 
  protected:
+  virtual void insertOpt(std::string name, bool* valptr,
+                         std::string label = "");
   virtual void insertPar(std::string name, double* valptr);
   virtual void insertVar(std::string name, double* valptr);
-  std::list<std::list<int>> conflicts;  // list of conflicting options
+  virtual void insertConflicts(std::list<std::string> conflicts);
 
-  virtual int removeConflicts(int opt);
+  virtual std::list<std::string> getConflicts(std::string name);
+
   void copyVarPar(const CellKernel& toCopy);
 
  private:
   std::map<std::string, double*> __vars;  // map of state vars
   std::map<std::string, double*> __pars;  // map of params
+  std::map<std::string, bool*> __opts;
+  std::list<std::set<std::string>> __conflicts;  // list of conflicting options
 
   void Initialize();
   void mkmap();

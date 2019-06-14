@@ -125,11 +125,9 @@ class TNNP04Control : public Cell {
   double Inabfactor;
   double Inafactor;
 
-  struct GateVariable Gate;
-  //    ISO //isoproterenol
-  MAKE_OPTIONS(ISO);
+  bool isoflag = false;
 
-  enum Options opts;
+  struct GateVariable Gate;
 
  private:
   void Initialize();

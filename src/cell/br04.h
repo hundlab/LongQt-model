@@ -198,12 +198,10 @@ class Br04 : public Cell {
 
   double TestFactor = 1;
   double TestFactor2 = 1;
-  //    ISO //isoproterenol
-  //    TREK //enable the trek channel
-  //    INS //?Plateau K current?
-  MAKE_OPTIONS(ISO, TREK /*, INS*/);
 
-  enum Options opts = WT;
+  bool isoflag = false;
+  bool trekflag = false;
+  bool insflag = false;
 
  private:
   void Initialize();

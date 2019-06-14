@@ -123,9 +123,6 @@ void GpbAtrialOnal17::Initialize() {
   fiNalP = 0;
   RyRP = 382.6E-3;
 
-  opts = WT;
-  conflicts = {{S571E, S571A}, {S2814D, S2814A}};
-
   Icalfactor = Icabfactor = Ipcafactor = 1;
   Itofactor = Iksfactor = Ikrfactor = 1;
   Ik1factor = Ikurfactor = 1;
@@ -137,6 +134,15 @@ void GpbAtrialOnal17::Initialize() {
   InalPFactor = 1;
   Jsrleakfactor = 1;
   ROSConc = 0;
+
+  this->insertOpt("ISO", &isoFlag, "Isoproterenol");
+  this->insertOpt("S571E", &s571eFlag, "Nav1.5 S571E");
+  this->insertOpt("S571A", &s571aFlag, "Nav1.5 S571A");
+  this->insertOpt("S2814D", &s2814dFlag, "RyR2 S2814D");
+  this->insertOpt("S2814A", &s2814aFlag, "RyR2 S2814A");
+
+  this->insertConflicts({"S571E", "S571A"});
+  this->insertConflicts({"S2814D", "S2814A"});
 
   testFactor = 1;
 
@@ -211,9 +217,9 @@ void GpbAtrialOnal17::updateInal() {
   fiNalP = fiNalP + dfiNalP;
   // for SA - SE fitting atrial data, 8 - 57
   // for SA - SE fitting vent data, 63 - 213
-  if (opts & S571A) {  // SA
+  if (s571aFlag) {  // SA
     fiNalP = 0;
-  } else if (opts & S571E) {  // SE
+  } else if (s571eFlag) {  // SE
     fiNalP = 1;
   }
   double fiNalNP = 1 - fiNalP;
@@ -245,7 +251,7 @@ void GpbAtrialOnal17::updateSRFlux() {
   double condisomf = 1;
   double condisoca = 1;
   // SR fluxes
-  if (opts & ISO) {
+  if (isoFlag) {
     condisomf = 0.5;
     condisoca = 2;
   }
@@ -291,9 +297,9 @@ void GpbAtrialOnal17::updateSRFlux() {
   double Rxnbasal = kb2815 * RyRN;
   double Rxnckryr = kckryr * (caMkii * 120E-3) * RyRN /
                     (kmckryr + RyRN);  // for WT 1.2923* was old fit value
-  if (opts & S2814D) {                 // S2814D
+  if (s2814dFlag) {                    // S2814D
     Rxnckryr = kckryr * (1 * 120E-3) * RyRN / (kmckryr + RyRN); /*1.2923*/
-  } else if (opts & S2814A) {                                   // S2814A
+  } else if (s2814aFlag) {                                      // S2814A
     Rxnckryr = 0;
   }
   double Rxnpp1ryr = kpp1ryr * PP1 * RyRP * OApp1 / (kmpp1ryr + RyRP);
@@ -375,7 +381,7 @@ void GpbAtrialOnal17::updatecytobuff() {
   double BmaxSR = 0.0171;
   double koffsr = 0.06;
 
-  if (opts & ISO) {
+  if (isoFlag) {
     koffTnCl = .0196 * 1.5;
   }
 
@@ -476,7 +482,7 @@ void GpbAtrialOnal17::updateIcal() {
 
   //	tauf = 1/(0.0197*exp(-(0.0337*(vOld+25))*(0.0337*(vOld+25)))+0.02);
 
-  if (opts & ISO) {
+  if (isoFlag) {
     d_inf = 1 / (1 + exp(-(vOld + 12) / 6));
     taud = d_inf * (1 - exp(-(vOld + 12) / 6)) / (0.035 * (vOld + 12));
     f_inf = 1 / (1 + exp((vOld + 33) / 7)) + 0.2 / (1 + exp((47 - vOld) / 20));
@@ -626,7 +632,7 @@ void GpbAtrialOnal17::updateIkur() {
   Gate.xkur = xkur_inf - (xkur_inf - Gate.xkur) * exp(-dt / tau_xkur);
   Gate.ykur = ykur_inf - (ykur_inf - Gate.ykur) * exp(-dt / tau_ykur);
 
-  if (opts & ISO) {
+  if (isoFlag) {
     condiso = 3;
   }
   iKur = Ikurfactor * condiso * gkur * Gate.xkur * Gate.ykur * (vOld - Ek);
@@ -647,7 +653,7 @@ void GpbAtrialOnal17::updateIks() {
   xs_inf = 1.0 / (1.0 + exp((-3.8 - vOld) / 14.25));
   tau_xs = 990.1 / (1.0 + exp((-2.436 - vOld) / 14.12));
 
-  if (opts & ISO) {
+  if (isoFlag) {
     condiso = 3;
     xs_inf = 1.0 / (1.0 + exp((-43.8 - vOld) / 14.25));
     tau_xs = 990.1 / (1.0 + exp((-42.436 - vOld) / 14.12));
@@ -748,7 +754,7 @@ void GpbAtrialOnal17::updateInak() {
   double sigma, fnak;
   double condiso = 1;
 
-  if (opts & ISO) {
+  if (isoFlag) {
     condiso = 0.75;
   }
 
@@ -939,136 +945,134 @@ void GpbAtrialOnal17::updateConc() {
 
 // Create map for easy retrieval of variable values.
 void GpbAtrialOnal17::makemap() {
-  CellKernel::insertVar("vOld",&vOld);
-  CellKernel::insertVar("t",&t);
-  CellKernel::insertVar("dVdt",&dVdt);
-  CellKernel::insertVar("naI",&naI);
-  CellKernel::insertVar("kI",&kI);
-  CellKernel::insertVar("clI",&clI);
-  CellKernel::insertVar("caI",&caI);
-  CellKernel::insertVar("caslI",&caslI);
-  CellKernel::insertVar("cajI",&cajI);
-  CellKernel::insertVar("caSr",&caSr);
-  CellKernel::insertVar("najI",&najI);
-  CellKernel::insertVar("naslI",&naslI);
-  CellKernel::insertVar("mgI",&mgI);
-  CellKernel::insertVar("CaM",&CaM);
-  CellKernel::insertVar("Csqnb",&Csqnb);
-  CellKernel::insertVar("iCa",&iCa);
-  CellKernel::insertVar("iCab",&iCab);
-  CellKernel::insertVar("iNa",&iNa);
-  CellKernel::insertVar("iNak",&iNak);
-  CellKernel::insertVar("iNal",&iNal);
-  CellKernel::insertVar("iNaca",&iNaca);
+  CellKernel::insertVar("vOld", &vOld);
+  CellKernel::insertVar("t", &t);
+  CellKernel::insertVar("dVdt", &dVdt);
+  CellKernel::insertVar("naI", &naI);
+  CellKernel::insertVar("kI", &kI);
+  CellKernel::insertVar("clI", &clI);
+  CellKernel::insertVar("caI", &caI);
+  CellKernel::insertVar("caslI", &caslI);
+  CellKernel::insertVar("cajI", &cajI);
+  CellKernel::insertVar("caSr", &caSr);
+  CellKernel::insertVar("najI", &najI);
+  CellKernel::insertVar("naslI", &naslI);
+  CellKernel::insertVar("mgI", &mgI);
+  CellKernel::insertVar("CaM", &CaM);
+  CellKernel::insertVar("Csqnb", &Csqnb);
+  CellKernel::insertVar("iCa", &iCa);
+  CellKernel::insertVar("iCab", &iCab);
+  CellKernel::insertVar("iNa", &iNa);
+  CellKernel::insertVar("iNak", &iNak);
+  CellKernel::insertVar("iNal", &iNal);
+  CellKernel::insertVar("iNaca", &iNaca);
 
-  CellKernel::insertVar("Gate.m",&Gate.m);
-  CellKernel::insertVar("Gate.h",&Gate.h);
-  CellKernel::insertVar("Gate.j",&Gate.j);
-  CellKernel::insertVar("Gate.xkr",&Gate.xkr);
-  CellKernel::insertVar("Gate.xks",&Gate.xks);
-  CellKernel::insertVar("Gate.xf",&Gate.xf);
-  CellKernel::insertVar("Gate.yf",&Gate.yf);
-  CellKernel::insertVar("Gate.xkur",&Gate.xkur);
-  CellKernel::insertVar("Gate.ykur",&Gate.ykur);
-  CellKernel::insertVar("Gate.d",&Gate.d);
-  CellKernel::insertVar("Gate.f",&Gate.f);
-  CellKernel::insertVar("Gate.f_cabj",&Gate.f_cabj);
-  CellKernel::insertVar("Gate.f_cabsl",&Gate.f_cabsl);
-  CellKernel::insertVar("Gate.hl",&Gate.hl);
-  CellKernel::insertVar("Gate.ml",&Gate.ml);
+  CellKernel::insertVar("Gate.m", &Gate.m);
+  CellKernel::insertVar("Gate.h", &Gate.h);
+  CellKernel::insertVar("Gate.j", &Gate.j);
+  CellKernel::insertVar("Gate.xkr", &Gate.xkr);
+  CellKernel::insertVar("Gate.xks", &Gate.xks);
+  CellKernel::insertVar("Gate.xf", &Gate.xf);
+  CellKernel::insertVar("Gate.yf", &Gate.yf);
+  CellKernel::insertVar("Gate.xkur", &Gate.xkur);
+  CellKernel::insertVar("Gate.ykur", &Gate.ykur);
+  CellKernel::insertVar("Gate.d", &Gate.d);
+  CellKernel::insertVar("Gate.f", &Gate.f);
+  CellKernel::insertVar("Gate.f_cabj", &Gate.f_cabj);
+  CellKernel::insertVar("Gate.f_cabsl", &Gate.f_cabsl);
+  CellKernel::insertVar("Gate.hl", &Gate.hl);
+  CellKernel::insertVar("Gate.ml", &Gate.ml);
 
-  CellKernel::insertVar("iTos",&iTos);
-  CellKernel::insertVar("iTof",&iTof);
-  CellKernel::insertVar("iTo",&iTo);
-  CellKernel::insertVar("iKsjunc",&iKsjunc);
-  CellKernel::insertVar("iKssl",&iKssl);
-  CellKernel::insertVar("iKs",&iKs);
-  CellKernel::insertVar("iKr",&iKr);
-  CellKernel::insertVar("iKur",&iKur);
-  CellKernel::insertVar("iKpjunc",&iKpjunc);
-  CellKernel::insertVar("iKpsl",&iKpsl);
-  CellKernel::insertVar("iKp",&iKp);
-  CellKernel::insertVar("iK1",&iK1);
-  CellKernel::insertVar("iNajunc",&iNajunc);
-  CellKernel::insertVar("iNasl",&iNasl);
-  CellKernel::insertVar("iNabjunc",&iNabjunc);
-  CellKernel::insertVar("iNabsl",&iNabsl);
-  CellKernel::insertVar("iNab",&iNab);
-  CellKernel::insertVar("iNa",&iNa);
-  CellKernel::insertVar("iCajunc",&iCajunc);
-  CellKernel::insertVar("iCasl",&iCasl);
-  CellKernel::insertVar("iCa",&iCa);
-  CellKernel::insertVar("iCaL",&iCaL);
-  CellKernel::insertVar("iCab",&iCab);
-  CellKernel::insertVar("ipCa",&ipCa);
-  CellKernel::insertVar("iCak",&iCak);
-  CellKernel::insertVar("iCanajunc",&iCanajunc);
-  CellKernel::insertVar("iCanasl",&iCanasl);
-  CellKernel::insertVar("iCana",&iCana);
-  CellKernel::insertVar("iNaKjunc",&iNaKjunc);
-  CellKernel::insertVar("iNaKsl",&iNaKsl);
-  CellKernel::insertVar("iNak",&iNak);
-  CellKernel::insertVar("iNcxjunc",&iNcxjunc);
-  CellKernel::insertVar("iNcxsl",&iNcxsl);
-  CellKernel::insertVar("iNaca",&iNaca);
-  CellKernel::insertVar("iClcajunc",&iClcajunc);
-  CellKernel::insertVar("iClcasl",&iClcasl);
-  CellKernel::insertVar("iClca",&iClca);
-  CellKernel::insertVar("iClbk",&iClbk);
-  CellKernel::insertVar("iClcajunc",&iClcajunc);
-  CellKernel::insertVar("ipCajunc",&ipCajunc);
-  CellKernel::insertVar("ipCasl",&ipCasl);
-  CellKernel::insertVar("ipCa",&ipCa);
-  CellKernel::insertVar("iCabjunc",&iCabjunc);
-  CellKernel::insertVar("iCabsl",&iCabsl);
-  CellKernel::insertVar("iCab",&iCab);
+  CellKernel::insertVar("iTos", &iTos);
+  CellKernel::insertVar("iTof", &iTof);
+  CellKernel::insertVar("iTo", &iTo);
+  CellKernel::insertVar("iKsjunc", &iKsjunc);
+  CellKernel::insertVar("iKssl", &iKssl);
+  CellKernel::insertVar("iKs", &iKs);
+  CellKernel::insertVar("iKr", &iKr);
+  CellKernel::insertVar("iKur", &iKur);
+  CellKernel::insertVar("iKpjunc", &iKpjunc);
+  CellKernel::insertVar("iKpsl", &iKpsl);
+  CellKernel::insertVar("iKp", &iKp);
+  CellKernel::insertVar("iK1", &iK1);
+  CellKernel::insertVar("iNajunc", &iNajunc);
+  CellKernel::insertVar("iNasl", &iNasl);
+  CellKernel::insertVar("iNabjunc", &iNabjunc);
+  CellKernel::insertVar("iNabsl", &iNabsl);
+  CellKernel::insertVar("iNab", &iNab);
+  CellKernel::insertVar("iNa", &iNa);
+  CellKernel::insertVar("iCajunc", &iCajunc);
+  CellKernel::insertVar("iCasl", &iCasl);
+  CellKernel::insertVar("iCa", &iCa);
+  CellKernel::insertVar("iCaL", &iCaL);
+  CellKernel::insertVar("iCab", &iCab);
+  CellKernel::insertVar("ipCa", &ipCa);
+  CellKernel::insertVar("iCak", &iCak);
+  CellKernel::insertVar("iCanajunc", &iCanajunc);
+  CellKernel::insertVar("iCanasl", &iCanasl);
+  CellKernel::insertVar("iCana", &iCana);
+  CellKernel::insertVar("iNaKjunc", &iNaKjunc);
+  CellKernel::insertVar("iNaKsl", &iNaKsl);
+  CellKernel::insertVar("iNak", &iNak);
+  CellKernel::insertVar("iNcxjunc", &iNcxjunc);
+  CellKernel::insertVar("iNcxsl", &iNcxsl);
+  CellKernel::insertVar("iNaca", &iNaca);
+  CellKernel::insertVar("iClcajunc", &iClcajunc);
+  CellKernel::insertVar("iClcasl", &iClcasl);
+  CellKernel::insertVar("iClca", &iClca);
+  CellKernel::insertVar("iClbk", &iClbk);
+  CellKernel::insertVar("iClcajunc", &iClcajunc);
+  CellKernel::insertVar("ipCajunc", &ipCajunc);
+  CellKernel::insertVar("ipCasl", &ipCasl);
+  CellKernel::insertVar("ipCa", &ipCa);
+  CellKernel::insertVar("iCabjunc", &iCabjunc);
+  CellKernel::insertVar("iCabsl", &iCabsl);
+  CellKernel::insertVar("iCab", &iCab);
 
-  CellKernel::insertVar("CaMKII",&caMkii);
-  CellKernel::insertVar("fBlock",&fBlock);
-  CellKernel::insertVar("fBound",&fBound);
-  CellKernel::insertVar("fI",&fI);
-  CellKernel::insertVar("fOx",&fOx);
-  CellKernel::insertVar("fOxP",&fOxP);
-  CellKernel::insertVar("fPhos",&fPhos);
-  CellKernel::insertVar("fiNalP",&fiNalP);
-  CellKernel::insertVar("RyRP",&RyRP);
-  CellKernel::insertVar("RyRratio",&RyRratio);
-  CellKernel::insertVar("Ryro",&Ryro);
-  CellKernel::insertVar("Ryri",&Ryri);
-  CellKernel::insertVar("Ryrr",&Ryrr);
+  CellKernel::insertVar("CaMKII", &caMkii);
+  CellKernel::insertVar("fBlock", &fBlock);
+  CellKernel::insertVar("fBound", &fBound);
+  CellKernel::insertVar("fI", &fI);
+  CellKernel::insertVar("fOx", &fOx);
+  CellKernel::insertVar("fOxP", &fOxP);
+  CellKernel::insertVar("fPhos", &fPhos);
+  CellKernel::insertVar("fiNalP", &fiNalP);
+  CellKernel::insertVar("RyRP", &RyRP);
+  CellKernel::insertVar("RyRratio", &RyRratio);
+  CellKernel::insertVar("Ryro", &Ryro);
+  CellKernel::insertVar("Ryri", &Ryri);
+  CellKernel::insertVar("Ryrr", &Ryrr);
 
-  CellKernel::insertVar("Jserca",&Jserca);
-  CellKernel::insertVar("Jsrcarel",&Jsrcarel);
-  CellKernel::insertVar("Jsrleak",&Jsrleak);
+  CellKernel::insertVar("Jserca", &Jserca);
+  CellKernel::insertVar("Jsrcarel", &Jsrcarel);
+  CellKernel::insertVar("Jsrleak", &Jsrleak);
 
-  CellKernel::insertPar("IcalFactor",&Icalfactor);
-  CellKernel::insertPar("IcabFactor",&Icabfactor);
-  CellKernel::insertPar("IpcaFactor",&Ipcafactor);
-  CellKernel::insertPar("ItoFactor",&Itofactor);
-  CellKernel::insertPar("IksFactor",&Iksfactor);
-  CellKernel::insertPar("IkrFactor",&Ikrfactor);
-  CellKernel::insertPar("Ik1Factor",&Ik1factor);
-  CellKernel::insertPar("IkurFactor",&Ikurfactor);
-  CellKernel::insertPar("IpkFactor",&Ipkfactor);
-  CellKernel::insertPar("InacaFactor",&Inacafactor);
-  CellKernel::insertPar("InakFactor",&Inakfactor);
-  CellKernel::insertPar("InabFactor",&Inabfactor);
-  CellKernel::insertPar("InaFactor",&Inafactor);
-  CellKernel::insertPar("IclcaFactor",&Iclcafactor);
-  CellKernel::insertPar("IclbkFactor",&Iclbkfactor);
-  CellKernel::insertPar("InalFactor",&Inalfactor);
-  CellKernel::insertPar("JSRcaRelFactor",&JSRcarelfactor);
-  CellKernel::insertPar("JsercaFactor",&Jsercafactor);
-  CellKernel::insertPar("InabFactor",&Inabfactor);
-  CellKernel::insertPar("ICaMKIIFactor",&IcaMkiiFactor);
-  CellKernel::insertPar("InalPFactor",&InalPFactor);
-  CellKernel::insertPar("JsrleakFactor",&Jsrleakfactor);
-  CellKernel::insertPar("ROS",&ROSConc);
-  CellKernel::insertPar("testFactor",&testFactor);
+  CellKernel::insertPar("IcalFactor", &Icalfactor);
+  CellKernel::insertPar("IcabFactor", &Icabfactor);
+  CellKernel::insertPar("IpcaFactor", &Ipcafactor);
+  CellKernel::insertPar("ItoFactor", &Itofactor);
+  CellKernel::insertPar("IksFactor", &Iksfactor);
+  CellKernel::insertPar("IkrFactor", &Ikrfactor);
+  CellKernel::insertPar("Ik1Factor", &Ik1factor);
+  CellKernel::insertPar("IkurFactor", &Ikurfactor);
+  CellKernel::insertPar("IpkFactor", &Ipkfactor);
+  CellKernel::insertPar("InacaFactor", &Inacafactor);
+  CellKernel::insertPar("InakFactor", &Inakfactor);
+  CellKernel::insertPar("InabFactor", &Inabfactor);
+  CellKernel::insertPar("InaFactor", &Inafactor);
+  CellKernel::insertPar("IclcaFactor", &Iclcafactor);
+  CellKernel::insertPar("IclbkFactor", &Iclbkfactor);
+  CellKernel::insertPar("InalFactor", &Inalfactor);
+  CellKernel::insertPar("JSRcaRelFactor", &JSRcarelfactor);
+  CellKernel::insertPar("JsercaFactor", &Jsercafactor);
+  CellKernel::insertPar("InabFactor", &Inabfactor);
+  CellKernel::insertPar("ICaMKIIFactor", &IcaMkiiFactor);
+  CellKernel::insertPar("InalPFactor", &InalPFactor);
+  CellKernel::insertPar("JsrleakFactor", &Jsrleakfactor);
+  CellKernel::insertPar("ROS", &ROSConc);
+  CellKernel::insertPar("testFactor", &testFactor);
 }
 const char* GpbAtrialOnal17::type() const {
   //    return "GpbAtrialOnal17";
   return "Human Atrial (Onal 2017)";
 }
-
-MAKE_OPTIONS_FUNCTIONS(GpbAtrialOnal17)

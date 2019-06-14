@@ -176,33 +176,27 @@ vector<string> CellUtils::split(string s, char delim, bool keepEmpty) {
   return v;
 }
 
-int CellUtils::strToFlag(std::string opts, std::map<std::string, int> optsMap,
-                         char seperator) {
-  int out = 0;
+std::map<std::string, bool> CellUtils::strToFlag(std::string opts,
+                                                 char seperator) {
+  std::map<std::string, bool> out;
   auto splits = CellUtils::split(opts, seperator);
   for (auto& sp : splits) {
-    try {
-      out |= optsMap.at(sp);
-    } catch (std::out_of_range&) {
-      Logger::getInstance()->write<std::out_of_range>(
-          "CellUtils: Flag {} does not exist in map", sp);
-    }
+    out[sp] = true;
   }
   return out;
 }
 
-std::string CellUtils::flagToStr(int opts, std::map<std::string, int> optsMap,
+std::string CellUtils::flagToStr(std::map<std::string, bool> optsMap,
                                  char seperator) {
   std::string str = "";
   bool first = true;
-  for (auto& it : optsMap) {
-    if (it.second & opts) {
-      if (first) {
-        str = it.first;
-        first = false;
-      } else {
-        str += seperator + it.first;
-      }
+  for (auto& opt : optsMap) {
+    if (!opt.second) continue;
+    if (first) {
+      str = opt.first;
+      first = false;
+    } else {
+      str += seperator + opt.first;
     }
   }
   return str;

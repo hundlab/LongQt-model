@@ -93,6 +93,7 @@ class CellKernel : public std::enable_shared_from_this<CellKernel> {
   virtual std::string optionStr() const;
   virtual void setOption(std::string opt);
   virtual void setOption(int opt);
+  virtual std::list<std::list<int>> checkConflicts(int opt);
 
  protected:
   virtual void insertPar(std::string name, double* valptr);

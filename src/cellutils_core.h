@@ -77,6 +77,19 @@ std::vector<std::string> split(std::string s, char delim,
                                bool keepEmpty = false);
 
 /*
+ * breaks a opts based on seperator and then converts that to a flag of opts
+ * or'ed together
+ */
+int strToFlag(std::string opts, std::map<std::string, int> optsMap,
+              char seperator = '|');
+
+/*
+ * constructs opts string from opts int flags using seperator
+ */
+std::string flagToStr(int opts, std::map<std::string, int> optsMap,
+                      char seperator = '|');
+
+/*
  * Create formated string, similar to python with {}
  * denoting placeholder
  */

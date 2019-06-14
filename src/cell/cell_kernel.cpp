@@ -152,29 +152,29 @@ void CellKernel::copyVarPar(const CellKernel& toCopy) {
 }
 void CellKernel::mkmap() {
   // make map of state vars
-  CellKernel::insertVar("vOld",&vOld);
-  CellKernel::insertVar("t",&t);
-  CellKernel::insertVar("dVdt",&dVdt);
-  CellKernel::insertVar("iTot",&iTot);
-  CellKernel::insertVar("iKt",&iKt);
-  CellKernel::insertVar("iNat",&iNat);
-  CellKernel::insertVar("iCat",&iCat);
+  CellKernel::insertVar("vOld", &vOld);
+  CellKernel::insertVar("t", &t);
+  CellKernel::insertVar("dVdt", &dVdt);
+  CellKernel::insertVar("iTot", &iTot);
+  CellKernel::insertVar("iKt", &iKt);
+  CellKernel::insertVar("iNat", &iNat);
+  CellKernel::insertVar("iCat", &iCat);
 
   // make map of params
-  CellKernel::insertPar("dtmin",&dtmin);
-  CellKernel::insertPar("dtmed",&dtmed);
-  CellKernel::insertPar("dtmax",&dtmax);
-  CellKernel::insertPar("Cm",&Cm);
-  CellKernel::insertPar("Rcg",&Rcg);
-  CellKernel::insertPar("RGAS",&RGAS);
-  CellKernel::insertPar("TEMP",&TEMP);
-  CellKernel::insertPar("FDAY",&FDAY);
-  CellKernel::insertPar("cellRadius",&cellRadius);
-  CellKernel::insertPar("cellLength",&cellLength);
-  CellKernel::insertPar("Vcell",&Vcell);
-  CellKernel::insertPar("Vmyo",&Vmyo);
-  CellKernel::insertPar("AGeo",&AGeo);
-  CellKernel::insertPar("ACap",&ACap);
+  CellKernel::insertPar("dtmin", &dtmin);
+  CellKernel::insertPar("dtmed", &dtmed);
+  CellKernel::insertPar("dtmax", &dtmax);
+  CellKernel::insertPar("Cm", &Cm);
+  CellKernel::insertPar("Rcg", &Rcg);
+  CellKernel::insertPar("RGAS", &RGAS);
+  CellKernel::insertPar("TEMP", &TEMP);
+  CellKernel::insertPar("FDAY", &FDAY);
+  CellKernel::insertPar("cellRadius", &cellRadius);
+  CellKernel::insertPar("cellLength", &cellLength);
+  CellKernel::insertPar("Vcell", &Vcell);
+  CellKernel::insertPar("Vmyo", &Vmyo);
+  CellKernel::insertPar("AGeo", &AGeo);
+  CellKernel::insertPar("ACap", &ACap);
 
   // add potenttially needed values to pars
   //    CellKernel::insertPar("vNew",&vNew);
@@ -195,6 +195,22 @@ string CellKernel::optionStr() const { return "WT"; }
 void CellKernel::setOption(string) {}
 
 void CellKernel::setOption(int) {}
+
+std::list<std::list<int> > CellKernel::checkConflicts(int opt) {
+  list<list<int> > conflictsList;
+  for (auto& cOptList : this->conflicts) {
+    list<int> has;
+    for (auto& cOpt : cOptList) {
+      if (cOpt & opt) {
+        has.push_back(cOpt);
+      }
+    }
+    if (has.size() > 1) {
+      conflictsList.push_back(has);
+    }
+  }
+  return conflictsList;
+}
 
 int CellKernel::removeConflicts(int opt) {
   int finalOpt = opt;

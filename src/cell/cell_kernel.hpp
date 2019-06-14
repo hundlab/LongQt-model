@@ -101,41 +101,21 @@ namespace LongQt {
     return (CLASS_NAME::Options&)((int&)a ^= (int)b);             \
   }
 
-#define OPTIONS_FUNCTIONS(CLASS_NAME)                         \
-  std::map<std::string, int> CLASS_NAME::optionsMap() const { \
-    return optsMap;                                           \
-  }                                                           \
-  int CLASS_NAME::option() const { return opts; }             \
-  std::string CLASS_NAME::optionStr() const {                 \
-    std::string str = "";                                     \
-    bool first = true;                                        \
-    for (auto& it : optsMap) {                                \
-      if (it.second & this->opts) {                           \
-        if (first) {                                          \
-          str = it.first;                                     \
-          first = false;                                      \
-        } else {                                              \
-          str += "|" + it.first;                              \
-        }                                                     \
-      }                                                       \
-    }                                                         \
-    return str != "" ? str : "WT";                            \
-  }                                                           \
-  void CLASS_NAME::setOption(std::string opt) {               \
-    Options o = WT;                                           \
-    auto splits = CellUtils::split(opt, '|');                 \
-    for (auto& sp : splits) {                                 \
-      try {                                                   \
-        o |= static_cast<Options>(this->optsMap.at(sp));      \
-      } catch (std::out_of_range&) {                          \
-        Logger::getInstance()->write<std::out_of_range>(      \
-            "CellKernel: Cell Option {} does not exist", sp); \
-      }                                                       \
-    }                                                         \
-    this->setOption(o);                                       \
-  }                                                           \
-  void CLASS_NAME::setOption(int opt) {                       \
-    opts = static_cast<Options>(this->removeConflicts(opt));  \
+#define OPTIONS_FUNCTIONS(CLASS_NAME)                                    \
+  std::map<std::string, int> CLASS_NAME::optionsMap() const {            \
+    return optsMap;                                                      \
+  }                                                                      \
+  int CLASS_NAME::option() const { return opts; }                        \
+  std::string CLASS_NAME::optionStr() const {                            \
+    std::string str = CellUtils::flagToStr(this->opts, this->optsMap);   \
+    return str != "" ? str : "WT";                                       \
+  }                                                                      \
+  void CLASS_NAME::setOption(std::string opt) {                          \
+    this->setOption(                                                     \
+        static_cast<Options>(CellUtils::strToFlag(opt, this->optsMap))); \
+  }                                                                      \
+  void CLASS_NAME::setOption(int opt) {                                  \
+    opts = static_cast<Options>(this->removeConflicts(opt));             \
   }
 
 #define MAKE_OPTIONS_FUNCTIONS(CLASS_NAME) \

@@ -175,3 +175,35 @@ vector<string> CellUtils::split(string s, char delim, bool keepEmpty) {
   }
   return v;
 }
+
+int CellUtils::strToFlag(std::string opts, std::map<std::string, int> optsMap,
+                         char seperator) {
+  int out = 0;
+  auto splits = CellUtils::split(opts, seperator);
+  for (auto& sp : splits) {
+    try {
+      out |= optsMap.at(sp);
+    } catch (std::out_of_range&) {
+      Logger::getInstance()->write<std::out_of_range>(
+          "CellUtils: Flag {} does not exist in map", sp);
+    }
+  }
+  return out;
+}
+
+std::string CellUtils::flagToStr(int opts, std::map<std::string, int> optsMap,
+                                 char seperator) {
+  std::string str = "";
+  bool first = true;
+  for (auto& it : optsMap) {
+    if (it.second & opts) {
+      if (first) {
+        str = it.first;
+        first = false;
+      } else {
+        str += seperator + it.first;
+      }
+    }
+  }
+  return str;
+}

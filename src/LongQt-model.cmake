@@ -62,7 +62,6 @@ set(modellib_headers
     "${CMAKE_CURRENT_LIST_DIR}/cell/br04.h"
     "${CMAKE_CURRENT_LIST_DIR}/cell/cell.h"
     "${CMAKE_CURRENT_LIST_DIR}/cell/cell_kernel.h"
-    "${CMAKE_CURRENT_LIST_DIR}/cell/cell_kernel.hpp"
     "${CMAKE_CURRENT_LIST_DIR}/cell/coupledinexcitablecell.h"
     "${CMAKE_CURRENT_LIST_DIR}/cell/gpbatrial.h"
     "${CMAKE_CURRENT_LIST_DIR}/cell/gpbatrialonal17.h"

@@ -55,7 +55,6 @@ HEADERS  += $$PWD/measuremanager.h\
     $$PWD/cell/kurata08.h\
     $$PWD/cell/tnnp04.h\
     $$PWD/cell/cell_kernel.h\
-    $$PWD/cell/cell_kernel.hpp\
     $$PWD/cell/gpbhuman.h\
     $$PWD/cell/ksan.h\
     $$PWD/cell/gpbatrialonal17.h\
@@ -82,7 +81,6 @@ HEADERS  += $$PWD/measuremanager.h\
     $$PWD/runsim.h \
     $$PWD/pvarscell.h \
     $$PWD/logger.h \
-    $$PWD/cell/cell_kernel.hpp \
     $$PWD/cellutils_core.h \
     $$PWD/cellutils_core.hpp \
     $$PWD/measurevoltage.h \

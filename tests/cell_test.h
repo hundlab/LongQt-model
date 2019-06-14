@@ -54,19 +54,24 @@ TEST(cellkernel, pars) {
 
 TEST(cellkernel, options) {
   auto* cell = new GpbAtrialOnal17;
-  auto inital_opt = cell->optionStr();
-  EXPECT_EQ(inital_opt, "WT");
+  EXPECT_FALSE(cell->option("ISO"));
+  EXPECT_FALSE(cell->option("S571E"));
+  EXPECT_FALSE(cell->option("S571A"));
+
   auto optsMap = cell->optionsMap();
-  EXPECT_EQ(optsMap["WT"], 0);
-  cell->setOption(GpbAtrialOnal17::Options::S571E);
-  EXPECT_EQ(optsMap["S571E"], cell->option());
-  EXPECT_EQ("S571E", cell->optionStr());
-  cell->setOption(GpbAtrialOnal17::Options::S571E |
-                  GpbAtrialOnal17::Options::S571A);
-  EXPECT_EQ(optsMap["S571E"], cell->option());
-  cell->setOption(GpbAtrialOnal17::Options::S571A |
-                  GpbAtrialOnal17::Options::S2814D);
-  EXPECT_EQ(optsMap["S571A"] | optsMap["S2814D"], cell->option());
+  EXPECT_EQ(optsMap["ISO"], cell->option("ISO"));
+
+  cell->setOption("S571E", true);
+  EXPECT_TRUE(cell->option("S571E"));
+
+  cell->setOption("S571A", true);
+  EXPECT_TRUE(cell->option("S571A"));
+  EXPECT_FALSE(cell->option("S571E"));
+
+  cell->setOption("S571E", true);
+  cell->setOption("S571A", false);
+  EXPECT_FALSE(cell->option("S571A"));
+  EXPECT_TRUE(cell->option("S571E"));
   delete cell;
 }
 
@@ -92,9 +97,10 @@ TEST(cell, ConstantSelection_extra) {
   cell.setConstantSelection(new_selection);
   std::vector<std::string> test(10);
   auto selection = cell.getConstantSelection();
-  auto it = std::set_intersection(new_selection.begin(), new_selection.end(),
-                        selection.begin(), selection.end(), test.begin());
-  test.resize(it-test.begin());
+  auto it =
+      std::set_intersection(new_selection.begin(), new_selection.end(),
+                            selection.begin(), selection.end(), test.begin());
+  test.resize(it - test.begin());
   EXPECT_EQ(test.size(), 3);
 }
 
@@ -115,14 +121,15 @@ TEST(cell, VariableSelection) {
 
 TEST(cell, VariableSelection_extra) {
   auto cell = InexcitableCell();
-  std::set<std::string> new_selection = {"dtmin", "RGAS", "TEMP", "asdf",
-                                         "vOld","iKt"};
+  std::set<std::string> new_selection = {"dtmin", "RGAS", "TEMP",
+                                         "asdf",  "vOld", "iKt"};
   cell.setVariableSelection(new_selection);
   std::vector<std::string> test(10);
   auto selection = cell.getVariableSelection();
-  auto it = std::set_intersection(new_selection.begin(), new_selection.end(),
-                        selection.begin(), selection.end(), test.begin());
-  test.resize(it-test.begin());
+  auto it =
+      std::set_intersection(new_selection.begin(), new_selection.end(),
+                            selection.begin(), selection.end(), test.begin());
+  test.resize(it - test.begin());
   EXPECT_EQ(test.size(), 2);
 }
 #endif

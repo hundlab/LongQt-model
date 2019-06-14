@@ -31,6 +31,35 @@ TEST(set_default_vals, all) {
   EXPECT_EQ(proto->paceflag, false);
 }
 
+TEST(str_to_flag, empty) {
+  auto flagMap = CellUtils::strToFlag("");
+  EXPECT_TRUE(flagMap.size() == 0);
+}
+
+TEST(str_to_flag, one) {
+  auto flagMap = CellUtils::strToFlag("TEST1");
+  EXPECT_TRUE(flagMap.size() == 1);
+  EXPECT_EQ(flagMap["TEST1"], true);
+}
+
+TEST(str_to_flag, many) {
+  auto flagMap = CellUtils::strToFlag("TEST1|&^*&^*&|sadfasfd");
+  EXPECT_TRUE(flagMap.size() == 3);
+  EXPECT_EQ(flagMap["TEST1"], true);
+  EXPECT_EQ(flagMap["&^*&^*&"], true);
+  EXPECT_EQ(flagMap["sadfasfd"], true);
+}
+
+TEST(flag_to_str, empty) {
+  auto str = CellUtils::flagToStr({});
+  EXPECT_EQ(str, "");
+}
+
+TEST(flag_to_str, many) {
+  auto str =
+      CellUtils::flagToStr({{"ASDF", true}, {"%^&", true}, {"IDL", false}});
+  EXPECT_EQ(str, "%^&|ASDF|IDL");
+}
 /*
  * Hopefully I will remove the dependance on QXml and
  * so these functions will become irrelevant

@@ -91,6 +91,7 @@ class CellKernel : public std::enable_shared_from_this<CellKernel> {
   virtual std::map<std::string, bool> optionsMap() const;
   virtual bool option(std::string name) const;
   virtual void setOption(std::string name, bool val);
+  virtual std::string optionDesc(std::string name) const;
 
  protected:
   virtual void insertOpt(std::string name, bool* valptr,
@@ -104,14 +105,19 @@ class CellKernel : public std::enable_shared_from_this<CellKernel> {
   void copyVarPar(const CellKernel& toCopy);
 
  private:
+  struct Option {
+    bool* valptr = nullptr;
+    std::string desc;
+  };
+
   std::map<std::string, double*> __vars;  // map of state vars
   std::map<std::string, double*> __pars;  // map of params
-  std::map<std::string, bool*> __opts;
+  std::map<std::string, Option> __opts;
   std::list<std::set<std::string>> __conflicts;  // list of conflicting options
 
   void Initialize();
   void mkmap();
 };
 }  // namespace LongQt
-#include "cell_kernel.hpp"
+
 #endif

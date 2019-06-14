@@ -123,7 +123,8 @@ set<string> CellKernel::pars() {
 }
 
 void CellKernel::insertOpt(string name, bool* valptr, std::string label) {
-  __opts[name] = valptr;
+  __opts[name].valptr = valptr;
+  __opts[name].desc = label;
 }
 
 // const char* CellKernel::name() const
@@ -154,7 +155,7 @@ void CellKernel::copyVarPar(const CellKernel& toCopy) {
   }
   for (auto& opt : __opts) {
     try {
-      *opt.second = *toCopy.__opts.at(opt.first);
+      *(opt.second.valptr) = *(toCopy.__opts.at(opt.first).valptr);
     } catch (const std::out_of_range&) {
       Logger::getInstance()->write("{} not in cell options", opt.first);
     }
@@ -199,14 +200,14 @@ void CellKernel::mkmap() {
 map<string, bool> CellKernel::optionsMap() const {
   map<string, bool> optsMap;
   for (auto opt : __opts) {
-    optsMap[opt.first] = *opt.second;
+    optsMap[opt.first] = *opt.second.valptr;
   }
   return optsMap;
 }
 
 bool CellKernel::option(string name) const {
   try {
-    return __opts.at(name);
+    return *(__opts.at(name).valptr);
   } catch (std::out_of_range&) {
     return false;
   }
@@ -217,13 +218,21 @@ void CellKernel::setOption(string name, bool val) {
     if (val) {
       auto conflictsList = this->getConflicts(name);
       for (auto& confl : conflictsList) {
-        *(__opts[confl]) = false;
+        *(__opts[confl].valptr) = false;
       }
     }
-    *(__opts.at(name)) = val;
+    *(__opts.at(name).valptr) = val;
 
   } catch (std::out_of_range&) {
     return;
+  }
+}
+
+string CellKernel::optionDesc(string name) const {
+  try {
+    return this->__opts.at(name).desc;
+  } catch (std::out_of_range&) {
+    return "";
   }
 }
 

@@ -146,6 +146,7 @@ void HRD09Control::Initialize() {
   Itrfactor = 1;
   Iupfactor = 1;
   Ileakfactor = 1;
+  ROSConc = 0;
 
   this->insertOpt("TREK", &trekflag, "include the trek channel");
 
@@ -257,7 +258,7 @@ void HRD09Control::updateItrek() {
   // TREK-1 with more rectification
   // ref 10.1161/JAHA.115.002865 hund
   double gk = ItrekFactor * .03011;
-  double prna = TestFactor * 0.01833;  // from iks
+  double prna = TrekPrnaFactor;// * 0.01833;  // from iks
   double prk = 1;
   double EK = RGAS * TEMP / FDAY *
               log((prk * kO + prna * naO) / (prk * kI + prna * naI));
@@ -746,7 +747,7 @@ void HRD09Control::updateCamk() {
 
   double va, va2, ka, tcamk;
 
-  double ros = 0.0;         // concentration of H2O2, um
+  double ros = ROSConc;         // concentration of H2O2, um
   double kib = 246.0;       // mM-1/ms-1
   double kbi = 0.0022;      // ms-1
   double kox = 0.0002909;   // ms-1
@@ -914,8 +915,9 @@ void HRD09Control::makemap() {
   CellKernel::insertPar("IupFactor", &Iupfactor);
   CellKernel::insertPar("IleakFactor", &Ileakfactor);
   CellKernel::insertPar("ItrekFactor", &ItrekFactor);
-  CellKernel::insertPar("TestFactor", &TestFactor);
-  CellKernel::insertPar("Test2Factor", &Test2Factor);
+  CellKernel::insertPar("ROS", &ROSConc);
+//  CellKernel::insertPar("TrekPrnaFactor", &TrekPrnaFactor);
+//  CellKernel::insertPar("Test2Factor", &Test2Factor);
 }
 
 const char* HRD09Control::type() const {

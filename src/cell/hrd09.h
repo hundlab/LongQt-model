@@ -181,8 +181,9 @@ class HRD09Control : public Cell {
   double Iupfactor;
   double Ileakfactor;
   double ItrekFactor = 1;  // Two-pore K+ channel
+  double ROSConc;
 
-  double TestFactor = 0;
+  double TrekPrnaFactor = 0;
   double Test2Factor = 1;
 
   bool trekflag = false;

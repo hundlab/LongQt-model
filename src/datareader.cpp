@@ -8,7 +8,7 @@
 #include "settingsIO.h"
 
 using namespace LongQt;
-namespace fs = std::experimental::filesystem;
+namespace fs = std::filesystem;
 using dlim = std::numeric_limits<double>;
 
 DataReader::TSVData DataReader::readFile(const fs::path& file,
@@ -85,7 +85,7 @@ DataReader::SimData DataReader::readDir(const fs::path& dir,
 }
 
 std::set<int> DataReader::getTrialNums(
-    const std::experimental::filesystem::path& dir) {
+    const fs::path& dir) {
   std::set<int> nums;
   for (auto& file : fs::directory_iterator(dir)) {
     const auto& filePath = file.path();

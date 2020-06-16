@@ -42,12 +42,12 @@ class DataReader {
     std::vector<TrialData<MeasHeader>> meas;
   };
 
-  static TSVData readFile(const std::experimental::filesystem::path& file,
+  static TSVData readFile(const std::filesystem::path& file,
                           const std::set<int>& exclude = {});
-  static SimData readDir(const std::experimental::filesystem::path& dir,
+  static SimData readDir(const std::filesystem::path& dir,
                          const std::set<int>& excludeTrials = {});
   static std::set<int> getTrialNums(
-      const std::experimental::filesystem::path& dir);
+      const std::filesystem::path& dir);
 
  private:
   template <class Header>
@@ -66,7 +66,7 @@ class DataReader {
   }
 
   static void tryLegacy(SimData data,
-                        const std::experimental::filesystem::path& file,
+                        const std::filesystem::path& file,
                         const std::set<int>& exclude);
 
   static int getTrialNum(std::string filename);

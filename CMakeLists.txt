@@ -4,6 +4,7 @@ project(LongQt-model VERSION 0.2)
 
 # Find includes in corresponding build directories
 #Release Debug
+set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_BUILD_TYPE Release)
 
 find_package(Qt5 COMPONENTS Core REQUIRED)

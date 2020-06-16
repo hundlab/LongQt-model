@@ -27,8 +27,8 @@
 namespace LongQt {
 
 namespace CellUtils {
-// version number for LongQt-model
-static const char* version = "v0.4";
+// version number for LongQt
+static const char* version = "v0.5";
 
 /*
  * Side provides a consistent system for numbering sides in 2D grids

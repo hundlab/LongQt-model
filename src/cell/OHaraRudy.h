@@ -187,6 +187,7 @@ class OHaraRudy : public Cell {
   void updateConc() override;
   void externalStim(double stimval) override;
   const char* type() const override;
+  const char* citation() const override;
 
  private:
   void Initialize();

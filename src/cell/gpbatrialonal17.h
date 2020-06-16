@@ -195,7 +195,7 @@ class GpbAtrialOnal17 : public Cell {
   void updateInaca();
   void updateInak();
   void updateInab();
-  void updateIna();
+  virtual void updateIna();
   void updateSRFlux();
   void updateCamk();
   void updatecytobuff();  // cytosolic Ca buffers
@@ -243,6 +243,7 @@ class GpbAtrialOnal17 : public Cell {
   void makemap();
   struct GateVariable Gate;
   const char* type() const override;
+  const char* citation() const override;
 };
 }  // namespace LongQt
 

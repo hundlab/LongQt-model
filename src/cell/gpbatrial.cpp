@@ -826,3 +826,10 @@ void GpbAtrial::makemap() {
 }
 
 const char *GpbAtrial::type() const { return "Human Atrial (Grandi 2011)"; }
+
+const char *GpbAtrial::citation() const
+{
+    return "Grandi, E., et al. “Human Atrial Action Potential and Ca2+ Model: Sinus Rhythm\n"
+           "\tand Chronic Atrial Fibrillation.” Circulation Research, vol. 109, no. 9, 2011,\n"
+           "\tpp. 1055–66, doi:10.1161/CIRCRESAHA.111.253955.";
+}

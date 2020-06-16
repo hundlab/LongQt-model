@@ -220,6 +220,7 @@ class GpbAtrial : public Cell {
   //##################
   void makemap();
   const char* type() const override;
+  const char* citation() const override;
   struct GateVariable Gate;
 
  private:

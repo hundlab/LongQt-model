@@ -916,10 +916,18 @@ void HRD09Control::makemap() {
   CellKernel::insertPar("IleakFactor", &Ileakfactor);
   CellKernel::insertPar("ItrekFactor", &ItrekFactor);
   CellKernel::insertPar("ROS", &ROSConc);
-//  CellKernel::insertPar("TrekPrnaFactor", &TrekPrnaFactor);
+  CellKernel::insertPar("TrekPrnaFactor", &TrekPrnaFactor);
 //  CellKernel::insertPar("Test2Factor", &Test2Factor);
 }
 
 const char* HRD09Control::type() const {
-  return "Canine Ventricular (Hund-Rudy 2009)";
+    return "Canine Ventricular (Hund-Rudy 2009)";
+}
+
+const char *HRD09Control::citation() const
+{
+    return "O’hara, Thomas, et al. “Simulation of the Undiseased Human Cardiac Ventricular\n"
+           "\tAction Potential: Model Formulation and Experimental Validation.” PLoS Comput\n"
+           "\tBiol, vol. 7, no. 5, American Heart Association, 2011, pp. 1002061–302,\n"
+           "\tdoi:10.1371/journal.pcbi.1002061.";
 };

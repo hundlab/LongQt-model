@@ -546,5 +546,13 @@ void Courtemanche98::makemap() {
 }
 
 const char *Courtemanche98::type() const {
-  return "Human Atrial (Courtemanche 1998)";
+    return "Human Atrial (Courtemanche 1998)";
+}
+
+const char *Courtemanche98::citation() const
+{
+    return  "Courtemanche, Marc, et al. “Ionic Mechanisms Underlying Human Atrial Action\n"
+            "\tPotential Properties: Insights from a Mathematical Model.” The American Journal\n"
+            "\tof Physiology, vol. 275, no. 1 Pt 2, July 1998, pp. H301-21,\n"
+            "\thttp://www.ncbi.nlm.nih.gov/pubmed/9688927.";
 }

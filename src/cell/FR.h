@@ -382,6 +382,7 @@ class FR : public Cell {
   void updateConc() override;
   void makemap();
   const char* type() const override;
+  const char* citation() const override;
 };
 }  // namespace LongQt
 

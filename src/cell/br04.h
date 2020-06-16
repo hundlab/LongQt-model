@@ -85,6 +85,7 @@ class Br04 : public Cell {
   //    virtual int tstep();
   void makemap();
   const char* type() const override;
+  const char* citation() const override;
   //##### Declare class variables ##############
   // Ion concentrations, mM
   double naI = 9.309480051;

@@ -794,3 +794,10 @@ void GpbVent::makemap() {
 }
 
 const char *GpbVent::type() const { return "Human Ventricular (Grandi 10)"; }
+
+const char *GpbVent::citation() const
+{
+    return "Grandi, Eleonora, et al. A Novel Computational Model of the Human Ventricular\n"
+           "\tAction Potential and Ca Transient. 2009, doi:10.1016/j.yjmcc.2009.09.019.";
+
+}

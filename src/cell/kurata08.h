@@ -78,6 +78,7 @@ class Kurata08 : public Cell {
   void updateConc() override;
   void externalStim(double stimval) override;
   const char* type() const override;
+  const char* citation() const override;
 
   //##### Declare additional class variables ##############
   double naI, kI, caI;  // Intracellular Ion concentrations

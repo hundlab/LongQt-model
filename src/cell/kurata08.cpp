@@ -594,3 +594,10 @@ void Kurata08::makemap() {
 }
 
 const char *Kurata08::type() const { return "Rabbit Sinus Node (Kurata 2008)"; }
+
+const char *Kurata08::citation() const
+{
+    return "Kurata, Yasutaka, et al. “Regional Difference in Dynamical Property of\n"
+           "\tSinoatrial Node Pacemaking: Role of Na+channel Current.” Biophysical Journal,\n"
+           "\tvol. 95, no. 2, 2008, pp. 951–77, doi:10.1529/biophysj.107.112854.";
+}

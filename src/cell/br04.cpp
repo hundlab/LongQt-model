@@ -800,5 +800,12 @@ void Br04::makemap() {
 }
 
 const char *Br04::type() const {
-  return "Mouse Ventricular (Bondarenko 2004)";
+    return "Mouse Ventricular (Bondarenko 2004)";
+}
+
+const char *Br04::citation() const
+{
+    return "Bondarenko, V. E. “Computer Model of Action Potential of Mouse Ventricular\n"
+           "\tMyocytes.” AJP: Heart and Circulatory Physiology, vol. 287, no. 3, 2004, pp.\n"
+           "\tH1378–403, doi:10.1152/ajpheart.00185.2003.";
 };

@@ -16,6 +16,7 @@ class InexcitableCell : public Cell {
   void updateConc() override;
 
   const char* type() const override;
+  const char* citation() const override;
 
  private:
   void Initialize();

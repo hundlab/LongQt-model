@@ -89,6 +89,7 @@ class Courtemanche98 : public Cell {
 
   void makemap();
   const char* type() const override;
+  const char* citation() const override;
 
   //##### Declare class variables ##############
   double naI, naO, kI, kO, caI, caO;  // Ion concentrations, mM

@@ -962,5 +962,13 @@ void FR::makemap() {
   ;
 };
 const char* FR::type() const {
-  return "Mammalian Ventricular (Faber-Rudy 2000)";
+    return "Mammalian Ventricular (Faber-Rudy 2000)";
+}
+
+const char *FR::citation() const
+{
+    return "Faber, Gregory M., and Yoram Rudy. “Action Potential and Contractility Changes\n"
+           "\t[Na+](i) Overloaded Cardiac Myocytes: A Simulation Study.” Biophysical Journal,\n"
+           "\tvol. 78, no. 5, Elsevier, 2000, pp. 2392–404,\n"
+           "\tdoi:10.1016/S0006-3495(00)76783-X.";
 }

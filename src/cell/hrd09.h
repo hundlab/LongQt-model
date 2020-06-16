@@ -113,6 +113,7 @@ class HRD09Control : public Cell {
   void externalStim(double stimval) override;
   void makemap();
   const char* type() const override;
+  const char* citation() const override;
   //##### Declare class variables ##############
   double naI, naO, kI, kO, caI, caO, clI, clO;  // Ion concentrations
   double iNa;                                   // Fast inward Na current

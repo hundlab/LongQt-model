@@ -74,6 +74,7 @@ class TNNP04Control : public Cell {
   void externalStim(double stimval) override;
   void makemap();
   const char* type() const override;
+  const char* citation() const override;
 
   //##### Declare class variables ##############
   double Vc;

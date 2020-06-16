@@ -76,6 +76,11 @@ const char *CoupledInexcitableCell::type() const {
   return "Coupled Inexcitable Cell";
 }
 
+const char *CoupledInexcitableCell::citation() const
+{
+  return "";
+}
+
 void CoupledInexcitableCell::Initialize() {
   Rcg = 2;
   makemap();

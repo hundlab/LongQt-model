@@ -54,6 +54,7 @@ class GridCell : public Cell {
   bool writeCellState(std::string filename) override;
   void closeFiles() override;
   const char* type() const override;
+  const char* citation() const override;
 
  private:
   bool handleNode(QXmlStreamReader& xml, int row);

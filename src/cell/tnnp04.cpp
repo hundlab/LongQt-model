@@ -514,5 +514,12 @@ void TNNP04Control::makemap() {
 }
 
 const char *TNNP04Control::type() const {
-  return "Human Ventricular (Ten Tusscher 2004)";
+    return "Human Ventricular (Ten Tusscher 2004)";
+}
+
+const char *TNNP04Control::citation() const
+{
+    return "Ten Tusscher, KHWJ H. W. J., et al. “A Model for Human Ventricular Tissue.”\n"
+           "\tAmerican Journal of Physiology. Heart and Circulatory Physiology, vol. 286, no.\n"
+           "\t4, 2004, pp. H1573-89, doi:10.1152/ajpheart.00794.2003.";
 }

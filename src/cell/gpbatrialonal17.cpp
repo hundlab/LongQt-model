@@ -1070,9 +1070,21 @@ void GpbAtrialOnal17::makemap() {
   CellKernel::insertPar("InalPFactor", &InalPFactor);
   CellKernel::insertPar("JsrleakFactor", &Jsrleakfactor);
   CellKernel::insertPar("ROS", &ROSConc);
+  CellKernel::insertPar("Fjunc", &Fjunc);
+  CellKernel::insertPar("Fsl", &Fsl);
+  CellKernel::insertPar("naO", &naO);
+
   CellKernel::insertPar("testFactor", &testFactor);
 }
 const char* GpbAtrialOnal17::type() const {
   //    return "GpbAtrialOnal17";
-  return "Human Atrial (Onal 2017)";
+    return "Human Atrial (Onal 2017)";
+}
+
+const char *GpbAtrialOnal17::citation() const
+{
+    return "Onal, Birce, et al. “Ca 2+ /Calmodulin Kinase II-Dependent Regulation of Atrial\n"
+           "\tMyocyte Late Na+ Current, Ca 2+ Cycling and Excitability: A Mathematical\n"
+           "\tModeling Study.” American Journal of Physiology - Heart and Circulatory\n"
+           "\tPhysiology, 2017, p. ajpheart.00185.2017, doi:10.1152/ajpheart.00185.2017.";
 }

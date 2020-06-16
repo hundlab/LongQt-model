@@ -294,6 +294,13 @@ void GridCell::makeMap() {  // only aply to cells added after the change?
 
 const char* GridCell::type() const { return "gridCell"; }
 
+const char *GridCell::citation() const
+{
+    return "Henriquez, C. S., & Plonsey, R. (1987). Effect of resistive discontinuities\n"
+           "\ton waveshape and velocity in a single cardiac fibre. Medical & Biological\n"
+           "\tEngineering & Computing, 25(4), 428–438. https://doi.org/10.1007/BF02443364";
+}
+
 bool GridCell::writeGridfile(QXmlStreamWriter& xml) {
   using namespace CellUtils;
   int i = 0;

@@ -36,6 +36,7 @@ class CoupledInexcitableCell : public Cell {
   void makemap();
 
   const char* type() const override;
+  const char* citation() const override;
 
  private:
   void Initialize();

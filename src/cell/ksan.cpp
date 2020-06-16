@@ -621,3 +621,11 @@ void Ksan::makemap() {
 }
 
 const char *Ksan::type() const { return "Mouse Sinus Node (Kharche 2011)"; }
+
+const char *Ksan::citation() const
+{
+    return "Kharche, Sanjay, et al. “A Mathematical Model of Action Potentials of Mouse\n"
+           "\tSinoatrial Node Cells with Molecular Bases.” American Journal of\n"
+           "\tPhysiology-Heart and Circulatory Physiology, vol. 301, no. 3, Sept. 2011, pp.\n"
+           "\tH945–63, doi:10.1152/ajpheart.00143.2010.";
+}

@@ -49,6 +49,14 @@ void OHaraRudy::externalStim(double stimval) {
 
 const char *OHaraRudy::type() const {
   return "Human Ventricular (O'Hara-Rudy 2011)";
+}
+
+const char *OHaraRudy::citation() const
+{
+  return "O’hara, Thomas, et al. “Simulation of the Undiseased Human Cardiac Ventricular\n"
+      "\tAction Potential: Model Formulation and Experimental Validation.” PLoS Comput\n"
+      "\tBiol, vol. 7, no. 5, American Heart Association, 2011, pp. 1002061–302,\n"
+      "\tdoi:10.1371/journal.pcbi.1002061.";
 };
 /*
    void OHaraRudy::stimulus()

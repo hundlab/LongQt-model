@@ -91,6 +91,7 @@ class Ksan : public Cell {
 
   void makemap();
   const char* type() const override;
+  const char* citation() const override;
 
   //##### Declare class variables ##############
 

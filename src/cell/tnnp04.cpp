@@ -40,6 +40,9 @@ void TNNP04Control::Initialize() {
 
   apTime = 0.0;
 
+  Cm = 2.0;
+//  Rmyo = 162;
+
   ACap = 1.85E-4;  // cm2
   Vc = 1.64E-5;    // uL
   Vsr = 1.094E-5;  // uL

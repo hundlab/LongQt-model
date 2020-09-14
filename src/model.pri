@@ -2,6 +2,7 @@ INCLUDEPATH += $$PWD $$PWD/cell $$PWD/structure $$PWD/protocol
 #RESOURCES += LongQt-model.qrc
 
 SOURCES += $$PWD/measure.cpp\
+    $$PWD/cell/gpbatrial_different_ina.cpp \
     $$PWD/measuremanager.cpp\
     $$PWD/gridmeasuremanager.cpp\
     $$PWD/cell/hrd09_bz.cpp\
@@ -46,6 +47,7 @@ SOURCES += $$PWD/measure.cpp\
     $$PWD/datareader.cpp
 
 HEADERS  += $$PWD/measuremanager.h\
+    $$PWD/cell/gpbatrial_different_ina.h \
     $$PWD/gridmeasuremanager.h\
     $$PWD/measure.h\
     $$PWD/cell/gpbatrial.h\

@@ -14,6 +14,7 @@
 #include "ksan.h"
 #include "kurata08.h"
 #include "tnnp04.h"
+#include "gpbatrial_different_ina.h"
 
 #include "coupledinexcitablecell.h"
 
@@ -46,6 +47,7 @@ const map<string, CellUtils::CellInitializer> CellUtils::cellMap = {
     {GpbAtrialOnal17().type(), []() { return make_shared<GpbAtrialOnal17>(); }},
     {FR().type(), []() { return make_shared<FR>(); }},
     {Ksan().type(), []() { return make_shared<Ksan>(); }},
+    {GpbAtrialdiffINa().type(), []() { return make_shared<GpbAtrialdiffINa>(); }},
 
     {GpbVent().type(), []() { return make_shared<GpbVent>(); }},
     {Br04().type(), []() { return make_shared<Br04>(); }},

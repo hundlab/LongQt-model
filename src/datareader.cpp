@@ -33,12 +33,17 @@ DataReader::TSVData DataReader::readFile(const fs::path& file,
   data.header = CellUtils::split(line, '\t');
 
   data.data.resize(data.header.size());
+  int lineNum = 1;
   while (std::getline(fileStrm, line)) {
     stringVals = CellUtils::split(line, '\t', true);
-    if (stringVals.size() > data.header.size())
+    int stringValsSize = stringVals.size();
+    if (stringVals.size() > data.header.size()) {
       Logger::getInstance()->write(
-          "DataReader: tsv line length is not consistant in '{}'", file);
-    for (int i = 0; i < stringVals.size(); ++i) {
+          "DataReader: tsv line {} in '{}' is too long (trimming down)", lineNum, file);
+      stringValsSize = data.header.size();
+    }
+    int i;
+    for (i = 0; i < stringValsSize; ++i) {
       try {
         data.data[i].push_back(std::stod(stringVals[i]));
       } catch (std::invalid_argument&) {
@@ -46,12 +51,14 @@ DataReader::TSVData DataReader::readFile(const fs::path& file,
                                      stringVals[i]);
       }
     }
-
-    if (stringVals.size() != data.header.size()) {
+    if(i < data.header.size()) {
       Logger::getInstance()->write(
-          "DataReader: file '{}', line is length {}, but header is {}", file,
-          stringVals.size(), data.header.size());
+          "DataReader: tsv line {} in '{}' is too short (filling with NaNs)", lineNum, file);
+      for(; i < data.header.size(); ++i) {
+          data.data[i].push_back(nanf(""));
+      }
     }
+    ++lineNum;
   }
   fileStrm.close();
   return data;

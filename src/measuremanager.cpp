@@ -29,6 +29,7 @@ void MeasureManager::selection(map<string, set<string>> sel) {
 
 void MeasureManager::addMeasure(string var, set<string> selection) {
   variableSelection.insert({var, selection});
+  this->removeBad();
 }
 
 void MeasureManager::removeMeasure(string var) { measures.erase(var); }
@@ -169,14 +170,35 @@ bool MeasureManager::writeMVarsFile(QXmlStreamWriter& xml) {
 
 void MeasureManager::removeBad() {
   list<map<string, set<string>>::iterator> bad;
+  map<string, set<string>> badSel;
   auto vars = __cell->vars();
   for (auto it = this->variableSelection.begin(); it != variableSelection.end();
        ++it) {
     if (vars.count(it->first) != 1) {
       bad.push_back(it);
+      Logger::getInstance()->write("MeasureManager: The variable '{}' is not valid"
+                                   "for this cell type", it->first);
+    } else {
+      set<string> good;
+      set<string> bad;
+      std::tie(good, bad) = this->measMaker.checkSelection(it->first, it->second);
+      if(bad.size() > 0) {
+          badSel.insert({it->first, bad});
+          string warn = "MeasureManager: The selection for variable '{}' contained"
+                        "items which were not valid: ";
+          for(auto& item: bad) {
+              warn += CellUtils::strprintf("'{}', ", item);
+          }
+          Logger::getInstance()->write(warn.c_str(), it->first);
+      }
     }
   }
   for (auto& b : bad) {
     variableSelection.erase(b);
+  }
+  for (auto& bpair: badSel) {
+      for (auto& b: bpair.second) {
+          this->variableSelection.at(bpair.first).erase(b);
+      }
   }
 }

@@ -9,6 +9,7 @@
 #include "cell.h"
 #include <QFile>
 #include <sstream>
+#include <iomanip>
 #include "cellutils.h"
 #include "logger.h"
 using namespace LongQt;
@@ -17,6 +18,7 @@ using namespace std;
 void Cell::setOuputfileVariables(string filename) {
   varsofile.open(filename, std::ios_base::app);
   varsofile << std::scientific;
+  varsofile << std::setprecision(12);
   if (!varsofile.good()) {
     varsofile.close();
     Logger::getInstance()->write<std::runtime_error>(
@@ -52,7 +54,8 @@ void Cell::writeVariables() {
     } else {
       first = false;
     }
-    varsofile << this->var(sel);
+    auto var = this->var(sel);
+    varsofile << var;
   }
   varsofile << '\n';
 }

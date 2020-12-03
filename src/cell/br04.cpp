@@ -102,7 +102,7 @@ void Br04::updateIpca() {
   double ipca_max = 0.5;  // 0.17; 1.0; my change 0.5;
   double kmpca = 0.0005;
 
-  iPca = ipca_max * caI * caI / ((kmpca * kmpca) + (caI * caI));
+  iPca = IpcaFactor* ipca_max * caI * caI / ((kmpca * kmpca) + (caI * caI));
 };
 
 void Br04::updateIto_f() {
@@ -794,7 +794,7 @@ void Br04::makemap() {
   CellKernel::insertPar("JtrFactor", &JtrFactor);
   ;
   CellKernel::insertPar("JtrpnFactor", &JtrpnFactor);
-  ;
+  CellKernel::insertPar("IpcaFactor", &IpcaFactor);
   //    CellKernel::insertPar("TestFactor",&TestFactor);
   //    CellKernel::insertPar("TestFactor2",&TestFactor2);
 }

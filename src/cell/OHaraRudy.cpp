@@ -534,7 +534,7 @@ void OHaraRudy::updateJrel() {
   }
   Jrelp = Jrel_infp - (Jrel_infp - Jrelp) * exp(-dt / tau_relp);
   double fJrelp = (1.0 / (1.0 + KmCaMK / CaMKa));
-  Jrel = (1.0 - fJrelp) * Jrelnp + fJrelp * Jrelp;
+  Jrel = JrelFactor * ((1.0 - fJrelp) * Jrelnp + fJrelp * Jrelp);
 }
 
 void OHaraRudy::updatenaI() {
@@ -545,8 +545,8 @@ void OHaraRudy::updatenaI() {
     Jupp *= 1.3;
   }
   double fJupp = (1.0 / (1.0 + KmCaMK / CaMKa));
-  Jleak = 0.0039375 * cansr / 15.0;
-  Jup = (1.0 - fJupp) * Jupnp + fJupp * Jupp - Jleak;
+  Jleak = JleakFactor * 0.0039375 * cansr / 15.0;
+  Jup = JupFactor * ((1.0 - fJupp) * Jupnp + fJupp * Jupp) - Jleak;
 
   Jtr = (cansr - cajsr) / 100.0;
 
@@ -755,4 +755,8 @@ void OHaraRudy::makemap() {
   CellKernel::insertPar("InabFactor", &InabFactor);
   CellKernel::insertPar("IpcaFactor", &IpcaFactor);
   CellKernel::insertPar("IcabFactor", &IcabFactor);
+
+  CellKernel::insertPar("JrelFactor", &JrelFactor);
+  CellKernel::insertPar("JleakFactor", &JleakFactor);
+  CellKernel::insertPar("JupFactor", &JupFactor);
 };

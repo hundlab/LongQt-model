@@ -41,8 +41,6 @@ Protocol::Protocol() {
   readfile = "r.txt";  // File to read SV ICs
   savefile = "s.txt";  // File to save final SV
 
-  __trial = 0;
-
   writeflag = 1;           // 1 to write data to file during sim
   dvarfile = "dvars.txt";  // File with SV to write.
   writetime = 0;           // time to start writing.
@@ -59,7 +57,6 @@ Protocol::Protocol() {
   measfile = "mvars.txt";  // File containing property names to track
   meastime = 0;            // time to start tracking props
 
-  numtrials = 1;
   writeCellState = readCellState = false;
   //######## Params for pacing protocol #########################
 
@@ -126,7 +123,7 @@ void Protocol::copy(const Protocol& c) {
   measfile = c.measfile;  // File containing property names to track
   meastime = c.meastime;  // time to start tracking props
 
-  numtrials = c.numtrials;
+  __numtrials = c.__numtrials;
   writeCellState = c.writeCellState;
   readCellState = c.readCellState;
 
@@ -145,9 +142,6 @@ void Protocol::copy(const Protocol& c) {
 //############################################################
 bool Protocol::runSim() {
   bool return_val = true;
-  if (this->numtrials <= 0) {
-    return false;
-  }
   //###############################################################
   // Loop over number of trials
   //###############################################################
@@ -159,7 +153,20 @@ bool Protocol::runSim() {
 
 void Protocol::setupTrial() {
   this->mkDirs();
-  //    cell()->reset();
+    //    cell()->reset();
+}
+
+std::function<void(Protocol &)> Protocol::saftyWrapper(
+        std::function<void(Protocol &)> func, std::string name)
+{
+    return [func, name] (Protocol& p) {
+        try {
+            func(p);
+        } catch(std::exception& e) {
+            Logger::getInstance()->write("Protocol: An exception was "
+                                         "raised in {}: {}", name, e.what());
+        }
+    };
 };
 
 //#############################################################
@@ -204,18 +211,36 @@ bool Protocol::writepars(QXmlStreamWriter& xml) {
   xml.writeEndElement();
   return 0;
 }
-bool Protocol::trial(unsigned int current_trial) {
-  if (current_trial < 0 || current_trial >= numtrials) {
+bool Protocol::trial(int current_trial) {
+  if (current_trial < 0 || current_trial >= numtrials()) {
     Logger::getInstance()->write(
-        "Protocol: Cannot set trial to {}, max numtrials is {}", current_trial,
-        numtrials);
+        "Protocol: Cannot set trial to {}, must be between "
+        "0 and numtrials ({})", current_trial,
+        numtrials());
     return false;
   }
   __trial = current_trial;
   return true;
 }
 
-unsigned int Protocol::trial() const { return __trial; }
+int Protocol::trial() const { return __trial; }
+
+int Protocol::numtrials() const { return this->__numtrials; }
+
+void Protocol::numtrials(int numtrials)
+{
+    if(numtrials < 1) {
+        Logger::getInstance()->write("Protocol: numtrials cannont be "
+                                     "less than 1 (tyring to be set to {})", numtrials);
+        return;
+    }
+    if(this->__numtrials != numtrials) {
+        this->__numtrials = numtrials;
+        if(this->__numtrials != this->pvars().numtrials()) {
+          this->pvars().calcIonChanParams();
+        }
+    }
+}
 
 void Protocol::stopTrial() { this->runflag = false; }
 
@@ -324,8 +349,8 @@ void Protocol::mkmap() {
       "double", [this]() { return std::to_string(tMax); },
       [this](const string& value) { tMax = std::stod(value); });
   __pars["numtrials"] = toInsert.Initialize(
-      "int", [this]() { return std::to_string(numtrials); },
-      [this](const string& value) { numtrials = std::stoi(value); });
+      "int", [this]() { return std::to_string(this->numtrials()); },
+      [this](const string& value) { this->numtrials(std::stoi(value)); });
   __pars["writeint"] = toInsert.Initialize(
       "int", [this]() { return std::to_string(writeint); },
       [this](const string& value) { writeint = std::stoi(value); });
@@ -376,12 +401,12 @@ void Protocol::mkmap() {
       });
 }
 
-void Protocol::setRunBefore(function<void(Protocol&)> p) {
-  this->runBefore = p;
+void Protocol::setRunBefore(function<void(Protocol&)> func) {
+  this->runBefore = this->saftyWrapper(func, "runBefore");
 }
-void Protocol::setRunDuring(function<void(Protocol&)> p, double firstRun,
+void Protocol::setRunDuring(function<void(Protocol&)> func, double firstRun,
                             double runEvery, int numruns) {
-  this->runDuring = p;
+  this->runDuring = this->saftyWrapper(func, "runDuring");
   if (firstRun >= 0) {
     this->firstRun = firstRun;
   }
@@ -392,4 +417,6 @@ void Protocol::setRunDuring(function<void(Protocol&)> p, double firstRun,
     this->numruns = numruns;
   }
 }
-void Protocol::setRunAfter(function<void(Protocol&)> p) { this->runAfter = p; }
+void Protocol::setRunAfter(function<void(Protocol&)>func) {
+    this->runAfter = this->saftyWrapper(func, "runAfter");
+}

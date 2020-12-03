@@ -51,6 +51,8 @@ class PvarsCell {
   virtual const_iterator begin() const;
   virtual const_iterator end() const;
 
+  virtual int numtrials() const;
+
  protected:
   std::default_random_engine generator =
       std::default_random_engine(std::random_device{}());

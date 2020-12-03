@@ -1,6 +1,7 @@
 #include "threadpool.h"
 #include <assert.h>
 #include <iostream>
+#include "logger.h"
 
 using namespace LongQt;
 
@@ -47,7 +48,12 @@ void ThreadPool::Thread::work_loop(std::unique_lock<std::mutex>& jobs_lck,
     d->jobs.pop();
     jobs_lck.unlock();
     --(d->idle);
-    fn();
+    try {
+      fn();
+    } catch(std::exception& e) {
+        Logger::getInstance()->write("Threadpool: Exception thrown while "
+                                     "running worker: {}", e.what());
+    }
   }
 }
 

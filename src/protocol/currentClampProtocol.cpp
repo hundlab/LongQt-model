@@ -109,7 +109,6 @@ void CurrentClamp::setupTrial() {
   }
   __cell->setConstantSelection(temp);
   temp.clear();
-  __cell->setup();
   stimbegin = stimt;
   stimend = stimt + stimdur;
   stimcounter = 0;
@@ -119,6 +118,7 @@ void CurrentClamp::setupTrial() {
   __cell->setOuputfileVariables(
       CellUtils::strprintf(getDataDir() + "/" + dvarsoutfile, __trial));
   this->__measureMgr->setupMeasures();
+  __cell->setup();
 }
 
 bool CurrentClamp::runTrial() {
@@ -135,7 +135,12 @@ bool CurrentClamp::runTrial() {
 
   while (runflag && (time < tMax)) {
     if (numrunsLeft > 0 && time >= nextRunT) {
-      this->runDuring(*this);
+      try {
+        this->runDuring(*this);
+      } catch(std::exception& e) {
+        std::cout << e.what() << std::endl;
+      }
+
       --numrunsLeft;
       nextRunT += this->runEvery;
     }
@@ -198,13 +203,8 @@ void CurrentClamp::mkmap() {
       "bool", [this]() { return CellUtils::to_string(paceflag); },
       [this](const string& value) { paceflag = CellUtils::stob(value); });
   __pars["numtrials"] =
-      toInsert.Initialize("int", [this]() { return std::to_string(numtrials); },
-                          [this](const string& value) {
-                            auto temp = std::stoi(value);
-                            if (temp == numtrials) return;
-                            numtrials = temp;
-                            this->pvars().calcIonChanParams();
-                          });
+      toInsert.Initialize("int", [this]() { return std::to_string(this->numtrials()); },
+                          [this](const string& value) { this->numtrials(std::stoi(value));});
 }
 
 const char* CurrentClamp::name = "Current Clamp Protocol";

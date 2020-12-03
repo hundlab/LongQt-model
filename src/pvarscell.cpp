@@ -1,4 +1,6 @@
 #include "pvarscell.h"
+#include "logger.h"
+
 using namespace LongQt;
 using namespace std;
 
@@ -9,15 +11,25 @@ PvarsCell::~PvarsCell() {
 }
 
 void PvarsCell::erase(string elem) { this->pvars.erase(elem); }
+
 PvarsCell::IonChanParam* PvarsCell::at(string elem) {
   return this->pvars.at(elem);
 }
 PvarsCell::const_iterator PvarsCell::begin() const {
-  return this->pvars.begin();
+
+    return this->pvars.begin();
 }
+
 PvarsCell::const_iterator PvarsCell::end() const { return this->pvars.end(); }
+
+int PvarsCell::numtrials() const {
+    return 1;
+}
+
 int PvarsCell::size() const { return this->pvars.size(); }
+
 void PvarsCell::clear() { this->pvars.clear(); }
+
 string PvarsCell::IonChanParam::str(string name) {
   string info = name;
   string var1Text;

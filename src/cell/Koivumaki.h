@@ -111,10 +111,6 @@ class Koivumaki : public Cell {
   double naO = 130.0;  // extracellular sodium in mM
   double cao = 1.8;    // extracellular calcium in mM
   double kO = 5.4;     // extracellular potassium in mM
-  double Cm = 0.05;    // nF, cell membrane capacitance
-
-  //Ca diffusion grid
-
 
   // AGeo
   double junctWidth;
@@ -146,12 +142,12 @@ class Koivumaki : public Cell {
   double IcabFactor = 1;
 
   // introduce varaibles for reversal potentials, currents, fluxes, and CaMK
-  double ena, ek, eca;
-  double INa, ICaL, Ito, Isus, IKs, IKr, IK1, IfNa, IfK, If,
-      INaCa, INaK, IpCa, INab, ICab, Ist;
-  double Jsercasr1, Jsercasr2, Jsercasr3, Jsercasrss, J1serca,
-      J2serca, J3serca, Jssserca, Jrel1, Jrel2, Jrel3, Jrelss,
-      Jsrleak1, Jsrleak2, Jsrleak3, Jsrleakss;
+  double ena=0, ek=0, eca=0;
+  double INa=0, ICaL=0, Ito=0, Isus=0, IKs=0, IKr=0, IK1=0, IfNa=0, IfK=0, If=0,
+      INaCa=0, INaK=0, IpCa=0, INab=0, ICab=0, Ist =0;
+  double Jsercasr1=0, Jsercasr2=0, Jsercasr3=0, Jsercasrss=0, J1serca=0,
+      J2serca=0, J3serca=0, Jssserca=0, Jrel1=0, Jrel2=0, Jrel3=0, Jrelss=0,
+      Jsrleak1=0, Jsrleak2=0, Jsrleak3=0, Jsrleakss =0;
 
   void revpots();  // compute reversal potentials
   // compute rates, gates, and currents
@@ -169,12 +165,12 @@ class Koivumaki : public Cell {
   void updateInab();
   void updateIcab();
   // calculate fluxes, buffers, and concentrations
-  void updateSERCA();
-  void updateRyR();
   void updatenaI();
   void updatekI();
-  void updatecai();
+  void updateSERCA();
+  void updateRyR();
   void updatecasr();
+  void updatecai();
 
   void updateCurr() override;
   void updateConc() override;

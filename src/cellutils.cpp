@@ -93,6 +93,8 @@ const map<pair<string, string>, map<string, string>>
          {{"stimval", "-60"}, {"stimdur", "0.5"}}},
         {{CurrentClamp::name, Ksan().type()},
          {{"stimval", "-10"}, {"paceflag", "false"}}},
+        {{CurrentClamp::name, Koivumaki().type()},
+         {{"stimval", "-5.6"}, {"stimdur", "6"}}},
 
         {{VoltageClamp::name, ""}, {{"writetime", "0"}, {"writeint", "20"}}},
 

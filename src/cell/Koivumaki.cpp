@@ -29,7 +29,7 @@ void Koivumaki::Initialize() {
   junctRadius = 6.5;  //cm, radius of the bulk cytosol
   junctWidth = 1.625; // cm, width of the bulk cytosol
   Vss = 4.99232* 1e-5;      //uL, volume of the subspace
-  vOld = -77.1494;
+  vOld = -75.42786;
   cellLength = 122.051;  //cm, length of the cell
   dtmin = 0.0005;
   dtmax = 0.01;
@@ -60,7 +60,7 @@ const char *Koivumaki::citation() const
 };
 
 void Koivumaki::revpots() {
-  ena = (RGAS * TEMP / FDAY) * log(naO / naI);
+  ena = (RGAS * TEMP / FDAY) * log(naO / nass);
   ek = (RGAS * TEMP / FDAY) * log(kO / kI);
   eca = (RGAS * TEMP / 2 / FDAY) * log(cao / cass);
 }
@@ -68,16 +68,12 @@ void Koivumaki::revpots() {
 // current
 void Koivumaki::updateINa() {
   double ffrt = FDAY * FDAY / RGAS / TEMP; //
-  //double Pna = 0.00182;         //nL/s/uF, permeability of Ina
   double Pna = 3.64 * 1e-5;         //nL/s/uF, permeability of Ina
   double mss = 1.0 / (1.0 + exp((vOld + 27.12) / -8.21));
-  //double taom = 0.000042 * exp(-pow((vOld + 25.57) / 28.8, 2)) + 0.000024;
   double taom = 0.042 * exp(-pow((vOld + 25.57) / 28.8, 2)) + 0.024;
   Inam = mss - (mss - Inam) * exp(-dt / taom);
   double hss= 1.0 / (1.0 + exp((vOld + 63.6) / 5.3));
-  //double taoh1 = 0.03 / (1.0 + exp((vOld + 35.1) / 3.2)) + 0.0003;
   double taoh1 = 30 / (1.0 + exp((vOld + 35.1) / 3.2)) + 0.3;
-  //double taoh2 = 0.12 / (1.0 + exp((vOld + 35.1) / 3.2)) + 0.003;
   double taoh2 = 120 / (1.0 + exp((vOld + 35.1) / 3.2)) + 3;
   Inah1 = hss - (hss - Inah1) * exp(- dt/ taoh1);
   Inah2 = hss - (hss - Inah2) * exp(- dt/ taoh2);
@@ -90,18 +86,13 @@ void Koivumaki::updateICa() {
    double kCa = 1e-3;
    double kCan = 2;
    double dLs = 1.0 / (1.0 + exp((vOld + 9.0) / -5.8));
-   //double taodL = 0.0027 * exp(-pow((vOld + 35.0) / 30, 2)) + 0.002;
    double taodL = 2.7 * exp(-pow((vOld + 35.0) / 30, 2)) + 2;
    Icald = dLs - (dLs - Icald) * exp(-dt / taodL);
    double fLs = 1.0 / (1.0 + exp((vOld + 27.4) / 7.1));
-   //double L1 = 0.986898 * exp(-pow((vOld + 30.16047) / 7.09396, 2));
-   //double L2 = 0.04275 / (1.0 + exp((vOld - 51.6155) / -80.61331));
-   //double L3 = 0.03576 / (1.0 + exp((vOld + 29.57272) / 13.21758)) - 0.00821;
    double L1 = 986.898 * exp(-pow((vOld + 30.16047) / 7.09396, 2));
    double L2 = 42.75 / (1.0 + exp((vOld - 51.6155) / -80.61331));
    double L3 = 35.76 / (1.0 + exp((vOld + 29.57272) / 13.21758)) - 8.21;
    double taofL1 = L1 + L2 + L3;
-   //double taofL2 = 1.3323 * exp(-pow((vOld + 40) / 14.2, 2)) + 0.0626;
    double taofL2 = 1332.3 * exp(-pow((vOld + 40) / 14.2, 2)) + 62.6;
    Icalf1 = fLs - (fLs - Icalf1) * exp(-dt / taofL1);
    Icalf2 = fLs - (fLs - Icalf2) * exp(-dt / taofL2);
@@ -113,36 +104,30 @@ void Koivumaki::updateICa() {
 }
 
 void Koivumaki::updateIto() {
-  double gt = 0.15;//2.75;
+  double gt = 0.1635;//2.75;
   double rss = 1.0 / (1.0 + exp((vOld - 1.0)/ -11));
-  //double taor = 0.0035 * exp(-pow((vOld / 30), 2)) + 0.0015;
   double taor = 3.5 * exp(-pow((vOld / 30), 2)) + 1.5;
   Itr = rss - (rss - Itr) * exp(-dt / taor);
   double ss = 1.0 / (1 + exp((vOld + 40.5) / 11.5));
-  //double taos = 0.025635 * exp(-pow((vOld + 52.45) / 15.8827, 2)) + 0.01414;
   double taos = 25.635 * exp(-pow((vOld + 52.45) / 15.8827, 2)) + 14.14;
   Its = ss - (ss - Its) * exp(-dt / taos);
   Ito = ItoFactor * gt * Itr * Its * (vOld - ek);
 }
 
 void Koivumaki::updateIsus() {
-  double gsus = 0.055;//7.5; //nS
+  double gsus = 0.049;//7.5; //nS
   double rsuss = 1.0 / (1.0 + exp((vOld + 6.0) / -8.6));
-  //double taorsus = 0.009 / (1.0 + exp((vOld + 5) / 12)) + 0.0005;
   double taorsus = 9 / (1.0 + exp((vOld + 5) / 12)) + 0.5;
   Isusr = rsuss - (rsuss - Isusr) * exp(-dt / taorsus);
   double ssuss = 1.0 / (1.0 + exp((vOld + 7.5) / 10));
-  //double taossus = 0.59 / (1.0 + exp((vOld + 60) / 10)) + 3.05;
-  double taossus = 47 / (1.0 + exp((vOld + 60) / 10)) + 300;
+  double taossus = 590 / (1.0 + exp((vOld + 60) / 10)) + 3050;
   Isuss = ssuss - (ssuss - Isuss) * exp(-dt / taossus);
   Isus = IsusFactor * gsus * Isusr * Isuss * (vOld - ek);
-
 }
 
 void Koivumaki::updateIKs() {
   double gks = 0.02;//1; //nS
   double ns = 1.0 / (1.0 + exp((vOld - 19.9) / -12.7));
-  //double taon = 0.7 + 0.4 * exp(-pow((vOld - 20) / 20, 2.0));
   double taon = 700 + 400 * exp(-pow((vOld - 20) / 20, 2.0));
   Iksn = ns - (ns - Iksn) * exp(-dt / taon);
   IKs = IksFactor * gks * Iksn * (vOld - ek);
@@ -152,22 +137,20 @@ void Koivumaki::updateIkr() {
   double gkr = 0.01;//0.5; //nS
   double Pi = 1.0 / (1.0 + exp((vOld + 55) / 24));
   double pas = 1.0 / (1.0 + exp((vOld + 15) / -6));
-  //double taopa = 0.03118 + 0.21718 * exp(-pow((vOld + 20.1376) / 22.1996, 2.0));
   double taopa = 31.18 + 217.18 * exp(-pow((vOld + 20.1376) / 22.1996, 2.0));
   Ikrpa = pas - (pas - Ikrpa) * exp(-dt / taopa);
   IKr = IkrFactor * gkr * Ikrpa * Pi * (vOld - ek);
 }
 
 void Koivumaki::updateIK1() {
-  double gIK1 = 0.0765;//3.825; //nS, conductance of Ik1
+  double gIK1 = 0.0689;//3.825; //nS, conductance of Ik1
   IK1 = Ik1Factor * (gIK1 * pow( kO, 0.4457) * (vOld - ek) / (1 + exp(1.5 * (vOld - ek + 3.6)*(FDAY / RGAS / TEMP))));
 }
 
 void Koivumaki::updateIf() {
   double gf = 0.02;//1; //nS
   double ys = 1.0 / (1.0 + exp((vOld + 97.82874) / 12.48025));
-  //double taoy = 1.0 / (0.00332 * exp(-vOld / 16.54103) + 23.71839 * exp(vOld/16.54103));
-  double taoy = 1000 / (0.00332 * exp(-vOld / 16.54103) + 23718.39 * exp(vOld/16.54103));
+  double taoy = 1000 / (0.00332 * exp(-vOld / 16.54103) + 23.71839 * exp(vOld/16.54103));
   Ify = ys - (ys - Ify) * exp(-dt / taoy);
   IfNa = gf * Ify * (0.2677 * (vOld - ena));
   IfK = gf * Ify * ((1 - 0.2677) * (vOld - ek));
@@ -179,14 +162,14 @@ void Koivumaki::updateINaCa() {
   double gamma = 0.45; // postition of energy barrier controlling voltage dependence of Inaca
   double dnaca = 0.0003; //(mmol/L)^4, denominator constant for Incx
   double fCaNCX = 1;
-  INaCa = InacaFactor * (gINCX * ((pow(naI, 3) * cao * exp(gamma * vOld * FDAY / RGAS / TEMP) - pow(naO, 3) * cass * fCaNCX * exp((gamma - 1) * vOld * FDAY / RGAS / TEMP)) / (1 + dnaca * (pow(naO,3) * cass * fCaNCX + pow(naI, 3) * cao))));
+  INaCa = InacaFactor * (gINCX * ((pow(nass, 3) * cao * exp(gamma * vOld * FDAY / RGAS / TEMP) - pow(naO, 3) * cass * fCaNCX * exp((gamma - 1) * vOld * FDAY / RGAS / TEMP)) / (1 + dnaca * (pow(naO,3) * cass * fCaNCX + pow(nass, 3) * cao))));
 }
 
 void Koivumaki::updateINaK() {
   double InaKs = 1.4165;//70.8253; //uA/uF
   double knaKK = 1; //mmol/L
   double knaKNa = 11; //mmol/L
-  INaK = InakFactor * (InaKs * (kO / (kO + knaKK)) * (pow(naI, 1.5) / (pow(naI, 1.5) + pow(knaKNa, 1.5))) * (vOld + 150) / (vOld + 200));//ADD Nass??
+  INaK = InakFactor * (InaKs * (kO / (kO + knaKK)) * (pow(nass, 1.5) / (pow(nass, 1.5) + pow(knaKNa, 1.5))) * (vOld + 150) / (vOld + 200));//ADD Nass??
 }
 
 void Koivumaki::updateIpCa() {
@@ -211,7 +194,6 @@ void Koivumaki::updateIcab() {
 void Koivumaki::updateSERCA() {
   double Kmf = 0.00025; //mM, SERCA half-maximal binding in cytosol
   double Kmr = 1.8; //mM, SERCA half-maximal binding in SR
-  //double k4 = 7.5; //s^-1, pumping rate from SERCA to SR
   double k4 = 0.0075; //ms^-1, pumping rate from SERCA to SR
   double k3 = k4 / pow(Kmr, 2);
   double k1 = k4 * pow(10, 6);
@@ -233,10 +215,6 @@ void Koivumaki::updateSERCA() {
 }
 
 void Koivumaki::updateRyR() {
-  /*double TRyRadapt = 1; //s, RyR adaptation time constant
-  double TRyRactss = 0.005; //s, RyR activation time constant
-  double TRyRinactss = 0.015; //s, RyR inactivation time constant
-  double vss = 625;*/
   double TRyRadapt = 1000; //ms, RyR adaptation time constant
   double TRyRactss = 5; //ms, RyR activation time constant
   double TRyRinactss = 15; //ms, RyR inactivation time constant
@@ -250,9 +228,6 @@ void Koivumaki::updateRyR() {
   RyRcss = RyRcinf4 - (RyRcinf4 - RyRcss) * exp(-dt / TRyRinactss);
   RyRass = RyRainf4 - (RyRainf4 - RyRass) * exp(-dt / TRyRadapt);
 
-  /*double TRyRact = 0.01875; //s, RyR activation time constant
-  double TRyRinact = 0.0875; //s, RyR inactivation time constant
-  double v = 1; //s^-1, RyR maximum flux (625 s^-1 in ss)*/
   double TRyRact = 18.75; //s, RyR activation time constant
   double TRyRinact = 87.5; //s, RyR inactivation time constant
   double v = 0.001; //s^-1, RyR maximum flux (625 s^-1 in ss)
@@ -285,21 +260,25 @@ void Koivumaki::updateRyR() {
 }
 
 void Koivumaki::updatenaI() {
-  //double BNa = 0.49 * 2.31;
-  //double KdBNa = 10;
-  //double BNass = 1.0 / (1.0 + BNa * KdBNa / pow(Nass + KdBNa, 2));
-  naI += -dt * (INa + INab + 3 * INaK + 3 * INaCa + IfNa) / (Vcyto * FDAY*1000); //CHANGE TO CYTOSOL
+  double DNa= 0.00012;
+  double Ajnj = 2 * 3.1416 * junctRadius * cellLength * 0.5; //Area accessible for diffusion between junctional and non-junction cytosol
+  double xjnj_Na = (0.2 / 2) + (junctWidth * 2); //Distance between centers of junctional and bulk compartments
+  double BNa = 0.49 * 2.31;
+  double KdBNa = 10;
+  double BNass = 1.0 / (1.0 + BNa * KdBNa / pow(nass + KdBNa, 2));
+  double Jna = DNa * Ajnj / xjnj_Na * (nass - naI) * 1e-6;//mM/ms * nL
+  nass += dt * BNass * (-Jna / Vss - 0.050 * iNat / (Vss * FDAY));
+  naI += dt * (Jna/(Vcyto - Vss));
 }
 
 void Koivumaki::updatekI() {
-  kI += -dt * (Ito + Isus + IK1 + IKs + IKr - 2 * INaK + IfK) / (Vcyto * FDAY*1000);
+  kI += dt * -0.050 * iKt / (Vcyto * FDAY);
 }
 
 void Koivumaki::updatecasr(){
   double DcaSR = 0.044;
   double CSQN =  6.7;
   double KdCSQN = 0.8;
-  //double ksrleak = 0.006;
   double ksrleak = 6e-6;//ms
   Jsrleak1 = ksrleak * (casr1 - caic1) * V1;
   Jsrleak2 = ksrleak * (casr2 - caic2) * V2;
@@ -357,7 +336,7 @@ void Koivumaki::updatecai() {
   double Bss = 1 / (1 + SLlow * KdSLlow / pow(cass + KdSLlow, 2) + SLhigh * KdSLhigh / pow(cass + KdSLhigh, 2)
                     + BCa * KdBCa / pow(cass + KdBCa, 2));
   double Jcass = -Jca4 + Jsrleakss - Jssserca + Jrelss;
-  cass += dt * (Bss * (Jcass / Vss + (-ICaL - ICab - IpCa + 2 * INaCa) / (2 * Vss * FDAY*1000)));
+  cass += dt * (Bss * (Jcass / Vss + 0.050 * -iCat  / (2 * Vss * FDAY)));
 }
 // end Conc
 
@@ -384,7 +363,7 @@ void Koivumaki::updateCurr() {
   iKt = Ito + Isus + IKr + IKs + IK1 - 2.0 * INaK + IfK;
   iTotold = iTot;
   iTot = (INa + Ito + ICaL + IKr + IKs + IK1 + INaCa + Isus + If +
-         INaK + INab + IpCa + ICab)/(Cm);
+         INaK + INab + IpCa + ICab);
 }
 
 void Koivumaki::updateConc() {
@@ -481,6 +460,7 @@ void Koivumaki::makemap() {
   CellKernel::insertVar("RyRcC3", &RyRcc3);
   CellKernel::insertVar("RyRaC3", &RyRac3);
   CellKernel::insertVar("naI", &naI);
+  CellKernel::insertVar("nass", &nass);
   CellKernel::insertVar("kI", &kI);
   CellKernel::insertVar("Cass", &cass);
   CellKernel::insertVar("CaC1", &caic1);

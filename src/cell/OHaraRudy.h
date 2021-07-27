@@ -155,6 +155,10 @@ class OHaraRudy : public Cell {
   double IpcaFactor = 1;
   double IcabFactor = 1;
 
+  double JrelFactor = 1;
+  double JleakFactor = 1;
+  double JupFactor = 1;
+
   // cell type
   cellType celltype = endo;  // endo = 0, epi = 1, M = 2
 

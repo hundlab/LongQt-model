@@ -5,7 +5,7 @@ project(LongQt-model VERSION 0.2)
 # Find includes in corresponding build directories
 #Release Debug
 set(CMAKE_CXX_STANDARD 17)
-set(CMAKE_BUILD_TYPE Release)
+#set(CMAKE_BUILD_TYPE Release)
 
 find_package(Qt5 COMPONENTS Core REQUIRED)
 include("${CMAKE_CURRENT_LIST_DIR}/src/${CMAKE_PROJECT_NAME}.cmake")
@@ -34,8 +34,8 @@ PREPEND(install_includes ${install_include_dir} ${modellib_includes})
 
 if(${BUILD_QT_STATIC})
 #        link_directories("/usr/local/Qt-5.9.3/lib/")
-	SET(CMAKE_FIND_LIBRARY_SUFFIXES ".a")
-	SET(BUILD_SHARED_LIBRARIES OFF)
+  SET(CMAKE_FIND_LIBRARY_SUFFIXES ".a")
+  SET(BUILD_SHARED_LIBRARIES OFF)
 #	SET(GCC_COVERAGE_LINK_FLAGS "-static")
 endif()
 

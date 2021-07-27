@@ -16,6 +16,8 @@ class MeasureFactory {
                                         std::set<std::string> selection = {});
   std::string measureType(std::string varname);
   std::set<std::string> measureOptions(std::string measType);
+  std::pair<std::set<std::string>, std::set<std::string>>
+    checkSelection(std::string varname, std::set<std::string> selection);
 
   double percrepol() { return __percrepol; }
   void percrepol(double percrepol) {

@@ -15,6 +15,7 @@
 #include "kurata08.h"
 #include "tnnp04.h"
 #include "Koivumaki.h"
+#include "gpbatrial_different_ina.h"
 
 #include "coupledinexcitablecell.h"
 
@@ -48,7 +49,7 @@ const map<string, CellUtils::CellInitializer> CellUtils::cellMap = {
     {FR().type(), []() { return make_shared<FR>(); }},
     {Ksan().type(), []() { return make_shared<Ksan>(); }},
     {Koivumaki().type(), []() { return make_shared<Koivumaki>(); }},
-
+//    {GpbAtrialdiffINa().type(), []() { return make_shared<GpbAtrialdiffINa>(); }},
     {GpbVent().type(), []() { return make_shared<GpbVent>(); }},
     {Br04().type(), []() { return make_shared<Br04>(); }},
     {Courtemanche98().type(), []() { return make_shared<Courtemanche98>(); }},

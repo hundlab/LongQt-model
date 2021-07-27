@@ -22,7 +22,7 @@ RunSim::~RunSim() { this->cancel(); }
 void RunSim::appendSims(shared_ptr<Protocol> proto) {
   int i = 0;
   proto->mkDirs();
-  for (i = 0; i < proto->numtrials; i++) {
+  for (i = 0; i < proto->numtrials(); i++) {
     proto->trial(i);
     simulations.push_back(shared_ptr<Protocol>(proto->clone()));
   }

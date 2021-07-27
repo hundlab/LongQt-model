@@ -19,6 +19,7 @@
 namespace LongQt {
 
 class GridCell : public Cell {
+ using dlim = std::numeric_limits<double>;
  public:
   GridCell();
   GridCell(GridCell& toCopy);

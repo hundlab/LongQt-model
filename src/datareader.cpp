@@ -11,6 +11,40 @@ using namespace LongQt;
 namespace fs = std::filesystem;
 using dlim = std::numeric_limits<double>;
 
+
+template <>
+DataReader::TrialData<DataReader::MeasHeader>::TrialData(
+    DataReader::TSVData& dat) {
+  this->data = std::move(dat.data);
+  for (auto& info : dat.header) {
+    MeasHeader header;
+    auto split = CellUtils::split(info, '/');
+    if (split.size() < 2) continue;
+    header.prop_name = split.back();
+    header.var_name = split.size() == 2 ? split.front() : split[1];
+    std::string cell_info = split.size() == 3 ? split.front() : "";
+    header.cell_info = cell_info;
+    DataReader::setCellInfoParsed(header, cell_info);
+    this->header.push_back(header);
+  }
+}
+
+template <>
+DataReader::TrialData<DataReader::TraceHeader>::TrialData(
+    DataReader::TSVData& dat) {
+  this->data = std::move(dat.data);
+  for (auto& info : dat.header) {
+    TraceHeader header;
+    auto split = CellUtils::split(info, '/');
+    if (split.size() < 1) continue;
+    header.var_name = split.back();
+    std::string cell_info = split.size() == 2 ? split.front() : "";
+    header.cell_info = cell_info;
+    DataReader::setCellInfoParsed(header, cell_info);
+    this->header.push_back(header);
+  }
+}
+
 DataReader::TSVData DataReader::readFile(const fs::path& file,
                                          const std::set<int>& exclude) {
   std::ifstream fileStrm;
@@ -33,12 +67,17 @@ DataReader::TSVData DataReader::readFile(const fs::path& file,
   data.header = CellUtils::split(line, '\t');
 
   data.data.resize(data.header.size());
+  int lineNum = 1;
   while (std::getline(fileStrm, line)) {
     stringVals = CellUtils::split(line, '\t', true);
-    if (stringVals.size() > data.header.size())
+    int stringValsSize = stringVals.size();
+    if (stringVals.size() > data.header.size()) {
       Logger::getInstance()->write(
-          "DataReader: tsv line length is not consistant in '{}'", file);
-    for (int i = 0; i < stringVals.size(); ++i) {
+          "DataReader: tsv line {} in '{}' is too long (trimming down)", lineNum, file);
+      stringValsSize = data.header.size();
+    }
+    int i;
+    for (i = 0; i < stringValsSize; ++i) {
       try {
         data.data[i].push_back(std::stod(stringVals[i]));
       } catch (std::invalid_argument&) {
@@ -46,12 +85,14 @@ DataReader::TSVData DataReader::readFile(const fs::path& file,
                                      stringVals[i]);
       }
     }
-
-    if (stringVals.size() != data.header.size()) {
+    if(i < data.header.size()) {
       Logger::getInstance()->write(
-          "DataReader: file '{}', line is length {}, but header is {}", file,
-          stringVals.size(), data.header.size());
+          "DataReader: tsv line {} in '{}' is too short (filling with NaNs)", lineNum, file);
+      for(; i < data.header.size(); ++i) {
+          data.data[i].push_back(nanf(""));
+      }
     }
+    ++lineNum;
   }
   fileStrm.close();
   return data;
@@ -168,35 +209,4 @@ int DataReader::getTrialNum(std::string filename) {
   return -1;
 }
 
-template <>
-DataReader::TrialData<DataReader::MeasHeader>::TrialData(
-    DataReader::TSVData& dat) {
-  this->data = std::move(dat.data);
-  for (auto& info : dat.header) {
-    MeasHeader header;
-    auto split = CellUtils::split(info, '/');
-    if (split.size() < 2) continue;
-    header.prop_name = split.back();
-    header.var_name = split.size() == 2 ? split.front() : split[1];
-    std::string cell_info = split.size() == 3 ? split.front() : "";
-    header.cell_info = cell_info;
-    DataReader::setCellInfoParsed(header, cell_info);
-    this->header.push_back(header);
-  }
-}
 
-template <>
-DataReader::TrialData<DataReader::TraceHeader>::TrialData(
-    DataReader::TSVData& dat) {
-  this->data = std::move(dat.data);
-  for (auto& info : dat.header) {
-    TraceHeader header;
-    auto split = CellUtils::split(info, '/');
-    if (split.size() < 1) continue;
-    header.var_name = split.back();
-    std::string cell_info = split.size() == 2 ? split.front() : "";
-    header.cell_info = cell_info;
-    DataReader::setCellInfoParsed(header, cell_info);
-    this->header.push_back(header);
-  }
-}

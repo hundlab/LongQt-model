@@ -52,6 +52,23 @@ std::set<std::string> MeasureFactory::measureOptions(std::string measType) {
   }
 }
 
+std::pair<std::set<std::string>, std::set<std::string> >
+    MeasureFactory::checkSelection(std::string varname, std::set<std::string> selection)
+{
+    std::set<std::string> good;
+    std::set<std::string> bad;
+    auto measType = this->measureType(varname);
+    auto measOpts = this->measureOptions(measType);
+    for(auto& sel: selection) {
+        if(measOpts.count(sel) == 1) {
+            good.insert(sel);
+        } else {
+            bad.insert(sel);
+        }
+    }
+    return std::make_pair(good, bad);
+}
+
 std::shared_ptr<Measure> MeasureFactory::buildMeasureFromType(
     std::string measType, std::set<std::string> selection) {
   if (varMeasCreator.count(measType) > 0) {

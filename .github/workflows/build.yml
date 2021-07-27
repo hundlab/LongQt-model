@@ -1,12 +1,8 @@
 # This is a basic workflow to help you get started with Actions
 name: CMake LongQt-model
 
-# Controls when the action will run. Triggers the workflow on push
-on:
-  push:
-    branches: [ $default-branch ]
-  pull_request:
-    branches: [ $default-branch ]
+# Controls when the action will run. Manually triggered
+on: workflow_dispatch
 
 env:
   CMAKE_INSTALL_PREFIX: ~/install

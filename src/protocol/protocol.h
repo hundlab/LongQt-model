@@ -60,8 +60,8 @@ class Protocol : public std::enable_shared_from_this<Protocol> {
   virtual void numtrials(int numtrials);
   virtual bool runTrial() = 0;
   virtual void stopTrial();
-  void setDataDir(std::string location = "", std::string basedir = "",
-                  std::string appendtxt = "");
+  void setDataDir(std::string location = "/data", std::string basedir = "",
+                  std::string appendtxt = "", bool append_date = true);
   void mkDirs();
   std::string getDataDir();
 

@@ -18,15 +18,15 @@ jobs:
       fail-fast: false
       matrix:
         config:
-          - {
-              name: "Windows Latest MSVC",
-              os: windows-latest,
-              build_type: "Release",
-              cc: "cl",
-              cxx: "cl",
-              environment_script: "C:/Program Files (x86)/Microsoft Visual Studio/2019/Enterprise/VC/Auxiliary/Build/vcvars64.bat",
-              generators: "Visual Studio 16 2019"
-            }
+#          - {
+#              name: "Windows Latest MSVC",
+#              os: windows-latest,
+#              build_type: "Release",
+#              cc: "cl",
+#              cxx: "cl",
+#              environment_script: "C:/Program Files (x86)/Microsoft Visual Studio/2019/Enterprise/VC/Auxiliary/Build/vcvars64.bat",
+#              generators: "Visual Studio 16 2019"
+#            }
           - {
               name: "Ubuntu_Latest",
               os: ubuntu-latest,
@@ -62,15 +62,16 @@ jobs:
       - name: Install dependencies on ubuntu
         if: startsWith(matrix.config.name, 'Ubuntu')
         run: |
-          apt-get update #sudo
-          apt-get install --assume-yes cmake build-essential qt5-default #sudo
+          sudo apt-get update
+          sudo apt-get install --assume-yes cmake build-essential qt5-default
           cmake --version
           gcc --version
 
       - name: Install dependencies on macos
         if: startsWith(matrix.config.os, 'macos')
         run: |
-          brew install cmake ninja
+          brew install cmake ninja qt@5
+          brew link qt5 --force
           ninja --version
           cmake --version
 

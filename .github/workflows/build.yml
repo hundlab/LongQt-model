@@ -27,15 +27,15 @@ jobs:
 #              environment_script: "C:/Program Files (x86)/Microsoft Visual Studio/2019/Enterprise/VC/Auxiliary/Build/vcvars64.bat",
 #              generators: "Visual Studio 16 2019"
 #            }
-          - {
-              name: "Ubuntu_Latest",
-              os: ubuntu-latest,
-              build_type: "Release",
-              cc: "gcc",
-              cxx: "g++",
-              generators: "Unix Makefiles",
-              qt5_path: ""
-            }
+#          - {
+#              name: "Ubuntu_Latest",
+#              os: ubuntu-latest,
+#              build_type: "Release",
+#              cc: "gcc",
+#              cxx: "g++",
+#              generators: "Unix Makefiles",
+#              qt5_path: ""
+#            }
           - {
               name: "macOS Latest Clang",
               os: macos-latest,
@@ -43,7 +43,7 @@ jobs:
               cc: "clang",
               cxx: "clang++",
               generators: "Ninja",
-              qt5_path: "/usr/local/opt/qt@5/lib/cmake"
+              qt5_path: "/usr/local/opt/qt@5/lib/cmake/Qt5"
             }
     
     steps:

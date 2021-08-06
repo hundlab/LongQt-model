@@ -33,7 +33,8 @@ jobs:
               build_type: "Release",
               cc: "gcc",
               cxx: "g++",
-              generators: "Unix Makefiles"
+              generators: "Unix Makefiles",
+              qt5_path: ""
             }
           - {
               name: "macOS Latest Clang",
@@ -41,7 +42,8 @@ jobs:
               build_type: "Release",
               cc: "clang",
               cxx: "clang++",
-              generators: "Ninja"
+              generators: "Ninja",
+              qt5_path: "/usr/local/opt/qt@5/lib/pkgconfig"
             }
     
     steps:
@@ -74,6 +76,7 @@ jobs:
           export PATH="/usr/local/opt/qt@5/bin:$PATH"
           ninja --version
           cmake --version
+          clang --version
 
 #          brew link qt5 --force
 
@@ -86,7 +89,10 @@ jobs:
             -B . \
             -DCMAKE_BUILD_TYPE=${{ matrix.config.build_type }} \
             -DCMAKE_INSTALL_PREFIX:PATH=./install \
+            -DQt5_DIR:PATH=${{ matrix.config.qt5_path }} \
             -G "${{ matrix.config.generators }}"
+        env:
+          
 
       - name: Build
         shell: bash

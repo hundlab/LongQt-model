@@ -35,14 +35,14 @@ jobs:
               cxx: "g++",
               generators: "Unix Makefiles"
             }
-#          - {
-#              name: "macOS Latest Clang",
-#              os: macos-latest,
-#              build_type: "Release",
-#              cc: "clang",
-#              cxx: "clang++",
-#              generators: "Ninja"
-#            }
+          - {
+              name: "macOS Latest Clang",
+              os: macos-latest,
+              build_type: "Release",
+              cc: "clang",
+              cxx: "clang++",
+              generators: "Ninja"
+            }
     
     steps:
   #      # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
@@ -71,7 +71,8 @@ jobs:
         if: startsWith(matrix.config.os, 'macos')
         run: |
           brew install cmake ninja qt@5
-          brew link qt5 --force
+#          brew link qt5 --force
+          export PATH="/usr/local/opt/qt@5/bin:$PATH"
           ninja --version
           cmake --version
 

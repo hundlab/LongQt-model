@@ -43,7 +43,7 @@ jobs:
               cc: "clang",
               cxx: "clang++",
               generators: "Ninja",
-              qt5_path: "/usr/local/opt/qt@5/lib/pkgconfig"
+              qt5_path: "/usr/local/opt/qt@5/lib/cmake"
             }
     
     steps:

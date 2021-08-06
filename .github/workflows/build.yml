@@ -18,15 +18,16 @@ jobs:
       fail-fast: false
       matrix:
         config:
-#          - {
-#              name: "Windows Latest MSVC",
-#              os: windows-latest,
-#              build_type: "Release",
-#              cc: "cl",
-#              cxx: "cl",
-#              environment_script: "C:/Program Files (x86)/Microsoft Visual Studio/2019/Enterprise/VC/Auxiliary/Build/vcvars64.bat",
-#              generators: "Visual Studio 16 2019"
-#            }
+          - {
+              name: "Windows Latest MSVC",
+              os: windows-latest,
+              build_type: "Release",
+              cc: "cl",
+              cxx: "cl",
+              environment_script: "C:/Program Files (x86)/Microsoft Visual Studio/2019/Enterprise/VC/Auxiliary/Build/vcvars64.bat",
+              generators: "Visual Studio 16 2019",
+              qt5_path: "./5.15.2/msvc2019_64/lib/cmake/Qt5"
+            }
 #          - {
 #              name: "Ubuntu_Latest",
 #              os: ubuntu-latest,
@@ -36,15 +37,15 @@ jobs:
 #              generators: "Unix Makefiles",
 #              qt5_path: ""
 #            }
-          - {
-              name: "macOS Latest Clang",
-              os: macos-latest,
-              build_type: "Release",
-              cc: "clang",
-              cxx: "clang++",
-              generators: "Ninja",
-              qt5_path: "/usr/local/opt/qt@5/lib/cmake/Qt5"
-            }
+#          - {
+#              name: "macOS Latest Clang",
+#              os: macos-latest,
+#              build_type: "Release",
+#              cc: "clang",
+#              cxx: "clang++",
+#              generators: "Ninja",
+#              qt5_path: "/usr/local/opt/qt@5/lib/cmake/Qt5"
+#            }
     
     steps:
   #      # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
@@ -57,9 +58,13 @@ jobs:
       - name: Install dependencies on windows
         if: startsWith(matrix.config.os, 'windows')
         run: |
-          choco install cmake
+          choco install -y cmake
           cmake --version
+          py -m pip install aqtinstall
+          py -m aqt install 5.15.2 windows desktop win64_mscv2019_64
           cmd "${{ matrix.config.environment_script }}"
+
+          #          choco install -y qt5-default
  
       - name: Install dependencies on ubuntu
         if: startsWith(matrix.config.name, 'Ubuntu')
@@ -77,8 +82,6 @@ jobs:
           ninja --version
           cmake --version
           clang --version
-
-#          brew link qt5 --force
 
       - name: Configure
         shell: bash

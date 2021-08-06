@@ -28,24 +28,24 @@ jobs:
               generators: "Visual Studio 16 2019",
               qt5_path: "./5.15.2/msvc2019_64/lib/cmake/Qt5"
             }
-#          - {
-#              name: "Ubuntu_Latest",
-#              os: ubuntu-latest,
-#              build_type: "Release",
-#              cc: "gcc",
-#              cxx: "g++",
-#              generators: "Unix Makefiles",
-#              qt5_path: ""
-#            }
-#          - {
-#              name: "macOS Latest Clang",
-#              os: macos-latest,
-#              build_type: "Release",
-#              cc: "clang",
-#              cxx: "clang++",
-#              generators: "Ninja",
-#              qt5_path: "/usr/local/opt/qt@5/lib/cmake/Qt5"
-#            }
+          - {
+              name: "Ubuntu_Latest",
+              os: ubuntu-latest,
+              build_type: "Release",
+              cc: "gcc",
+              cxx: "g++",
+              generators: "Unix Makefiles",
+              qt5_path: ""
+            }
+          - {
+              name: "macOS Latest Clang",
+              os: macos-latest,
+              build_type: "Release",
+              cc: "clang",
+              cxx: "clang++",
+              generators: "Ninja",
+              qt5_path: "/usr/local/opt/qt@5/lib/cmake/Qt5"
+            }
     
     steps:
   #      # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it

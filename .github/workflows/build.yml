@@ -61,7 +61,7 @@ jobs:
           choco install -y cmake
           cmake --version
           py -m pip install aqtinstall
-          py -m aqt install 5.15.2 windows desktop win64_mscv2019_64
+          py -m aqt install 5.15.2 windows desktop win64_msvc2019_64
           cmd "${{ matrix.config.environment_script }}"
 
           #          choco install -y qt5-default

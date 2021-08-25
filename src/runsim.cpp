@@ -1,20 +1,21 @@
 #include "runsim.h"
+#include "logger.h"
 
 using namespace LongQt;
 using namespace std;
 
 RunSim::RunSim() {
-  this->pool.finishedCallback(std::bind(&RunSim::poolCallback, this));
+  this->pool.finishedCallback(std::bind(&RunSim::finishedCallback, this));
 }
 
 RunSim::RunSim(shared_ptr<Protocol> proto) {
   this->setSims(proto);
-  this->pool.finishedCallback(std::bind(&RunSim::poolCallback, this));
+  this->pool.finishedCallback(std::bind(&RunSim::finishedCallback, this));
 }
 
 RunSim::RunSim(std::vector<shared_ptr<Protocol>> protoList) {
   this->setSims(protoList);
-  this->pool.finishedCallback(std::bind(&RunSim::poolCallback, this));
+  this->pool.finishedCallback(std::bind(&RunSim::finishedCallback, this));
 }
 
 RunSim::~RunSim() { this->cancel(); }
@@ -47,11 +48,23 @@ void RunSim::setSims(std::vector<shared_ptr<Protocol>> protoList) {
 
 void RunSim::clear() { simulations.clear(); }
 
-void RunSim::poolCallback() {
+void RunSim::finishedCallback() {
   this->__finished = true;
   try {
     this->__finishedCall();
   } catch (std::bad_function_call&) {
+    Logger::getInstance()->write(
+      "RunSim: Failed call to finished callback function");
+  }
+}
+
+void RunSim::startedCallback() {
+  this->__finished = false;
+  try {
+    this->__startCall();
+  } catch (std::bad_function_call&) {
+        Logger::getInstance()->write(
+            "RunSim: Failed call to start callback function");
   }
 }
 
@@ -95,11 +108,7 @@ void RunSim::wait() {
 void RunSim::run() {
   if (!this->finished()) return;
   if(this->simulations.empty()) return;
-  this->__finished = false;
-  try {
-    this->__startCall();
-  } catch (std::bad_function_call&) {
-  }
+  startedCallback();
   //    for(auto& p: vector) {
   //        p->runTrial();
   //    }

@@ -32,7 +32,8 @@ class RunSim {
 //  QFuture<void>& getFuture();
 
  private:
-  void poolCallback();
+  void finishedCallback();
+  void startedCallback();
 //  QFuture<void> next;
   std::vector<std::shared_ptr<Protocol>> simulations;
   ThreadPool pool;

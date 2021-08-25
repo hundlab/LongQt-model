@@ -5,17 +5,17 @@ using namespace LongQt;
 using namespace std;
 
 RunSim::RunSim() {
-  this->pool.finishedCallback(std::bind(&RunSim::finishedCallback, this));
+  this->pool.finishedCallback(std::bind(&RunSim::finishedCallbackFn, this));
 }
 
 RunSim::RunSim(shared_ptr<Protocol> proto) {
   this->setSims(proto);
-  this->pool.finishedCallback(std::bind(&RunSim::finishedCallback, this));
+  this->pool.finishedCallback(std::bind(&RunSim::finishedCallbackFn, this));
 }
 
 RunSim::RunSim(std::vector<shared_ptr<Protocol>> protoList) {
   this->setSims(protoList);
-  this->pool.finishedCallback(std::bind(&RunSim::finishedCallback, this));
+  this->pool.finishedCallback(std::bind(&RunSim::finishedCallbackFn, this));
 }
 
 RunSim::~RunSim() { this->cancel(); }
@@ -48,20 +48,25 @@ void RunSim::setSims(std::vector<shared_ptr<Protocol>> protoList) {
 
 void RunSim::clear() { simulations.clear(); }
 
-void RunSim::finishedCallback() {
+void RunSim::finishedCallbackFn() {
   this->__finished = true;
   try {
-    this->__finishedCall();
+    if(this->__finishedCall) {
+      this->__finishedCall();
+    }
   } catch (std::bad_function_call&) {
     Logger::getInstance()->write(
       "RunSim: Failed call to finished callback function");
   }
+  return;
 }
 
-void RunSim::startedCallback() {
+void RunSim::startedCallbackFn() {
   this->__finished = false;
   try {
-    this->__startCall();
+    if(this->__startCall) {
+      this->__startCall();
+    }
   } catch (std::bad_function_call&) {
         Logger::getInstance()->write(
             "RunSim: Failed call to start callback function");
@@ -105,10 +110,21 @@ void RunSim::wait() {
   }
 }
 
+int RunSim::numThreads()
+{
+  this->pool.numThreads();
+}
+
+void RunSim::numThreads(int maxthreads)
+{
+  if(!this->finished()) return;
+  this->pool.resize(maxthreads);
+}
+
 void RunSim::run() {
   if (!this->finished()) return;
   if(this->simulations.empty()) return;
-  startedCallback();
+  this->startedCallbackFn();
   //    for(auto& p: vector) {
   //        p->runTrial();
   //    }

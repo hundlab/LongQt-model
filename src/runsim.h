@@ -24,6 +24,9 @@ class RunSim {
   void startCallback(std::function<void(void)> fn);
   void wait();
 
+  int numThreads();
+  void numThreads(int maxthreads);
+
   void setSims(std::shared_ptr<Protocol> proto);
   void setSims(std::vector<std::shared_ptr<Protocol>> protoList);
   void appendSims(std::shared_ptr<Protocol> proto);
@@ -32,8 +35,8 @@ class RunSim {
 //  QFuture<void>& getFuture();
 
  private:
-  void finishedCallback();
-  void startedCallback();
+  void finishedCallbackFn();
+  void startedCallbackFn();
 //  QFuture<void> next;
   std::vector<std::shared_ptr<Protocol>> simulations;
   ThreadPool pool;

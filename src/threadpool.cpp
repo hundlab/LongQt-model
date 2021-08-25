@@ -90,8 +90,13 @@ void ThreadPool::deleteThreads(int num) {
 }
 
 ThreadPool::ThreadPool(int maxthreads) {
+  if (maxthreads >= 1) {
+      this->maxthreads = maxthreads;
+  }
+  else {
+      this->maxthreads = std::thread::hardware_concurrency();
+  }
   if (this->maxthreads < 1) this->maxthreads = 1;
-  if (maxthreads >= 1) this->maxthreads = maxthreads;
 }
 
 ThreadPool::~ThreadPool() {

@@ -58,7 +58,7 @@ TEST(flag_to_str, empty) {
 TEST(flag_to_str, many) {
   auto str =
       CellUtils::flagToStr({{"ASDF", true}, {"%^&", true}, {"IDL", false}});
-  EXPECT_EQ(str, "%^&|ASDF|IDL");
+  EXPECT_EQ(str, "%^&|ASDF");
 }
 /*
  * Hopefully I will remove the dependance on QXml and

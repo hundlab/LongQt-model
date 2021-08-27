@@ -86,7 +86,10 @@ TEST(threadpool, resize_smaller_multiple) {
   std::atomic<int> to_set_b = 0;
   std::mutex mtx;
   std::condition_variable cv;
-  auto fn = [&mtx, &cv, &to_set_b]() { to_set_b++; };
+  auto fn = [&mtx, &cv, &to_set_b]() {
+	  to_set_b++;
+	  std::this_thread::sleep_for(std::chrono::milliseconds(500));
+  };
   for (int i = 0; i < 10; i++) {
     pool.push(fn);
   }
@@ -156,7 +159,7 @@ TEST(threadpool, finishedCallback_resize_gt) {
   pool.resize(7);
   pool.wait();
   EXPECT_EQ(pool.idleThreads(), pool.numThreads());
-  EXPECT_EQ(to_set, 1);
+  EXPECT_EQ(to_set, 10);
 }
 
 TEST(threadpool, finishedCallback_resize_lt) {
@@ -181,7 +184,7 @@ TEST(threadpool, finishedCallback_resize_lt) {
   pool.resize(1);
   std::this_thread::sleep_for(std::chrono::milliseconds(500));
   EXPECT_EQ(pool.idleThreads(), pool.numThreads());
-  EXPECT_EQ(to_set, 1);
+  EXPECT_EQ(to_set, 10);
 }
 
 TEST(threadpool, finishedCallback_mult) {

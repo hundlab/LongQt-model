@@ -110,9 +110,16 @@ void RunSim::wait() {
   }
 }
 
+bool RunSim::wait_for(std::chrono::seconds dur) {
+  if (!this->__finished) {
+    return pool.wait_for(dur);
+  }
+  return true;
+}
+
 int RunSim::numThreads()
 {
-  this->pool.numThreads();
+  return this->pool.numThreads();
 }
 
 void RunSim::numThreads(int maxthreads)

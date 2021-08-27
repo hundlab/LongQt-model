@@ -4,6 +4,7 @@
 #include "protocol.h"
 #include "threadpool.h"
 #include <vector>
+#include <chrono>
 
 namespace LongQt {
 
@@ -22,6 +23,7 @@ class RunSim {
   double progress();
   void finishedCallback(std::function<void(void)> fn);
   void startCallback(std::function<void(void)> fn);
+  bool wait_for(std::chrono::seconds dur);
   void wait();
 
   int numThreads();

@@ -11,6 +11,40 @@ using namespace LongQt;
 namespace fs = std::filesystem;
 using dlim = std::numeric_limits<double>;
 
+
+template <>
+DataReader::TrialData<DataReader::MeasHeader>::TrialData(
+    DataReader::TSVData& dat) {
+  this->data = std::move(dat.data);
+  for (auto& info : dat.header) {
+    MeasHeader header;
+    auto split = CellUtils::split(info, '/');
+    if (split.size() < 2) continue;
+    header.prop_name = split.back();
+    header.var_name = split.size() == 2 ? split.front() : split[1];
+    std::string cell_info = split.size() == 3 ? split.front() : "";
+    header.cell_info = cell_info;
+    DataReader::setCellInfoParsed(header, cell_info);
+    this->header.push_back(header);
+  }
+}
+
+template <>
+DataReader::TrialData<DataReader::TraceHeader>::TrialData(
+    DataReader::TSVData& dat) {
+  this->data = std::move(dat.data);
+  for (auto& info : dat.header) {
+    TraceHeader header;
+    auto split = CellUtils::split(info, '/');
+    if (split.size() < 1) continue;
+    header.var_name = split.back();
+    std::string cell_info = split.size() == 2 ? split.front() : "";
+    header.cell_info = cell_info;
+    DataReader::setCellInfoParsed(header, cell_info);
+    this->header.push_back(header);
+  }
+}
+
 DataReader::TSVData DataReader::readFile(const fs::path& file,
                                          const std::set<int>& exclude) {
   std::ifstream fileStrm;
@@ -175,35 +209,4 @@ int DataReader::getTrialNum(std::string filename) {
   return -1;
 }
 
-template <>
-DataReader::TrialData<DataReader::MeasHeader>::TrialData(
-    DataReader::TSVData& dat) {
-  this->data = std::move(dat.data);
-  for (auto& info : dat.header) {
-    MeasHeader header;
-    auto split = CellUtils::split(info, '/');
-    if (split.size() < 2) continue;
-    header.prop_name = split.back();
-    header.var_name = split.size() == 2 ? split.front() : split[1];
-    std::string cell_info = split.size() == 3 ? split.front() : "";
-    header.cell_info = cell_info;
-    DataReader::setCellInfoParsed(header, cell_info);
-    this->header.push_back(header);
-  }
-}
 
-template <>
-DataReader::TrialData<DataReader::TraceHeader>::TrialData(
-    DataReader::TSVData& dat) {
-  this->data = std::move(dat.data);
-  for (auto& info : dat.header) {
-    TraceHeader header;
-    auto split = CellUtils::split(info, '/');
-    if (split.size() < 1) continue;
-    header.var_name = split.back();
-    std::string cell_info = split.size() == 2 ? split.front() : "";
-    header.cell_info = cell_info;
-    DataReader::setCellInfoParsed(header, cell_info);
-    this->header.push_back(header);
-  }
-}

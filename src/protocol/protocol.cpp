@@ -319,20 +319,22 @@ void Protocol::writeOutCellState(bool write) {
   }
 }
 
-void Protocol::setDataDir(string location, string basedir, string appendtxt) {
+void Protocol::setDataDir(string location, string basedir, string appendtxt, bool append_date) {
   if (basedir.length() > 0) {
     this->basedir = basedir.c_str();
   }
-  QDir working_dir = QDir(QString(location.c_str()));
-  if (working_dir == QDir::currentPath()) {
-    auto date_time = QDate::currentDate().toString("MMddyy") + "-" +
-                     QTime::currentTime().toString("hhmm");
-    working_dir = (this->basedir.absolutePath() + "/data" + date_time +
-                   QString(appendtxt.c_str()));
-    for (int i = 1; working_dir.exists(); i++) {
-      working_dir = (this->basedir.absolutePath() + "/data" + date_time + "_" +
-                     QString::number(i));
-    }
+
+  auto date_time = QString();
+  if(append_date) {
+      date_time = QDate::currentDate().toString("MMddyy") + "-" +
+                   QTime::currentTime().toString("hhmm");
+  }
+
+  QDir working_dir = (this->basedir.absolutePath() + QString(location.c_str()) + date_time +
+                      QString(appendtxt.c_str()));
+  for (int i = 1; working_dir.exists(); i++) {
+    working_dir = (this->basedir.absolutePath() + QString(location.c_str()) + date_time + "_" +
+                   QString::number(i));
   }
   this->datadir = working_dir;
 }

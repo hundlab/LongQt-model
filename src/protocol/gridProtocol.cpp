@@ -55,7 +55,6 @@ int GridProtocol::stim() {
 
 void GridProtocol::setupTrial() {
   this->Protocol::setupTrial();
-  __cell->setup(stimNodes, __measureMgr->dataNodes());
 
   stimbegin = stimt;
   stimend = stimt + stimdur;
@@ -76,8 +75,10 @@ void GridProtocol::setupTrial() {
   this->pvars().setIonChanParams();
   runflag = true;  // reset doneflag
 
-  __cell->setOuputfileVariables(getDataDir() + "/" +
-                                CellUtils::strprintf(dvarsoutfile, __trial));
+   __cell->setup(stimNodes, __measureMgr->dataNodes());
+
+   __cell->setOuputfileVariables(getDataDir() + "/" +
+                                 CellUtils::strprintf(dvarsoutfile, __trial));
 }
 
 bool GridProtocol::runTrial() {

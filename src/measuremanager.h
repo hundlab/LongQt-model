@@ -27,6 +27,8 @@ class MeasureManager {
   std::map<std::string, std::set<std::string>> selection();
   void selection(std::map<std::string, std::set<std::string>> sel);
 
+  std::shared_ptr<Cell> cell() { return this->__cell; }
+
   virtual void addMeasure(std::string var,
                           std::set<std::string> selection = {});
   virtual void removeMeasure(std::string var);

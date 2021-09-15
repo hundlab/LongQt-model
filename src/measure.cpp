@@ -16,7 +16,7 @@ using namespace LongQt;
 using namespace std;
 
 Measure::Measure(std::map<string, double* const> varmap, set<string> selected) {
-  this->varmap = varmap;
+  this->varmap.swap(varmap);
   this->selection(selected);
 };
 

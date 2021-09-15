@@ -9,7 +9,11 @@
 using namespace LongQt;
 using namespace std;
 
-MeasureManager::MeasureManager(shared_ptr<Cell> cell) : __cell(cell) {}
+MeasureManager::MeasureManager(shared_ptr<Cell> cell) : __cell(cell) {
+    if (variableSelection.count("vOld") == 0) {
+      variableSelection.insert({"vOld", {}});
+    }
+}
 
 MeasureManager::~MeasureManager() {}
 
@@ -25,14 +29,33 @@ map<string, set<string>> MeasureManager::selection() {
 
 void MeasureManager::selection(map<string, set<string>> sel) {
   this->variableSelection = sel;
+
+  this->removeBad();
+  if (variableSelection.count("vOld") == 0) {
+    variableSelection.insert({"vOld", {}});
+  }
 }
 
 void MeasureManager::addMeasure(string var, set<string> selection) {
-  variableSelection.insert({var, selection});
+  if(variableSelection.count(var) == 0) {
+    variableSelection.insert({var, selection});
+  } else {
+    auto sel = variableSelection.at(var);
+    sel.merge(selection);
+    variableSelection.at(var) = sel;
+  }
   this->removeBad();
+  if (variableSelection.count("vOld") == 0) {
+    variableSelection.insert({"vOld", {}});
+  }
 }
 
-void MeasureManager::removeMeasure(string var) { measures.erase(var); }
+void MeasureManager::removeMeasure(string var) {
+    measures.erase(var);
+    if (variableSelection.count("vOld") == 0) {
+      variableSelection.insert({"vOld", {}});
+    }
+}
 
 void MeasureManager::setupMeasures() {
   this->measures.clear();
@@ -177,7 +200,7 @@ void MeasureManager::removeBad() {
     if (vars.count(it->first) != 1) {
       bad.push_back(it);
       Logger::getInstance()->write("MeasureManager: The variable '{}' is not valid"
-                                   "for this cell type", it->first);
+                                   " for this cell type", it->first);
     } else {
       set<string> good;
       set<string> bad;
@@ -185,7 +208,7 @@ void MeasureManager::removeBad() {
       if(bad.size() > 0) {
           badSel.insert({it->first, bad});
           string warn = "MeasureManager: The selection for variable '{}' contained"
-                        "items which were not valid: ";
+                        " items which were not valid: ";
           for(auto& item: bad) {
               warn += CellUtils::strprintf("'{}', ", item);
           }

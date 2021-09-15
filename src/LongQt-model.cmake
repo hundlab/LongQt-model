@@ -7,6 +7,7 @@ set(modellib_includes
 )
 
 set(modellib_sources
+    "${CMAKE_CURRENT_LIST_DIR}/cell/Koivumaki.cpp"
     "${CMAKE_CURRENT_LIST_DIR}/cell/FR.cpp"
     "${CMAKE_CURRENT_LIST_DIR}/cell/OHaraRudy.cpp"
     "${CMAKE_CURRENT_LIST_DIR}/cell/OHaraRudyEndo.cpp"

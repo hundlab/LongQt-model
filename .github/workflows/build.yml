@@ -1,12 +1,8 @@
 # This is a basic workflow to help you get started with Actions
 name: CMake LongQt-model
 
-# Controls when the action will run. Triggers the workflow on push
-on:
-  push:
-    branches: [ $default-branch ]
-  pull_request:
-    branches: [ $default-branch ]
+# Controls when the action will run. Manually triggered
+on: workflow_dispatch
 
 env:
   CMAKE_INSTALL_PREFIX: ~/install
@@ -29,7 +25,8 @@ jobs:
               cc: "cl",
               cxx: "cl",
               environment_script: "C:/Program Files (x86)/Microsoft Visual Studio/2019/Enterprise/VC/Auxiliary/Build/vcvars64.bat",
-              generators: "Visual Studio 16 2019"
+              generators: "Visual Studio 16 2019",
+              qt5_path: "./5.15.2/msvc2019_64/lib/cmake/Qt5"
             }
           - {
               name: "Ubuntu_Latest",
@@ -37,7 +34,8 @@ jobs:
               build_type: "Release",
               cc: "gcc",
               cxx: "g++",
-              generators: "Unix Makefiles"
+              generators: "Unix Makefiles",
+              qt5_path: ""
             }
           - {
               name: "macOS Latest Clang",
@@ -45,7 +43,8 @@ jobs:
               build_type: "Release",
               cc: "clang",
               cxx: "clang++",
-              generators: "Ninja"
+              generators: "Ninja",
+              qt5_path: "/usr/local/opt/qt@5/lib/cmake/Qt5"
             }
     
     steps:
@@ -56,27 +55,34 @@ jobs:
         run: |
           echo github.event.action: ${{ github.event.action }}
           echo github.event_name: ${{ github.event_name }}
+
       - name: Install dependencies on windows
         if: startsWith(matrix.config.os, 'windows')
         run: |
-          choco install cmake
+          choco install -y cmake
           cmake --version
+          py -m pip install aqtinstall
+          py -m aqt install 5.15.2 windows desktop win64_msvc2019_64
           cmd "${{ matrix.config.environment_script }}"
+
+          #          choco install -y qt5-default
  
       - name: Install dependencies on ubuntu
         if: startsWith(matrix.config.name, 'Ubuntu')
         run: |
-          apt-get update #sudo
-          apt-get install --assume-yes cmake build-essential qt5-default #sudo
+          sudo apt-get update
+          sudo apt-get install --assume-yes cmake build-essential qt5-default
           cmake --version
           gcc --version
 
       - name: Install dependencies on macos
         if: startsWith(matrix.config.os, 'macos')
         run: |
-          brew install cmake ninja
+          brew install cmake ninja qt@5
+          export PATH="/usr/local/opt/qt@5/bin:$PATH"
           ninja --version
           cmake --version
+          clang --version
 
       - name: Configure
         shell: bash
@@ -87,6 +93,7 @@ jobs:
             -B . \
             -DCMAKE_BUILD_TYPE=${{ matrix.config.build_type }} \
             -DCMAKE_INSTALL_PREFIX:PATH=./install \
+            -DQt5_DIR:PATH=${{ matrix.config.qt5_path }} \
             -G "${{ matrix.config.generators }}"
 
       - name: Build

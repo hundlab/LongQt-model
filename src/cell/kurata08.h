@@ -23,7 +23,7 @@ class Kurata08 : public Cell {
   Kurata08(const Kurata08& toCopy);
   ~Kurata08();
 
-  virtual Kurata08* clone() override;
+  Kurata08* clone() override;
 
   /*########################*/
   /*    DEFINE STRUCTS      */
@@ -53,31 +53,32 @@ class Kurata08 : public Cell {
   //##################################################
   // Declare class functions
   //##################################################
-  virtual void updateIst();
-  virtual void updateInab();
-  virtual void updateIcal();
-  virtual void updateIcatt();
-  virtual void updateIks();
-  virtual void updateIkr();
-  virtual void updateI4ap();
-  virtual void updateItrek();
-  virtual void updateIkach();
-  virtual void updateInak();
-  virtual void updateInaca();
-  virtual void updateIh();
-  virtual void updateIup();
-  virtual void updateItr();
-  virtual void updateIdiff();
-  virtual void updateIrel();
-  virtual void updateCar();
-  virtual void updateCasr();
-  virtual void updateNai();
-  virtual void updateKi();
-  virtual void updateCai();
-  virtual void updateCurr();
-  virtual void updateConc();
-  virtual void externalStim(double stimval);
-  virtual const char* type() const;
+  void updateIst();
+  void updateInab();
+  void updateIcal();
+  void updateIcatt();
+  void updateIks();
+  void updateIkr();
+  void updateI4ap();
+  void updateItrek();
+  void updateIkach();
+  void updateInak();
+  void updateInaca();
+  void updateIh();
+  void updateIup();
+  void updateItr();
+  void updateIdiff();
+  void updateIrel();
+  void updateCar();
+  void updateCasr();
+  void updateNai();
+  void updateKi();
+  void updateCai();
+  void updateCurr() override;
+  void updateConc() override;
+  void externalStim(double stimval) override;
+  const char* type() const override;
+  const char* citation() const override;
 
   //##### Declare additional class variables ##############
   double naI, kI, caI;  // Intracellular Ion concentrations
@@ -128,16 +129,11 @@ class Kurata08 : public Cell {
   double Vjsr;
   double Vss;
 
-  //    ISO //isoproterenol
-  //    TREK //include the trek channel
-  MAKE_OPTIONS(TREK)  //,ISO
-
-  enum Options opts;
-
- protected:
-  virtual void Initialize();
+  bool trekflag = false;
+  bool isoflag = false;
 
  private:
+  void Initialize();
   void makemap();
 };
 }  // namespace LongQt

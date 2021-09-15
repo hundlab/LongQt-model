@@ -8,17 +8,18 @@ class InexcitableCell : public Cell {
  public:
   InexcitableCell();
   InexcitableCell(const InexcitableCell& toCopy);
-  virtual ~InexcitableCell();
+  ~InexcitableCell();
 
-  virtual InexcitableCell* clone() override;  // public copy function
+  InexcitableCell* clone() override;  // public copy function
 
-  virtual void updateCurr();
-  virtual void updateConc();
+  void updateCurr() override;
+  void updateConc() override;
 
-  virtual const char* type() const;
+  const char* type() const override;
+  const char* citation() const override;
 
- protected:
-  virtual void Initialize();
+ private:
+  void Initialize();
 };
 }  // namespace LongQt
 

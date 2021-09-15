@@ -12,7 +12,7 @@ class PvarsVoltageClamp : public PvarsCell {
     double paramVal;  // value for that cell
     virtual std::string str(std::string name) override;
     SIonChanParam() = default;
-    SIonChanParam(const IonChanParam& other) : IonChanParam(other){};
+    SIonChanParam(const IonChanParam& other) : IonChanParam(other) {}
     virtual ~SIonChanParam() = default;
   };
 

@@ -80,7 +80,7 @@ TEST(runsim, set_single_mult_trials) {
   auto proto = std::make_shared<CurrentClamp>();
   RunSim runner;
   proto->tMax = 500;
-  proto->numtrials = 5;
+  proto->numtrials(5);
   runner.setSims(proto);
   runner.setSims(proto);
   runner.setSims(proto);
@@ -175,7 +175,7 @@ TEST(runsim, append_single_mult_trials) {
   runner.setSims(protos);
   auto proto = std::make_shared<CurrentClamp>();
   proto->tMax = tMax_2;
-  proto->numtrials = 5;
+  proto->numtrials(5);
   runner.appendSims(proto);
   EXPECT_TRUE(runner.finished());
   auto range = runner.progressRange();

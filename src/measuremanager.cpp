@@ -2,27 +2,25 @@
 #include "cellutils.h"
 #include "logger.h"
 #include "measuredefault.h"
+
+#include <algorithm>
+#include <numeric>
+
 using namespace LongQt;
 using namespace std;
 
-MeasureManager::MeasureManager(shared_ptr<Cell> cell) : __cell(cell){};
-
-MeasureManager::~MeasureManager() {
-  if (this->ofile) {
-    ofile->close();
-  }
+MeasureManager::MeasureManager(shared_ptr<Cell> cell) : __cell(cell) {
+    if (variableSelection.count("vOld") == 0) {
+      variableSelection.insert({"vOld", {}});
+    }
 }
+
+MeasureManager::~MeasureManager() {}
 
 MeasureManager::MeasureManager(const MeasureManager& o,
                                std::shared_ptr<Cell> cell)
-    : __cell(cell) {
-  this->copy(o);
-}
-
-void MeasureManager::copy(const MeasureManager& o) {
+    : __cell(cell), measMaker(o.measMaker) {
   variableSelection = o.variableSelection;
-  __percrepol = o.__percrepol;
-  last = o.last;
 }
 
 map<string, set<string>> MeasureManager::selection() {
@@ -31,131 +29,118 @@ map<string, set<string>> MeasureManager::selection() {
 
 void MeasureManager::selection(map<string, set<string>> sel) {
   this->variableSelection = sel;
-}
 
-double MeasureManager::percrepol() { return this->__percrepol; }
-
-void MeasureManager::percrepol(double percrepol) {
-  if (0 <= percrepol && percrepol <= 100) this->__percrepol = percrepol;
-}
-
-shared_ptr<Measure> MeasureManager::getMeasure(string varname,
-                                               set<string> selection) {
-  if (varsMeas.count(varname) > 0) {
-    string measName = varsMeas.at(varname);
-    return shared_ptr<Measure>(varMeasCreator.at(measName)(selection));
+  this->removeBad();
+  if (variableSelection.count("vOld") == 0) {
+    variableSelection.insert({"vOld", {}});
   }
-  return make_shared<MeasureDefault>(selection);
 }
 
 void MeasureManager::addMeasure(string var, set<string> selection) {
-  variableSelection.insert({var, selection});
+  if(variableSelection.count(var) == 0) {
+    variableSelection.insert({var, selection});
+  } else {
+    auto sel = variableSelection.at(var);
+    sel.merge(selection);
+    variableSelection.at(var) = sel;
+  }
+  this->removeBad();
+  if (variableSelection.count("vOld") == 0) {
+    variableSelection.insert({"vOld", {}});
+  }
 }
 
-void MeasureManager::removeMeasure(string var) { measures.erase(var); }
+void MeasureManager::removeMeasure(string var) {
+    measures.erase(var);
+    if (variableSelection.count("vOld") == 0) {
+      variableSelection.insert({"vOld", {}});
+    }
+}
 
-void MeasureManager::setupMeasures(string filename) {
+void MeasureManager::setupMeasures() {
   this->measures.clear();
   if (variableSelection.count("vOld") == 0) {
     variableSelection.insert({"vOld", {}});
   }
   this->removeBad();
-  this->ofile.reset(new QFile(filename.c_str()));
-  if (!ofile->open(QIODevice::WriteOnly | QIODevice::Text)) {
-    Logger::getInstance()->write<std::runtime_error>(
-        "MeasureManager: File could not be opened for writing.");
-  }
-  for (auto& sel : variableSelection) {
+  header = "";
+  bool first = true;
+  for (auto& item1 : variableSelection) {
+    auto& name = item1.first;
+    auto& sel = item1.second;
     auto it =
-        measures.insert({sel.first, this->getMeasure(sel.first, sel.second)})
-            .first;
-    string nameStr = it->second->getNameString(sel.first);
-    if (ofile->write(nameStr.c_str()) == -1) {
-      Logger::getInstance()->write<std::runtime_error>(
-          "MeasureManager: File cound not be written to");
+        measures.insert({name, this->measMaker.buildMeasure(name, sel)}).first;
+    this->numSelected += sel.size();
+    if (first) {
+      first = false;
+    } else {
+      header += '\t';
     }
+    header += it->second->getNameString(name);
   }
-  if (ofile->write("\n") == -1) {
-    Logger::getInstance()->write<std::runtime_error>(
-        "MeasureManager: File cound not be written to");
-  }
+  header += '\n';
 }
 
-void MeasureManager::measure(double time) {
-  bool write = false;
+void MeasureManager::measure(double time, bool write) {
   for (auto& m : this->measures) {
     bool varWrite = m.second->measure(time, __cell->var(m.first));
-    if (m.first == "vOld" && varWrite) {
+    if (this->determineWriteTime && m.first == "vOld" && varWrite) {
       write = true;
     }
   }
   if (write) {
-    this->write();
-    this->resetMeasures();
+    this->saveCurrent();
   }
 }
 
-void MeasureManager::writeLast(string filename) {
-  QFile lastFile(filename.c_str());
-  if (!lastFile.open(QIODevice::WriteOnly | QIODevice::Text)) {
+void MeasureManager::write(string filename) {
+  std::ofstream ofile;
+  ofile.open(filename, std::ios_base::app);
+  if (!ofile.good()) {
+    ofile.close();
     Logger::getInstance()->write<std::runtime_error>(
-        "MeasureManager: File could not be opened for writing.");
+        "MeasureManager: Error Opening \'{}\'", filename);
   }
-  for (auto& meas : this->measures) {
-    string nameStr = meas.second->getNameString(meas.first);
-    if (lastFile.write(nameStr.c_str()) == -1) {
-      Logger::getInstance()->write<std::runtime_error>(
-          "MeasureManager: Last file cound not be written to");
+  ofile << header;
+  ofile << std::scientific;
+  bool written = false;
+  for (auto& row : this->data) {
+    bool first = true;
+    for (double val : row) {
+      if (first) {
+        first = false;
+      } else {
+        ofile << '\t';
+      }
+      ofile << val;
+      written = true;
     }
+    if (written) ofile << '\n';
   }
-  if (lastFile.write("\n") == -1) {
-    Logger::getInstance()->write<std::runtime_error>(
-        "MeasureManager: Last file cound not be written to");
-  }
-  if (this->last == "") {
-    this->write(&lastFile);
-  } else {
-    if (lastFile.write(last.c_str()) == -1) {
-      Logger::getInstance()->write<std::runtime_error>(
-          "MeasureManager: Last file cound not be written to");
-    }
-  }
-  lastFile.close();
+  ofile.flush();
+  ofile.close();
 }
 
-void MeasureManager::write(QFile* file) {
-  QFile& ofile = file ? *file : *this->ofile;
-  if (!ofile.isOpen()) {
-    Logger::getInstance()->write<std::runtime_error>(
-        "MeasureManager: Measure file must be open to be written");
-    return;
-  }
-  this->last = "";
-  for (auto& meas : measures) {
-    string valStr = meas.second->getValueString();
-    last += valStr;
-    if (ofile.write(valStr.c_str()) == -1) {
-      Logger::getInstance()->write<std::runtime_error>(
-          "MeasureManager: File cound not be written to");
-    }
-  }
-  last += "\n";
-  if (ofile.write("\n") == -1) {
-    Logger::getInstance()->write<std::runtime_error>(
-        "MeasureManager: File cound not be written to");
-  }
-}
-
-void MeasureManager::close() {
-  if (this->ofile->isOpen()) {
-    ofile->close();
-  }
+void MeasureManager::saveCurrent() {
+  this->save();
+  this->resetMeasures();
 }
 
 void MeasureManager::resetMeasures() {
   for (auto& meas : this->measures) {
     meas.second->reset();
   }
+}
+
+void MeasureManager::save() {
+  if (this->numSelected == 0) return;
+  std::vector<double> dat(this->numSelected);
+  auto pos = dat.begin();
+  for (auto& meas : measures) {
+    auto vals = meas.second->getValues();
+    pos = std::copy(vals.begin(), vals.end(), pos);
+  }
+  this->data.push_back(dat);
 }
 
 //#############################################################
@@ -169,7 +154,7 @@ bool MeasureManager::readMvarsFile(QXmlStreamReader& xml) {
   if (!CellUtils::readNext(xml, "mvars")) return false;
   if (xml.readNextStartElement() && xml.name() == "percrepol") {
     xml.readNext();
-    __percrepol = xml.text().toDouble();
+    measMaker.percrepol(xml.text().toDouble());
     xml.skipCurrentElement();
   } else {
     return true;
@@ -193,7 +178,7 @@ bool MeasureManager::readMvarsFile(QXmlStreamReader& xml) {
 
 bool MeasureManager::writeMVarsFile(QXmlStreamWriter& xml) {
   xml.writeStartElement("mvars");
-  xml.writeTextElement("percrepol", QString::number(__percrepol));
+  xml.writeTextElement("percrepol", QString::number(measMaker.percrepol()));
   for (auto& sel : this->variableSelection) {
     xml.writeStartElement("mvar");
     xml.writeAttribute("name", sel.first.c_str());
@@ -208,14 +193,35 @@ bool MeasureManager::writeMVarsFile(QXmlStreamWriter& xml) {
 
 void MeasureManager::removeBad() {
   list<map<string, set<string>>::iterator> bad;
+  map<string, set<string>> badSel;
   auto vars = __cell->vars();
   for (auto it = this->variableSelection.begin(); it != variableSelection.end();
        ++it) {
     if (vars.count(it->first) != 1) {
       bad.push_back(it);
+      Logger::getInstance()->write("MeasureManager: The variable '{}' is not valid"
+                                   " for this cell type", it->first);
+    } else {
+      set<string> good;
+      set<string> bad;
+      std::tie(good, bad) = this->measMaker.checkSelection(it->first, it->second);
+      if(bad.size() > 0) {
+          badSel.insert({it->first, bad});
+          string warn = "MeasureManager: The selection for variable '{}' contained"
+                        " items which were not valid: ";
+          for(auto& item: bad) {
+              warn += CellUtils::strprintf("'{}', ", item);
+          }
+          Logger::getInstance()->write(warn.c_str(), it->first);
+      }
     }
   }
   for (auto& b : bad) {
     variableSelection.erase(b);
+  }
+  for (auto& bpair: badSel) {
+      for (auto& b: bpair.second) {
+          this->variableSelection.at(bpair.first).erase(b);
+      }
   }
 }

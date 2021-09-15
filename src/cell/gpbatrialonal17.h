@@ -18,13 +18,15 @@ namespace LongQt {
 // subclass of Cell
 //####################################
 class GpbAtrialOnal17 : public Cell {
+  void Initialize();
+
  public:
   // constructors
   GpbAtrialOnal17();
   GpbAtrialOnal17(GpbAtrialOnal17& toCopy);
-  virtual ~GpbAtrialOnal17();
-  void Initialize();
-  GpbAtrialOnal17* clone();
+  ~GpbAtrialOnal17();
+  void setup() override;
+  GpbAtrialOnal17* clone() override;
 
   /*########################*/
   /*    DEFINE STRUCTS	  */
@@ -46,13 +48,6 @@ class GpbAtrialOnal17 : public Cell {
     double ml;
     double hl;
   };
-
-  //    S571E //Nav1.5 S571E
-  //    S571A //Nav1.5 S571A
-  //    S2814D //RyR2 S2814D
-  //    S2814A //RyR2 S2814A
-  //    ISO //isoproterenol
-  MAKE_OPTIONS(S571E, S571A, S2814D, S2814A, ISO)
 
   double Vsl;
   double Vjunc;
@@ -182,35 +177,35 @@ class GpbAtrialOnal17 : public Cell {
   double RyRratio;
 
   //###Concentration updating functions ######
-  void updateConc();
-  virtual void updatecaI();
-  virtual void updatenaI();
+  void updateConc() override;
+  void updatecaI();
+  void updatenaI();
   //####Current updating functions #######
-  /*virtual void updateSRcurrents();*/
-  void updateCurr();
-  virtual void updateIcal();
-  virtual void updateIcab();
-  virtual void updateIpca();
-  virtual void updateIto();
-  virtual void updateIks();
-  virtual void updateIkr();
-  virtual void updateIk1();
-  virtual void updateIkur();
-  virtual void updateIpk();
-  virtual void updateInaca();
-  virtual void updateInak();
-  virtual void updateInab();
+  /*void updateSRcurrents();*/
+  void updateCurr() override;
+  void updateIcal();
+  void updateIcab();
+  void updateIpca();
+  void updateIto();
+  void updateIks();
+  void updateIkr();
+  void updateIk1();
+  void updateIkur();
+  void updateIpk();
+  void updateInaca();
+  void updateInak();
+  void updateInab();
   virtual void updateIna();
-  virtual void updateSRFlux();
-  virtual void updateCamk();
-  virtual void updatecytobuff();  // cytosolic Ca buffers
-  virtual void updateJSLbuff();   // junctional and SL Ca buffers
-  virtual void updateSRbuff();    // SR Ca buffer
-  virtual void updateIclca();
-  virtual void updateIclbk();
-  virtual void updateInal();
-  virtual void updatekI();
-  virtual void updateClI();
+  void updateSRFlux();
+  void updateCamk();
+  void updatecytobuff();  // cytosolic Ca buffers
+  void updateJSLbuff();   // junctional and SL Ca buffers
+  void updateSRbuff();    // SR Ca buffer
+  void updateIclca();
+  void updateIclbk();
+  void updateInal();
+  void updatekI();
+  void updateClI();
 
   double Icalfactor;
   double Icabfactor;
@@ -233,7 +228,13 @@ class GpbAtrialOnal17 : public Cell {
   double IcaMkiiFactor;
   double InalPFactor;
   double Jsrleakfactor;
-  double ROSFactor;
+  double ROSConc;
+
+  bool isoFlag = false;
+  bool s571eFlag = false;
+  bool s571aFlag = false;
+  bool s2814dFlag = false;
+  bool s2814aFlag = false;
 
   // testing
   double testFactor;
@@ -241,11 +242,10 @@ class GpbAtrialOnal17 : public Cell {
   double test3Factor;
   //
 
-  void externalStim(double stimval);
   void makemap();
   struct GateVariable Gate;
-  enum Options opts;
-  virtual const char* type() const;
+  const char* type() const override;
+  const char* citation() const override;
 };
 }  // namespace LongQt
 

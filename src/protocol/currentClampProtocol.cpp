@@ -38,7 +38,7 @@ CurrentClamp::~CurrentClamp() {}
 shared_ptr<Cell> CurrentClamp::cell() const { return __cell; }
 
 void CurrentClamp::cell(shared_ptr<Cell> cell) {
-  __measureMgr.reset(new MeasureManager(cell));
+  if (__measureMgr) __measureMgr.reset(new MeasureManager(cell));
   if (__pvars) pvars().clear();
   this->__cell = cell;
 }
@@ -70,14 +70,12 @@ int CurrentClamp::stim() {
   if (stimbegin <= __cell->t && __cell->t < stimend) {
     __cell->externalStim(stimval);
   }
-  if (stimend < __cell->t) {
+  if (__cell->t > stimend) {
     stimbegin += bcl;
     stimend += bcl;
-    __cell->apTime = 0.0;
     stimcounter++;
   }
 
-  __cell->apTime = __cell->apTime + __cell->dt;
   return 1;
   ///////////////////////////////////////////test
   //    if(__cell->t>=stimt&&__cell->t<(stimt+stimdur)){
@@ -111,18 +109,16 @@ void CurrentClamp::setupTrial() {
   }
   __cell->setConstantSelection(temp);
   temp.clear();
-  __cell->t = 0.0;  // reset time
   stimbegin = stimt;
   stimend = stimt + stimdur;
-  //    stimt = 0;
   stimcounter = 0;
   this->readInCellState(this->readCellState);
   this->__pvars->setIonChanParams();
   runflag = true;  // reset doneflag
   __cell->setOuputfileVariables(
       CellUtils::strprintf(getDataDir() + "/" + dvarsoutfile, __trial));
-  this->__measureMgr->setupMeasures(
-      CellUtils::strprintf(getDataDir() + "/" + propertyoutfile, __trial));
+  this->__measureMgr->setupMeasures();
+  __cell->setup();
 }
 
 bool CurrentClamp::runTrial() {
@@ -139,7 +135,12 @@ bool CurrentClamp::runTrial() {
 
   while (runflag && (time < tMax)) {
     if (numrunsLeft > 0 && time >= nextRunT) {
-      this->runDuring(*this);
+      try {
+        this->runDuring(*this);
+      } catch(std::exception& e) {
+        std::cout << e.what() << std::endl;
+      }
+
       --numrunsLeft;
       nextRunT += this->runEvery;
     }
@@ -149,7 +150,7 @@ bool CurrentClamp::runTrial() {
       stim();
 
     __cell->updateConc();           // Update ion concentrations
-    double vM = __cell->updateV();  // Update transmembrane potential
+    __cell->updateV();  // Update transmembrane potential
 
     //##### Output select variables to file  ####################
     if (measflag == 1 && __cell->t > meastime) {
@@ -159,21 +160,14 @@ bool CurrentClamp::runTrial() {
     if (writeflag && time > writetime && (pCount % writeint == 0)) {
       __cell->writeVariables();
     }
-    __cell->setV(vM);  // Overwrite vOld with new value
+    __cell->setV();  // Overwrite vOld with new value
     pCount++;
   }
 
-  // Output final (ss) property values for each trial
-  this->__measureMgr->writeLast(
-      CellUtils::strprintf(getDataDir() + "/" + finalpropertyoutfile, __trial));
-
-  // Output parameter values for each trial
-  __cell->setOutputfileConstants(
-      CellUtils::strprintf(getDataDir() + "/" + finaldvarsoutfile, __trial));
-  __cell->writeConstants();
-  this->__measureMgr->close();
-  __cell->closeFiles();
+  this->__measureMgr->write(
+      CellUtils::strprintf(getDataDir() + "/" + propertyoutfile, __trial));
   this->writeOutCellState(this->writeCellState);
+  __cell->closeFiles();
 
   this->runAfter(*this);
   return true;
@@ -209,13 +203,8 @@ void CurrentClamp::mkmap() {
       "bool", [this]() { return CellUtils::to_string(paceflag); },
       [this](const string& value) { paceflag = CellUtils::stob(value); });
   __pars["numtrials"] =
-      toInsert.Initialize("int", [this]() { return std::to_string(numtrials); },
-                          [this](const string& value) {
-                            auto temp = std::stoi(value);
-                            if (temp == numtrials) return;
-                            numtrials = temp;
-                            this->pvars().calcIonChanParams();
-                          });
+      toInsert.Initialize("int", [this]() { return std::to_string(this->numtrials()); },
+                          [this](const string& value) { this->numtrials(std::stoi(value));});
 }
 
 const char* CurrentClamp::name = "Current Clamp Protocol";

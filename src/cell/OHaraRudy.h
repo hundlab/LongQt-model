@@ -65,9 +65,10 @@ class OHaraRudy : public Cell {
   OHaraRudy(OHaraRudy& toCopy);
   ~OHaraRudy();
 
-  virtual OHaraRudy* clone() override;
+  void setup();
+  OHaraRudy* clone() override;
 
-  virtual void makemap();
+  void makemap();
 
   double naI = 7;
   double nass = naI;
@@ -76,7 +77,7 @@ class OHaraRudy : public Cell {
   double cai = 1.0e-4;
   double cass = cai;
   double cansr = 1.2;
-  double cajsr = cansr;
+  double cajsr;
   double m = 0;
   double hf = 1;
   double hs = 1;
@@ -126,19 +127,12 @@ class OHaraRudy : public Cell {
   double csqnmax = 10.0;
   double kmcsqn = 0.8;
 
-  // cell geometry
-  double L = 0.01;
-  double rad = 0.0011;
-  double vcell = 1000 * 3.14 * rad * rad * L;
-  double Ageo = 2 * 3.14 * rad * rad + 2 * 3.14 * rad * L;
   // AGeo
-  double Acap = 2 * Ageo;
-  double vmyo = 0.68 * vcell;
-  double vmito = 0.26 * vcell;
-  double vsr = 0.06 * vcell;
-  double vnsr = 0.0552 * vcell;
-  double vjsr = 0.0048 * vcell;
-  double vss = 0.02 * vcell;
+  double Vmito;
+  double Vsr;
+  double Vnsr;
+  double Vjsr;
+  double Vss;
 
   // CaMK paramaters
   double aCaMK = 0.05;
@@ -148,7 +142,22 @@ class OHaraRudy : public Cell {
   double KmCaMK = 0.15;
 
   // factors
+  double InaFactor = 1;
+  double InalFactor = 1;
+  double ItoFactor = 1;
   double IcalFactor = 1;
+  double IkrFactor = 1;
+  double IksFactor = 1;
+  double Ik1Factor = 1;
+  double InacaFactor = 1;
+  double InakFactor = 1;
+  double InabFactor = 1;
+  double IpcaFactor = 1;
+  double IcabFactor = 1;
+
+  double JrelFactor = 1;
+  double JleakFactor = 1;
+  double JupFactor = 1;
 
   // cell type
   cellType celltype = endo;  // endo = 0, epi = 1, M = 2
@@ -178,13 +187,14 @@ class OHaraRudy : public Cell {
   void updatekI();
   void updatecajsr();
 
-  virtual void updateCurr();
-  virtual void updateConc();
-  virtual void externalStim(double stimval);
-  virtual const char* type() const;
+  void updateCurr() override;
+  void updateConc() override;
+  void externalStim(double stimval) override;
+  const char* type() const override;
+  const char* citation() const override;
 
- protected:
-  virtual void Initialize();
+ private:
+  void Initialize();
 };
 }  // namespace LongQt
 

@@ -28,9 +28,10 @@ class Ksan : public Cell {
  public:
   Ksan();
   Ksan(Ksan& toCopy);
-  virtual ~Ksan();
+  ~Ksan();
 
   Ksan* clone() override;
+  void setup() override;
 
   /*########################*/
   /*    DEFINE STRUCTS	  */
@@ -72,25 +73,25 @@ class Ksan : public Cell {
   //##################################################
   // Declare class functions
   //##################################################
-  virtual void updateIst();
-  virtual void updateIb();
-  virtual void updateIK1();
-  virtual void updateICaT();
-  virtual void updateIKr();
-  virtual void updateIKs();
-  virtual void updateICaL();
-  virtual void updateINa();
-  virtual void updateIf();
-  virtual void updateIto();
-  virtual void updateIsus();
-  virtual void updateINaK();
-  virtual void updateiNaCa();
-  virtual void updateCurr();
-  virtual void updateConc();
+  void updateIst();
+  void updateIb();
+  void updateIK1();
+  void updateICaT();
+  void updateIKr();
+  void updateIKs();
+  void updateICaL();
+  void updateINa();
+  void updateIf();
+  void updateIto();
+  void updateIsus();
+  void updateINaK();
+  void updateiNaCa();
+  void updateCurr() override;
+  void updateConc() override;
 
-  virtual void makemap();
-  virtual const char* type() const;
-  virtual void externalStim(double stimval);
+  void makemap();
+  const char* type() const override;
+  const char* citation() const override;
 
   //##### Declare class variables ##############
 
@@ -141,8 +142,8 @@ class Ksan : public Cell {
   double INaKfactor;
   double iNaCafactor;
 
- protected:
-  virtual void Initialize();
+ private:
+  void Initialize();
 };
 }  // namespace LongQt
 

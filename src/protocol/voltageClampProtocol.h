@@ -51,7 +51,7 @@ class VoltageClamp : public Protocol {
  private:
   int clampsHint;
   std::vector<std::pair<double, double>> __clamps;
-  void clamp(double& vM);
+  bool clamp(double& vM);
   void CCcopy(const VoltageClamp& toCopy);
   void mkmap();
 

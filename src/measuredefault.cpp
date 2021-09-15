@@ -88,7 +88,9 @@ void MeasureDefault::reset() {
   maxderiv.second = -INF;
   avg = 0;
   count = 0;
-};
+}
+
+const char* MeasureDefault::type() const { return "Measure Default"; }
 
 void MeasureDefault::beforeOutput() { sd = std::sqrt(avg_2 - avg * avg); }
 #undef INF

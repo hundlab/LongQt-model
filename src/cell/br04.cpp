@@ -23,6 +23,10 @@ void Br04::Initialize() {
 
   ACap = 1.534E-4;  // cm2
   Vmyo = 25.84E-6;  // uL
+
+  this->insertOpt("ISO", &isoflag, "Isoproternol");
+  this->insertOpt("TREK", &trekflag, "Enable the trek channel");
+  //  this->insertOpt("INS",&insflag, "?Plateau K current?");
   this->makemap();
 }
 Br04 *Br04::clone() { return new Br04(*this); }
@@ -30,7 +34,13 @@ Br04 *Br04::clone() { return new Br04(*this); }
 // Destructor for control canine epicardial
 // ventricular model.
 //#####################################################
-Br04::~Br04(){};
+Br04::~Br04() {}
+
+void Br04::setup() {
+  Cell::setup();
+  caTrpn_low = 0.07 * (caI / (caI + 0.0006));
+  caTrpn_high = 0.140 * (caI / (caI + 0.0000135));
+};
 
 void Br04::updateIlca() {
   double dO, dC2, dC3, dC4, dI1, dI2, dI3;
@@ -74,7 +84,7 @@ void Br04::updateIlca() {
   I3 = I3 + dI3;
   C1 = 1 - O - C2 - C3 - C4 - I1 - I2 - I3;
 
-  if (opts & ISO) condfact = 2.429;
+  if (isoflag) condfact = 2.429;
 
   iCal = IcalFactor * condfact * gcal * O * (vOld - Eca);
 };
@@ -92,7 +102,7 @@ void Br04::updateIpca() {
   double ipca_max = 0.5;  // 0.17; 1.0; my change 0.5;
   double kmpca = 0.0005;
 
-  iPca = ipca_max * caI * caI / ((kmpca * kmpca) + (caI * caI));
+  iPca = IpcaFactor* ipca_max * caI * caI / ((kmpca * kmpca) + (caI * caI));
 };
 
 void Br04::updateIto_f() {
@@ -167,7 +177,7 @@ void Br04::updateIks() {
   nksinf = alpha_n / (alpha_n + beta_n);
   gate.nks = nksinf - (nksinf - gate.nks) * exp(-dt / taunks);
 
-  if (opts & ISO) condfact = 1.8;
+  if (isoflag) condfact = 1.8;
 
   iKs = IksFactor * condfact * gks * gate.nks * gate.nks * (vOld - EK);
 };
@@ -337,7 +347,7 @@ void Br04::updateInak() {
   fNak = 1.0 / (1.0 + 0.1245 * exp(-0.1 * vOld * FDAY / RGAS / TEMP) +
                 0.0365 * sigma * exp(-vOld * FDAY / (RGAS * TEMP)));
 
-  if (opts & ISO) condfact = 1.4;
+  if (isoflag) condfact = 1.4;
 
   iNak = InakFactor * condfact *
          (inakmax * fNak / (1 + pow((KmNai / naI), 1.5))) * (kO / (kO + KmKo));
@@ -420,7 +430,7 @@ void Br04::updateCaFlux() {
 
   dPO2 = dt * (pow((caSs * 1000.0), 3.0) * PO1 * kb_open - kb_close * PO2);
   dPC2 = dt * (kc_open * PO1 - kc_close * PC2);
-  if (opts & ISO) irelcondfact = 2.429;
+  if (isoflag) irelcondfact = 2.429;
 
   dPRyr = dt * (-0.04 * PRyr - 0.1 * (iCal / (irelcondfact * 7.0)) *
                                    exp(-1.0 * (vOld) / 30.0));
@@ -448,7 +458,7 @@ void Br04::updateCaFlux() {
 
   PC1 = 1 - PC2 - PO1 - PO2;
 
-  if (opts & ISO) iupcondfact = 1.2;
+  if (isoflag) iupcondfact = 1.2;
 
   J_rel = JrelFactor * v1 * (PO1 + PO2) * (caJsr - caSs) * PRyr;
 
@@ -543,28 +553,25 @@ void Br04::updateNai() {
 
   naI = naI + dnaI;
 };
-// External stimulus.
-void Br04::externalStim(double stimval) { iTot = iTot + stimval; }
 
 void Br04::updateCurr() {
-  updateIlca();                    // L-type Ca current
-  updateIcab();                    // Background Ca current
-  updateIpca();                    // Sarcolemmal Ca pump
-  updateIto_f();                   // Transient outward K current
-  updateIto_s();                   // Transient outward K current
-  updateIk1();                     // Time-independent K current
-  updateIks();                     // Slow delayed rectifier current
-  updateIkur();                    // Slow delayed rectifier current
-  updateIkss();                    // Slow delayed rectifier current
-  updateIkr();                     // Rapid delayed rectifier current
-  if (opts & TREK) updateItrek();  // Transient outward K current
-  updateInak();                    // Na-K pump
-  updateInaca();                   // Na-Ca exchanger
-  updateIclca();                   // Na-Ca exchanger
-  updateIna();                     // Fast Na current
-  updateInab();                    // Late Na current
-                                   /*    if(opts & INS)
-                                           updateIns();*/    // Plateau K current
+  updateIlca();                 // L-type Ca current
+  updateIcab();                 // Background Ca current
+  updateIpca();                 // Sarcolemmal Ca pump
+  updateIto_f();                // Transient outward K current
+  updateIto_s();                // Transient outward K current
+  updateIk1();                  // Time-independent K current
+  updateIks();                  // Slow delayed rectifier current
+  updateIkur();                 // Slow delayed rectifier current
+  updateIkss();                 // Slow delayed rectifier current
+  updateIkr();                  // Rapid delayed rectifier current
+  if (trekflag) updateItrek();  // Transient outward K current
+  updateInak();                 // Na-K pump
+  updateInaca();                // Na-Ca exchanger
+  updateIclca();                // Na-Ca exchanger
+  updateIna();                  // Fast Na current
+  updateInab();                 // Late Na current
+  if (insflag) updateIns();     // Plateau K current
 
   iNat = iNa + iNab + 3 * iNak + 3 * iNaca + iNsna;
   iCait = iCab - 2 * iNaca + iPca;
@@ -609,108 +616,196 @@ double Br04::tstep(double stimt) {
     dt = 0.0005;  // 0.008
   else
     dt = 0.0005;  // 0.008
+
+  this->apTime += dt;
   return t;
 }
 
 // Create map for easy retrieval of variable values.
 void Br04::makemap() {
-  __vars["vOld"] = &vOld;
-  __vars["t"] = &t;
-  __vars["dVdt"] = &dVdt;
-  __vars["caI"] = &caI;
-  __vars["caSs"] = &caSs;
-  __vars["caJsr"] = &caJsr;
-  __vars["caNsr"] = &caNsr;
-  __vars["csqn"] = &csqn;
-  __vars["naI"] = &naI;
-  __vars["kI"] = &kI;
-  __vars["iCal"] = &iCal;
-  __vars["iCab"] = &iCab;
-  __vars["iPca"] = &iPca;
-  __vars["iTo_f"] = &iTo_f;
-  __vars["iTo_s"] = &iTo_s;
-  __vars["iK1"] = &iK1;
-  __vars["iKs"] = &iKs;
-  __vars["iKur"] = &iKur;
-  __vars["iKss"] = &iKss;
-  __vars["iKr"] = &iKr;
-  __vars["iTrek"] = &iTrek;
-  __vars["iNak"] = &iNak;
-  __vars["iNaca"] = &iNaca;
-  __vars["iClca"] = &iClca;
-  __vars["iNa"] = &iNa;
-  __vars["iNab"] = &iNab;
-  __vars["J_rel"] = &J_rel;
-  __vars["tRel"] = &tRel;
-  __vars["J_up"] = &J_up;
-  __vars["J_leak"] = &J_leak;
-  __vars["J_tr"] = &J_tr;
-  __vars["J_xfer"] = &J_xfer;
-  __vars["Gate.a_to_f"] = &gate.a_to_f;
-  __vars["Gate.i_to_f"] = &gate.i_to_f;
-  __vars["Hate.nks"] = &gate.nks;
-  __vars["Gate.a_to_s"] = &gate.a_to_s;
-  __vars["Gate.i_to_s"] = &gate.i_to_s;
-  __vars["Gate.a_ur"] = &gate.a_ur;
-  __vars["Gate.i_ur"] = &gate.i_ur;
-  __vars["Gate.a_Kss"] = &gate.a_Kss;
-  __vars["Gate.i_Kss"] = &gate.i_Kss;
-  __vars["PO1"] = &PO1;
-  __vars["PO2"] = &PO2;
-  __vars["PC1"] = &PC1;
-  __vars["PC2"] = &PC2;
-  __vars["PRyr"] = &PRyr;
-  __vars["O"] = &O;
-  __vars["OK"] = &OK;
-  __vars["C2"] = &C2;
-  __vars["C3"] = &C3;
-  __vars["C4"] = &C4;
-  __vars["I1"] = &I1;
-  __vars["I2"] = &I2;
-  __vars["I3"] = &I3;
-  __vars["IK"] = &IK;
-  __vars["CNa2"] = &CNa2;
-  __vars["CNa1"] = &CNa1;
-  __vars["CK1"] = &CK1;
-  __vars["CK2"] = &CK2;
-  __vars["ONa"] = &ONa;
-  __vars["IFNa"] = &IFNa;
-  __vars["I1Na"] = &I1Na;
-  __vars["I2Na"] = &I2Na;
-  __vars["ICNa2"] = &ICNa2;
-  __vars["ICNa3"] = &ICNa3;
-  __vars["caTrpn_low"] = &caTrpn_low;
-  __vars["caTrpn_high"] = &caTrpn_high;
+  CellKernel::insertVar("vOld", &vOld);
+  ;
+  CellKernel::insertVar("t", &t);
+  ;
+  CellKernel::insertVar("dVdt", &dVdt);
+  ;
+  CellKernel::insertVar("caI", &caI);
+  ;
+  CellKernel::insertVar("caSs", &caSs);
+  ;
+  CellKernel::insertVar("caJsr", &caJsr);
+  ;
+  CellKernel::insertVar("caNsr", &caNsr);
+  ;
+  CellKernel::insertVar("csqn", &csqn);
+  ;
+  CellKernel::insertVar("naI", &naI);
+  ;
+  CellKernel::insertVar("kI", &kI);
+  ;
+  CellKernel::insertVar("iCal", &iCal);
+  ;
+  CellKernel::insertVar("iCab", &iCab);
+  ;
+  CellKernel::insertVar("iPca", &iPca);
+  ;
+  CellKernel::insertVar("iTo_f", &iTo_f);
+  ;
+  CellKernel::insertVar("iTo_s", &iTo_s);
+  ;
+  CellKernel::insertVar("iK1", &iK1);
+  ;
+  CellKernel::insertVar("iKs", &iKs);
+  ;
+  CellKernel::insertVar("iKur", &iKur);
+  ;
+  CellKernel::insertVar("iKss", &iKss);
+  ;
+  CellKernel::insertVar("iKr", &iKr);
+  ;
+  CellKernel::insertVar("iTrek", &iTrek);
+  ;
+  CellKernel::insertVar("iNak", &iNak);
+  ;
+  CellKernel::insertVar("iNaca", &iNaca);
+  ;
+  CellKernel::insertVar("iClca", &iClca);
+  ;
+  CellKernel::insertVar("iNa", &iNa);
+  ;
+  CellKernel::insertVar("iNab", &iNab);
+  ;
+  CellKernel::insertVar("J_rel", &J_rel);
+  ;
+  CellKernel::insertVar("tRel", &tRel);
+  ;
+  CellKernel::insertVar("J_up", &J_up);
+  ;
+  CellKernel::insertVar("J_leak", &J_leak);
+  ;
+  CellKernel::insertVar("J_tr", &J_tr);
+  ;
+  CellKernel::insertVar("J_xfer", &J_xfer);
+  ;
+  CellKernel::insertVar("Gate.a_to_f", &gate.a_to_f);
+  CellKernel::insertVar("Gate.i_to_f", &gate.i_to_f);
+  CellKernel::insertVar("Gate.nks", &gate.nks);
+  CellKernel::insertVar("Gate.a_to_s", &gate.a_to_s);
+  CellKernel::insertVar("Gate.i_to_s", &gate.i_to_s);
+  CellKernel::insertVar("Gate.a_ur", &gate.a_ur);
+  CellKernel::insertVar("Gate.i_ur", &gate.i_ur);
+  CellKernel::insertVar("Gate.a_Kss", &gate.a_Kss);
+  CellKernel::insertVar("Gate.i_Kss", &gate.i_Kss);
+  CellKernel::insertVar("PO1", &PO1);
+  ;
+  CellKernel::insertVar("PO2", &PO2);
+  ;
+  CellKernel::insertVar("PC1", &PC1);
+  ;
+  CellKernel::insertVar("PC2", &PC2);
+  ;
+  CellKernel::insertVar("PRyr", &PRyr);
+  ;
+  CellKernel::insertVar("O", &O);
+  ;
+  CellKernel::insertVar("OK", &OK);
+  ;
+  CellKernel::insertVar("C2", &C2);
+  ;
+  CellKernel::insertVar("C3", &C3);
+  ;
+  CellKernel::insertVar("C4", &C4);
+  ;
+  CellKernel::insertVar("I1", &I1);
+  ;
+  CellKernel::insertVar("I2", &I2);
+  ;
+  CellKernel::insertVar("I3", &I3);
+  ;
+  CellKernel::insertVar("IK", &IK);
+  ;
+  CellKernel::insertVar("CNa2", &CNa2);
+  ;
+  CellKernel::insertVar("CNa1", &CNa1);
+  ;
+  CellKernel::insertVar("CK1", &CK1);
+  ;
+  CellKernel::insertVar("CK2", &CK2);
+  ;
+  CellKernel::insertVar("ONa", &ONa);
+  ;
+  CellKernel::insertVar("IFNa", &IFNa);
+  ;
+  CellKernel::insertVar("I1Na", &I1Na);
+  ;
+  CellKernel::insertVar("I2Na", &I2Na);
+  ;
+  CellKernel::insertVar("ICNa2", &ICNa2);
+  ;
+  CellKernel::insertVar("ICNa3", &ICNa3);
+  ;
+  CellKernel::insertVar("caTrpn_low", &caTrpn_low);
+  ;
+  CellKernel::insertVar("caTrpn_high", &caTrpn_high);
+  ;
 
-  __pars["IcalFactor"] = &IcalFactor;
-  __pars["IcabFactor"] = &IcabFactor;
-  __pars["ItofFactor"] = &ItofFactor;
-  __pars["ItosFactor"] = &ItosFactor;
-  __pars["Ik1Factor"] = &Ik1Factor;
-  __pars["IksFactor"] = &IksFactor;
-  __pars["IkurFactor"] = &IkurFactor;
-  __pars["IkssFactor"] = &IkssFactor;
-  __pars["IkrFactor"] = &IkrFactor;
-  __pars["ItrekFactor"] = &ItrekFactor;
-  __pars["InaFactor"] = &InaFactor;
-  __pars["InabFactor"] = &InabFactor;
-  __pars["InakFactor"] = &InakFactor;
-  __pars["InacaFactor"] = &InacaFactor;
-  __pars["IclcaFactor"] = &IclcaFactor;
-  __pars["InskFactor"] = &InskFactor;
-  __pars["InsnaFactor"] = &InsnaFactor;
-  __pars["JrelFactor"] = &JrelFactor;
-  __pars["JleakFactor"] = &JleakFactor;
-  __pars["JxferFactor"] = &JxferFactor;
-  __pars["JupFactor"] = &JupFactor;
-  __pars["JtrFactor"] = &JtrFactor;
-  __pars["JtrpnFactor"] = &JtrpnFactor;
-  //    __pars["TestFactor"] = &TestFactor;
-  //    __pars["TestFactor2"] = &TestFactor2;
+  CellKernel::insertPar("IcalFactor", &IcalFactor);
+  ;
+  CellKernel::insertPar("IcabFactor", &IcabFactor);
+  ;
+  CellKernel::insertPar("ItofFactor", &ItofFactor);
+  ;
+  CellKernel::insertPar("ItosFactor", &ItosFactor);
+  ;
+  CellKernel::insertPar("Ik1Factor", &Ik1Factor);
+  ;
+  CellKernel::insertPar("IksFactor", &IksFactor);
+  ;
+  CellKernel::insertPar("IkurFactor", &IkurFactor);
+  ;
+  CellKernel::insertPar("IkssFactor", &IkssFactor);
+  ;
+  CellKernel::insertPar("IkrFactor", &IkrFactor);
+  ;
+  CellKernel::insertPar("ItrekFactor", &ItrekFactor);
+  ;
+  CellKernel::insertPar("InaFactor", &InaFactor);
+  ;
+  CellKernel::insertPar("InabFactor", &InabFactor);
+  ;
+  CellKernel::insertPar("InakFactor", &InakFactor);
+  ;
+  CellKernel::insertPar("InacaFactor", &InacaFactor);
+  ;
+  CellKernel::insertPar("IclcaFactor", &IclcaFactor);
+  ;
+  CellKernel::insertPar("InskFactor", &InskFactor);
+  ;
+  CellKernel::insertPar("InsnaFactor", &InsnaFactor);
+  ;
+  CellKernel::insertPar("JrelFactor", &JrelFactor);
+  ;
+  CellKernel::insertPar("JleakFactor", &JleakFactor);
+  ;
+  CellKernel::insertPar("JxferFactor", &JxferFactor);
+  ;
+  CellKernel::insertPar("JupFactor", &JupFactor);
+  ;
+  CellKernel::insertPar("JtrFactor", &JtrFactor);
+  ;
+  CellKernel::insertPar("JtrpnFactor", &JtrpnFactor);
+  CellKernel::insertPar("IpcaFactor", &IpcaFactor);
+  //    CellKernel::insertPar("TestFactor",&TestFactor);
+  //    CellKernel::insertPar("TestFactor2",&TestFactor2);
 }
 
 const char *Br04::type() const {
-  return "Mouse Ventricular (Bondarenko 2004)";
-};
+    return "Mouse Ventricular (Bondarenko 2004)";
+}
 
-MAKE_OPTIONS_FUNCTIONS(Br04)
+const char *Br04::citation() const
+{
+    return "Bondarenko, V. E. “Computer Model of Action Potential of Mouse Ventricular\n"
+           "\tMyocytes.” AJP: Heart and Circulatory Physiology, vol. 287, no. 3, 2004, pp.\n"
+           "\tH1378–403, doi:10.1152/ajpheart.00185.2003.";
+};

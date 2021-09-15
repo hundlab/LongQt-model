@@ -98,8 +98,11 @@ void MeasureVoltage::calcMeasure(double time, double var) {
     ddrfound = true;
   }
 
-  if (var > repol &&
-      !inAP) {  // t1 for dur calculation = first time var crosses repol.
+  if (var > repol && minfound && !inAP &&
+      var > (min.second +
+             std::abs(min.second) * 0.5 *
+                 (1 - __percrepol * 0.01))) {  // t1 for dur calculation = first
+                                               // time var crosses repol.
     durtime1 =
         time;  // will depend on __percrepol default is 50 but can be changed.
     inAP = true;
@@ -146,6 +149,8 @@ void MeasureVoltage::reset() {
 void MeasureVoltage::percrepol(double val) { this->__percrepol = val; }
 
 double MeasureVoltage::percrepol() const { return this->__percrepol; }
+
+const char* MeasureVoltage::type() const { return "Measure Voltage"; }
 
 void MeasureVoltage::beforeOutput() {
   //    sd = std::sqrt(avg_2-avg*avg);

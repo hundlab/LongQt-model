@@ -2,6 +2,8 @@ INCLUDEPATH += $$PWD $$PWD/cell $$PWD/structure $$PWD/protocol
 #RESOURCES += LongQt-model.qrc
 
 SOURCES += $$PWD/measure.cpp\
+    $$PWD/cell/Koivumaki.cpp \
+    $$PWD/cell/gpbatrial_different_ina.cpp \
     $$PWD/measuremanager.cpp\
     $$PWD/gridmeasuremanager.cpp\
     $$PWD/cell/hrd09_bz.cpp\
@@ -22,7 +24,6 @@ SOURCES += $$PWD/measure.cpp\
     $$PWD/cell/OHaraRudyEpi.cpp\
     $$PWD/cell/OHaraRudyM.cpp\
     $$PWD/cell/FR.cpp\
-    $$PWD/iobase.cpp\
     $$PWD/structure/fiber.cpp\
     $$PWD/structure/node.cpp\
     $$PWD/structure/grid.cpp\
@@ -41,12 +42,16 @@ SOURCES += $$PWD/measure.cpp\
     $$PWD/logger.cpp \
     $$PWD/measurevoltage.cpp \
     $$PWD/measuredefault.cpp \
-    $$PWD/threadpool.cpp
+    $$PWD/threadpool.cpp \
+    $$PWD/cell/coupledinexcitablecell.cpp \
+    $$PWD/measurefactory.cpp \
+    $$PWD/datareader.cpp
 
 HEADERS  += $$PWD/measuremanager.h\
+    $$PWD/cell/Koivumaki.h \
+    $$PWD/cell/gpbatrial_different_ina.h \
     $$PWD/gridmeasuremanager.h\
     $$PWD/measure.h\
-    $$PWD/tridag.h\
     $$PWD/cell/gpbatrial.h\
     $$PWD/cell/gridCell.h\
     $$PWD/cell/hrd09.h\
@@ -54,7 +59,6 @@ HEADERS  += $$PWD/measuremanager.h\
     $$PWD/cell/kurata08.h\
     $$PWD/cell/tnnp04.h\
     $$PWD/cell/cell_kernel.h\
-    $$PWD/cell/cell_kernel.hpp\
     $$PWD/cell/gpbhuman.h\
     $$PWD/cell/ksan.h\
     $$PWD/cell/gpbatrialonal17.h\
@@ -65,7 +69,6 @@ HEADERS  += $$PWD/measuremanager.h\
     $$PWD/cell/OHaraRudyEpi.h\
     $$PWD/cell/OHaraRudyM.h\
     $$PWD/cell/FR.h\
-    $$PWD/iobase.h\
     $$PWD/cellutils.h\
     $$PWD/structure/grid.h\
     $$PWD/structure/node.h\
@@ -82,9 +85,11 @@ HEADERS  += $$PWD/measuremanager.h\
     $$PWD/runsim.h \
     $$PWD/pvarscell.h \
     $$PWD/logger.h \
-    $$PWD/cell/cell_kernel.hpp \
     $$PWD/cellutils_core.h \
     $$PWD/cellutils_core.hpp \
     $$PWD/measurevoltage.h \
     $$PWD/measuredefault.h \
-    $$PWD/threadpool.h
+    $$PWD/threadpool.h \
+    $$PWD/cell/coupledinexcitablecell.h \
+    $$PWD/measurefactory.h \
+    $$PWD/datareader.h

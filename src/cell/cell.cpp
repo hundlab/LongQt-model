@@ -9,69 +9,116 @@
 #include "cell.h"
 #include <QFile>
 #include <sstream>
+#include <iomanip>
 #include "cellutils.h"
 #include "logger.h"
 using namespace LongQt;
 using namespace std;
 
-bool Cell::setOuputfileVariables(string filename) {
-  return setOutputfile(filename, this->varsSelection, &varsofile);
+Cell::Cell() : CellKernel() {
+    varsSelection.insert("t");
+    varsSelection.insert("vOld");
+}
+
+Cell::Cell(const Cell &toCopy) : CellKernel(toCopy) {
+    parsSelection = toCopy.parsSelection;
+    varsSelection = toCopy.varsSelection;
+}
+
+void Cell::setOuputfileVariables(string filename) {
+  varsofile.open(filename, std::ios_base::app);
+  varsofile << std::scientific;
+  varsofile << std::setprecision(12);
+  if (!varsofile.good()) {
+    varsofile.close();
+    Logger::getInstance()->write<std::runtime_error>(
+        "Cell: Error Opening \'{}\'", filename);
+  }
+  bool first = true;
+  for (auto& sel : this->getVariableSelection()) {
+    if (first) {
+      first = false;
+    } else {
+      varsofile << '\t';
+    }
+    varsofile << sel;
+  }
+  varsofile << '\n';
 };
 
-bool Cell::setOutputfileConstants(string filename) {
-  return setOutputfile(filename, this->parsSelection, &parsofile);
+void Cell::setOutputfileConstants(string filename) {
+    parsofile.open(filename, std::ios_base::app);
+    parsofile << std::scientific;
+    if (!parsofile.good()) {
+    parsofile.close();
+    Logger::getInstance()->write<std::runtime_error>(
+        "Cell: Error Opening \'{}\'", filename);
+  }
 };
 
-void Cell::writeVariables() { write(varsSelection, this->__vars, &varsofile); }
+void Cell::writeVariables() {
+  bool first = true;
+  for (auto& sel : this->varsSelection) {
+    if (!first) {
+      varsofile << '\t';
+    } else {
+      first = false;
+    }
+    auto var = this->var(sel);
+    varsofile << var;
+  }
+  varsofile << '\n';
+}
 
-void Cell::writeConstants() { write(parsSelection, this->__pars, &parsofile); }
+std::vector<double> Cell::getVariablesVals() {
+  std::vector<double> res(this->varsSelection.size());
+  int i = 0;
+  for (auto& sel : this->varsSelection) {
+    res[i] = this->var(sel);
+    ++i;
+  }
+  return res;
+}
 
-bool Cell::setConstantSelection(set<string> selection) {
-  return setSelection(this->__pars, &this->parsSelection, selection,
-                      &parsofile);
+void Cell::writeConstants() {
+  bool first = true;
+  for (auto& sel : this->parsSelection) {
+    if (!first) {
+      parsofile << "\t";
+    } else {
+      first = false;
+    }
+    parsofile << this->par(sel);
+  }
+  parsofile << '\n';
+}
+
+void Cell::setConstantSelection(set<string> selection) {
+  parsSelection.clear();
+  for (auto& sel : selection) {
+    if (this->hasPar(sel)) {
+      parsSelection.insert(sel);
+    } else {
+      Logger::getInstance()->write("Cell: constant \"{}\" is not a var in cell", sel);
+    }
+  }
 };
 
-bool Cell::setVariableSelection(set<string> selection) {
-  return setSelection(this->__vars, &this->varsSelection, selection,
-                      &varsofile);
+void Cell::setVariableSelection(set<string> selection) {
+  varsSelection.clear();
+  for (auto& sel : selection) {
+    if (this->hasVar(sel)) {
+      varsSelection.insert(sel);
+    } else {
+      Logger::getInstance()->write("Cell: variable \"{}\" is not a par in cell", sel);
+    }
+  }
 };
 
 set<string> Cell::getConstantSelection() { return parsSelection; }
 
 set<string> Cell::getVariableSelection() { return varsSelection; }
 
-bool Cell::setSelection(map<string, double*> map, set<string>* old_selection,
-                        set<string> new_selection, ofstream* ofile) {
-  bool toReturn = true;
-  set<string>::iterator set_it;
-
-  *old_selection = set<string>();
-
-  for (set_it = new_selection.begin(); set_it != new_selection.end();
-       set_it++) {
-    if (map.find(*set_it) != map.end()) {
-      old_selection->insert(*set_it);
-    } else {
-      toReturn = false;
-    }
-  }
-  if (!ofile->good()) {
-    return toReturn;
-  }
-  ofile->seekp(0);
-  for (set<string>::iterator it = old_selection->begin();
-       it != old_selection->end(); it++) {
-    *ofile << *it << "\t";
-  }
-  *ofile << endl;
-
-  return toReturn;
-};
-
-void Cell::closeFiles() {
-  IOBase::closeFile(&parsofile);
-  IOBase::closeFile(&varsofile);
-}
 bool Cell::writeCellState(string file) {
   QFile ofile(file.c_str());
   string name;
@@ -94,19 +141,19 @@ bool Cell::writeCellState(QXmlStreamWriter& xml) {
   xml.writeAttribute("type", this->type());
 
   xml.writeStartElement("pars");
-  for (auto& par : this->__pars) {
+  for (auto& par : this->pars()) {
     xml.writeStartElement("par");
-    xml.writeAttribute("name", par.first.c_str());
-    xml.writeCharacters(QString::number(*par.second));
+    xml.writeAttribute("name", par.c_str());
+    xml.writeCharacters(QString::number(this->par(par)));
     xml.writeEndElement();
   }
   xml.writeEndElement();
 
   xml.writeStartElement("vars");
-  for (auto& var : this->__vars) {
+  for (auto& var : this->vars()) {
     xml.writeStartElement("var");
-    xml.writeAttribute("name", var.first.c_str());
-    xml.writeCharacters(QString::number(*var.second));
+    xml.writeAttribute("name", var.c_str());
+    xml.writeCharacters(QString::number(this->var(var)));
     xml.writeEndElement();
   }
   xml.writeEndElement();
@@ -144,7 +191,7 @@ bool Cell::readCellState(QXmlStreamReader& xml) {
     double val = xml.text().toDouble(&ok);
     if (ok) {
       try {
-        *(this->__pars.at(name)) = val;
+        this->setPar(name, val);
       } catch (const std::out_of_range&) {
         Logger::getInstance()->write("Cell: {} not in cell pars", name);
       }
@@ -159,7 +206,7 @@ bool Cell::readCellState(QXmlStreamReader& xml) {
     double val = xml.text().toDouble(&ok);
     if (ok) {
       try {
-        *(this->__vars.at(name)) = val;
+        this->setVar(name, val);
       } catch (const std::out_of_range&) {
         Logger::getInstance()->write("Cell: {} not in cell vars", name);
       }
@@ -167,4 +214,9 @@ bool Cell::readCellState(QXmlStreamReader& xml) {
     xml.readNext();
   }
   return true;
+}
+
+void Cell::closeFiles() {
+  this->parsofile.close();
+  this->varsofile.close();
 }

@@ -1,21 +1,18 @@
 #include "fiber.h"
-#include "tridag.h"
 using namespace LongQt;
 using namespace std;
 
-Fiber::Fiber(int size) {
+Fiber::Fiber(int size, CellUtils::Side dir) {
+  this->setOrderedSides(dir);
   unsigned int i = static_cast<int>(nodes.size());
   nodes.resize(size, NULL);
-  B.resize(size + 1);
   for (; i < nodes.size(); i++) {
     nodes[i] = make_shared<Node>();
-    B[i] = 0;
   }
-  B[size] = 0;
 }
-Fiber::Fiber(const Fiber& o) {
-  this->B = o.B;
+Fiber::Fiber(const Fiber &o) {
   this->nodes = o.nodes;
+  this->directions = o.directions;
   /*
   this->nodes.resize(o.nodes.size());
   for(unsigned int i = 0; i < o.nodes.size(); ++i) {
@@ -23,50 +20,42 @@ Fiber::Fiber(const Fiber& o) {
   }*/
 }
 Fiber::~Fiber() {}
+
 //#############################################################
 // Solve PDE for Vm along fiber using tridiagonal solver.
 //#############################################################
-void Fiber::updateVm(const double& dt) {
+void Fiber::updateVm(const double &dt) {
   int i;
   int nn = static_cast<int>(nodes.size());
+
   if (nn <= 1) {
     return;
   }
 
-  diffuseTop(0);
-  nodes[0]->r = (B[1] * dt - 2) * nodes[0]->cell->vOld -
-                B[1] * dt * nodes[1]->cell->vOld +
-                dt / nodes[0]->cell->Cm *
-                    (nodes[0]->cell->iTotold + nodes[0]->cell->iTot);
   for (i = 0; i < nn; i++) {
-    nodes[i]->d1 = B[i] * dt;
-    nodes[i]->d2 = -(B[i] * dt + B[i + 1] * dt + 2);
-    nodes[i]->d3 = B[i + 1] * dt;
-    if (i > 0 && i < (nn - 1)) {
-      diffuse(i);
-      nodes[i]->r = -B[i] * dt * nodes[i - 1]->cell->vOld +
-                    (B[i] * dt + B[i + 1] * dt - 2) * nodes[i]->cell->vOld -
-                    B[i + 1] * dt * nodes[i + 1]->cell->vOld +
-                    dt / nodes[i]->cell->Cm *
-                        (nodes[i]->cell->iTotold + nodes[i]->cell->iTot);
-    }
+    double vOldp = i - 1 >= 0 ? nodes[i - 1]->cell()->vOld : 0;
+    double vOldc = nodes[i]->cell()->vOld;
+    double vOldn = i + 1 < nn ? nodes[i + 1]->cell()->vOld : 0;
+    d1[i] = B[i] * dt;
+    d2[i] = -(B[i] * dt + B[i + 1] * dt + 2);
+    d3[i] = B[i + 1] * dt;
+    nodes[i]->cell()->iTot -=
+        B[i] * (vOldp - vOldc) - B[i + 1] * (vOldc - vOldn);
+    r[i] = dt * (nodes[i]->cell()->iTotold + nodes[i]->cell()->iTot) /
+               nodes[i]->cell()->Cm -
+           (d1[i] * vOldp + (d2[i] + 4) * vOldc + d3[i] * vOldn);
   }
-  diffuseBottom(nn - 1);
-  nodes[nn - 1]->r =
-      -B[nn - 1] * dt * nodes[nn - 2]->cell->vOld +
-      (B[nn - 1] * dt - 2) * nodes[nn - 1]->cell->vOld +
-      dt / nodes[nn - 1]->cell->Cm *
-          (nodes[nn - 1]->cell->iTotold + nodes[nn - 1]->cell->iTot);
 
-  tridag(nodes);
+  this->tridag();
 
   for (i = 0; i < nn; i++) {
-    nodes[i]->cell->iTotold = nodes[i]->cell->iTot;
-    nodes[i]->cell->dVdt = (nodes[i]->vNew - nodes[i]->cell->vOld) / dt;
+    nodes[i]->cell()->iTotold = nodes[i]->cell()->iTot;
+    nodes[i]->cell()->dVdt =
+        (nodes[i]->cell()->vNew - nodes[i]->cell()->vOld) / dt;
     //##### Conservation for multicellular fiber ############
-    nodes[i]->dIax = -(nodes[i]->cell->dVdt + nodes[i]->cell->iTot);
-    nodes[i]->cell->iKt = nodes[i]->cell->iKt + nodes[i]->dIax;
-    nodes[i]->cell->setV(nodes[i]->vNew);
+    nodes[i]->dIax = -(nodes[i]->cell()->dVdt + nodes[i]->cell()->iTot);
+    nodes[i]->cell()->iKt = nodes[i]->cell()->iKt + nodes[i]->dIax;
+    //    nodes[i]->cell->setV();
   }
 }
 shared_ptr<Node> Fiber::operator[](int pos) {
@@ -79,19 +68,22 @@ shared_ptr<Node> Fiber::operator[](int pos) {
 shared_ptr<Node> Fiber::at(int pos) { return this->nodes.at(pos); }
 
 int Fiber::size() const { return nodes.size(); }
-void Fiber::diffuseBottom(int node) {
-  nodes[node]->cell->iTot -=
-      B[node] * (nodes[node - 1]->cell->vOld - nodes[node]->cell->vOld);
+
+void Fiber::setup() {
+  int nn = static_cast<int>(nodes.size());
+  gam.resize(nn);
+  d1.resize(nn);
+  d2.resize(nn);
+  d3.resize(nn);
+  r.resize(nn);
+
+  B.resize(nn + 1);
+  for (unsigned int i = 0; i < nodes.size(); ++i) {
+    B[i] = nodes[i]->getCondConst(directions[0]);
+    B[i + 1] = nodes[i]->getCondConst(directions[1]);
+  }
 }
-void Fiber::diffuseTop(int node) {
-  nodes[node]->cell->iTot -=
-      -B[node + 1] * (nodes[node]->cell->vOld - nodes[node + 1]->cell->vOld);
-}
-void Fiber::diffuse(int node) {
-  nodes[node]->cell->iTot -=
-      B[node] * (nodes[node - 1]->cell->vOld - nodes[node]->cell->vOld) -
-      B[node + 1] * (nodes[node]->cell->vOld - nodes[node + 1]->cell->vOld);
-}
+
 /*
 //#############################################################
 // Dynamic time step for one-dimensional fiber.
@@ -123,6 +115,116 @@ int Fiber::tstep()
      return 1;
 }*/
 
-Fiber::const_iterator Fiber::begin() const { return nodes.begin(); }
+Fiber::FiberIterator Fiber::begin() { return FiberIterator(this); }
 
-Fiber::const_iterator Fiber::end() const { return nodes.end(); }
+Fiber::FiberIterator Fiber::end() { return FiberIterator(0); }
+
+void Fiber::setOrderedSides(CellUtils::Side s) {
+  using namespace CellUtils;
+  if (s == Side::top || s == Side::bottom) {
+    this->directions = {Side::top, Side::bottom};
+  } else {  // if(s == Side::left || s == Side::right) {
+    this->directions = {Side::left, Side::right};
+  }
+}
+
+void Fiber::tridag() {
+  int j;
+  double bet;
+
+  int nn = static_cast<int>(nodes.size());
+  if (d2[0] == 0.0) {
+    Logger::getInstance()->write("Error 1 in tridag");
+  }
+
+  nodes[0]->cell()->vNew = r[0] / (bet = d2[0]);
+  for (j = 1; j < nn; j++) {
+    gam[j] = d3[j - 1] / bet;
+    bet = d2[j] - d1[j] * gam[j];
+    if (bet == 0.0) {
+      Logger::getInstance()->write("Error 2 in tridag");
+    }
+    nodes[j]->cell()->vNew = (r[j] - d1[j] * nodes[j - 1]->cell()->vNew) / bet;
+  }
+  for (j = (nn - 2); j >= 0; j--) {
+    nodes[j]->cell()->vNew -= gam[j + 1] * nodes[j + 1]->cell()->vNew;
+  }
+}
+
+Fiber::FiberIterator::FiberIterator(Fiber *parent) : parent(parent) {
+  if (!this->parent || this->parent->size() == 0) {
+    pos = -1;
+  }
+}
+
+Fiber::FiberIterator &Fiber::FiberIterator::operator++() {
+  if (pos < 0) return *this;
+  ++pos;
+  if (pos >= parent->size()) {
+    pos = -1;
+  }
+  return *this;
+}
+
+Fiber::FiberIterator Fiber::FiberIterator::operator++(int) {
+  FiberIterator tmp(*this);
+  operator++();
+  return tmp;
+}
+
+Fiber::FiberIterator &Fiber::FiberIterator::operator--() {
+  if (pos < 0) return *this;
+  --pos;
+  if (pos < 0) {
+    pos = -1;
+  }
+  return *this;
+}
+
+Fiber::FiberIterator Fiber::FiberIterator::operator--(int) {
+  FiberIterator tmp(*this);
+  operator--();
+  return tmp;
+}
+
+Fiber::FiberIterator &Fiber::FiberIterator::operator+=(int i) {
+  if (pos < 0) return *this;
+  pos += i;
+  if (pos < 0 || pos >= parent->size()) {
+    pos = -1;
+  }
+  return *this;
+}
+
+Fiber::FiberIterator &Fiber::FiberIterator::operator-=(int i) {
+  if (pos < 0) return *this;
+  pos -= i;
+  if (pos < 0 || pos >= parent->size()) {
+    pos = -1;
+  }
+  return *this;
+}
+
+Fiber::FiberIterator Fiber::FiberIterator::operator+(int i) {
+  FiberIterator tmp(*this);
+  tmp += i;
+  return tmp;
+}
+
+Fiber::FiberIterator Fiber::FiberIterator::operator-(int i) {
+  FiberIterator tmp(*this);
+  tmp -= i;
+  return tmp;
+}
+
+bool Fiber::FiberIterator::operator==(const Fiber::FiberIterator &rhs) const {
+  return (pos == rhs.pos);
+}
+
+bool Fiber::FiberIterator::operator!=(const Fiber::FiberIterator &rhs) const {
+  return !operator==(rhs);
+}
+
+std::shared_ptr<Node> Fiber::FiberIterator::operator*() {
+  return (*parent)[pos];
+}

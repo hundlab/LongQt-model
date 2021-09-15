@@ -27,8 +27,8 @@
 namespace LongQt {
 
 namespace CellUtils {
-//version number for LongQt-model
-static const char* version = "v0.4";
+// version number for LongQt
+static const char* version = "v0.5";
 
 /*
  * Side provides a consistent system for numbering sides in 2D grids
@@ -73,7 +73,20 @@ inline bool stob(const std::string& s) {
  * splits s on delim into a list of strings not including delim
  * does not keep empty strings
  */
-std::vector<std::string> split(std::string s, char delim);
+std::vector<std::string> split(std::string s, char delim,
+                               bool keepEmpty = false);
+
+/*
+ * breaks a opts based on seperator and then converts that to a flag of opts
+ * or'ed together
+ */
+std::map<std::string, bool> strToFlag(std::string opts, char seperator = '|');
+
+/*
+ * constructs opts string from opts int flags using seperator
+ */
+std::string flagToStr(std::map<std::string, bool> optsMap,
+                      char seperator = '|');
 
 /*
  * Create formated string, similar to python with {}

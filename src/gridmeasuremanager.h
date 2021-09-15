@@ -1,7 +1,6 @@
 #ifndef GRIDMEASUREMANAGER_H
 #define GRIDMEASUREMANAGER_H
 
-#include <QFile>
 #include "grid.h"
 #include "gridCell.h"
 #include "measure.h"
@@ -23,24 +22,25 @@ class GridMeasureManager : public MeasureManager {
   void dataNodes(std::set<std::pair<int, int>> nodes);
   std::set<std::pair<int, int>> dataNodes();
 
-  virtual bool writeMVarsFile(QXmlStreamWriter& xml);
-  virtual bool readMvarsFile(QXmlStreamReader& xml);
+  bool writeMVarsFile(QXmlStreamWriter& xml);
+  bool readMvarsFile(QXmlStreamReader& xml);
 
-  virtual void setupMeasures(std::string filename);
-  virtual void measure(double time);
-  virtual void write(QFile* file = 0);
-  virtual void writeSingleCell(std::pair<int, int> node, QFile* file = 0);
-  virtual void writeLast(std::string filename);
-  virtual std::string nameString(std::pair<int, int> node) const;
-  virtual void close();
-  virtual void resetMeasures(std::pair<int, int> node);
+  void setupMeasures();
+  void measure(double time, bool write = false) override;
+  void write(std::string filename);
+  std::string nameString(std::pair<int, int> node) const;
+  void resetMeasures(std::pair<int, int> node);
+  void saveCurrent() override;
 
  private:
+  void saveSingleCell(std::pair<int, int> node);
+
   std::set<std::pair<int, int>> __dataNodes;
-  std::map<std::pair<int, int>, std::shared_ptr<QFile>> ofiles;
-  std::map<std::pair<int, int>, std::string> lasts;
   std::map<std::pair<int, int>, std::map<std::string, std::shared_ptr<Measure>>>
       measures;
+  std::string header = "";
+  std::map<std::pair<int, int>, std::vector<std::vector<double>>> data;
+  std::map<std::pair<int, int>, int> numSelected;
   Grid* grid = 0;
 };
 }  // namespace LongQt

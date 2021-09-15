@@ -33,15 +33,6 @@ void Courtemanche98::Initialize() {
   cellLength = 0.01;
   Rcg = 1.0;
 
-  Vcell = 1000 * 3.14 * cellRadius * cellRadius * cellLength;
-  AGeo =
-      2 * 3.14 * cellRadius * cellRadius + 2 * 3.14 * cellRadius * cellLength;
-  ACap = AGeo;
-  Vmyo = 0.68 * Vcell;  // 13668; //uL, 13668 um3
-  Vup = 0.0552 *
-        Vcell;  // 1109.52; //uL,  1109.52 um3... SR compartment uptake volume
-  Vrel = 0.0048 *
-         Vcell;  // 96.48; //uL,  96.48 um3... SR compartment release volume
   //#### Initialize ion channel gates ####
   Gate.m = 0.0;
   Gate.h = 1.0;
@@ -101,7 +92,20 @@ Courtemanche98 *Courtemanche98::clone() { return new Courtemanche98(*this); }
 // Destructor for control human
 // atrial model.
 //#####################################################
-Courtemanche98::~Courtemanche98(){};
+Courtemanche98::~Courtemanche98() {}
+
+void Courtemanche98::setup() {
+  Cell::setup();
+  Vcell = 1000 * 3.14 * cellRadius * cellRadius * cellLength;
+  AGeo =
+      2 * 3.14 * cellRadius * cellRadius + 2 * 3.14 * cellRadius * cellLength;
+  ACap = AGeo;
+  Vmyo = 0.68 * Vcell;  // 13668; //uL, 13668 um3
+  Vup = 0.0552 *
+        Vcell;  // 1109.52; //uL,  1109.52 um3... SR compartment uptake volume
+  Vrel = 0.0048 *
+         Vcell;  // 96.48; //uL,  96.48 um3... SR compartment release volume
+};
 
 // L-type Ca current
 void Courtemanche98::updateiCal() {  // slow inward Ca2+ current, L-type
@@ -489,59 +493,66 @@ void Courtemanche98::updateConc() {
   updatecaUp();
   updatecaRel();
 };
-// External stimulus.
-void Courtemanche98::externalStim(double stimval) { iTot = iTot + stimval; }
+
 // Create map for easy retrieval of variable values.
 void Courtemanche98::makemap() {
-  __vars["vOld"] = &vOld;
-  __vars["t"] = &t;
-  __vars["dVdt"] = &dVdt;
-  __vars["naI"] = &naI;
-  __vars["kI"] = &kI;
-  __vars["caI"] = &caI;
-  __vars["caUp"] = &caUp;
-  __vars["caRel"] = &caRel;
-  __vars["trpn"] = &caTrpn;
-  __vars["cmdn"] = &caCmdn;
-  __vars["csqn"] = &caCsqn;
-  __vars["iRel"] = &iRel;
-  __vars["iUp"] = &iUp;
-  __vars["iLeak"] = &iUp_leak;
-  __vars["iTr"] = &iTr;
-  __vars["Gate.d"] = &Gate.d;
-  __vars["Gate.f"] = &Gate.f;
-  __vars["Gate.fCa"] = &Gate.fCa;
-  __vars["Gate.u"] = &Gate.u;
-  __vars["iCab"] = &iCab;
-  __vars["iNab"] = &iNab;
-  __vars["ipCa"] = &ipCa;
-  __vars["iNa"] = &iNa;
-  __vars["iCal"] = &iCal;
-  __vars["Gate.v"] = &Gate.v;
-  __vars["Gate.w"] = &Gate.w;
-  __vars["Gate.m"] = &Gate.m;
-  __vars["Gate.h"] = &Gate.h;
-  __vars["Gate.j"] = &Gate.j;
-  __vars["iNak"] = &iNak;
-  __vars["iNaca"] = &iNaca;
-  __vars["iTo"] = &iTo;
-  __vars["iKur"] = &iKur;
-  __vars["Gate.ua"] = &Gate.ua;
-  __vars["Gate.ui"] = &Gate.ui;
-  __vars["Gate.oa"] = &Gate.oa;
-  __vars["Gate.oi"] = &Gate.oi;
-  __vars["iKs"] = &iKs;
-  __vars["Gate.xs"] = &Gate.xs;
-  __vars["iKr"] = &iKr;
-  __vars["Gate.xr"] = &Gate.xr;
-  __vars["iK1"] = &iK1;
+  CellKernel::insertVar("vOld",&vOld);
+  CellKernel::insertVar("t",&t);
+  CellKernel::insertVar("dVdt",&dVdt);
+  CellKernel::insertVar("naI",&naI);
+  CellKernel::insertVar("kI",&kI);
+  CellKernel::insertVar("caI",&caI);
+  CellKernel::insertVar("caUp",&caUp);
+  CellKernel::insertVar("caRel",&caRel);
+  CellKernel::insertVar("trpn",&caTrpn);
+  CellKernel::insertVar("cmdn",&caCmdn);
+  CellKernel::insertVar("csqn",&caCsqn);
+  CellKernel::insertVar("iRel",&iRel);
+  CellKernel::insertVar("iUp",&iUp);
+  CellKernel::insertVar("iLeak",&iUp_leak);
+  CellKernel::insertVar("iTr",&iTr);
+  CellKernel::insertVar("Gate.d",&Gate.d);
+  CellKernel::insertVar("Gate.f",&Gate.f);
+  CellKernel::insertVar("Gate.fCa",&Gate.fCa);
+  CellKernel::insertVar("Gate.u",&Gate.u);
+  CellKernel::insertVar("iCab",&iCab);
+  CellKernel::insertVar("iNab",&iNab);
+  CellKernel::insertVar("ipCa",&ipCa);
+  CellKernel::insertVar("iNa",&iNa);
+  CellKernel::insertVar("iCal",&iCal);
+  CellKernel::insertVar("Gate.v",&Gate.v);
+  CellKernel::insertVar("Gate.w",&Gate.w);
+  CellKernel::insertVar("Gate.m",&Gate.m);
+  CellKernel::insertVar("Gate.h",&Gate.h);
+  CellKernel::insertVar("Gate.j",&Gate.j);
+  CellKernel::insertVar("iNak",&iNak);
+  CellKernel::insertVar("iNaca",&iNaca);
+  CellKernel::insertVar("iTo",&iTo);
+  CellKernel::insertVar("iKur",&iKur);
+  CellKernel::insertVar("Gate.ua",&Gate.ua);
+  CellKernel::insertVar("Gate.ui",&Gate.ui);
+  CellKernel::insertVar("Gate.oa",&Gate.oa);
+  CellKernel::insertVar("Gate.oi",&Gate.oi);
+  CellKernel::insertVar("iKs",&iKs);
+  CellKernel::insertVar("Gate.xs",&Gate.xs);
+  CellKernel::insertVar("iKr",&iKr);
+  CellKernel::insertVar("Gate.xr",&Gate.xr);
+  CellKernel::insertVar("iK1",&iK1);
 
-  __vars["iCat"] = &iCat;
-  __vars["iNat"] = &iNat;
-  __vars["iKt"] = &iKt;
+  CellKernel::insertVar("iCat",&iCat);
+  CellKernel::insertVar("iNat",&iNat);
+  CellKernel::insertVar("iKt",&iKt);
   // vars["iTot"] = &iTot;
 }
 
 const char *Courtemanche98::type() const {
-  return "Human Atrial (Courtemanche 1998)";
+    return "Human Atrial (Courtemanche 1998)";
+}
+
+const char *Courtemanche98::citation() const
+{
+    return  "Courtemanche, Marc, et al. “Ionic Mechanisms Underlying Human Atrial Action\n"
+            "\tPotential Properties: Insights from a Mathematical Model.” The American Journal\n"
+            "\tof Physiology, vol. 275, no. 1 Pt 2, July 1998, pp. H301-21,\n"
+            "\thttp://www.ncbi.nlm.nih.gov/pubmed/9688927.";
 }

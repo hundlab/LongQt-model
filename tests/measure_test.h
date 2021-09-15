@@ -30,7 +30,7 @@ TEST(measure, getNameSring_normal) {
 
   std::string res = meas.getNameString("asdf");
   std::sort(res.begin(), res.end());
-  std::string ans = "asdf/amp\tasdf/avg\tasdf/min\tasdf/stdev\t";
+  std::string ans = "asdf/amp\tasdf/avg\tasdf/min\tasdf/stdev";
   std::sort(ans.begin(), ans.end());
   EXPECT_EQ(ans, res);
 }
@@ -52,7 +52,7 @@ TEST(measure, getNameSring_no_name) {
 
   std::string res = meas.getNameString("");
   std::sort(res.begin(), res.end());
-  std::string ans = "/avg\t/min\t/stdev\t";
+  std::string ans = "/avg\t/min\t/stdev";
   std::sort(ans.begin(), ans.end());
   EXPECT_EQ(ans, res);
 }
@@ -63,7 +63,7 @@ TEST(measure, getValueString_normal) {
 
   std::string res = meas.getValueString();
   std::sort(res.begin(), res.end());
-  std::string ans = "nan\t0.000000e+00\tinf\t0.000000e+00\t";
+  std::string ans = "nan\t0.000000e+00\tinf\t0.000000e+00";
   std::sort(ans.begin(), ans.end());
   EXPECT_EQ(ans, res);
 }
@@ -84,20 +84,34 @@ inline void compareMap(std::map<std::string, double> ans,
   //    EXPECT_EQ(res,ans);
 
   // write result
-  /*
-      std::cout << "{";
-      for(auto& pair: ans) {
-          std::stringstream result;
-          if(std::isnan(res[pair.first])) {
-              result << "Q_NAN";
-          } else if(std::isinf(res[pair.first])) {
-              result << "INF";
-          } else {
-              result << res[pair.first];
-          }
-          std::cout << "{\"" << pair.first << "\", " << result.str() << "}, ";
-      }
-      std::cout << "}" << std::endl;*/
+
+/*  std::cout << "{";
+  for (auto& pair : ans) {
+    std::stringstream result;
+    if (std::isnan(res[pair.first])) {
+      result << "Q_NAN";
+    } else if (std::isinf(res[pair.first])) {
+      result << "INF";
+    } else {
+      result << res[pair.first];
+    }
+    std::cout << "{\"" << pair.first << "\", " << result.str() << "}, ";
+  }
+  std::cout << "}" << std::endl;
+
+  std::cout << "{";
+  for (auto& pair : ans) {
+    std::stringstream result;
+    if (std::isnan(pair.second)) {
+      result << "Q_NAN";
+    } else if (std::isinf(pair.second)) {
+      result << "INF";
+    } else {
+      result << pair.second;
+    }
+    std::cout << "{\"" << pair.first << "\", " << result.str() << "}, ";
+  }
+  std::cout << "}" << std::endl;*/
 
   for (auto& pair : ans) {
     if (std::isnan(pair.second)) {
@@ -190,13 +204,14 @@ TEST(measure_default, measure_hrd09) {
   }
 }
 
-TEST(measure_voltage, measure50_square_wave) {
+TEST(measure_voltage, measure_resets_square_wave) {
   std::ifstream ist("./tests/time_square_wave.csv");
   std::istream_iterator<double> startt(ist), end;
   std::vector<double> times(startt, end);
   std::ifstream isv("./tests/value_square_wave.csv");
   std::istream_iterator<double> startv(isv);
   std::vector<double> values(startv, end);
+  double wavelength = 20;
 
   ASSERT_NE(values.size(), 0) << "Values not found."
                               << " working dir should be project dir";
@@ -206,214 +221,77 @@ TEST(measure_voltage, measure50_square_wave) {
   std::set<std::string> sel = {
       "peak", "min", "maxderiv", "mint",     "derivt",     "maxt",     "cl",
       "amp",  "ddr", "dur",      "durtime1", "vartakeoff", "deriv2ndt"};
-  std::vector<std::map<std::string, double>> ans = {{{"amp", Q_NAN},
-                                                     {"cl", 0},
-                                                     {"ddr", Q_NAN},
-                                                     {"deriv2ndt", Q_NAN},
-                                                     {"derivt", 0.01},
-                                                     {"dur", 9.99},
-                                                     {"durtime1", 0.01},
-                                                     {"maxderiv", 0},
-                                                     {"maxt", Q_NAN},
-                                                     {"min", -150},
-                                                     {"mint", 10},
-                                                     {"peak", -INF},
-                                                     {"vartakeoff", Q_NAN}},
-                                                    {{"amp", 200},
-                                                     {"cl", Q_NAN},
-                                                     {"ddr", 20.02},
-                                                     {"deriv2ndt", 20},
-                                                     {"derivt", 20},
-                                                     {"dur", 10},
-                                                     {"durtime1", 20},
-                                                     {"maxderiv", 20000},
-                                                     {"maxt", 20.01},
-                                                     {"min", -150},
-                                                     {"mint", 10.01},
-                                                     {"peak", 50},
-                                                     {"vartakeoff", 50}},
-                                                    {{"amp", 200},
-                                                     {"cl", 20},
-                                                     {"ddr", 20.02},
-                                                     {"deriv2ndt", 40},
-                                                     {"derivt", 40},
-                                                     {"dur", 10},
-                                                     {"durtime1", 40},
-                                                     {"maxderiv", 20000},
-                                                     {"maxt", 40.01},
-                                                     {"min", -150},
-                                                     {"mint", 30.01},
-                                                     {"peak", 50},
-                                                     {"vartakeoff", 50}},
-                                                    {{"amp", 200},
-                                                     {"cl", 20},
-                                                     {"ddr", 20.02},
-                                                     {"deriv2ndt", 60},
-                                                     {"derivt", 60},
-                                                     {"dur", 10},
-                                                     {"durtime1", 60},
-                                                     {"maxderiv", 20000},
-                                                     {"maxt", 60.01},
-                                                     {"min", -150},
-                                                     {"mint", 50.01},
-                                                     {"peak", 50},
-                                                     {"vartakeoff", 50}},
-                                                    {{"amp", 200},
-                                                     {"cl", 20},
-                                                     {"ddr", 20.02},
-                                                     {"deriv2ndt", 80},
-                                                     {"derivt", 80},
-                                                     {"dur", 10},
-                                                     {"durtime1", 80},
-                                                     {"maxderiv", 20000},
-                                                     {"maxt", 80.01},
-                                                     {"min", -150},
-                                                     {"mint", 70.01},
-                                                     {"peak", 50},
-                                                     {"vartakeoff", 50}},
-                                                    {{"amp", -INF},
-                                                     {"cl", 20},
-                                                     {"ddr", 20.02},
-                                                     {"deriv2ndt", 80},
-                                                     {"derivt", 90},
-                                                     {"dur", 10},
-                                                     {"durtime1", 80},
-                                                     {"maxderiv", 0},
-                                                     {"maxt", 80.01},
-                                                     {"min", -150},
-                                                     {"mint", 90.01},
-                                                     {"peak", -INF},
-                                                     {"vartakeoff", 50}}};
+
+  std::vector<std::map<std::string, double>> ans = {
+      {{"min", -150}, {"mint", 10}},
+      {{"amp", 200},
+       {"ddr", 204.082},
+       {"deriv2ndt", 20},
+       {"derivt", 20},
+       {"dur", 10},
+       {"durtime1", 20},
+       {"maxderiv", 20000},
+       {"maxt", 20.01},
+       {"min", -150},
+       {"mint", 19.02},
+       {"peak", 50},
+       {"vartakeoff", 50}},
+      {{"amp", 200},
+       {"cl", 20},
+       {"ddr", 204.082},
+       {"deriv2ndt", 40},
+       {"derivt", 40},
+       {"dur", 10},
+       {"durtime1", 40},
+       {"maxderiv", 20000},
+       {"maxt", 40.01},
+       {"min", -150},
+       {"mint", 39.02},
+       {"peak", 50},
+       {"vartakeoff", 50}},
+      {{"amp", 200},
+       {"cl", 20},
+       {"ddr", 204.082},
+       {"deriv2ndt", 60},
+       {"derivt", 60},
+       {"dur", 10},
+       {"durtime1", 60},
+       {"maxderiv", 20000},
+       {"maxt", 60.01},
+       {"min", -150},
+       {"mint", 59.02},
+       {"peak", 50},
+       {"vartakeoff", 50}},
+      {{"amp", 200},
+       {"cl", 20},
+       {"ddr", 204.082},
+       {"deriv2ndt", 80},
+       {"derivt", 80},
+       {"dur", 10},
+       {"durtime1", 80},
+       {"maxderiv", 20000},
+       {"maxt", 80.01},
+       {"min", -150},
+       {"mint", 79.02},
+       {"peak", 50},
+       {"vartakeoff", 50}}};
 
   int count = 0;
   auto meas = MeasureVoltage(sel);
   meas.percrepol(50);
+  double treset = 19;
   for (int i = 0; i < values.size() && i < times.size(); i++) {
-    bool reset = meas.measure(times[i], values[i]);
-    if (reset) {
+    count += meas.measure(times[i], values[i]);
+    if (times[i] > treset) {
       auto res = meas.variablesMap();
       //            EXPECT_EQ(res,ans);
       compareMap(ans[count], res);
-      count++;
       meas.reset();
+      treset += wavelength;
     }
   }
   auto res = meas.variablesMap();
-  ASSERT_EQ(count, 5);
-  EXPECT_NO_THROW(compareMap(ans[count], res));
-}
-
-TEST(measure_voltage, measure90_square_wave) {
-  std::ifstream ist("./tests/time_square_wave.csv");
-  std::istream_iterator<double> startt(ist), end;
-  std::vector<double> times(startt, end);
-  std::ifstream isv("./tests/value_square_wave.csv");
-  std::istream_iterator<double> startv(isv);
-  std::vector<double> values(startv, end);
-
-  ASSERT_NE(values.size(), 0) << "Values not found."
-                              << " working dir should be project dir";
-  ASSERT_NE(times.size(), 0) << "Times not found."
-                             << " working dir should be project dir";
-
-  std::set<std::string> sel = {
-      "peak", "min", "maxderiv", "mint",     "derivt",     "maxt",     "cl",
-      "amp",  "ddr", "dur",      "durtime1", "vartakeoff", "deriv2ndt"};
-  std::vector<std::map<std::string, double>> ans = {{{"amp", Q_NAN},
-                                                     {"cl", 0},
-                                                     {"ddr", Q_NAN},
-                                                     {"deriv2ndt", Q_NAN},
-                                                     {"derivt", 0.01},
-                                                     {"dur", 9.99},
-                                                     {"durtime1", 0.01},
-                                                     {"maxderiv", 0},
-                                                     {"maxt", Q_NAN},
-                                                     {"min", -150},
-                                                     {"mint", 10},
-                                                     {"peak", -INF},
-                                                     {"vartakeoff", Q_NAN}},
-                                                    {{"amp", 200},
-                                                     {"cl", Q_NAN},
-                                                     {"ddr", 20.02},
-                                                     {"deriv2ndt", 20},
-                                                     {"derivt", 20},
-                                                     {"dur", 10},
-                                                     {"durtime1", 20},
-                                                     {"maxderiv", 20000},
-                                                     {"maxt", 20.01},
-                                                     {"min", -150},
-                                                     {"mint", 10.01},
-                                                     {"peak", 50},
-                                                     {"vartakeoff", 50}},
-                                                    {{"amp", 200},
-                                                     {"cl", 20},
-                                                     {"ddr", 20.02},
-                                                     {"deriv2ndt", 40},
-                                                     {"derivt", 40},
-                                                     {"dur", 10},
-                                                     {"durtime1", 40},
-                                                     {"maxderiv", 20000},
-                                                     {"maxt", 40.01},
-                                                     {"min", -150},
-                                                     {"mint", 30.01},
-                                                     {"peak", 50},
-                                                     {"vartakeoff", 50}},
-                                                    {{"amp", 200},
-                                                     {"cl", 20},
-                                                     {"ddr", 20.02},
-                                                     {"deriv2ndt", 60},
-                                                     {"derivt", 60},
-                                                     {"dur", 10},
-                                                     {"durtime1", 60},
-                                                     {"maxderiv", 20000},
-                                                     {"maxt", 60.01},
-                                                     {"min", -150},
-                                                     {"mint", 50.01},
-                                                     {"peak", 50},
-                                                     {"vartakeoff", 50}},
-                                                    {{"amp", 200},
-                                                     {"cl", 20},
-                                                     {"ddr", 20.02},
-                                                     {"deriv2ndt", 80},
-                                                     {"derivt", 80},
-                                                     {"dur", 10},
-                                                     {"durtime1", 80},
-                                                     {"maxderiv", 20000},
-                                                     {"maxt", 80.01},
-                                                     {"min", -150},
-                                                     {"mint", 70.01},
-                                                     {"peak", 50},
-                                                     {"vartakeoff", 50}},
-                                                    {{"amp", -INF},
-                                                     {"cl", 20},
-                                                     {"ddr", 20.02},
-                                                     {"deriv2ndt", 80},
-                                                     {"derivt", 90},
-                                                     {"dur", 10},
-                                                     {"durtime1", 80},
-                                                     {"maxderiv", 0},
-                                                     {"maxt", 80.01},
-                                                     {"min", -150},
-                                                     {"mint", 90.01},
-                                                     {"peak", -INF},
-                                                     {"vartakeoff", 50}}};
-
-  int count = 0;
-  auto meas = MeasureVoltage(sel);
-  meas.percrepol(90);
-  for (int i = 0; i < values.size() && i < times.size(); i++) {
-    bool reset = meas.measure(times[i], values[i]);
-    if (reset) {
-      auto res = meas.variablesMap();
-      //            EXPECT_EQ(res,ans);
-      compareMap(ans[count], res);
-      count++;
-      meas.reset();
-    }
-  }
-  auto res = meas.variablesMap();
-  ASSERT_EQ(count, 5);
-  compareMap(ans[count], res);
+  ASSERT_EQ(count, 4);
 }
 
 TEST(measure_voltage, measure90_hrd09) {

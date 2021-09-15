@@ -132,8 +132,5 @@ void SettingsIO::readdvars(shared_ptr<Protocol> proto, QXmlStreamReader& xml) {
     selection.insert(xml.text().toString().toStdString());
     xml.readNext();
   }
-  if (!proto->cell()->setVariableSelection(selection)) {
-    Logger::getInstance()->write(
-        "SettingsIO: Some dvars were not vars in cell");
-  }
+  proto->cell()->setVariableSelection(selection);
 }

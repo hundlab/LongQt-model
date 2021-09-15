@@ -56,6 +56,7 @@ inline std::string trim(std::string str) {
 
 template <typename... Args>
 inline std::string strprintf(const std::string& format, Args... args) {
+  if(format.find("{") == std::string::npos) return format;
   std::vector<std::string> texts;
   std::vector<std::string> formats;
   std::vector<std::string> values;

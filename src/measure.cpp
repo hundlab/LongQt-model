@@ -16,7 +16,7 @@ using namespace LongQt;
 using namespace std;
 
 Measure::Measure(std::map<string, double* const> varmap, set<string> selected) {
-  this->varmap = varmap;
+  this->varmap.swap(varmap);
   this->selection(selected);
 };
 
@@ -52,19 +52,42 @@ map<string, double> Measure::variablesMap() {
 }
 
 string Measure::getNameString(string name) const {
+  bool first = true;
   string nameStr = "";
   for (auto& sel : this->__selection) {
-    nameStr += name + "/" + sel + "\t";
+    if (first) {
+      first = false;
+    } else {
+      nameStr += "\t";
+    }
+    nameStr += name + "/" + sel;
   }
   return nameStr;
 }
 string Measure::getValueString() {
+  bool first = true;
   this->beforeOutput();
   std::ostringstream valStr;
   for (auto& sel : this->__selection) {
-    valStr << std::scientific << *this->varmap.at(sel) << "\t";
+    if (!first) {
+      valStr << "\t";
+    } else {
+      first = false;
+    }
+    valStr << std::scientific << *this->varmap.at(sel);
   }
   return valStr.str();
+}
+
+std::vector<double> Measure::getValues() {
+  this->beforeOutput();
+  std::vector<double> dat(this->selection().size());
+  int i = 0;
+  for (auto& sel : this->__selection) {
+    dat[i] = *this->varmap.at(sel);
+    ++i;
+  }
+  return dat;
 }
 
 set<string> Measure::selection() { return this->__selection; }

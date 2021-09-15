@@ -17,4 +17,9 @@ void InexcitableCell::updateConc() {}
 
 const char *InexcitableCell::type() const { return "Inexcitable Cell"; }
 
+const char *InexcitableCell::citation() const
+{
+    return "";
+}
+
 void InexcitableCell::Initialize() {}

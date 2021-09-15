@@ -96,7 +96,9 @@ void Kurata08::Initialize() {
 
   iCait = iCart = 0.0;
 
-  opts = WT;
+  this->insertOpt("TREK", &trekflag, "include the trek channel");
+  //  this->insertOpt("ISO", &isoflag, "Isoproterenol");
+  makemap();
 };
 
 Kurata08::Kurata08(const Kurata08 &toCopy) : Cell(toCopy) {
@@ -164,12 +166,12 @@ void Kurata08::updateIkr() {
   double ek = (RGAS * TEMP / FDAY) * log(kO / kI);  // mV
   double isofact = 1;
 
-  //        if(opts & ISO) {
-  //            pafinf = pasinf = 1/(1+exp(-(vOld+33.2)/10.6));
-  //        } else {
-  pafinf = pasinf =
-      1 / (1 + exp(-(vOld + 23.2) / 10.6));  //+23.2 or 33.2 for iso
-                                             //        }
+  if (isoflag) {
+    pafinf = pasinf = 1 / (1 + exp(-(vOld + 33.2) / 10.6));
+  } else {
+    pafinf = pasinf =
+        1 / (1 + exp(-(vOld + 23.2) / 10.6));  //+23.2 or 33.2 for iso
+  }
   // Zhang et al.
   // pafinf = pasinf = 1/(1+exp(-(vOld+14.2)/10.6));  //+23.2 or 33.2 for iso
   taupaf =
@@ -187,9 +189,9 @@ void Kurata08::updateIkr() {
   Gate.pi = piinf - (piinf - Gate.pi) * exp(-dt / taupi);
 
   // from Demir et al. AJP Heart 1999
-  //        if(opts & ISO) {
-  //            isofact=0.62*(1+2.6129*(cAmp/(cAmp+9.0)))-0.025;
-  //        }
+  //  if (isoflag) {
+  //    isofact = 0.62 * (1 + 2.6129 * (cAmp / (cAmp + 9.0))) - 0.025;
+  //  }
   iKr =
       gkr * isofact * (0.6 * Gate.paf + 0.4 * Gate.pas) * Gate.pi * (vOld - ek);
 };
@@ -269,9 +271,9 @@ void Kurata08::updateIst() {
   double isofact = 0;  // effect of iso on conductance
   double vhalf = -57.0;
 
-  //        if(opts & ISO) {
-  //            vhalf = -15.0*isoConc/(0.00226+isoConc);
-  //        }
+  if (isoflag) {
+    vhalf = -15.0 * isoConc / (0.00226 + isoConc);
+  }
   alphaqa = 1 / (0.15 * exp(-vOld / 11.0) + 0.2 * exp(-vOld / 700.0));
   betaqa = 1 / (16.0 * exp(vOld / 8.0) + 15.0 * exp(vOld / 50.0));
   qainf = 1 / (1 + exp(-(vOld - vhalf) / 5.0));
@@ -286,9 +288,9 @@ void Kurata08::updateIst() {
   Gate.qa = qainf - (qainf - Gate.qa) * exp(-dt / tauqa);
   Gate.qi = qiinf - (qiinf - Gate.qi) * exp(-dt / tauqi);
 
-  //        if(opts & ISO) {
-  //            isofact=0.964*isoConc/(0.00226+isoConc);
-  //        }
+  if (isoflag) {
+    isofact = 0.964 * isoConc / (0.00226 + isoConc);
+  }
   iSt = gSt * (1 + isofact) * Gate.qa * Gate.qi * (vOld - est);
 };
 // Na+ background current
@@ -384,9 +386,9 @@ void Kurata08::updateIup() {
   //        double deltaiup=.75;
   double isofact = 0;
 
-  //        if(opts & ISO) {
-  //            isofact = 0.85*pow(isoConc,0.934)/(pow(isoConc,0.934)+0.0052);
-  //        }
+  if (isoflag) {
+    isofact = 0.85 * pow(isoConc, 0.934) / (pow(isoConc, 0.934) + 0.0052);
+  }
   iUp = iUpbar * (1 + isofact) * caI / (caI + kmup);
 };
 // Transfer from NSR to JSR^M
@@ -487,7 +489,7 @@ void Kurata08::updateCurr() {
   updateIks();    // Slow delayed rectifier current
   updateIkr();    // Rapid delayed rectifier current
   updateI4ap();   // Transient outward K current
-  if (opts & TREK) {
+  if (trekflag) {
     updateItrek();  // Transient outward K current
   }
   updateIkach();  // Transient outward K current
@@ -520,77 +522,82 @@ void Kurata08::externalStim(double stimval) {
 
 void Kurata08::makemap() {
   // add to vars map declared/defined in cell.h and cell.cpp
-  __vars["naI"] = &naI;
-  __vars["kI"] = &kI;
-  __vars["caI"] = &caI;
-  __vars["caR"] = &caR;
-  __vars["caJsr"] = &caJsr;
-  __vars["caNsr"] = &caNsr;
-  __vars["trpnCa"] = &trpnCa;
-  __vars["trpnMg"] = &trpnMg;
-  __vars["trpnMgmg"] = &trpnMgmg;
-  __vars["cmdnI"] = &cmdnI;
-  __vars["cmdnR"] = &cmdnR;
-  __vars["csqn"] = &csqn;
-  __vars["iRel"] = &iRel;
-  __vars["iUp"] = &iUp;
-  __vars["iTr"] = &iTr;
-  __vars["iDiff"] = &iDiff;
-  __vars["iSt"] = &iSt;
-  __vars["Gate.qa"] = &Gate.qa;
-  __vars["Gate.qi"] = &Gate.qi;
-  __vars["iNab"] = &iNab;
-  __vars["iCal"] = &iCal;
-  __vars["Gate.d"] = &Gate.d;
-  __vars["Gate.f"] = &Gate.f;
-  __vars["Gate.fca"] = &Gate.fca;
-  __vars["iCatt"] = &iCatt;
-  __vars["Gate.dt"] = &Gate.dt;
-  __vars["Gate.ft"] = &Gate.ft;
-  __vars["iNak"] = &iNak;
-  __vars["iNaca"] = &iNaca;
-  __vars["iTo"] = &iTo;
-  __vars["iTrek"] = &iTrek;
-  __vars["iSus"] = &iSus;
-  __vars["Gate.q"] = &Gate.q;
-  __vars["Gate.r"] = &Gate.r;
-  __vars["iKs"] = &iKs;
-  __vars["Gate.n"] = &Gate.n;
-  __vars["iKr"] = &iKr;
-  __vars["Gate.paf"] = &Gate.paf;
-  __vars["Gate.pas"] = &Gate.pas;
-  __vars["Gate.pi"] = &Gate.pi;
-  __vars["iKach"] = &iKach;
-  __vars["iH"] = &iH;
-  __vars["iHna"] = &iHna;
-  __vars["iHk"] = &iHk;
-  __vars["Gate.y"] = &Gate.y;
+  CellKernel::insertVar("naI", &naI);
+  CellKernel::insertVar("kI", &kI);
+  CellKernel::insertVar("caI", &caI);
+  CellKernel::insertVar("caR", &caR);
+  CellKernel::insertVar("caJsr", &caJsr);
+  CellKernel::insertVar("caNsr", &caNsr);
+  CellKernel::insertVar("trpnCa", &trpnCa);
+  CellKernel::insertVar("trpnMg", &trpnMg);
+  CellKernel::insertVar("trpnMgmg", &trpnMgmg);
+  CellKernel::insertVar("cmdnI", &cmdnI);
+  CellKernel::insertVar("cmdnR", &cmdnR);
+  CellKernel::insertVar("csqn", &csqn);
+  CellKernel::insertVar("iRel", &iRel);
+  CellKernel::insertVar("iUp", &iUp);
+  CellKernel::insertVar("iTr", &iTr);
+  CellKernel::insertVar("iDiff", &iDiff);
+  CellKernel::insertVar("iSt", &iSt);
+  CellKernel::insertVar("Gate.qa", &Gate.qa);
+  CellKernel::insertVar("Gate.qi", &Gate.qi);
+  CellKernel::insertVar("iNab", &iNab);
+  CellKernel::insertVar("iCal", &iCal);
+  CellKernel::insertVar("Gate.d", &Gate.d);
+  CellKernel::insertVar("Gate.f", &Gate.f);
+  CellKernel::insertVar("Gate.fca", &Gate.fca);
+  CellKernel::insertVar("iCatt", &iCatt);
+  CellKernel::insertVar("Gate.dt", &Gate.dt);
+  CellKernel::insertVar("Gate.ft", &Gate.ft);
+  CellKernel::insertVar("iNak", &iNak);
+  CellKernel::insertVar("iNaca", &iNaca);
+  CellKernel::insertVar("iTo", &iTo);
+  CellKernel::insertVar("iTrek", &iTrek);
+  CellKernel::insertVar("iSus", &iSus);
+  CellKernel::insertVar("Gate.q", &Gate.q);
+  CellKernel::insertVar("Gate.r", &Gate.r);
+  CellKernel::insertVar("iKs", &iKs);
+  CellKernel::insertVar("Gate.n", &Gate.n);
+  CellKernel::insertVar("iKr", &iKr);
+  CellKernel::insertVar("Gate.paf", &Gate.paf);
+  CellKernel::insertVar("Gate.pas", &Gate.pas);
+  CellKernel::insertVar("Gate.pi", &Gate.pi);
+  CellKernel::insertVar("iKach", &iKach);
+  CellKernel::insertVar("iH", &iH);
+  CellKernel::insertVar("iHna", &iHna);
+  CellKernel::insertVar("iHk", &iHk);
+  CellKernel::insertVar("Gate.y", &Gate.y);
   //    vars["iCait"]=&iCait;
   //    vars["iCart"]=&iCart;
 
-  __pars["Vnsr"] = &Vnsr;
-  __pars["Vjsr"] = &Vjsr;
-  __pars["Vss"] = &Vss;
-  __pars["naO"] = &naO;
-  __pars["kO"] = &kO;
-  __pars["caO"] = &caO;
-  __pars["icalFactor"] = &icalFactor;
-  __pars["icattFactor"] = &icattFactor;
-  __pars["ikrFactor"] = &ikrFactor;
-  __pars["iksFactor"] = &iksFactor;
-  __pars["itoFactor"] = &itoFactor;
-  __pars["itrekFactor"] = &itrekFactor;
-  __pars["isusFactor"] = &isusFactor;
-  __pars["ikachFactor"] = &ikachFactor;
-  __pars["istFactor"] = &istFactor;
-  __pars["inabFactor"] = &inabFactor;
-  __pars["inakFactor"] = &inakFactor;
-  __pars["inacaFactor"] = &inacaFactor;
-  __pars["ihFactor"] = &ihFactor;
-  __pars["iupFactor"] = &iupFactor;
-  __pars["irelFactor"] = &irelFactor;
+  CellKernel::insertPar("Vnsr", &Vnsr);
+  CellKernel::insertPar("Vjsr", &Vjsr);
+  CellKernel::insertPar("Vss", &Vss);
+  CellKernel::insertPar("naO", &naO);
+  CellKernel::insertPar("kO", &kO);
+  CellKernel::insertPar("caO", &caO);
+  CellKernel::insertPar("IcalFactor", &icalFactor);
+  CellKernel::insertPar("IcattFactor", &icattFactor);
+  CellKernel::insertPar("IkrFactor", &ikrFactor);
+  CellKernel::insertPar("IksFactor", &iksFactor);
+  CellKernel::insertPar("ItoFactor", &itoFactor);
+  CellKernel::insertPar("ItrekFactor", &itrekFactor);
+  CellKernel::insertPar("IsusFactor", &isusFactor);
+  CellKernel::insertPar("IkachFactor", &ikachFactor);
+  CellKernel::insertPar("IstFactor", &istFactor);
+  CellKernel::insertPar("InabFactor", &inabFactor);
+  CellKernel::insertPar("InakFactor", &inakFactor);
+  CellKernel::insertPar("InacaFactor", &inacaFactor);
+  CellKernel::insertPar("IhFactor", &ihFactor);
+  CellKernel::insertPar("IupFactor", &iupFactor);
+  CellKernel::insertPar("IrelFactor", &irelFactor);
 }
 
 const char *Kurata08::type() const { return "Rabbit Sinus Node (Kurata 2008)"; }
 
-MAKE_OPTIONS_FUNCTIONS(Kurata08)
+const char *Kurata08::citation() const
+{
+    return "Kurata, Yasutaka, et al. “Regional Difference in Dynamical Property of\n"
+           "\tSinoatrial Node Pacemaking: Role of Na+channel Current.” Biophysical Journal,\n"
+           "\tvol. 95, no. 2, 2008, pp. 951–77, doi:10.1529/biophysj.107.112854.";
+}

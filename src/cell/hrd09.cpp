@@ -27,6 +27,7 @@ HRD09Control::~HRD09Control(){};
 
 //##### Initialize variables ##################
 void HRD09Control::Initialize() {
+  //  using nan = std::numeric_limits<double>::quiet_NaN;
   dVdt = /*dVdtmax=*/5.434230843e-10;  // check
   Cm = 1.0;  // uF/cm2  must be defined for fiber...default = 1.
   t = 0.0;   // check
@@ -37,6 +38,7 @@ void HRD09Control::Initialize() {
   vOld /*= vNew */ = -87.21621716;  // check
   tRel = 10000.0;
   sponRelflag = 0;
+  sponRelT = std::numeric_limits<double>::quiet_NaN();
 
   apTime = 0.0;
 
@@ -56,17 +58,6 @@ void HRD09Control::Initialize() {
   cellRadius = 0.0011;  // must be defined for fiber...default = 0.001;
   cellLength = 0.01;
   Rcg = 2.0;  // must be defined for fiber...default = 1.
-
-  Vcell = 1000 * 3.14 * cellRadius * cellRadius * cellLength;
-  AGeo =
-      2 * 3.14 * cellRadius * cellRadius + 2 * 3.14 * cellRadius * cellLength;
-  ACap = AGeo * Rcg;
-  Vmyo = Vcell * 0.66;
-  Vmito = Vcell * 0.26;
-  Vsr = Vcell * 0.06;
-  Vnsr = Vsr * 0.92;
-  Vjsr = Vsr * 0.08;
-  Vss = Vcell * 0.02;
 
   //#### Initialize ion channel gatess ####
   Gate.m = 0.00106712815;     // check
@@ -108,8 +99,6 @@ void HRD09Control::Initialize() {
   fOx = 0;                   // check
   fOxP = 0;                  // check
   fPhos = 8.382592879e-09;   // check
-
-  caTotal = caI + cmdn + trpn;
 
   iCab = -0.1545414915;    // check
   iCa = -0.0002372516075;  // check
@@ -157,11 +146,30 @@ void HRD09Control::Initialize() {
   Itrfactor = 1;
   Iupfactor = 1;
   Ileakfactor = 1;
+  ROSConc = 0;
+
+  this->insertOpt("TREK", &trekflag, "include the trek channel");
 
   makemap();
 }
 // overriden deep copy funtion
 HRD09Control* HRD09Control::clone() { return new HRD09Control(*this); }
+
+void HRD09Control::setup() {
+  Cell::setup();
+  Vcell = 1000 * 3.14 * cellRadius * cellRadius * cellLength;
+  AGeo =
+      2 * 3.14 * cellRadius * cellRadius + 2 * 3.14 * cellRadius * cellLength;
+  ACap = AGeo * Rcg;
+  Vmyo = Vcell * 0.66;
+  Vmito = Vcell * 0.26;
+  Vsr = Vcell * 0.06;
+  Vnsr = Vsr * 0.92;
+  Vjsr = Vsr * 0.08;
+  Vss = Vcell * 0.02;
+
+  caTotal = caI + cmdn + trpn;
+}
 // L-type Ca current
 void HRD09Control::updateIlca() {
   double taud, finf, fcainf, fcainf2, taufca, taufca2, tauf,
@@ -250,7 +258,8 @@ void HRD09Control::updateItrek() {
   // TREK-1 with more rectification
   // ref 10.1161/JAHA.115.002865 hund
   double gk = ItrekFactor * .03011;
-  double prna = 0.01833;  // from iks
+
+  double prna = TrekPrnaFactor;// * 0.01833;  // from iks
   double prk = 1;
   double EK = RGAS * TEMP / FDAY *
               log((prk * kO + prna * naO) / (prk * kI + prna * naI));
@@ -258,7 +267,7 @@ void HRD09Control::updateItrek() {
   double aa = 1 / (1 + exp(-(vOld - 65) / 52));  // from Kim J Gen Physiol 1992
 
   iTrek = gk * aa * (vOld - EK);  // apex vs. septum???
-                                                           // TJH
+                                  // TJH
   iTrek_k = prk / (prna + prk) * iTrek;
   iTrek_na = prna / (prna + prk) * iTrek;
 }
@@ -581,7 +590,7 @@ void HRD09Control::updateIrel() {
     if (sponRelflag == 0) {
       tRel = 0.0;
       sponRelflag = 1;
-      Logger::getInstance()->write("HRD09: Spontaneous release at t = {}", t);
+      sponRelT = t;
       ryRopen = irelinf = 6.0;
     }
     tRel = tRel + dt;
@@ -739,8 +748,8 @@ void HRD09Control::updateCamk() {
 
   double va, va2, ka, tcamk;
 
-  double ros = 1 * ROSFactor;         // concentration of H2O2, um
-  double kib = 246.0 * TestFactor;       // mM-1/ms-1
+  double ros = ROSConc;         // concentration of H2O2, um
+  double kib = 246.0;       // mM-1/ms-1
   double kbi = 0.0022;      // ms-1
   double kox = 0.0002909;   // ms-1
   double kred = 0.0000228;  // um/ms
@@ -786,7 +795,7 @@ void HRD09Control::updateCurr() {
   updateIk1();    // Time-independent K current
   updateIkp();    // Plateau K current
   updateIto();    // Transient outward K current
-  if (opts & TREK) {
+  if (trekflag) {
     updateItrek();  // Transient outward K current
   }
   updateIto2();  // Ca-dep transient outward Cl current
@@ -817,102 +826,111 @@ void HRD09Control::externalStim(double stimval) {
   iKt = iKt + 0.5 * stimval;
   iClt = iClt + 0.5 * stimval;
   iTot = iTot + stimval;
+  apTime += dt;
 };
 
 // Create map for easy retrieval of variable values.
 void HRD09Control::makemap() {
-  __vars["vOld"] = &vOld;
-  __vars["t"] = &t;
-  __vars["dVdt"] = &dVdt;
-  __vars["naI"] = &naI;
-  __vars["kI"] = &kI;
-  __vars["clI"] = &clI;
-  __vars["caI"] = &caI;
-  __vars["caR"] = &caR;
-  __vars["caJsr"] = &caJsr;
-  __vars["caNsr"] = &caNsr;
-  __vars["trpn"] = &trpn;
-  __vars["CaM"] = &cmdn;
-  __vars["csqn"] = &csqn;
-  __vars["CaMKII"] = &caM;
-  __vars["fBound"] = &fBound;
+  CellKernel::insertVar("vOld", &vOld);
+  CellKernel::insertVar("t", &t);
+  CellKernel::insertVar("dVdt", &dVdt);
+  CellKernel::insertVar("naI", &naI);
+  CellKernel::insertVar("kI", &kI);
+  CellKernel::insertVar("clI", &clI);
+  CellKernel::insertVar("caI", &caI);
+  CellKernel::insertVar("caR", &caR);
+  CellKernel::insertVar("caJsr", &caJsr);
+  CellKernel::insertVar("caNsr", &caNsr);
+  CellKernel::insertVar("trpn", &trpn);
+  CellKernel::insertVar("CaM", &cmdn);
+  CellKernel::insertVar("csqn", &csqn);
+  CellKernel::insertVar("CaMKII", &caM);
+  CellKernel::insertVar("fBound", &fBound);
   //  vars["fBlock"]=&fBlock;
-  __vars["fI"] = &fI;
-  __vars["fOx"] = &fOx;
-  __vars["fOxP"] = &fOxP;
-  __vars["fPhos"] = &fPhos;
-  __vars["iRel"] = &iRel;
-  __vars["ryRopen"] = &ryRopen;
-  __vars["iUp"] = &iUp;
-  __vars["iLeak"] = &iLeak;
-  __vars["iTr"] = &iTr;
-  __vars["iDiff"] = &iDiff;
-  __vars["iCa"] = &iCa;
-  __vars["Gate.d"] = &Gate.d;
-  __vars["Gate.f"] = &Gate.f;
-  __vars["Gate.fca"] = &Gate.fca;
-  __vars["Gate.fca2"] = &Gate.fca2;
-  __vars["iCab"] = &iCab;
-  __vars["iPca"] = &iPca;
-  __vars["iNa"] = &iNa;
-  __vars["Gate.m"] = &Gate.m;
-  __vars["Gate.h"] = &Gate.h;
-  __vars["Gate.j"] = &Gate.j;
-  __vars["iNal"] = &iNal;
-  __vars["Gate.ml"] = &Gate.ml;
-  __vars["Gate.hl"] = &Gate.hl;
-  __vars["iNak"] = &iNak;
-  __vars["iNaca"] = &iNaca;
-  __vars["iNacar"] = &iNacar;
-  __vars["iTo"] = &iTo;
-  __vars["Gate.a"] = &Gate.a;
-  __vars["Gate.i"] = &Gate.i;
-  __vars["Gate.i2"] = &Gate.i2;
-  __vars["iTo2"] = &iTo2;
-  __vars["Gate.aa"] = &Gate.aa;
-  __vars["iKs"] = &iKs;
-  __vars["Gate.xs"] = &Gate.xs;
-  __vars["Gate.xs2"] = &Gate.xs2;
-  __vars["iKr"] = &iKr;
-  __vars["Gate.xr"] = &Gate.xr;
-  __vars["iK1"] = &iK1;
-  __vars["iKp"] = &iKp;
-  __vars["iCat"] = &iCat;
-  __vars["iNat"] = &iNat;  // not initialized
-  __vars["iKt"] = &iKt;    // not initialized
-  __vars["iClt"] = &iClt;  // not initialized
-  __vars["iTrek"] = &iTrek;
 
-  __pars["InaFactor"] = &Inafactor;
-  __pars["InakFactor"] = &Inakfactor;
-  __pars["InalFactor"] = &Inalfactor;
-  __pars["InacaFactorss"] = &Inacafactorss;
-  __pars["InacaFactorbulk"] = &Inacafactorbulk;
-  __pars["IcabFactor"] = &Icabfactor;
-  __pars["IclbFactor"] = &Iclbfactor;
-  __pars["InaclFactor"] = &Inaclfactor;
-  __pars["IlcaFactor"] = &Ilcafactor;
-  __pars["IpcaFactor"] = &Ipcafactor;
-  __pars["IksFactor"] = &Iksfactor;
-  __pars["IkrFactor"] = &Ikrfactor;
-  __pars["IkclFactor"] = &Ikclfactor;
-  __pars["Ik1Factor"] = &Ik1factor;
-  __pars["IkpFactor"] = &Ikpfactor;
-  __pars["ItoFactor"] = &Itofactor;
-  __pars["Ito2Factor"] = &Ito2factor;
-  __pars["IrelFactor"] = &Irelfactor;
-  __pars["ItrFactor"] = &Itrfactor;
-  __pars["IupFactor"] = &Iupfactor;
-  __pars["IleakFactor"] = &Ileakfactor;
-  __pars["ItrekFactor"] = &ItrekFactor;
-  __pars["IcaMkiiFactor"] = &IcaMkiiFactor;
-  __pars["ROSFactor"] = &ROSFactor;
-  __pars["TestFactor"] = &TestFactor;
-  __pars["Test2Factor"] = &Test2Factor;
+  CellKernel::insertVar("fI", &fI);
+  CellKernel::insertVar("fOx", &fOx);
+  CellKernel::insertVar("fOxP", &fOxP);
+  CellKernel::insertVar("fPhos", &fPhos);
+  CellKernel::insertVar("iRel", &iRel);
+  CellKernel::insertVar("ryRopen", &ryRopen);
+  CellKernel::insertVar("iUp", &iUp);
+  CellKernel::insertVar("iLeak", &iLeak);
+  CellKernel::insertVar("iTr", &iTr);
+  CellKernel::insertVar("iDiff", &iDiff);
+  CellKernel::insertVar("iCa", &iCa);
+  CellKernel::insertVar("Gate.d", &Gate.d);
+  CellKernel::insertVar("Gate.f", &Gate.f);
+  CellKernel::insertVar("Gate.fca", &Gate.fca);
+  CellKernel::insertVar("Gate.fca2", &Gate.fca2);
+  CellKernel::insertVar("iCab", &iCab);
+  CellKernel::insertVar("iPca", &iPca);
+  CellKernel::insertVar("iNa", &iNa);
+  CellKernel::insertVar("Gate.m", &Gate.m);
+  CellKernel::insertVar("Gate.h", &Gate.h);
+  CellKernel::insertVar("Gate.j", &Gate.j);
+  CellKernel::insertVar("iNal", &iNal);
+  CellKernel::insertVar("Gate.ml", &Gate.ml);
+  CellKernel::insertVar("Gate.hl", &Gate.hl);
+  CellKernel::insertVar("iNak", &iNak);
+  CellKernel::insertVar("iNaca", &iNaca);
+  CellKernel::insertVar("iNacar", &iNacar);
+  CellKernel::insertVar("iTo", &iTo);
+  CellKernel::insertVar("Gate.a", &Gate.a);
+  CellKernel::insertVar("Gate.i", &Gate.i);
+  CellKernel::insertVar("Gate.i2", &Gate.i2);
+  CellKernel::insertVar("iTo2", &iTo2);
+  CellKernel::insertVar("Gate.aa", &Gate.aa);
+  CellKernel::insertVar("iKs", &iKs);
+  CellKernel::insertVar("Gate.xs", &Gate.xs);
+  CellKernel::insertVar("Gate.xs2", &Gate.xs2);
+  CellKernel::insertVar("iKr", &iKr);
+  CellKernel::insertVar("Gate.xr", &Gate.xr);
+  CellKernel::insertVar("iK1", &iK1);
+  CellKernel::insertVar("iKp", &iKp);
+  CellKernel::insertVar("iCat", &iCat);
+  CellKernel::insertVar("iNat", &iNat);  // not initialized
+  CellKernel::insertVar("iKt", &iKt);    // not initialized
+  CellKernel::insertVar("iClt", &iClt);  // not initialized
+  CellKernel::insertVar("iTrek", &iTrek);
+  CellKernel::insertVar("sponRelTime", &sponRelT);
+
+  CellKernel::insertPar("InaFactor", &Inafactor);
+  CellKernel::insertPar("InakFactor", &Inakfactor);
+  CellKernel::insertPar("InalFactor", &Inalfactor);
+  CellKernel::insertPar("InacaFactorss", &Inacafactorss);
+  CellKernel::insertPar("InacaFactorbulk", &Inacafactorbulk);
+  CellKernel::insertPar("IcabFactor", &Icabfactor);
+  CellKernel::insertPar("IclbFactor", &Iclbfactor);
+  CellKernel::insertPar("InaclFactor", &Inaclfactor);
+  CellKernel::insertPar("IlcaFactor", &Ilcafactor);
+  CellKernel::insertPar("IpcaFactor", &Ipcafactor);
+  CellKernel::insertPar("IksFactor", &Iksfactor);
+  CellKernel::insertPar("IkrFactor", &Ikrfactor);
+  CellKernel::insertPar("IkclFactor", &Ikclfactor);
+  CellKernel::insertPar("Ik1Factor", &Ik1factor);
+  CellKernel::insertPar("IkpFactor", &Ikpfactor);
+  CellKernel::insertPar("ItoFactor", &Itofactor);
+  CellKernel::insertPar("Ito2Factor", &Ito2factor);
+  CellKernel::insertPar("IrelFactor", &Irelfactor);
+  CellKernel::insertPar("ItrFactor", &Itrfactor);
+  CellKernel::insertPar("IupFactor", &Iupfactor);
+  CellKernel::insertPar("IleakFactor", &Ileakfactor);
+  CellKernel::insertPar("ItrekFactor", &ItrekFactor);
+  CellKernel::insertPar("ROS", &ROSConc);
+  CellKernel::insertPar("TrekPrnaFactor", &TrekPrnaFactor);
+//  CellKernel::insertPar("Test2Factor", &Test2Factor);
 }
 
 const char* HRD09Control::type() const {
-  return "Canine Ventricular (Hund-Rudy 2009)";
-};
+    return "Canine Ventricular (Hund-Rudy 2009)";
+}
 
-MAKE_OPTIONS_FUNCTIONS(HRD09Control)
+const char *HRD09Control::citation() const
+{
+    return "Hund, T. J., Decker, K. F., Kanter, E., Mohler, P. J., Boyden, P. A., Schuessler, \n"
+           "\tR. B., … Rudy, Y. (2008). Role of activated CaMKII in abnormal calcium homeostasis \n"
+           "\tand INa remodeling after myocardial infarction: Insights from mathematical modeling. \n"
+           "\tJournal of Molecular and Cellular Cardiology, 45(3), 420–428. "
+           "\thttps://doi.org/10.1016/j.yjmcc.2008.06.007";
+};

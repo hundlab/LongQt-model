@@ -15,7 +15,7 @@ PvarsGrid::PvarsGrid(const PvarsGrid& o, Grid* grid) {
 void PvarsGrid::setIonChanParams() {
   for (auto& pvar : *this->__pvars) {
     for (auto& oneCell : pvar.second->cells) {
-      (*this->grid)(oneCell.first)->cell->setPar(pvar.first, oneCell.second);
+      (*this->grid)(oneCell.first)->cell()->setPar(pvar.first, oneCell.second);
     }
   }
 }

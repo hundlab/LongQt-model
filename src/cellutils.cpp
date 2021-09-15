@@ -14,6 +14,10 @@
 #include "ksan.h"
 #include "kurata08.h"
 #include "tnnp04.h"
+#include "Koivumaki.h"
+#include "gpbatrial_different_ina.h"
+
+#include "coupledinexcitablecell.h"
 
 #include "currentClampProtocol.h"
 #include "gridProtocol.h"
@@ -24,7 +28,6 @@
 
 #include <stdarg.h>
 #include <stdio.h>
-#include <QFile>
 using namespace LongQt;
 using namespace std;
 
@@ -45,10 +48,13 @@ const map<string, CellUtils::CellInitializer> CellUtils::cellMap = {
     {GpbAtrialOnal17().type(), []() { return make_shared<GpbAtrialOnal17>(); }},
     {FR().type(), []() { return make_shared<FR>(); }},
     {Ksan().type(), []() { return make_shared<Ksan>(); }},
-
+    {Koivumaki().type(), []() { return make_shared<Koivumaki>(); }},
+//    {GpbAtrialdiffINa().type(), []() { return make_shared<GpbAtrialdiffINa>(); }},
     {GpbVent().type(), []() { return make_shared<GpbVent>(); }},
     {Br04().type(), []() { return make_shared<Br04>(); }},
     {Courtemanche98().type(), []() { return make_shared<Courtemanche98>(); }},
+    {CoupledInexcitableCell().type(),
+     []() { return make_shared<CoupledInexcitableCell>(); }},
 };
 
 /*
@@ -86,6 +92,10 @@ const map<pair<string, string>, map<string, string>>
          {{"stimval", "-80"}, {"stimdur", "0.5"}}},
         {{CurrentClamp::name, Br04().type()},
          {{"stimval", "-60"}, {"stimdur", "0.5"}}},
+        {{CurrentClamp::name, Ksan().type()},
+         {{"stimval", "-10"}, {"paceflag", "false"}}},
+        {{CurrentClamp::name, Koivumaki().type()},
+         {{"stimval", "-5.6"}, {"stimdur", "6"}}},
 
         {{VoltageClamp::name, ""}, {{"writetime", "0"}, {"writeint", "20"}}},
 
@@ -151,14 +161,14 @@ CellUtils::Side CellUtils::flipSide(CellUtils::Side s) {
   }
 }
 
-vector<string> CellUtils::split(string s, char delim) {
+vector<string> CellUtils::split(string s, char delim, bool keepEmpty) {
   vector<string> v;
   size_t prev_pos = 0;
   size_t pos = s.find(delim, prev_pos);
   std::string token;
   while (pos != std::string::npos) {
     token = s.substr(prev_pos, pos - prev_pos);
-    if (token != "") {
+    if (keepEmpty || token != "") {
       v.push_back(token);
     }
     prev_pos = pos + 1;
@@ -169,4 +179,30 @@ vector<string> CellUtils::split(string s, char delim) {
     v.push_back(token);
   }
   return v;
+}
+
+std::map<std::string, bool> CellUtils::strToFlag(std::string opts,
+                                                 char seperator) {
+  std::map<std::string, bool> out;
+  auto splits = CellUtils::split(opts, seperator);
+  for (auto& sp : splits) {
+    out[sp] = true;
+  }
+  return out;
+}
+
+std::string CellUtils::flagToStr(std::map<std::string, bool> optsMap,
+                                 char seperator) {
+  std::string str = "";
+  bool first = true;
+  for (auto& opt : optsMap) {
+    if (!opt.second) continue;
+    if (first) {
+      str = opt.first;
+      first = false;
+    } else {
+      str += seperator + opt.first;
+    }
+  }
+  return str;
 }

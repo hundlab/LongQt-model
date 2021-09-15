@@ -20,8 +20,9 @@ class GpbVent : public Cell {
   // constructors
   GpbVent();
   GpbVent(GpbVent& toCopy);
-  virtual ~GpbVent();
+  ~GpbVent();
 
+  void setup() override;
   GpbVent* clone() override;
 
   /*########################*/
@@ -154,39 +155,71 @@ class GpbVent : public Cell {
   double F_juncCaL;
   double F_slCaL;
 
+  double Icajuncfactor;
+  double Icaslfactor;
+  double Icakfactor;
+  double Icanajuncfactor;
+  double Icanaslfactor;
+  double Icabslfactor;
+  double Icabjuncfactor;
+  double Ipcaslfactor;
+  double Ipcajuncfactor;
+  double Itofactor;
+  double Iksslfactor;
+  double Iksjuncfactor;
+  double Ikrfactor;
+  double Ik1factor;
+  double Ipkslfactor;
+  double Ipkjuncfactor;
+  double Inacaslfactor;
+  double Inacajuncfactor;
+  double Inakslfactor;
+  double Inakjuncfactor;
+  double Inabslfactor;
+  double Inabjuncfactor;
+  double Inaslfactor;
+  double Inajuncfactor;
+  double Jsrcarelfactor;
+  double Jsrleakfactor;
+  double Jsercafactor;
+  double Iclcaslfactor;
+  double Iclcajuncfactor;
+  double Iclbkfactor;
+  double Icalfactor;
+
   //###Concentration updating functions ######
-  virtual void updatecaI();
-  virtual void updatenaI();
+  void updatecaI();
+  void updatenaI();
   //####Current updating functions #######
-  /*virtual void updateSRcurrents();*/
-  virtual void updateIcal();
-  virtual void updateIcab();
-  virtual void updateIpca();
-  virtual void updateIto();
-  virtual void updateIks();
-  virtual void updateIkr();
-  virtual void updateIk1();
-  virtual void updateIpk();
-  virtual void updateInaca();
-  virtual void updateInak();
-  virtual void updateInab();
-  virtual void updateIna();
-  virtual void updateSRFlux();
-  virtual void updatecytobuff();  // cytosolic Ca buffers
-  virtual void updateJSLbuff();   // junctional and SL Ca buffers
-  virtual void updateSRbuff();    // SR Ca buffer
-  virtual void updateIclca();
-  virtual void updateIclbk();
-  virtual void updateCurr();
-  virtual void updateConc();
-  virtual void externalStim(double stimval);
-  virtual void makemap();
-  virtual const char* type() const;
+  /*void updateSRcurrents();*/
+  void updateIcal();
+  void updateIcab();
+  void updateIpca();
+  void updateIto();
+  void updateIks();
+  void updateIkr();
+  void updateIk1();
+  void updateIpk();
+  void updateInaca();
+  void updateInak();
+  void updateInab();
+  void updateIna();
+  void updateSRFlux();
+  void updatecytobuff();  // cytosolic Ca buffers
+  void updateJSLbuff();   // junctional and SL Ca buffers
+  void updateSRbuff();    // SR Ca buffer
+  void updateIclca();
+  void updateIclbk();
+  void updateCurr() override;
+  void updateConc() override;
+  void makemap();
+  const char* type() const override;
+  const char* citation() const override;
 
   struct GateVariable gate;
 
- protected:
-  virtual void Initialize();
+ private:
+  void Initialize();
 };
 }  // namespace LongQt
 

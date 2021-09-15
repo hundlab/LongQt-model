@@ -21,46 +21,35 @@
 #include <vector>
 
 #include "cell_kernel.h"
-#include "iobase.h"
 
 namespace LongQt {
 
 //######################################################
 // Define class for parent cell.
 //######################################################
-class Cell : public CellKernel, public IOBase {
+class Cell : public CellKernel {
  public:
-  Cell() : CellKernel() {
-    varsSelection.insert("t");
-    varsSelection.insert("vOld");
-  };
-
-  Cell(const Cell& toCopy) : CellKernel(toCopy) {
-    parsSelection = toCopy.parsSelection;
-    varsSelection = toCopy.varsSelection;
-  }
+  Cell();
+  Cell(const Cell& toCopy);
   virtual ~Cell() {}
   virtual Cell* clone() = 0;
 
-  virtual bool setOutputfileConstants(std::string filename);
-  virtual bool setOuputfileVariables(std::string filename);
-  virtual bool setConstantSelection(std::set<std::string> new_selection);
-  virtual bool setVariableSelection(std::set<std::string> new_selection);
+  virtual void setOutputfileConstants(std::string filename);
+  virtual void setOuputfileVariables(std::string filename);
+  virtual void setConstantSelection(std::set<std::string> new_selection);
+  virtual void setVariableSelection(std::set<std::string> new_selection);
   virtual std::set<std::string> getConstantSelection();
   virtual std::set<std::string> getVariableSelection();
   virtual void writeConstants();
   virtual void writeVariables();
-  virtual void closeFiles();
+  virtual std::vector<double> getVariablesVals();
   virtual bool writeCellState(std::string file);
   virtual bool writeCellState(QXmlStreamWriter& xml);
   virtual bool readCellState(std::string file);
   virtual bool readCellState(QXmlStreamReader& xml);
+  virtual void closeFiles();
 
  protected:
-  virtual bool setSelection(std::map<std::string, double*> map,
-                            std::set<std::string>* old_selection,
-                            std::set<std::string> new_selection,
-                            std::ofstream* ofile);
   std::ofstream parsofile;
   std::ofstream varsofile;
   std::set<std::string> parsSelection;

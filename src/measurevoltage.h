@@ -38,6 +38,8 @@ class MeasureVoltage : public Measure {
   void percrepol(double val);
   double percrepol() const;
 
+  virtual const char* type() const;
+
  protected:
   virtual void beforeOutput();
 

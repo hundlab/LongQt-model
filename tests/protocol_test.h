@@ -32,28 +32,28 @@ TEST(protocol, trial) {
   Mock_Protocol proto;
   EXPECT_FALSE(proto.trial(5));
   EXPECT_EQ(proto.trial(), 0);
-  proto.numtrials = 5;
+  proto.numtrials(5);
   EXPECT_TRUE(proto.trial(4));
   EXPECT_EQ(proto.trial(), 4);
 }
 
 TEST(protocol, runSim_false) {
   Mock_Protocol proto;
-  proto.numtrials = 5;
+  proto.numtrials(5);
   EXPECT_CALL(proto, runTrial()).Times(5).WillRepeatedly(Return(false));
   EXPECT_FALSE(proto.runSim());
 }
 
 TEST(protocol, runSim_true) {
   Mock_Protocol proto;
-  proto.numtrials = 5;
+  proto.numtrials(5);
   EXPECT_CALL(proto, runTrial()).Times(5).WillRepeatedly(Return(true));
   EXPECT_TRUE(proto.runSim());
 }
 
 TEST(protocol, runSim_mixed) {
   Mock_Protocol proto;
-  proto.numtrials = 5;
+  proto.numtrials(5);
   EXPECT_CALL(proto, runTrial())
       .Times(5)
       .WillOnce(Return(true))

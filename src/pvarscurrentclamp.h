@@ -29,6 +29,8 @@ class PvarsCurrentClamp : public PvarsCell {
 
   virtual void insert(std::string, IonChanParam);
 
+  virtual int numtrials() const override;
+
  private:
   void handlePvars(QXmlStreamReader& xml);
   void handlePvar(QXmlStreamReader& xml);

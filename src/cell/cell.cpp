@@ -9,14 +9,26 @@
 #include "cell.h"
 #include <QFile>
 #include <sstream>
+#include <iomanip>
 #include "cellutils.h"
 #include "logger.h"
 using namespace LongQt;
 using namespace std;
 
+Cell::Cell() : CellKernel() {
+    varsSelection.insert("t");
+    varsSelection.insert("vOld");
+}
+
+Cell::Cell(const Cell &toCopy) : CellKernel(toCopy) {
+    parsSelection = toCopy.parsSelection;
+    varsSelection = toCopy.varsSelection;
+}
+
 void Cell::setOuputfileVariables(string filename) {
   varsofile.open(filename, std::ios_base::app);
   varsofile << std::scientific;
+  varsofile << std::setprecision(12);
   if (!varsofile.good()) {
     varsofile.close();
     Logger::getInstance()->write<std::runtime_error>(
@@ -35,9 +47,9 @@ void Cell::setOuputfileVariables(string filename) {
 };
 
 void Cell::setOutputfileConstants(string filename) {
-  parsofile.open(filename, std::ios_base::app);
-  parsofile << std::scientific;
-  if (!parsofile.good()) {
+    parsofile.open(filename, std::ios_base::app);
+    parsofile << std::scientific;
+    if (!parsofile.good()) {
     parsofile.close();
     Logger::getInstance()->write<std::runtime_error>(
         "Cell: Error Opening \'{}\'", filename);
@@ -52,7 +64,8 @@ void Cell::writeVariables() {
     } else {
       first = false;
     }
-    varsofile << this->var(sel);
+    auto var = this->var(sel);
+    varsofile << var;
   }
   varsofile << '\n';
 }
@@ -86,7 +99,7 @@ void Cell::setConstantSelection(set<string> selection) {
     if (this->hasPar(sel)) {
       parsSelection.insert(sel);
     } else {
-      Logger::getInstance()->write("Cell: {} is not a var in cell", sel);
+      Logger::getInstance()->write("Cell: constant \"{}\" is not a var in cell", sel);
     }
   }
 };
@@ -97,7 +110,7 @@ void Cell::setVariableSelection(set<string> selection) {
     if (this->hasVar(sel)) {
       varsSelection.insert(sel);
     } else {
-      Logger::getInstance()->write("Cell: {} is not a par in cell", sel);
+      Logger::getInstance()->write("Cell: variable \"{}\" is not a par in cell", sel);
     }
   }
 };

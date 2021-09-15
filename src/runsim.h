@@ -4,6 +4,7 @@
 #include "protocol.h"
 #include "threadpool.h"
 #include <vector>
+#include <chrono>
 
 namespace LongQt {
 
@@ -22,7 +23,11 @@ class RunSim {
   double progress();
   void finishedCallback(std::function<void(void)> fn);
   void startCallback(std::function<void(void)> fn);
+  bool wait_for(std::chrono::seconds dur);
   void wait();
+
+  int numThreads();
+  void numThreads(int maxthreads);
 
   void setSims(std::shared_ptr<Protocol> proto);
   void setSims(std::vector<std::shared_ptr<Protocol>> protoList);
@@ -32,7 +37,8 @@ class RunSim {
 //  QFuture<void>& getFuture();
 
  private:
-  void poolCallback();
+  void finishedCallbackFn();
+  void startedCallbackFn();
 //  QFuture<void> next;
   std::vector<std::shared_ptr<Protocol>> simulations;
   ThreadPool pool;

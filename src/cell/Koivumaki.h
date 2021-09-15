@@ -1,4 +1,4 @@
-/* Copyright (c) 2011-2015 by Thomas O'Hara, Yoram Rudy,
+/* Copyright (c) 2011 by Koivumaki et al
 *                            Washington University in St. Louis.
 * All rights reserved.
 *
@@ -47,145 +47,129 @@
 * Email: tom.ohara@gmail.com / rudy@wustl.edu
 * Web: http://rudylab.wustl.edu
 */
-#ifndef MODEL_OHARARUDY_H
-#define MODEL_OHARARUDY_H
+#ifndef MODEL_KOIVUMAKI_H
+#define MODEL_KOIVUMAKI_H
 
 #include "cell.h"  // Parent class declaration
 namespace LongQt {
 
-class OHaraRudy : public Cell {
+class Koivumaki : public Cell {
  public:
-  enum cellType {
-    endo = 0,
-    epi = 1,
-    M = 2,
-  };
-
-  OHaraRudy();
-  OHaraRudy(OHaraRudy& toCopy);
-  ~OHaraRudy();
+  Koivumaki();
+  Koivumaki(Koivumaki& toCopy);
+  ~Koivumaki();
 
   void setup();
-  OHaraRudy* clone() override;
+  Koivumaki* clone() override;
 
   void makemap();
+  double Inam = 0.002775812;
+  double Inah1 = 0.90391;
+  double Inah2 = 0.9039673;
+  double Icald = 1.060917e-5;
+  double Icalf1 = 0.9988566;
+  double Icalf2 = 0.9988624;
+  double Icalfca = 0.9744374;
+  double Itr = 9.594258e-4;
+  double Its = 0.954338;
+  double Isusr = 3.111703e-4;
+  double Isuss = 0.9751094;
+  double Iksn = 0.004109751;
+  double Ikrpa = 4.189417e-5;
+  double Ify = 0.05620665;
+  double SERCACa1 = 0.004638565;
+  double SERCACa2 = 0.004512078;
+  double SERCACa3 = 0.004326409;
+  double SERCACass = 0.004250445;
+  double RyRoss = 3.975097e-5;
+  double RyRcss = 0.9999717;
+  double RyRass = 0.2455297;
+  double RyRoc1 = 9.478514e-5;
+  double RyRcc1 = 0.9993722;
+  double RyRac1 = 0.1925362;
+  double RyRoc2 = 7.765503e-5;
+  double RyRcc2 = 0.9995086;
+  double RyRac2 = 0.2010345;
+  double RyRoc3 = 5.674947e-5;
+  double RyRcc3 = 0.9995604;
+  double RyRac3 = 0.2163122;
+  double naI = 9.28686;
+  double nass = 8.6915;
+  double kI = 134.6313;
+  double cass = 1.619377e-4;
+  double caic1 = 1.354965e-4;
+  double caic2 = 1.381421e-4;
+  double caic3 = 1.442087e-4;
+  double caic4 = 1.561844e-4;
+  double casr1 = 0.6189225;
+  double casr2 = 0.6076289;
+  double casr3 = 0.5905266;
+  double casr4 = 0.5738108;
 
-  double naI = 7;
-  double nass = naI;
-  double kI = 145;
-  double kss = kI;
-  double cai = 1.0e-4;
-  double cass = cai;
-  double cansr = 1.2;
-  double cajsr;
-  double m = 0;
-  double hf = 1;
-  double hs = 1;
-  double j = 1;
-  double hsp = 1;
-  double jp = 1;
-  double mL = 0;
-  double hL = 1;
-  double hLp = 1;
-  double a = 0;
-  double iF = 1;
-  double iS = 1;
-  double ap = 0;
-  double iFp = 1;
-  double iSp = 1;
-  double d = 0;
-  double ff = 1;
-  double fs = 1;
-  double fcaf = 1;
-  double fcas = 1;
-  double jca = 1;
-  double nca = 0;
-  double ffp = 1;
-  double fcafp = 1;
-  double xrf = 0;
-  double xrs = 0;
-  double xs1 = 0;
-  double xs2 = 0;
-  double xk1 = 1;
-  double Jrelnp = 0;
-  double Jrelp = 0;
-  double CaMKt = 0;
   // constants
-  double naO = 140.0;  // extracellular sodium in mM
+  double naO = 130.0;  // extracellular sodium in mM
   double cao = 1.8;    // extracellular calcium in mM
   double kO = 5.4;     // extracellular potassium in mM
 
-  // buffer paramaters
-  double BSRmax = 0.047;
-  double KmBSR = 0.00087;
-  double BSLmax = 1.124;
-  double KmBSL = 0.0087;
-  double cmdnmax = 0.05;
-  double kmcmdn = 0.00238;
-  double trpnmax = 0.07;
-  double kmtrpn = 0.0005;
-  double csqnmax = 10.0;
-  double kmcsqn = 0.8;
-
   // AGeo
-  double Vmito;
-  double Vsr;
-  double Vnsr;
-  double Vjsr;
+  double junctWidth;
   double Vss;
-
-  // CaMK paramaters
-  double aCaMK = 0.05;
-  double bCaMK = 0.00068;
-  double CaMKo = 0.05;
-  double KmCaM = 0.0015;
-  double KmCaMK = 0.15;
+  double junctRadius;
+  double V1;
+  double V2;
+  double V3;
+  double V4;
+  double Vcyto;
+  double Vsr1;
+  double Vsr2;
+  double Vsr3;
+  double Vsr4;
 
   // factors
   double InaFactor = 1;
-  double InalFactor = 1;
-  double ItoFactor = 1;
   double IcalFactor = 1;
+  double ItoFactor = 1;
+  double IsusFactor = 1;
   double IkrFactor = 1;
   double IksFactor = 1;
   double Ik1Factor = 1;
+  double IfFactor = 1;
   double InacaFactor = 1;
   double InakFactor = 1;
-  double InabFactor = 1;
   double IpcaFactor = 1;
+  double InabFactor = 1;
   double IcabFactor = 1;
 
-  double JrelFactor = 1;
-  double JleakFactor = 1;
-  double JupFactor = 1;
-
-  // cell type
-  cellType celltype = endo;  // endo = 0, epi = 1, M = 2
-
   // introduce varaibles for reversal potentials, currents, fluxes, and CaMK
-  double ena, ek, eks;
-  double INa, INaL, Ito, ICaL, ICaNa, ICaK, IKr, IKs, IK1, INaCa_i, INaCa_ss,
-      INaCa, INaK, IKb, INab, IpCa, ICab;
-  double Jrel, Jup, Jtr, Jdiff, JdiffNa, JdiffK, Jleak;
-  double CaMKa, CaMKb;
+  double ena=0, ek=0, eca=0;
+  double INa=0, ICaL=0, Ito=0, Isus=0, IKs=0, IKr=0, IK1=0, IfNa=0, IfK=0, If=0,
+      INaCa=0, INaK=0, IpCa=0, INab=0, ICab=0, Ist =0;
+  double Jsercasr1=0, Jsercasr2=0, Jsercasr3=0, Jsercasrss=0, J1serca=0,
+      J2serca=0, J3serca=0, Jssserca=0, Jrel1=0, Jrel2=0, Jrel3=0, Jrelss=0,
+      Jsrleak1=0, Jsrleak2=0, Jsrleak3=0, Jsrleakss =0;
 
   void revpots();  // compute reversal potentials
   // compute rates, gates, and currents
-  void updateCaMKa();
   void updateINa();
-  void updateIto();
   void updateICa();
-  void updateIkr();
+  void updateIto();
+  void updateIsus();
   void updateIKs();
+  void updateIkr();
   void updateIK1();
+  void updateIf();
   void updateINaCa();
   void updateINaK();
   void updateIpCa();
+  void updateInab();
+  void updateIcab();
   // calculate fluxes, buffers, and concentrations
-  void updateJrel();
   void updatenaI();
   void updatekI();
-  void updatecajsr();
+  void updateSERCA();
+  void updateRyR();
+  void updatecasr();
+  void updatecai();
 
   void updateCurr() override;
   void updateConc() override;

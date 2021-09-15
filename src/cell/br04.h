@@ -196,6 +196,7 @@ class Br04 : public Cell {
   double JupFactor = 1;
   double JtrFactor = 1;
   double JtrpnFactor = 1;
+  double IpcaFactor = 1;
 
   double TestFactor = 1;
   double TestFactor2 = 1;

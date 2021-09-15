@@ -926,8 +926,9 @@ const char* HRD09Control::type() const {
 
 const char *HRD09Control::citation() const
 {
-    return "O’hara, Thomas, et al. “Simulation of the Undiseased Human Cardiac Ventricular\n"
-           "\tAction Potential: Model Formulation and Experimental Validation.” PLoS Comput\n"
-           "\tBiol, vol. 7, no. 5, American Heart Association, 2011, pp. 1002061–302,\n"
-           "\tdoi:10.1371/journal.pcbi.1002061.";
+    return "Hund, T. J., Decker, K. F., Kanter, E., Mohler, P. J., Boyden, P. A., Schuessler, \n"
+           "\tR. B., … Rudy, Y. (2008). Role of activated CaMKII in abnormal calcium homeostasis \n"
+           "\tand INa remodeling after myocardial infarction: Insights from mathematical modeling. \n"
+           "\tJournal of Molecular and Cellular Cardiology, 45(3), 420–428. "
+           "\thttps://doi.org/10.1016/j.yjmcc.2008.06.007";
 };

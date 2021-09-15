@@ -54,12 +54,14 @@ class Protocol : public std::enable_shared_from_this<Protocol> {
   virtual bool writepars(
       QXmlStreamWriter& xml);  // write the contents of pars to a file
 
-  virtual bool trial(unsigned int current_trial);
-  virtual unsigned int trial() const;
+  virtual bool trial(int current_trial);
+  virtual int trial() const;
+  virtual int numtrials() const;
+  virtual void numtrials(int numtrials);
   virtual bool runTrial() = 0;
   virtual void stopTrial();
-  void setDataDir(std::string location = "", std::string basedir = "",
-                  std::string appendtxt = "");
+  void setDataDir(std::string location = "/data", std::string basedir = "",
+                  std::string appendtxt = "", bool append_date = true);
   void mkDirs();
   std::string getDataDir();
 
@@ -80,7 +82,7 @@ class Protocol : public std::enable_shared_from_this<Protocol> {
   int writeint;
   bool writeflag, measflag;
   bool writeCellState, readCellState;
-  int numtrials;
+//  int numtrials;
   double tMax;
 
   std::string readfile, savefile, dvarfile, pvarfile, measfile, simvarfile,
@@ -112,8 +114,11 @@ class Protocol : public std::enable_shared_from_this<Protocol> {
   virtual void readInCellState(bool read);
   virtual void writeOutCellState(bool write);
   virtual void setupTrial();
+  virtual std::function<void(Protocol &)> saftyWrapper(
+          std::function<void(Protocol &)> func, std::string name);
 
-  int __trial;
+  int __trial = 0;
+  int __numtrials = 1;
   std::function<void(Protocol&)> runBefore;
   std::function<void(Protocol&)> runDuring;
   std::function<void(Protocol&)> runAfter;

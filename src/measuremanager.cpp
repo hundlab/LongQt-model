@@ -9,7 +9,11 @@
 using namespace LongQt;
 using namespace std;
 
-MeasureManager::MeasureManager(shared_ptr<Cell> cell) : __cell(cell) {}
+MeasureManager::MeasureManager(shared_ptr<Cell> cell) : __cell(cell) {
+    if (variableSelection.count("vOld") == 0) {
+      variableSelection.insert({"vOld", {}});
+    }
+}
 
 MeasureManager::~MeasureManager() {}
 
@@ -25,13 +29,33 @@ map<string, set<string>> MeasureManager::selection() {
 
 void MeasureManager::selection(map<string, set<string>> sel) {
   this->variableSelection = sel;
+
+  this->removeBad();
+  if (variableSelection.count("vOld") == 0) {
+    variableSelection.insert({"vOld", {}});
+  }
 }
 
 void MeasureManager::addMeasure(string var, set<string> selection) {
-  variableSelection.insert({var, selection});
+  if(variableSelection.count(var) == 0) {
+    variableSelection.insert({var, selection});
+  } else {
+    auto sel = variableSelection.at(var);
+    sel.merge(selection);
+    variableSelection.at(var) = sel;
+  }
+  this->removeBad();
+  if (variableSelection.count("vOld") == 0) {
+    variableSelection.insert({"vOld", {}});
+  }
 }
 
-void MeasureManager::removeMeasure(string var) { measures.erase(var); }
+void MeasureManager::removeMeasure(string var) {
+    measures.erase(var);
+    if (variableSelection.count("vOld") == 0) {
+      variableSelection.insert({"vOld", {}});
+    }
+}
 
 void MeasureManager::setupMeasures() {
   this->measures.clear();
@@ -169,14 +193,35 @@ bool MeasureManager::writeMVarsFile(QXmlStreamWriter& xml) {
 
 void MeasureManager::removeBad() {
   list<map<string, set<string>>::iterator> bad;
+  map<string, set<string>> badSel;
   auto vars = __cell->vars();
   for (auto it = this->variableSelection.begin(); it != variableSelection.end();
        ++it) {
     if (vars.count(it->first) != 1) {
       bad.push_back(it);
+      Logger::getInstance()->write("MeasureManager: The variable '{}' is not valid"
+                                   " for this cell type", it->first);
+    } else {
+      set<string> good;
+      set<string> bad;
+      std::tie(good, bad) = this->measMaker.checkSelection(it->first, it->second);
+      if(bad.size() > 0) {
+          badSel.insert({it->first, bad});
+          string warn = "MeasureManager: The selection for variable '{}' contained"
+                        " items which were not valid: ";
+          for(auto& item: bad) {
+              warn += CellUtils::strprintf("'{}', ", item);
+          }
+          Logger::getInstance()->write(warn.c_str(), it->first);
+      }
     }
   }
   for (auto& b : bad) {
     variableSelection.erase(b);
+  }
+  for (auto& bpair: badSel) {
+      for (auto& b: bpair.second) {
+          this->variableSelection.at(bpair.first).erase(b);
+      }
   }
 }

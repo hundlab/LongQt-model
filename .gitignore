@@ -29,6 +29,7 @@ defaultTrials/
 
 #qt creator
 *.pro.user*
+*.user*
 
 #kdev files
 .kdev4/

@@ -7,6 +7,7 @@ set(modellib_includes
 )
 
 set(modellib_sources
+    "${CMAKE_CURRENT_LIST_DIR}/cell/Koivumaki.cpp"
     "${CMAKE_CURRENT_LIST_DIR}/cell/FR.cpp"
     "${CMAKE_CURRENT_LIST_DIR}/cell/OHaraRudy.cpp"
     "${CMAKE_CURRENT_LIST_DIR}/cell/OHaraRudyEndo.cpp"
@@ -18,6 +19,7 @@ set(modellib_sources
     "${CMAKE_CURRENT_LIST_DIR}/cell/cell_kernel.cpp"
     "${CMAKE_CURRENT_LIST_DIR}/cell/coupledinexcitablecell.cpp"
     "${CMAKE_CURRENT_LIST_DIR}/cell/gpbatrial.cpp"
+    "${CMAKE_CURRENT_LIST_DIR}/cell/gpbatrial_different_ina.cpp"
     "${CMAKE_CURRENT_LIST_DIR}/cell/gpbatrialonal17.cpp"
     "${CMAKE_CURRENT_LIST_DIR}/cell/gpbhuman.cpp"
     "${CMAKE_CURRENT_LIST_DIR}/cell/gridCell.cpp"
@@ -64,6 +66,7 @@ set(modellib_headers
     "${CMAKE_CURRENT_LIST_DIR}/cell/cell_kernel.h"
     "${CMAKE_CURRENT_LIST_DIR}/cell/coupledinexcitablecell.h"
     "${CMAKE_CURRENT_LIST_DIR}/cell/gpbatrial.h"
+    "${CMAKE_CURRENT_LIST_DIR}/cell/gpbatrial_different_ina.h"
     "${CMAKE_CURRENT_LIST_DIR}/cell/gpbatrialonal17.h"
     "${CMAKE_CURRENT_LIST_DIR}/cell/gpbhuman.h"
     "${CMAKE_CURRENT_LIST_DIR}/cell/gridCell.h"

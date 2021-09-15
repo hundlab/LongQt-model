@@ -39,7 +39,7 @@ void PvarsCurrentClamp::calcIonChanParams() {
 }
 void PvarsCurrentClamp::calcIonChanParam(TIonChanParam* param) {
   param->trials.clear();
-  int numtrials = std::stoi(proto->parsStr("numtrials"));
+  int numtrials = this->proto->numtrials();
   for (int i = 0; i < numtrials; i++) {
     double val = 0;
     switch (param->dist) {
@@ -157,4 +157,27 @@ void PvarsCurrentClamp::insert(string name, IonChanParam param) {
   TIonChanParam* nparam = new TIonChanParam(const_cast<IonChanParam&>(param));
   this->calcIonChanParam(nparam);
   (*this->__pvars)[name] = nparam;
+}
+
+int PvarsCurrentClamp::numtrials() const
+{
+  int numtrials = 0;
+  bool first = true;
+  for (auto& pvar : *this->__pvars) {
+    int trial_size = pvar.second->trials.size();
+    if(first) {
+        numtrials = trial_size;
+        first = false;
+    } else {
+      if(numtrials != trial_size) {
+          Logger::getInstance()->write(
+              "CurrentClamp: Parameter {}"
+              " has a different number of trials "
+              "({}) than the other parameters",
+                      pvar.first, trial_size);
+          return this->proto->numtrials();
+      }
+    }
+  }
+  return numtrials;
 }

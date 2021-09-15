@@ -29,15 +29,8 @@ namespace LongQt {
 //######################################################
 class Cell : public CellKernel {
  public:
-  Cell() : CellKernel() {
-    varsSelection.insert("t");
-    varsSelection.insert("vOld");
-  };
-
-  Cell(const Cell& toCopy) : CellKernel(toCopy) {
-    parsSelection = toCopy.parsSelection;
-    varsSelection = toCopy.varsSelection;
-  }
+  Cell();
+  Cell(const Cell& toCopy);
   virtual ~Cell() {}
   virtual Cell* clone() = 0;
 

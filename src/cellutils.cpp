@@ -14,6 +14,8 @@
 #include "ksan.h"
 #include "kurata08.h"
 #include "tnnp04.h"
+#include "Koivumaki.h"
+#include "gpbatrial_different_ina.h"
 
 #include "coupledinexcitablecell.h"
 
@@ -46,7 +48,8 @@ const map<string, CellUtils::CellInitializer> CellUtils::cellMap = {
     {GpbAtrialOnal17().type(), []() { return make_shared<GpbAtrialOnal17>(); }},
     {FR().type(), []() { return make_shared<FR>(); }},
     {Ksan().type(), []() { return make_shared<Ksan>(); }},
-
+    {Koivumaki().type(), []() { return make_shared<Koivumaki>(); }},
+//    {GpbAtrialdiffINa().type(), []() { return make_shared<GpbAtrialdiffINa>(); }},
     {GpbVent().type(), []() { return make_shared<GpbVent>(); }},
     {Br04().type(), []() { return make_shared<Br04>(); }},
     {Courtemanche98().type(), []() { return make_shared<Courtemanche98>(); }},
@@ -91,6 +94,8 @@ const map<pair<string, string>, map<string, string>>
          {{"stimval", "-60"}, {"stimdur", "0.5"}}},
         {{CurrentClamp::name, Ksan().type()},
          {{"stimval", "-10"}, {"paceflag", "false"}}},
+        {{CurrentClamp::name, Koivumaki().type()},
+         {{"stimval", "-5.6"}, {"stimdur", "6"}}},
 
         {{VoltageClamp::name, ""}, {{"writetime", "0"}, {"writeint", "20"}}},
 

@@ -1,20 +1,21 @@
 #include "runsim.h"
+#include "logger.h"
 
 using namespace LongQt;
 using namespace std;
 
 RunSim::RunSim() {
-  this->pool.finishedCallback(std::bind(&RunSim::poolCallback, this));
+  this->pool.finishedCallback(std::bind(&RunSim::finishedCallbackFn, this));
 }
 
 RunSim::RunSim(shared_ptr<Protocol> proto) {
   this->setSims(proto);
-  this->pool.finishedCallback(std::bind(&RunSim::poolCallback, this));
+  this->pool.finishedCallback(std::bind(&RunSim::finishedCallbackFn, this));
 }
 
 RunSim::RunSim(std::vector<shared_ptr<Protocol>> protoList) {
   this->setSims(protoList);
-  this->pool.finishedCallback(std::bind(&RunSim::poolCallback, this));
+  this->pool.finishedCallback(std::bind(&RunSim::finishedCallbackFn, this));
 }
 
 RunSim::~RunSim() { this->cancel(); }
@@ -22,7 +23,7 @@ RunSim::~RunSim() { this->cancel(); }
 void RunSim::appendSims(shared_ptr<Protocol> proto) {
   int i = 0;
   proto->mkDirs();
-  for (i = 0; i < proto->numtrials; i++) {
+  for (i = 0; i < proto->numtrials(); i++) {
     proto->trial(i);
     simulations.push_back(shared_ptr<Protocol>(proto->clone()));
   }
@@ -47,11 +48,28 @@ void RunSim::setSims(std::vector<shared_ptr<Protocol>> protoList) {
 
 void RunSim::clear() { simulations.clear(); }
 
-void RunSim::poolCallback() {
+void RunSim::finishedCallbackFn() {
   this->__finished = true;
   try {
-    this->__finishedCall();
+    if(this->__finishedCall) {
+      this->__finishedCall();
+    }
   } catch (std::bad_function_call&) {
+    Logger::getInstance()->write(
+      "RunSim: Failed call to finished callback function");
+  }
+  return;
+}
+
+void RunSim::startedCallbackFn() {
+  this->__finished = false;
+  try {
+    if(this->__startCall) {
+      this->__startCall();
+    }
+  } catch (std::bad_function_call&) {
+        Logger::getInstance()->write(
+            "RunSim: Failed call to start callback function");
   }
 }
 
@@ -92,14 +110,28 @@ void RunSim::wait() {
   }
 }
 
+bool RunSim::wait_for(std::chrono::seconds dur) {
+  if (!this->__finished) {
+    return pool.wait_for(dur);
+  }
+  return true;
+}
+
+int RunSim::numThreads()
+{
+  return this->pool.numThreads();
+}
+
+void RunSim::numThreads(int maxthreads)
+{
+  if(!this->finished()) return;
+  this->pool.resize(maxthreads);
+}
+
 void RunSim::run() {
   if (!this->finished()) return;
   if(this->simulations.empty()) return;
-  this->__finished = false;
-  try {
-    this->__startCall();
-  } catch (std::bad_function_call&) {
-  }
+  this->startedCallbackFn();
   //    for(auto& p: vector) {
   //        p->runTrial();
   //    }

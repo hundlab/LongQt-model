@@ -114,6 +114,7 @@ void ThreadPool::pushAllpnt(Fn &&fn, InputIterator begin, InputIterator end) {
     shared.jobs.push(std::make_pair(job_id, [fn,temp] () {fn(*temp);}));
     n_work++;
   }
+  shared.n_jobs_unfinished[job_id] = n_work;
   shared.more_jobs.notify_all();
   this->createThreads();
 }

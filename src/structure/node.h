@@ -24,7 +24,7 @@ struct Node : public std::enable_shared_from_this<Node> {
   void resetCondConst(CellUtils::Side s = (CellUtils::Side)-1);
   void setCondConst(CellUtils::Side s, bool perc = true, double val = 1);
   //	void updateV(double dt);
-  //  bool setCellByName(const std::string& type);
+  bool cell(const std::string& type);
   void cell(std::shared_ptr<Cell> cell);
   std::shared_ptr<Cell> cell() const;
   std::list<std::string> cellOptions();

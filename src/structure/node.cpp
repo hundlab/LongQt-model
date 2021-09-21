@@ -58,12 +58,41 @@ void Node::setCondConst(CellUtils::Side s, bool perc, double val) {
   }
 }
 
+bool Node::cell(const std::string &type)
+{
+    if (cell() != NULL && type == cell()->type()) {
+      return false;
+    }
+    if(type == InexcitableCell().type()) {
+        this->cell(make_shared<InexcitableCell>());
+        return true;
+    }
+    try {
+      this->cell((CellUtils::cellMap.at(type))());
+      return true;
+    } catch (const std::out_of_range&) {
+      Logger::getInstance()->write<std::out_of_range>(
+          "Protocol: {} is not a valid cell type", type);
+      return false;
+    }
+}
+
 void Node::cell(std::shared_ptr<Cell> cell) {
   this->__cell = cell;
   this->resetCondConst();
 }
 
 std::shared_ptr<Cell> Node::cell() const { return this->__cell; }
+
+std::list<std::string> Node::cellOptions()
+{
+    list<string> options;
+    options.push_back(InexcitableCell().type());
+    for (auto& cellOpt : CellUtils::cellMap) {
+      options.push_back(cellOpt.first);
+    }
+    return options;
+}
 
 pair<int, int> Node::calcNeighborPos(CellUtils::Side s) {
   pair<int, int> nei;

@@ -102,11 +102,11 @@ const map<pair<string, string>, map<string, string>>
         {{GridProtocol::name, ""},
          {{"stimval", "-60"},
           {"stimdur", "5"},
-          {"tMax", "500000"},
-          {"writetime", "495000"},
+          {"tMax", "5000"},
+          {"writetime", "4000"},
           {"bcl", "1000"},
           {"numstims", "500"},
-          {"stimval", "-80"}}},
+          {"stimval", "-100"}}},
         {{GridProtocol::name, GridCell().type()}, {}},
 };
 

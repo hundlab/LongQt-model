@@ -175,8 +175,8 @@ bool CurrentClamp::runTrial() {
 
 void CurrentClamp::readInCellState(bool read) {
   if (read) {
-    __cell->readCellState(cellStateDir.absolutePath().toStdString() + "/" +
-                          cellStateFile + std::to_string(__trial) + ".xml");
+    __cell->readCellState((cellStateDir/
+                          (cellStateFile + std::to_string(__trial) + ".xml")).string());
     this->stimt = __cell->t;
     this->tMax += this->__cell->t;
   }

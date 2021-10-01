@@ -158,8 +158,8 @@ bool VoltageClamp::runTrial() {
 void VoltageClamp::readInCellState(bool read) {
   // BROKEN
   if (read) {
-    __cell->readCellState(cellStateDir.absolutePath().toStdString() + "/" +
-                          cellStateFile + ".xml");
+    __cell->readCellState((cellStateDir/
+                          (cellStateFile + ".xml")).string());
     this->tMax += this->__cell->t;
   }
 }

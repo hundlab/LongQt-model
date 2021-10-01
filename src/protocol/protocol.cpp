@@ -15,6 +15,7 @@
 #include <QTime>
 #include <QXmlStreamReader>
 #include <QXmlStreamWriter>
+#include <ctime>
 #include "cellutils.h"
 #include "hrd09.h"
 #include "logger.h"
@@ -28,6 +29,7 @@
 #endif
 using namespace LongQt;
 using namespace std;
+namespace fs = std::filesystem;
 
 //######################################################
 // Default Constructor
@@ -66,8 +68,9 @@ Protocol::Protocol() {
   this->runAfter = [](Protocol&) {};
   // make map of params
   this->mkmap();
-  basedir = QStandardPaths::standardLocations(QStandardPaths::DocumentsLocation)
-                .first();
+  auto documents_loc =  QStandardPaths::standardLocations(QStandardPaths::DocumentsLocation)
+          .first();
+  basedir = documents_loc.toStdString();
   this->setDataDir();
   cellStateDir = datadir;
 };
@@ -244,6 +247,11 @@ void Protocol::numtrials(int numtrials)
 
 void Protocol::stopTrial() { this->runflag = false; }
 
+void Protocol::setDataDirDirect(std::string datadir)
+{
+    this->datadir = fs::absolute(datadir);
+}
+
 bool Protocol::cell(const string& type) {
   if (cell() != NULL && type == cell()->type()) {
     return false;
@@ -306,16 +314,19 @@ bool Protocol::hasPar(string name) { return this->__pars.count(name) > 0; }
 
 void Protocol::readInCellState(bool read) {
   if (read) {
-    cell()->readCellState(cellStateDir.absolutePath().toStdString() + "/" +
-                          cellStateFile + std::to_string(__trial) + ".xml");
+    auto path = cellStateDir / cellStateFile;
+    path += std::to_string(__trial) + ".xml";
+    cell()->readCellState(fs::absolute(path).string());
     this->tMax += this->cell()->t;
   }
 }
 
 void Protocol::writeOutCellState(bool write) {
   if (write) {
-    cell()->writeCellState(getDataDir() + "/" + cellStateFile +
-                           std::to_string(__trial) + ".xml");
+    fs::path path = this->getDataDir();
+    path /= cellStateFile;
+    path += std::to_string(__trial) + ".xml";
+    cell()->writeCellState(fs::absolute(path).string());
   }
 }
 
@@ -324,25 +335,28 @@ void Protocol::setDataDir(string location, string basedir, string appendtxt, boo
     this->basedir = basedir.c_str();
   }
 
-  auto date_time = QString();
+  string date_time;
   if(append_date) {
-      date_time = QDate::currentDate().toString("MMddyy") + "-" +
-                   QTime::currentTime().toString("hhmm");
+      auto time = std::time(nullptr);
+      auto local_time = *std::localtime(&time);
+      stringstream current_time;
+      current_time << std::put_time(&local_time, "%m%d%y-%H%M");
+      date_time = current_time.str();
   }
 
-  QDir working_dir = (this->basedir.absolutePath() + QString(location.c_str()) + date_time +
-                      QString(appendtxt.c_str()));
-  for (int i = 1; working_dir.exists(); i++) {
-    working_dir = (this->basedir.absolutePath() + QString(location.c_str()) + date_time + "_" +
-                   QString::number(i));
+  fs::path working_dir = this->basedir ;
+  string datadir_name = location + date_time + appendtxt;
+  for (int i = 1; fs::exists(working_dir/datadir_name); i++) {
+    datadir_name = location + date_time + appendtxt + "_" +
+            std::to_string(i);
   }
-  this->datadir = working_dir;
+  this->datadir = working_dir/datadir_name;
 }
 
-void Protocol::mkDirs() { this->datadir.mkpath(datadir.absolutePath()); }
+void Protocol::mkDirs() { fs::create_directory(this->datadir); }
 
 string Protocol::getDataDir() {
-  return this->datadir.absolutePath().toStdString();
+  return this->datadir.string();
 }
 
 void Protocol::mkmap() {
@@ -373,9 +387,9 @@ void Protocol::mkmap() {
                           [this](const string& value) { setDataDir(value); });
   __pars["cellStateDir"] = toInsert.Initialize(
       "directory",
-      [this]() { return cellStateDir.absolutePath().toStdString(); },
+      [this]() { return fs::absolute(cellStateDir).string(); },
       [this](const string& value) {
-        cellStateDir.setPath(QString(value.c_str()));
+        cellStateDir = fs::absolute(value);
       });
   //	pars["pvarfile"]= toInsert.Initialize("file", [this] () {return
   // pvarfile;}, [this] (const string& value) {pvarfile = value;});

@@ -61,7 +61,8 @@ shared_ptr<Protocol> SettingsIO::readProtoType(shared_ptr<Protocol> proto,
       try {
         string datadir = proto ? proto->getDataDir() : "";
         new_proto = CellUtils::protoMap.at(type.toStdString())();
-        new_proto->setDataDir(datadir);
+        if(proto)
+          new_proto->setDataDirDirect(datadir);
         __protoChanged = true;
       } catch (const std::out_of_range&) {
         Logger::getInstance()->write<std::out_of_range>(

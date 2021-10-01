@@ -20,6 +20,7 @@
 #include <memory>
 #include <sstream>
 #include <string>
+#include <filesystem>
 
 #include "cellutils.h"
 #include "measuremanager.h"
@@ -60,6 +61,7 @@ class Protocol : public std::enable_shared_from_this<Protocol> {
   virtual void numtrials(int numtrials);
   virtual bool runTrial() = 0;
   virtual void stopTrial();
+  void setDataDirDirect(std::string datadir);
   void setDataDir(std::string location = "/data", std::string basedir = "",
                   std::string appendtxt = "", bool append_date = true);
   void mkDirs();
@@ -88,9 +90,9 @@ class Protocol : public std::enable_shared_from_this<Protocol> {
   std::string readfile, savefile, dvarfile, pvarfile, measfile, simvarfile,
       propertyoutfile, dvarsoutfile, cellStateFile;
 
-  QDir basedir;
-  QDir datadir;
-  QDir cellStateDir;
+  std::filesystem::path basedir;
+  std::filesystem::path datadir;
+  std::filesystem::path cellStateDir;
 
   void setRunBefore(std::function<void(Protocol&)>);
   void setRunDuring(std::function<void(Protocol&)>, double firstRun = -1,

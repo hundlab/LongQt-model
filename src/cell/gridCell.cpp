@@ -132,18 +132,52 @@ void GridCell::setup(std::set<std::pair<int, int>> stimNodes,
 
 void GridCell::setConstantSelection(set<string> new_selection) {
   parsSelection = new_selection;
+  set<string> unused_selection = new_selection;
   for (auto& it : grid.rows) {
     for (auto& iv : it.nodes) {
-      iv->cell()->setConstantSelection(new_selection);
+        auto possible_pars = iv->cell()->pars();
+        set<string> intersect;
+        for(auto& sel: new_selection) {
+            if(possible_pars.find(sel) != possible_pars.end()) {
+                intersect.insert(sel);
+                unused_selection.erase(sel);
+            }
+        }
+        iv->cell()->setConstantSelection(intersect);
     }
+  }
+  if(unused_selection.size() != 0) {
+      string sel_string;
+      for(auto& sel : unused_selection) {
+        sel_string += sel + ",";
+      }
+      Logger::getInstance()->write("GridCell: constants \"{}\" are not a par in any cell",
+                                   sel_string);
   }
 }
 void GridCell::setVariableSelection(set<string> new_selection) {
   varsSelection = new_selection;
+  set<string> unused_selection = new_selection;
   for (auto& it : grid.rows) {
     for (auto iv : it) {
-      iv->cell()->setVariableSelection(new_selection);
+      auto possible_vars = iv->cell()->vars();
+      set<string> intersect;
+      for(auto& sel: new_selection) {
+          if(possible_vars.find(sel) != possible_vars.end()) {
+              intersect.insert(sel);
+              unused_selection.erase(sel);
+          }
+      }
+      iv->cell()->setVariableSelection(intersect);
     }
+  }
+  if(unused_selection.size() != 0) {
+      string sel_string;
+      for(auto& sel : unused_selection) {
+        sel_string += sel + ",";
+      }
+      Logger::getInstance()->write("GridCell: variables \"{}\" are not a var in any cell",
+                                   sel_string);
   }
 }
 void GridCell::writeConstants() {
@@ -308,7 +342,7 @@ bool GridCell::writeGridfile(QXmlStreamWriter& xml) {
   xml.writeStartElement("grid");
   xml.writeAttribute("rows", QString::number(grid.rowCount()));
   xml.writeAttribute("columns", QString::number(grid.columnCount()));
-  xml.writeAttribute("np", QString::number(grid.np));
+//  xml.writeAttribute("np", QString::number(grid.np));
   xml.writeAttribute("dx", QString::number(grid.dx));
   xml.writeAttribute("dy", QString::number(grid.dy));
 
@@ -361,7 +395,7 @@ bool GridCell::handleGrid(QXmlStreamReader& xml) {
 
   grid.addRows(xml.attributes().value("rows").toInt());
   grid.addColumns(xml.attributes().value("columns").toInt());
-  grid.np = xml.attributes().value("np").toDouble();
+//  grid.np = xml.attributes().value("np").toDouble();
   grid.dx = xml.attributes().value("dx").toDouble();
   grid.dy = xml.attributes().value("dy").toDouble();
 

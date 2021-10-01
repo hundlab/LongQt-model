@@ -83,8 +83,8 @@ inline void args_to_strings(std::vector<std::string>& values, T v,
   args_to_strings(values, args...);
 }
 inline void split_format(const std::string& format,
-                         /*ret*/ std::vector<std::string>& texts,
-                         /*ret*/ std::vector<std::string>& formats) {
+                         /*return*/ std::vector<std::string>& texts,
+                         /*return*/ std::vector<std::string>& formats) {
   size_t posBegin = 0;
   size_t posEnd = 0;
   size_t posPrev = 0;

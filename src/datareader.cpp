@@ -1,4 +1,4 @@
-#include "datareader.h"
+﻿#include "datareader.h"
 #include <algorithm>
 #include <functional>
 #include <iostream>
@@ -80,7 +80,7 @@ DataReader::TSVData DataReader::readFile(const fs::path& file,
     for (i = 0; i < stringValsSize; ++i) {
       try {
         data.data[i].push_back(std::stod(stringVals[i]));
-      } catch (std::invalid_argument&) {
+      } catch (const std::exception&) {
         Logger::getInstance()->write("DataReader: '{}' not a valid number",
                                      stringVals[i]);
       }

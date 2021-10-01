@@ -20,7 +20,7 @@ Grid::Grid(const Grid& other) {
   //  }
   dx = other.dx;
   dy = other.dy;
-  np = other.np;
+//  np = other.np;
   this->updateNodePositions();
 }
 Grid::~Grid() {}
@@ -136,6 +136,7 @@ pair<int, int> Grid::findNode(const shared_ptr<Node> toFind) {
   }
   return p;
 }
+
 shared_ptr<Node> Grid::operator()(const pair<int, int>& p) {
   return (*this)(p.first, p.second);
 }
@@ -144,9 +145,6 @@ shared_ptr<Node> Grid::operator()(const int row, const int col) {
   try {
     return rows.at(row).at(col);
   } catch (const std::out_of_range&) {
-    // no log cuz it happens just too much
-    // Logger::getInstance()->write<std::out_of_range>(
-    //    "Grid: ({}, {}) not in grid", row, col);
     return shared_ptr<Node>();
   }
 }

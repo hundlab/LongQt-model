@@ -47,7 +47,7 @@ class PvarsGrid : public PvarsCell {
       (reinterpret_cast<std::map<std::string, MIonChanParam*>*>(&this->pvars));
   Grid* grid;
 
-  void calcIonChanParam(MIonChanParam* param);
+  void calcIonChanParam(std::string name, MIonChanParam* param);
   void getNext();
   void add(std::pair<int, int> e, std::set<std::pair<int, int>>& next);
 

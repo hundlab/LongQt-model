@@ -15,10 +15,14 @@ PvarsGrid::PvarsGrid(const PvarsGrid& o, Grid* grid) {
 void PvarsGrid::setIonChanParams() {
   for (auto& pvar : *this->__pvars) {
     for (auto& oneCell : pvar.second->cells) {
-      (*this->grid)(oneCell.first)->cell()->setPar(pvar.first, oneCell.second);
+      auto cell = (*this->grid)(oneCell.first)->cell();
+      if(cell->hasPar(pvar.first)) {
+          cell->setPar(pvar.first, oneCell.second);
+      }
     }
   }
 }
+
 void PvarsGrid::writePvars(QXmlStreamWriter& xml) {
   xml.writeStartElement("pvars");
   for (auto& pvar : *this->__pvars) {
@@ -143,7 +147,7 @@ void PvarsGrid::insert(string name, IonChanParam param) {
       nparam->startCells.insert({rn, cn});
     }
   }
-  this->calcIonChanParam(nparam);
+  this->calcIonChanParam(name, nparam);
   (*this->__pvars)[name] = nparam;
 }
 void PvarsGrid::setMaxDistAndVal(string varname, int maxDist, double maxVal) {
@@ -151,7 +155,7 @@ void PvarsGrid::setMaxDistAndVal(string varname, int maxDist, double maxVal) {
     MIonChanParam* param = this->__pvars->at(varname);
     param->maxDist = maxDist;
     param->maxVal = maxVal;
-    this->calcIonChanParam(param);
+    this->calcIonChanParam(varname, param);
   } catch (std::out_of_range&) {
     Logger::getInstance()->write<std::out_of_range>(
         "PvarsGrid: {} is not in pvars", varname);
@@ -161,7 +165,7 @@ void PvarsGrid::setStartCells(string varname, set<pair<int, int>> startCells) {
   try {
     MIonChanParam* param = this->__pvars->at(varname);
     param->startCells = startCells;
-    this->calcIonChanParam(param);
+    this->calcIonChanParam(varname, param);
   } catch (std::out_of_range&) {
     Logger::getInstance()->write<std::out_of_range>(
         "PvarsGrid: {} is not in pvars", varname);
@@ -169,10 +173,10 @@ void PvarsGrid::setStartCells(string varname, set<pair<int, int>> startCells) {
 }
 void PvarsGrid::calcIonChanParams() {
   for (auto& pvar : *this->__pvars) {
-    this->calcIonChanParam(pvar.second);
+    this->calcIonChanParam(pvar.first, pvar.second);
   }
 }
-void PvarsGrid::calcIonChanParam(MIonChanParam* param) {
+void PvarsGrid::calcIonChanParam(std::string name, MIonChanParam* param) {
   set<pair<int, int>> good;
   for (auto& node : param->startCells) {
     if (node.first < grid->rowCount() && node.second < grid->columnCount()) {
@@ -206,7 +210,9 @@ void PvarsGrid::calcIonChanParam(MIonChanParam* param) {
       if (val > param->maxVal) {
         val = param->maxVal;
       }
-      param->cells[e] = val;
+      if((*this->grid)(e)->cell()->hasPar(name)) {
+          param->cells[e] = val;
+      }
       this->visited.insert(e);
     }
     ++i;

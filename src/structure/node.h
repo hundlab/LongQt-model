@@ -17,11 +17,12 @@ namespace LongQt {
 class Grid;
 
 struct Node : public std::enable_shared_from_this<Node> {
-  Node() {}
+  Node();
   Node(const Node& other);
   ~Node() {}
 
-  void resetCondConst(CellUtils::Side s = (CellUtils::Side)-1);
+  void resetCondConst();
+  void resetCondConst(CellUtils::Side s);
   void setCondConst(CellUtils::Side s, bool perc = true, double val = 1);
   //	void updateV(double dt);
   bool cell(const std::string& type);

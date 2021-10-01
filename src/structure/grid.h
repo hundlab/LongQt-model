@@ -18,26 +18,6 @@
 #include "fiber.h"
 namespace LongQt {
 
-/*struct CellInfo {
-  // necessary
-  CellInfo(int row = -1, int col = -1, std::shared_ptr<Cell> cell = 0,
-           std::array<double, 4> c = {1, 1, 1, 1},
-           bool c_perc = true) {
-    this->row = row;
-    this->col = col;
-    this->cell = cell;
-    this->c = c;
-    this->c_perc = c_perc;
-  }
-  ~CellInfo() {}
-  int row = -1;
-  int col = -1;
-  // if cell == NULL then cell will not be changed
-  std::shared_ptr<Cell> cell = 0;
-  std::array<double, 4> c = {{1, 1, 1, 1}};
-  bool c_perc = true;
-};*/
-
 class Grid {
  public:
   Grid();
@@ -116,7 +96,8 @@ class Grid {
   bool iterRowsFirst = true;
   double dx = 0.01;
   double dy = 0.01;
-  int np = 1;  // nodes per patch
+  //Having multiple patches per node is not supported and has been commented out
+//  int np = 1;  // nodes per patch
 };
 }  // namespace LongQt
 

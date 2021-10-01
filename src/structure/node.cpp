@@ -5,6 +5,8 @@
 using namespace LongQt;
 using namespace std;
 
+Node::Node() : std::enable_shared_from_this<Node>() {}
+
 Node::Node(const Node &o) : std::enable_shared_from_this<Node>(o) {
   rd = o.rd;
   dIax = o.dIax;
@@ -17,44 +19,53 @@ Node::Node(const Node &o) : std::enable_shared_from_this<Node>(o) {
   c = o.c;
 }
 
-void Node::resetCondConst(CellUtils::Side s) {
-  if (s == -1) {
-    this->c = {{NAN, NAN, NAN, NAN}};
-  } else {
-    this->c[s] = NAN;
-  }
+void Node::resetCondConst() {
+    for(auto s: {CellUtils::Side::top,
+                    CellUtils::Side::bottom,
+                    CellUtils::Side::left,
+                    CellUtils::Side::right}) {
+        this->resetCondConst(s);
+    }
 }
 
-/*double Node::calPerc(int X, double dx, double val) {
-        if(val == 0) {
-                return 0;
-        }
-        if((np==1)||((X%np)==0)) {
-                return
-((1000*cell->cellRadius)/(val*2*cell->Rcg*cell->Cm*dx)-cell->Rmyo*dx)/rd; } else
-{ return 1;
-        }
-}*/
+void Node::resetCondConst(CellUtils::Side s) {
+    auto nei_pos = this->calcNeighborPos(s);
+    CellUtils::Side fs = CellUtils::flipSide(s);
+    std::shared_ptr<Node> nei_node = (*parent)(nei_pos);
+    if (!nei_node) {
+      this->c[s] = 0;
+      return;
+    }
+    double ours = this->calcOurCondConst(s, 1);
+    double theirs = nei_node->calcOurCondConst(fs, 1);
+    auto cond = std::min(ours, theirs);
+    this->c[s] = cond;
+    nei_node->c[fs] = cond;
+}
 
 void Node::setCondConst(CellUtils::Side s, bool perc, double val) {
-  //  auto nei = this->calcNeighborPos(s);
-  //  std:shared_ptr<Node> neiNode;
-  //  try {
-  //    neiNode = (*parent)(nei);
-  //  } catch(std::out_of_range) {
-  //      return;
-  //  }
-  //  if (!neiNode) {
-  //    return;
-  //  }
+    auto nei_pos = this->calcNeighborPos(s);
+    CellUtils::Side fs = CellUtils::flipSide(s);
+    std::shared_ptr<Node> nei_node = (*parent)(nei_pos);
+    if (!nei_node) {
+    this->c[s] = 0;
+        return;
+    }
 
   if (perc) {
     if (isnan(val)) {
       val = 1;
     }
-    this->c[s] = this->calcOurCondConst(s, val);
+    double ours = this->calcOurCondConst(s, val);
+    double theirs = nei_node->calcOurCondConst(fs, val);
+    auto cond = std::min(ours, theirs);
+    this->c[s] = cond;
+    nei_node->c[fs] = cond;
+  } else if(isnan(val)) {
+    return;
   } else {
     this->c[s] = val;
+    nei_node->c[fs] = val;
   }
 }
 
@@ -121,68 +132,19 @@ double Node::calcOurCondConst(CellUtils::Side s, double val) {
   int reduction = isRow ? 1 : 2;
   double dx = isRow ? parent->dx : parent->dy;
   int X = isRow ? row : col;
-  if ((parent->np == 1) || ((X % parent->np) == 0)) {
+// Commented out lines are for cells with multiple patches, this feature is currently
+// unused and not functional
+//  if ((parent->np == 1) || ((X % parent->np) == 0)) {
     return (1000 / reduction) * __cell->cellRadius /
            (2 * __cell->Rcg * (__cell->Rmyo * dx + rd * val) * __cell->Cm * dx);
-  } else {
-    return (1001 / reduction) * __cell->cellRadius /
-           (2 * __cell->Rcg * __cell->Rmyo * __cell->Cm * dx * dx);
-  }
+//  } else {
+//    return (1001 / reduction) * __cell->cellRadius /
+//           (2 * __cell->Rcg * __cell->Rmyo * __cell->Cm * dx * dx);
+//  }
 }
 
-// void Node::setCondConstDirect(CellUtils::Side s, double val) {
-//  switch (s) {
-//    case CellUtils::Side::left:
-//      parent->rows.at(row).B.at(col) = val;
-//      break;
-//    case CellUtils::Side::right:
-//      parent->rows.at(row).B.at(col + 1) = val;
-//      break;
-//    case CellUtils::Side::top:
-//      parent->columns.at(col).B.at(row) = val;
-//      break;
-//    case CellUtils::Side::bottom:
-//      parent->columns.at(col).B.at(row + 1) = val;
-//      break;
-//  }
-//}
-
 double Node::getCondConst(CellUtils::Side s) {
-  auto nei = this->calcNeighborPos(s);
-  CellUtils::Side fs = CellUtils::flipSide(s);
-  std::shared_ptr<Node> neiNode;
-  try {
-    neiNode = (*parent)(nei);
-  } catch (std::out_of_range) {
-    return 0;
-  }
-  if (!neiNode) {
-    return 0;
-  }
-  if (isnan(this->c[s])) {
-    this->c[s] = this->calcOurCondConst(s, 1);
-  }
-  if (isnan(neiNode->c[fs])) {
-    neiNode->c[fs] = neiNode->calcOurCondConst(fs, 1);
-  }
-  return std::min(neiNode->c[fs], this->c[s]);
-  //  double val = -1;
-  //  switch (s) {
-  //    case CellUtils::Side::left:
-  //      val = parent->rows.at(row).B[col];
-  //      break;
-  //    case CellUtils::Side::right:
-  //      val = parent->rows.at(row).B[col + 1];
-  //      break;
-  //    case CellUtils::Side::top:
-  //      val = parent->columns.at(col).B[row];
-  //      break;
-  //    case CellUtils::Side::bottom:
-  //      val = parent->columns.at(col).B[row + 1];
-  //      break;
-  //  }
-
-  //  return val;
+    return this->c[s];
 }
 
 void Node::waitUnlock(int which) {
@@ -219,6 +181,7 @@ void Node::setParent(Grid *par, int row, int col) {
     this->row = row;
     this->col = col;
   }
+  this->resetCondConst();
 }
 
 void Node::setPosition(int row, int col) {

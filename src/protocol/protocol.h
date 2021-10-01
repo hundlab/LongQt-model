@@ -62,10 +62,12 @@ class Protocol : public std::enable_shared_from_this<Protocol> {
   virtual bool runTrial() = 0;
   virtual void stopTrial();
   void setDataDirDirect(std::string datadir);
-  void setDataDir(std::string location = "/data", std::string basedir = "",
+  void setDataDir(std::string directory = "data", std::string basedir = "",
                   std::string appendtxt = "", bool append_date = true);
-  void mkDirs();
   std::string getDataDir();
+  void mkDirs();
+  void setCellStateDir(std::string location);
+  std::string getCellStateDir();
 
   virtual bool cell(const std::string& type);
   virtual void cell(std::shared_ptr<Cell> cell) = 0;
@@ -89,10 +91,6 @@ class Protocol : public std::enable_shared_from_this<Protocol> {
 
   std::string readfile, savefile, dvarfile, pvarfile, measfile, simvarfile,
       propertyoutfile, dvarsoutfile, cellStateFile;
-
-  std::filesystem::path basedir;
-  std::filesystem::path datadir;
-  std::filesystem::path cellStateDir;
 
   void setRunBefore(std::function<void(Protocol&)>);
   void setRunDuring(std::function<void(Protocol&)>, double firstRun = -1,
@@ -126,6 +124,10 @@ class Protocol : public std::enable_shared_from_this<Protocol> {
   std::function<void(Protocol&)> runAfter;
 
   std::atomic<bool> runflag = true;  // fix to bool
+
+  std::filesystem::path datadir;
+  std::filesystem::path cellStateDir;
+
  private:
   void mkmap();
 };

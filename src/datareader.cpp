@@ -79,7 +79,11 @@ DataReader::TSVData DataReader::readFile(const fs::path& file,
     int i;
     for (i = 0; i < stringValsSize; ++i) {
       try {
-        data.data[i].push_back(std::stod(stringVals[i]));
+        if(stringVals[i] != "") {
+          data.data[i].push_back(std::stod(stringVals[i]));
+        } else {
+          data.data[i].push_back(std::nan("1"));
+        }
       } catch (const std::exception&) {
         Logger::getInstance()->write("DataReader: '{}' not a valid number",
                                      stringVals[i]);

@@ -89,7 +89,9 @@ void ThreadPool::Thread::signal_jobs_finished(std::unique_lock<std::mutex>& jobs
     jobs_lck.lock();
   d->finished_jobs.notify_all();
   try {
-    d->__finishedCallback();
+    if(d->__finishedCallback) {
+      d->__finishedCallback();
+    }
   } catch (std::bad_function_call&) {
   }
   if(release_job_lock)

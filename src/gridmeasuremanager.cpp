@@ -150,9 +150,9 @@ void GridMeasureManager::write(std::string filename) {
         int selSize = this->numSelected[node];
         if (first) {
           first = false;
-          ofile << std::string('\t', selSize - 2);
+          ofile << std::string(selSize - 2, '\t');
         } else {
-          ofile << std::string('\t', selSize - 1);
+          ofile << std::string(selSize - 1, '\t');
         }
       }
     }

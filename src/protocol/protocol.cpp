@@ -68,10 +68,9 @@ Protocol::Protocol() {
   this->runAfter = [](Protocol&) {};
   // make map of params
   this->mkmap();
-  auto documents_loc =  QStandardPaths::standardLocations(QStandardPaths::DocumentsLocation)
+  auto base_dir =  QStandardPaths::standardLocations(QStandardPaths::DocumentsLocation)
           .first();
-  basedir = documents_loc.toStdString();
-  this->setDataDir();
+  this->setDataDir("data", base_dir.toStdString());
   cellStateDir = datadir;
 };
 
@@ -330,11 +329,7 @@ void Protocol::writeOutCellState(bool write) {
   }
 }
 
-void Protocol::setDataDir(string location, string basedir, string appendtxt, bool append_date) {
-  if (basedir.length() > 0) {
-    this->basedir = basedir.c_str();
-  }
-
+void Protocol::setDataDir(string directory, string basedir, string appendtxt, bool append_date) {
   string date_time;
   if(append_date) {
       auto time = std::time(nullptr);
@@ -344,16 +339,26 @@ void Protocol::setDataDir(string location, string basedir, string appendtxt, boo
       date_time = current_time.str();
   }
 
-  fs::path working_dir = this->basedir ;
-  string datadir_name = location + date_time + appendtxt;
+  fs::path working_dir = basedir ;
+  string datadir_name = directory + date_time + appendtxt;
   for (int i = 1; fs::exists(working_dir/datadir_name); i++) {
-    datadir_name = location + date_time + appendtxt + "_" +
+    datadir_name = directory + date_time + appendtxt + "_" +
             std::to_string(i);
   }
-  this->datadir = working_dir/datadir_name;
+  this->datadir = fs::absolute(working_dir/datadir_name);
 }
 
 void Protocol::mkDirs() { fs::create_directory(this->datadir); }
+
+void Protocol::setCellStateDir(std::string location)
+{
+    this->cellStateDir = fs::absolute(location);
+}
+
+std::string Protocol::getCellStateDir()
+{
+    return this->cellStateDir.string();
+}
 
 string Protocol::getDataDir() {
   return this->datadir.string();

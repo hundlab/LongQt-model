@@ -79,8 +79,8 @@ void Fiber::setup() {
 
   B.resize(nn + 1);
   for (unsigned int i = 0; i < nodes.size(); ++i) {
-    B[i] = nodes[i]->getCondConst(directions[0]);
-    B[i + 1] = nodes[i]->getCondConst(directions[1]);
+    B[i] = nodes[i]->getConductivity(directions[0]);
+    B[i + 1] = nodes[i]->getConductivity(directions[1]);
   }
 }
 

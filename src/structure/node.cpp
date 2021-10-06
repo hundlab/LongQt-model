@@ -19,16 +19,16 @@ Node::Node(const Node &o) : std::enable_shared_from_this<Node>(o) {
   c = o.c;
 }
 
-void Node::resetCondConst() {
+void Node::resetConductivity() {
     for(auto s: {CellUtils::Side::top,
                     CellUtils::Side::bottom,
                     CellUtils::Side::left,
                     CellUtils::Side::right}) {
-        this->resetCondConst(s);
+        this->resetConductivity(s);
     }
 }
 
-void Node::resetCondConst(CellUtils::Side s) {
+void Node::resetConductivity(CellUtils::Side s) {
     auto nei_pos = this->calcNeighborPos(s);
     CellUtils::Side fs = CellUtils::flipSide(s);
     std::shared_ptr<Node> nei_node = (*parent)(nei_pos);
@@ -43,7 +43,29 @@ void Node::resetCondConst(CellUtils::Side s) {
     nei_node->c[fs] = cond;
 }
 
-void Node::setCondConst(CellUtils::Side s, bool perc, double val) {
+void Node::setResistivity(CellUtils::Side s, double percentage) {
+    if(percentage <= 0) {
+        Logger::getInstance()->write("Node: resistivity is a percentage, "
+                                     "it cannot be less than 0");
+    }
+
+    auto nei_pos = this->calcNeighborPos(s);
+    CellUtils::Side fs = CellUtils::flipSide(s);
+    std::shared_ptr<Node> nei_node = (*parent)(nei_pos);
+    if (!nei_node) {
+        this->c[s] = 0;
+        return;
+    }
+
+    auto frac = percentage/100;
+    double ours = this->calcOurCondConst(s, frac);
+    double theirs = nei_node->calcOurCondConst(fs, frac);
+    auto cond = std::min(ours, theirs);
+    this->c[s] = cond;
+    nei_node->c[fs] = cond;
+}
+
+void Node::setConductivityDirect(CellUtils::Side s, double val) {
     auto nei_pos = this->calcNeighborPos(s);
     CellUtils::Side fs = CellUtils::flipSide(s);
     std::shared_ptr<Node> nei_node = (*parent)(nei_pos);
@@ -52,21 +74,8 @@ void Node::setCondConst(CellUtils::Side s, bool perc, double val) {
         return;
     }
 
-  if (perc) {
-    if (isnan(val)) {
-      val = 1;
-    }
-    double ours = this->calcOurCondConst(s, val);
-    double theirs = nei_node->calcOurCondConst(fs, val);
-    auto cond = std::min(ours, theirs);
-    this->c[s] = cond;
-    nei_node->c[fs] = cond;
-  } else if(isnan(val)) {
-    return;
-  } else {
     this->c[s] = val;
     nei_node->c[fs] = val;
-  }
 }
 
 bool Node::cell(const std::string &type)
@@ -90,7 +99,7 @@ bool Node::cell(const std::string &type)
 
 void Node::cell(std::shared_ptr<Cell> cell) {
   this->__cell = cell;
-  this->resetCondConst();
+  this->resetConductivity();
 }
 
 std::shared_ptr<Cell> Node::cell() const { return this->__cell; }
@@ -131,7 +140,7 @@ double Node::calcOurCondConst(CellUtils::Side s, double val) {
   bool isRow = (s == CellUtils::Side::right || s == CellUtils::Side::left);
   int reduction = isRow ? 1 : 2;
   double dx = isRow ? parent->dx : parent->dy;
-  int X = isRow ? row : col;
+//  int X = isRow ? row : col;
 // Commented out lines are for cells with multiple patches, this feature is currently
 // unused and not functional
 //  if ((parent->np == 1) || ((X % parent->np) == 0)) {
@@ -143,7 +152,7 @@ double Node::calcOurCondConst(CellUtils::Side s, double val) {
 //  }
 }
 
-double Node::getCondConst(CellUtils::Side s) {
+double Node::getConductivity(CellUtils::Side s) {
     return this->c[s];
 }
 
@@ -181,7 +190,7 @@ void Node::setParent(Grid *par, int row, int col) {
     this->row = row;
     this->col = col;
   }
-  this->resetCondConst();
+  this->resetConductivity();
 }
 
 void Node::setPosition(int row, int col) {

@@ -21,9 +21,6 @@ struct Node : public std::enable_shared_from_this<Node> {
   Node(const Node& other);
   ~Node() {}
 
-  void resetCondConst();
-  void resetCondConst(CellUtils::Side s);
-  void setCondConst(CellUtils::Side s, bool perc = true, double val = 1);
   //	void updateV(double dt);
   bool cell(const std::string& type);
   void cell(std::shared_ptr<Cell> cell);
@@ -31,7 +28,11 @@ struct Node : public std::enable_shared_from_this<Node> {
   std::list<std::string> cellOptions();
 
   double rd = 1.5;  // gap junctional disk resistance.
-  double getCondConst(CellUtils::Side s);
+  double getConductivity(CellUtils::Side s);
+  void setConductivityDirect(CellUtils::Side s, double val);
+  void setResistivity(CellUtils::Side s, double percentage = 100);
+  void resetConductivity();
+  void resetConductivity(CellUtils::Side s);
   //  double setFiberB();
   //## default value cannot be deterimined by constructor
   std::array<std::atomic<bool>, 2> lock{0, 0};
@@ -50,7 +51,7 @@ struct Node : public std::enable_shared_from_this<Node> {
   bool writeNode(QXmlStreamWriter& xml);
   bool readNode(QXmlStreamReader& xml);
 
- private:
+private:
   std::shared_ptr<Cell> __cell = std::make_shared<InexcitableCell>();
   //  void setCondConstDirect(CellUtils::Side s, double val);
   std::array<double, 4> c = {{NAN, NAN, NAN, NAN}};

@@ -84,8 +84,7 @@ TEST(protocol, cell_real) {
 TEST(protocol, DataDir) {
   Mock_Protocol proto;
   proto.setDataDir("", "D:", "_endText");
-  QString datadir = proto.datadir.absolutePath();
-  EXPECT_TRUE(datadir == proto.getDataDir().c_str());
+  QString datadir = proto.getDataDir().c_str();
   EXPECT_TRUE(datadir.contains("D:/"));
   EXPECT_TRUE(datadir.contains("data"));
   EXPECT_TRUE(datadir.contains("_endText"));

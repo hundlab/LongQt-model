@@ -46,6 +46,7 @@ set_target_properties(LongQt-model PROPERTIES
 target_link_libraries(LongQt-model PUBLIC Qt5::Core)
 
 if(LongQT_model_tests)
+  message("Tests will be built")
   # Add tests
   include(FetchContent)
   FetchContent_Declare(
@@ -61,6 +62,8 @@ if(LongQT_model_tests)
   add_executable(LongQt-model-tests "${CMAKE_CURRENT_LIST_DIR}/tests/main.cpp")
   gtest_discover_tests(LongQt-model-tests)
   target_link_libraries(LongQt-model-tests LongQt-model gtest_main gmock_main)
+else()
+  message("Tests will not be built")
 endif()
 
 

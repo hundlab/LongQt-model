@@ -3,11 +3,12 @@ cmake_minimum_required(VERSION 3.0)
 project(LongQt-model VERSION 0.2)
 
 set(CMAKE_CXX_STANDARD 17)
+set(LongQT_model_tests FALSE CACHE BOOL "Build the tests")
 #set(CMAKE_BUILD_TYPE Release)
 
 find_package(Qt5 REQUIRED COMPONENTS Core)
 
-# Get source files and setup LongQt-model to be build as 
+# Get source files and setup LongQt-model to be build as
 # a static library
 # Note: Qt5 will still be linked dynamically
 include("${CMAKE_CURRENT_LIST_DIR}/src/LongQt-model.cmake")
@@ -44,21 +45,23 @@ set_target_properties(LongQt-model PROPERTIES
 
 target_link_libraries(LongQt-model PUBLIC Qt5::Core)
 
-# Add tests 
-include(FetchContent)
-FetchContent_Declare(
-  googletest
-  URL https://github.com/google/googletest/archive/609281088cfefc76f9d0ce82e1ff6c30cc3591e5.zip
-)
-# For Windows: Prevent overriding the parent project's compiler/linker settings
-set(gtest_force_shared_crt ON CACHE BOOL "" FORCE)
-FetchContent_MakeAvailable(googletest)
+if(LongQT_model_tests)
+  # Add tests
+  include(FetchContent)
+  FetchContent_Declare(
+    googletest
+    URL https://github.com/google/googletest/archive/609281088cfefc76f9d0ce82e1ff6c30cc3591e5.zip
+  )
+  # For Windows: Prevent overriding the parent project's compiler/linker settings
+  set(gtest_force_shared_crt ON CACHE BOOL "" FORCE)
+  FetchContent_MakeAvailable(googletest)
 
-enable_testing()
-include(GoogleTest)
-add_executable(LongQt-model-tests "${CMAKE_CURRENT_LIST_DIR}/tests/main.cpp")
-gtest_discover_tests(LongQt-model-tests)
-target_link_libraries(LongQt-model-tests LongQt-model gtest_main gmock_main)
+  enable_testing()
+  include(GoogleTest)
+  add_executable(LongQt-model-tests "${CMAKE_CURRENT_LIST_DIR}/tests/main.cpp")
+  gtest_discover_tests(LongQt-model-tests)
+  target_link_libraries(LongQt-model-tests LongQt-model gtest_main gmock_main)
+endif()
 
 
 ##create package

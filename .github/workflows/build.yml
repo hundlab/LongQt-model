@@ -71,7 +71,7 @@ jobs:
         if: startsWith(matrix.config.name, 'Ubuntu')
         run: |
           sudo apt-get update
-          sudo apt-get install --assume-yes cmake build-essential qt5-default
+          sudo apt-get install --assume-yes cmake build-essential qtbase5-dev qtchooser qt5-qmake qtbase5-dev-tools
           cmake --version
           gcc --version
 

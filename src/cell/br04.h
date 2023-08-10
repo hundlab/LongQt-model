@@ -203,7 +203,7 @@ class Br04 : public Cell {
   double JtrFactor = 1;
   double JtrpnFactor = 1;
   double IpcaFactor = 1;
-  double drug_conc = 0;
+  double drugConc = 1;
 
   double TestFactor = 1;
   double TestFactor2 = 1;

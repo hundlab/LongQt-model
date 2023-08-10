@@ -304,7 +304,7 @@ void Br04::updateIna() {
         alpha_Na4 = alpha_Na2/1000;
         alpha_Na5 = 1.052632E-5*alpha_Na2;
         alpha_Na6 = 4.09327e-13; //1.0E-7 WT, 0.5E-6 Mutant
-        alpha_Na7 = drug_conc*8.2;
+        alpha_Na7 = drugConc*8.2;
         beta_Na11 = 0.1917*exp(-(vOld+2.5)/20.3);
         beta_Na12 = 0.2*exp(-(vOld-2.5)/20.3);
         beta_Na13 = 0.22*exp(-(vOld-7.5)/20.3); //0.17 WT, 0.535 mutant
@@ -852,7 +852,7 @@ void Br04::makemap() {
   ;
   CellKernel::insertPar("JtrFactor", &JtrFactor);
   ;
-  CellKernel::insertPar("drugConc", &drug_conc);
+  CellKernel::insertPar("drugConc", &drugConc);
   ;
   CellKernel::insertPar("JtrpnFactor", &JtrpnFactor);
   CellKernel::insertPar("IpcaFactor", &IpcaFactor);

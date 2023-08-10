@@ -26,6 +26,7 @@ void Br04::Initialize() {
 
   this->insertOpt("ISO", &isoflag, "Isoproternol");
   this->insertOpt("TREK", &trekflag, "Enable the trek channel");
+  this->insertOpt("Ranolozine", &ranflag, "Ranolazine");
   //  this->insertOpt("INS",&insflag, "?Plateau K current?");
   this->makemap();
 }
@@ -265,10 +266,11 @@ void Br04::updateItrek() {
 
 void Br04::updateIna() {
   double alpha_Na11, alpha_Na12, alpha_Na13;
-  double alpha_Na2, alpha_Na3, alpha_Na4, alpha_Na5;
+  double alpha_Na2, alpha_Na3, alpha_Na4, alpha_Na5, alpha_Na6, alpha_Na7;
   double beta_Na11, beta_Na12, beta_Na13;
-  double beta_Na2, beta_Na3, beta_Na4, beta_Na5;
+  double beta_Na2, beta_Na3, beta_Na4, beta_Na5, beta_Na6, beta_Na7;
   double dCNa1, dCNa2, dIFNa, dI1Na, dI2Na, dICNa2, dICNa3, dONa;
+  double dOBNa, dLCNa3, dLCNa2, dLCNa1, dLONa, dLOBNa;
   double ENa;
 
   double gna = 13.0;
@@ -292,6 +294,28 @@ void Br04::updateIna() {
   beta_Na2 = alpha_Na13 * alpha_Na2 * alpha_Na3 / (beta_Na13 * beta_Na3);
   beta_Na4 = alpha_Na3;
   beta_Na5 = alpha_Na3 / 50.0;
+  if (ranflag) {
+
+        alpha_Na11 = 7.52067/(0.1027*exp(-(vOld+2.5)/17.0)+0.20*exp(-(vOld+2.5)/150.0));
+        alpha_Na12 = 7.52067/(0.1027*exp(-(vOld+2.5)/15.0)+0.23*exp(-(vOld+2.5)/150.0));
+        alpha_Na13 = 7.52067/(0.1027*exp(-(vOld+2.5)/12.0)+0.25*exp(-(vOld+2.5)/150.0));
+        alpha_Na2 = 1/(0.188495*exp(-(vOld+7.0)/16.6)+0.393956);//(P1a4*exp(vOld/P2a4)); //divide by 2 for mutant
+        alpha_Na3 = 7.0E-7*exp(-(vOld+7.0)/7.7);
+        alpha_Na4 = alpha_Na2/1000;
+        alpha_Na5 = 1.052632E-5*alpha_Na2;
+        alpha_Na6 = 4.09327e-13; //1.0E-7 WT, 0.5E-6 Mutant
+        alpha_Na7 = drug_conc*8.2;
+        beta_Na11 = 0.1917*exp(-(vOld+2.5)/20.3);
+        beta_Na12 = 0.2*exp(-(vOld-2.5)/20.3);
+        beta_Na13 = 0.22*exp(-(vOld-7.5)/20.3); //0.17 WT, 0.535 mutant
+        beta_Na3 = 0.0108469+2E-5*(vOld+7.0);
+        beta_Na2 = (alpha_Na13*alpha_Na2*alpha_Na3)/(beta_Na13*beta_Na3);
+        beta_Na4 = 0.0060448*alpha_Na3;//P1b6*exp(-vOld/P2b6)
+        beta_Na5 = 0.02*alpha_Na3;
+        beta_Na6 = 9.5E-4; //3.8E-3 WT, 6.0E-4 mutant
+        beta_Na7 = 0.022;
+    }
+
 
   dCNa1 = dt * (alpha_Na12 * CNa2 - beta_Na12 * CNa1 + beta_Na13 * ONa -
                 alpha_Na13 * CNa1 + alpha_Na3 * IFNa - beta_Na3 * CNa1);
@@ -309,6 +333,25 @@ void Br04::updateIna() {
                  alpha_Na12 * ICNa2 + beta_Na3 * CNa2 - alpha_Na3 * ICNa2);
   dICNa3 = dt * (beta_Na11 * ICNa2 - alpha_Na11 * ICNa3 + beta_Na3 * CNa3 -
                  alpha_Na3 * ICNa3);
+  if (ranflag) {
+        dCNa1 += dt * (alpha_Na6 * LCNa1 - beta_Na6 * CNa1);
+        dCNa2 += dt * (alpha_Na6 * LCNa2 - beta_Na6 * CNa2);
+        dONa += dt * (alpha_Na6 * LONa - beta_Na6 * ONa);
+
+        dOBNa = dt * (alpha_Na7 * ONa - beta_Na7 * OBNa);
+        dLCNa3 = dt * (alpha_Na6 * CNa3 - beta_Na6 * LCNa3 + beta_Na11 * LCNa2 -  alpha_Na11 * LCNa3);
+        dLCNa2 = dt * (alpha_Na11 * LCNa3 - beta_Na11 * LCNa2 + alpha_Na6 * CNa2 - beta_Na6 * LCNa2 + beta_Na12 * LCNa1 - alpha_Na12 * LCNa2);
+        dLCNa1 = dt * (alpha_Na12 * LCNa2 - beta_Na12 * LCNa1 + alpha_Na6 * CNa1 - beta_Na6 * LCNa1 + beta_Na13 * LONa - alpha_Na13 * LCNa1);
+        dLONa = dt * (alpha_Na13 * LCNa1 - beta_Na13 * LONa + alpha_Na6 * ONa - beta_Na6 * LONa + beta_Na7 * LOBNa - alpha_Na7 * LONa);
+        dLOBNa = dt * (alpha_Na7 * LONa - beta_Na7 * LOBNa);
+
+        OBNa = OBNa + dOBNa;
+        LCNa3 = LCNa3 + dLCNa3;
+        LCNa2 = LCNa2 + dLCNa2;
+        LCNa1 = LCNa1 + dLCNa1;
+        LONa = LONa + dLONa;
+        LOBNa = LOBNa + dLOBNa;
+    }
 
   CNa1 = CNa1 + dCNa1;
   CNa2 = CNa2 + dCNa2;
@@ -324,6 +367,11 @@ void Br04::updateIna() {
   ENa =
       RGAS * TEMP / FDAY * log((0.9 * naO + 0.1 * kO) / (0.9 * naI + 0.1 * kI));
   iNa = InaFactor * gna * ONa * (vOld - ENa);
+  if (ranflag) {
+      CNa3 = 1 - ONa - CNa1 - CNa2 - IFNa - I1Na - I2Na - ICNa2 - ICNa3 - OBNa - LCNa3 - LCNa2 - LCNa1 - LONa - LOBNa;
+      double gna = 7.35;//13.0 for old
+      iNa = InaFactor * gna * (ONa + LONa) * (vOld - ENa);
+  }
 };
 
 void Br04::updateInab() {
@@ -744,6 +792,18 @@ void Br04::makemap() {
   ;
   CellKernel::insertVar("ICNa3", &ICNa3);
   ;
+  CellKernel::insertVar("OBNa", &OBNa);
+  ;
+  CellKernel::insertVar("LOBNa", &LOBNa);
+  ;
+  CellKernel::insertVar("LONa", &LONa);
+  ;
+  CellKernel::insertVar("LCNa1", &LCNa1);
+  ;
+  CellKernel::insertVar("LCNa2", &LCNa2);
+  ;
+  CellKernel::insertVar("LCNa3", &LCNa3);
+  ;
   CellKernel::insertVar("caTrpn_low", &caTrpn_low);
   ;
   CellKernel::insertVar("caTrpn_high", &caTrpn_high);
@@ -793,6 +853,7 @@ void Br04::makemap() {
   ;
   CellKernel::insertPar("JtrFactor", &JtrFactor);
   ;
+  CellKernel::insertPar("drug_conc", &drug_conc);
   CellKernel::insertPar("JtrpnFactor", &JtrpnFactor);
   CellKernel::insertPar("IpcaFactor", &IpcaFactor);
   //    CellKernel::insertPar("TestFactor",&TestFactor);

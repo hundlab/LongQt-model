@@ -158,6 +158,12 @@ class Br04 : public Cell {
   double I2Na = 1.323937657e-09;
   double ICNa2 = 0.01078263966;
   double ICNa3 = 0.3321288129;
+  double OBNa = 0.0;
+  double LCNa3 = 0.0;
+  double LCNa2 = 0.0;
+  double LCNa1 = 0.0;
+  double LONa = 0.0;
+  double LOBNa = 0.0;
   //####### RyR channel fractions in kinetic states
   double PC1 = 0.9998292337;
   double PC2 = 0.0001568252687;
@@ -197,6 +203,7 @@ class Br04 : public Cell {
   double JtrFactor = 1;
   double JtrpnFactor = 1;
   double IpcaFactor = 1;
+  double drug_conc = 0;
 
   double TestFactor = 1;
   double TestFactor2 = 1;
@@ -204,6 +211,7 @@ class Br04 : public Cell {
   bool isoflag = false;
   bool trekflag = false;
   bool insflag = false;
+  bool ranflag = false;
 
  private:
   void Initialize();

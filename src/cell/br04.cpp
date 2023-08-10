@@ -26,7 +26,7 @@ void Br04::Initialize() {
 
   this->insertOpt("ISO", &isoflag, "Isoproternol");
   this->insertOpt("TREK", &trekflag, "Enable the trek channel");
-  this->insertOpt("Ranolozine", &ranflag, "Ranolazine");
+  this->insertOpt("Ranolazine", &ranflag, "Ranolazine");
   //  this->insertOpt("INS",&insflag, "?Plateau K current?");
   this->makemap();
 }
@@ -808,7 +808,6 @@ void Br04::makemap() {
   ;
   CellKernel::insertVar("caTrpn_high", &caTrpn_high);
   ;
-
   CellKernel::insertPar("IcalFactor", &IcalFactor);
   ;
   CellKernel::insertPar("IcabFactor", &IcabFactor);
@@ -853,7 +852,8 @@ void Br04::makemap() {
   ;
   CellKernel::insertPar("JtrFactor", &JtrFactor);
   ;
-  CellKernel::insertPar("drug_conc", &drug_conc);
+  CellKernel::insertPar("drugConc", &drug_conc);
+  ;
   CellKernel::insertPar("JtrpnFactor", &JtrpnFactor);
   CellKernel::insertPar("IpcaFactor", &IpcaFactor);
   //    CellKernel::insertPar("TestFactor",&TestFactor);
